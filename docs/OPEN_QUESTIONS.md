@@ -1,114 +1,171 @@
 # Açık konular
 
-Bu dosyada karar gerektiren konular ve konuşulmuş başlangıç fikirleri bulunur. Uygulanmış özellik veya tamamlanmış entegrasyon olarak okunmamalıdır. 7 Eylül 2026'da yapılan ilk Sahibinden/EİDS referans araştırmasının sonuçları ilgili başlıklara işlenmiştir.
+Bu dosyada karar gerektiren konular ve konuşulmuş başlangıç fikirleri bulunur. Uygulanmış özellik veya tamamlanmış entegrasyon olarak okunmamalıdır. İlk MVP kapsamı artık [MVP_SCOPE.md](MVP_SCOPE.md) dosyasında dondurulmuştur.
 
 ## 1. Alan adı ve isim
 
-- Kullanıcı `bizzat.com` adresinin dolu olduğunu belirtti ve `bizzat.tr` adresini düşündüğünü söyledi.
-- `bizzat.tr` adresinin müsaitliği, satın alınıp alınmadığı ve Bizzat adının marka uygunluğu bu çalışmada doğrulanmadı.
+- `bizzat.tr` düşünülen adrestir.
+- Alan adının müsaitliği/satın alma durumu ve marka tescil uygunluğu doğrulanmadı.
 
-## 2. İlan ve kişi kontrolleri
+## 2. EİDS, kimlik ve ilan verme yetkisi
 
-### EİDS — artık açık bir ürün tercihi değil, entegrasyon gereksinimi
+### EİDS entegrasyon yöntemi
 
-7 Eylül 2026 araştırmasında Ticaret Bakanlığının güncel EİDS açıklamaları incelendi. Kimlik ve ilan verme yetkisi doğrulaması elektronik ortamda verilen taşınmaz ve taşıt ilanlarını kapsıyor.
+EİDS artık açık bir ürün tercihi değil, production yayın önkoşuludur. Açık kalan konu **nasıl entegre edileceğidir**.
 
-Bireysel ilan tarafında ilan verme yetkisi genel olarak şu kümeyle sınırlı:
-
-- mal/taşıt sahibi,
-- sahibin eşi,
-- birinci derece kan hısımları,
-- ikinci derece kan hısımları.
-
-Yetki belgeli emlak işletmeleri ve oto galeriler için de ayrı yetkilendirme yolu vardır; ancak Bizzat'ın ürün kararı profesyonel emlakçı ve galerici ilanlarını dışarıda tutmaktır.
-
-Bu nedenle önceki genel ürün yaklaşımındaki “başka bir birey adına yardımcı olarak ilan vermek kabul edilebilir” ifadesi teknik olarak sınırsız uygulanamaz. Arkadaş, kuzen, amca/dayı/hala/teyze, yeğen gibi EİDS kapsamındaki eş + 1./2. derece hısımlık kümesinin dışındaki kişiler için taşınmaz/taşıt ilanı yayınlanması mümkün görünmemektedir.
-
-Ayrıntılı araştırma ve kaynaklar: [reference/SAHIBINDEN_REFERENCE.md](reference/SAHIBINDEN_REFERENCE.md).
-
-### Araçta plaka ve sahiplik
-
-Kullanıcı, araç ilanlarında plaka kontrolü ve ilan veren kişi ile kayıtlı araç sahibinin eşleşmesi yönünde bir yaklaşım belirtti.
-
-Güncel EİDS kuralı nedeniyle yalnızca birebir malik eşleşmesi doğru ürün modeli değildir: eş ile birinci/ikinci derece kan hısımları da bireysel ilan verebilir. Teknik tasarımın plaka/araç doğrulamasını ve Bakanlık tarafındaki ilan verme yetkisini birlikte ele alması gerekir.
-
-Henüz kesinleşmeyenler:
+Henüz netleşmeyenler:
 
 - Bizzat'ın EİDS'ye hangi teknik/kurumsal yöntemle bağlanabileceği.
-- Doğrulama için gereken sözleşme, izin, veri ve operasyon gereksinimleri.
-- Kullanıcıya gösterilecek doğrulama durumları ve hata/itiraz akışı.
-- EİDS'nin izin verdiği hısımlık durumunun Bizzat arayüzünde nasıl anlatılacağı.
+- Sözleşme, başvuru, yetki ve erişim gereksinimleri.
+- Test/sandbox imkânı olup olmadığı.
+- Taşınmaz ve taşıt doğrulaması için gereken exact request/response akışları.
+- Kullanıcıya gösterilecek doğrulama hata ve itiraz durumları.
+- Entegrasyon kesintisinde production davranışının ne olacağı.
 
-### Emlakta taşınmaz ve hısımlık doğrulaması
+Karar: production'da doğrulama başarısızsa veya yapılamıyorsa ilan sessizce yayınlanamaz.
 
-Güncel referansa göre bireysel gayrimenkul ilanında taşınmaz numarası üzerinden malik veya izin verilen hısımlık/yetki kontrolü yapılır. Sahibinden Yardım Merkezi, tüm gayrimenkul ilanlarında ilan yayınlama izni uygulamasının 15 Şubat 2026 itibarıyla zorunlu olduğunu belirtmektedir.
+### KVKK ve hassas veri
 
-Henüz kesinleşmeyenler:
+Henüz netleşmeyenler:
 
-- Bizzat'ın taşınmaz numarası doğrulamasını nasıl entegre edeceği.
-- EİDS sonucu dışında ek sahte/ticari ilan kontrollerinin neler olacağı.
-- Hısımlık ve malik verilerinden hangilerinin Bizzat tarafından saklanmasının gerçekten gerekli olduğu.
+- TC kimlik numarası gibi verilerin Bizzat tarafından tutulmasına gerçekten ihtiyaç olup olmadığı.
+- Plaka ve taşınmaz numarası için saklama süreleri.
+- EİDS doğrulama cevabından hangi minimum verinin kalıcı tutulacağı.
+- Log/redaction politikası.
+- Kullanıcı aydınlatma ve açık rıza gereksinimleri.
+
+Amaç mümkün olduğunca az hassas veri saklamaktır.
 
 ### Emlakta ilan sınırı
 
-Kullanıcı, özellikle emlak için TC başına en fazla yaklaşık 3–4 ilanı başlangıç fikri olarak önerdi.
+TC başına yaklaşık 3–4 ilan fikri hâlâ kesin ürün kuralı değildir.
 
-Henüz kesinleşmeyenler:
+Açık kalanlar:
 
-- Sınırın 3 mü 4 mü olacağı.
-- Aktif ilan sayısı mı, belli bir dönem içindeki toplam mı sayılacağı.
-- Limitin hangi kategorilere uygulanacağı.
-- İstisna ve itirazların nasıl ele alınacağı.
-- EİDS doğrulaması varken ek ilan limitinin gerçekten gerekli olup olmadığı.
+- EİDS + moderasyon varken ek limite gerçekten ihtiyaç olup olmadığı.
+- Gerekirse limitin aktif ilan mı, dönemsel ilan mı sayacağı.
+- İstisna ve itiraz modeli.
 
-İlan sayısı sınırı tek başına emlakçı veya galerici tespiti değildir. Başlangıç hedefi, pratik kontrollerle ticari ilanları azaltmak ve bireysel ilan odağını korumaktır; sıfır istisna koşulu yoktur.
+İlk MVP bu limiti zorunlu kabul ederek kodlanmamalıdır.
 
-### Uygulama, hukuk ve operasyon
+## 3. İlk MVP için veri kaynakları
 
-Doğrulamanın erişim koşulları, gerekli hukuki değerlendirmeler, KVKK kapsamındaki veri işleme yöntemi, saklama süreleri ve operasyon süreci uygulama aşamasında araştırılmalıdır. Bu görüşmede bir EİDS entegrasyon yöntemi veya sağlayıcı seçilmedi.
+### Araç marka / seri / model
 
-## 3. Referansın aktarılması ve açık ürün ayrıntıları
+İlk MVP'de Otomobil bulunduğu için bu konu artık implementasyon öncesi çözülmesi gereken açık teknik üründür.
 
-Filtrelerin Sahibinden ile birebir aynı olması kararlaştırıldı. Ana sayfa, ilan listesi ve ilan detayı da Sahibinden'i esas alacak; ilan verme adımları benzer olacak. Bu yönler artık açık tasarım kararı değildir.
+Açık kalanlar:
 
-7 Eylül 2026'da ilk referans envanteri çıkarıldı: [reference/SAHIBINDEN_REFERENCE.md](reference/SAHIBINDEN_REFERENCE.md).
+- veri kaynağı,
+- lisans/kullanım koşulları,
+- model yılına göre seri/model ilişkisi gerekip gerekmediği,
+- düzenli güncelleme yöntemi.
 
-Bu ilk envanter şunları içeriyor:
+### Türkiye konum verisi
 
-- ortak ekran kabuğu ve liste davranışı,
-- Emlak ve Vasıta kategori ağacının yüksek seviyeli snapshot'ı,
-- satılık/kiralık daire filtrelerinin çekirdeği,
-- arsa, bina ve iş yeri filtre örüntüleri,
-- otomobil ve Arazi/SUV/Pickup filtreleri,
-- sonuç tablosu sütunları ve sıralamalar,
-- ilan detay ekranının temel blokları,
-- ilan verme akışı,
-- Bizzat'a aynen taşınmaması gereken profesyonel satıcı/mağaza parçaları,
-- EİDS gereksinimleri.
+Daire ve otomobil filtrelerinde il/ilçe, emlakta ayrıca semt/mahalle hiyerarşisi gerekir.
 
-Sahibinden canlı kategori sayfaları otomatik erişimde 403 verdiği için bazı filtre/kategori ayrıntıları arama indeksindeki Sahibinden snapshot'larından çıkarıldı. MVP kapsamı belli olduğunda seçilen kategoriler canlı tarayıcıyla son kez karşılaştırılmalıdır.
+Açık kalanlar:
 
-Açık kalan ürün ayrıntıları:
+- il/ilçe/mahalle veri kaynağı,
+- güncelleme yöntemi,
+- koordinat/geocoding'in ilk MVP'de ne kadar gerekli olduğu.
 
-- İlk yayına alınacak emlak ve araç alt kategorileri.
-- Seçilen alt kategorilerin eksiksiz makine-okunur filtre/attribute şeması.
-- Araç marka/model verisinin kaynağı.
-- İlan verenle iletişimin kanalı.
-- Şüpheli ticari ilanların incelenmesi ve kullanıcı itirazları.
-- İlk yayın kapsamı ve lansman bölgesi.
-- İlan ücretleri, gelir modeli veya abonelik olup olmayacağı.
+Harita-odaklı ürün ilk MVP şartı değildir.
 
-## 4. Tasarım üretimi
+### Makine-okunur attribute şeması
 
-- Kesin yazı karakteri ve kullanım lisansı.
-- Düzenlenebilir vektör logo ve farklı boyutlarda kullanım dosyaları.
-- Favicon ve benzeri küçük uygulamalar.
-- Gerçek ekranlarda renk ve metin okunabilirliği.
+Referans envanteri metin olarak çıkarıldı. İlk implementasyon için şu üç ilan türü JSON/YAML veya seed-data biçiminde normalize edilmelidir:
 
-Görsel yön zaten onaylandı; bu başlıklar yeni bir estetik arayışı değil, onaylanan görünümün üretime aktarılmasıyla ilgilidir.
+- Satılık Daire
+- Kiralık Daire
+- Satılık Otomobil
 
-## 5. Teknik altyapı
+Bu şemada alan tipi, seçenekler, zorunluluk, filtrelenebilirlik, sıralanabilirlik ve işlem türü/kategori ilişkisi açık olmalıdır.
 
-Frontend, backend, veritabanı, kimlik doğrulama, barındırma ve mobil uygulama yaklaşımı seçilmedi.
+## 4. Teknik altyapı
 
-Referans araştırması stack seçimini yapmadı fakat veri modeli için önemli bir gereksinimi netleştirdi: Sahibinden'deki alanlar kategoriye göre ciddi biçimde değiştiğinden Bizzat'ın ilan özellikleri kategoriye bağlı dinamik attribute şeması desteklemelidir. Kesin mimari sonraki teknik aşamada kararlaştırılacaktır.
+Henüz seçilmedi:
+
+- frontend framework,
+- backend yaklaşımı,
+- veritabanı,
+- auth servisi/yöntemi,
+- dosya/fotoğraf storage,
+- arama altyapısı,
+- hosting/deploy,
+- gözlemlenebilirlik,
+- CI/CD.
+
+MVP kararı bazı gereksinimleri sabitledi:
+
+- ilk istemci responsive web,
+- kategoriye bağlı dinamik attribute şeması,
+- gerçek relational veri tabanı,
+- fotoğraf yükleme,
+- filtrelenebilir/sıralanabilir ilan listeleri,
+- EİDS provider/adapter sınırı,
+- moderasyon durumları,
+- production'da mock EİDS fallback olmaması.
+
+Sıradaki teknik iş stack + sistem/veri mimarisi kararıdır.
+
+## 5. İletişim ayrıntıları
+
+İlk MVP'de kanal kararı verildi: **telefon odaklı**, site içi mesajlaşma yok.
+
+Açık kalan küçük uygulama ayrıntıları:
+
+- telefonun varsayılan olarak gizli/açık olması,
+- telefon gösteriminde rate limit / abuse önlemleri,
+- numara doğrulama yönteminin auth ile aynı olup olmayacağı.
+
+## 6. Moderasyon operasyonu
+
+İlk MVP'de ilan raporlama ve moderatör kaldırma yeteneği var.
+
+Henüz netleşmeyenler:
+
+- rapor nedenleri,
+- moderasyon SLA'sı,
+- tekrar eden kötüye kullanım davranışı,
+- kullanıcı itirazı,
+- hesap seviyesinde yaptırım,
+- ileride emlakçı/galerici davranışını tespit etmek için ek sinyaller.
+
+Bunların tamamının ilk kod tesliminden önce kusursuz çözülmesi şart değildir.
+
+## 7. Gelir modeli ve ticari kapsam
+
+Açık:
+
+- ilan ücretli mi ücretsiz mi,
+- ücretsiz ilan limiti,
+- abonelik,
+- öne çıkarma/doping,
+- gelir modeli,
+- ilk ticari lansman bölgesi.
+
+İlk MVP'de ödeme/abonelik/doping yoktur; bu karar gelir modelini kalıcı olarak reddetmez.
+
+## 8. Tasarım üretimi
+
+Açık:
+
+- kesin font ailesi ve lisansı,
+- SVG/vector logo,
+- favicon/app icon seti,
+- gerçek ekranlarda erişilebilirlik/kontrast doğrulaması,
+- responsive breakpoint ve component-level tasarım detayları.
+
+Görsel yön değişmiyor: açık mavi, beyaz/açık tonlar, sade ve profesyonel.
+
+## 9. Sonraki kategori genişlemesi
+
+İlk MVP kategorileri artık açık konu değildir:
+
+- Satılık Daire
+- Kiralık Daire
+- Satılık Otomobil
+
+Sonraki hangi kategorinin ekleneceği MVP ana döngüsü çalıştıktan sonra kararlaştırılacaktır. Araç kiralama ve diğer emlak/vasıta sınıfları uzun vadeli ürün kapsamındadır.
