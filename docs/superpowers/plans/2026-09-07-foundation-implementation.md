@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Create the first working Bizzat codebase foundation: pnpm monorepo, shared API contracts, Fastify API, PostgreSQL 18 + Kysely migration/readiness layer, minimal Next.js web app, repeatable local developer workflow, and CI.
+**Goal:** Build the first working Bizzat code foundation: pnpm monorepo, shared REST contracts, Fastify API, PostgreSQL 18 + explicit Kysely migrations/readiness, minimal Next.js web app, repeatable local developer workflow, and CI.
 
-**Architecture:** This plan implements only the foundation of the approved self-hosted modular monolith. It deliberately stops before authentication, listing tables, listing filters, EİDS business flows, media uploads, or moderation. The result is one understandable repository where `web -> REST -> api -> PostgreSQL` already runs and is testable, without introducing infrastructure that later product plans do not yet need.
+**Architecture:** This plan implements only the foundation of the approved self-hosted modular monolith. It deliberately stops before Better Auth, listing domain tables, EİDS business flows, media uploads, moderation, Caddy, and production deployment. At the end, `web -> REST -> api -> PostgreSQL` runs locally and is tested without premature infrastructure.
 
 **Tech Stack:** Node.js 24 LTS, pnpm 10, TypeScript 6.0.3, Next.js 16.3.x + React 19.2.x, Fastify 5.x + TypeBox, Kysely 0.29.4 + `pg`, PostgreSQL 18, Vitest 4.1.x, ESLint 9 + typescript-eslint 8, Docker Compose.
 
@@ -13,40 +13,36 @@
 ## Global Constraints
 
 - Architecture is a self-hosted TypeScript **modular monolith**; do not add microservices.
-- First production database baseline is **PostgreSQL 18**.
-- Web and API are separate applications in one pnpm monorepo.
+- First production DB baseline is **PostgreSQL 18**.
+- Web and API are separate apps in one pnpm monorepo.
 - REST lives under `/api/v1`.
 - Fastify uses schema-driven request/response validation; shared transport schemas live in `packages/contracts`.
-- Kysely + `pg` is the DB access layer; do not add Prisma/Drizzle/another ORM.
-- Production schema migrations must be explicit commands; do **not** auto-run migrations at API startup.
-- PostgreSQL is the initial source of truth; do not add Redis, queues, Elasticsearch/OpenSearch/Meilisearch, replicas, or partitioning.
+- Kysely + `pg` is the DB layer; do not add Prisma, Drizzle, or another ORM.
+- Migrations are explicit commands; API startup must **not** auto-run migrations.
+- PostgreSQL is the source of truth; do not add Redis, queues, external search, replicas, or partitioning.
 - No managed DB/auth/backend platform.
-- Do not introduce Better Auth in this foundation plan; auth is the next independent plan.
-- Do not introduce listing domain tables in this foundation plan; the first product schema belongs to the listing plan.
-- Do not introduce Caddy/production deployment yet; production infra is a later plan. Local Docker is only for PostgreSQL here.
+- Better Auth is **not** implemented in this plan; it is Plan 2.
+- Listing tables/filters are **not** implemented in this plan; they are Plan 3.
+- Caddy/full production Compose/backup deployment are **not** implemented in this plan; they are Plan 5.
 - Use stable releases only; no beta/RC/canary packages.
-- Use Node.js `24.20.0` LTS for the implementation baseline. Node 26 is Current, not the baseline.
-- Pin `typescript@6.0.3` for now instead of TypeScript 7 because the current typescript-eslint 8 line warns on TS7; revisit deliberately later instead of accepting unsupported-tooling warnings.
-- Use `pnpm@10.34.5` as the package manager baseline rather than the newly released pnpm 12 major.
-- Use `next@16.3.4`, `react@19.2.8`, `react-dom@19.2.8`, `fastify@5.12.3`, `kysely@0.29.4`, `vitest@4.1.11`, `typescript-eslint@8.69.0`, `@fastify/type-provider-typebox@6.1.0` as the reviewed baseline; `typebox` stays on stable `1.x` and the exact patch is pinned by `pnpm-lock.yaml` during implementation.
+- Node baseline: `24.20.0` LTS. Node 26 Current is not the baseline.
+- pnpm baseline: `10.34.5`.
+- TypeScript baseline: `6.0.3`; do not jump to TS7 while the selected typescript-eslint line reports unsupported-version warnings.
+- Reviewed package baseline: `next@16.3.4`, `react@19.2.8`, `react-dom@19.2.8`, `fastify@5.12.3`, `kysely@0.29.4`, `vitest@4.1.11`, `typescript-eslint@8.69.0`, `@fastify/type-provider-typebox@6.1.0`. `pnpm-lock.yaml` pins exact transitive versions.
 
 ## Phase Map
 
-This is **Plan 1** only. Do not stretch it into the whole MVP.
-
-1. **Foundation — this plan:** workspace, contracts, API system boundary, DB/migrations/readiness, minimal web app, local dev, CI.
-2. **Identity + reference data:** Better Auth, profiles/roles, Turkey location source, vehicle make/series/model source.
-3. **Listing read vertical slice:** listing schema package, relational listing/detail tables, seed data, list/filter/search/detail API + web pages.
-4. **Listing write vertical slice:** create/edit/state transitions, EİDS provider boundary/mock, media storage/image processing, publish flow + web forms.
-5. **Moderation + production operations:** reports/moderation, Caddy/full production Compose, backups, deploy pipeline, production security checks.
+1. **Foundation — this plan:** workspace, contracts, system API, DB/migrations/readiness, minimal web, local dev, CI.
+2. **Identity + reference data:** Better Auth, profiles/roles, Turkey locations, vehicle make/series/model source.
+3. **Listing read vertical slice:** listing schema package, relational listing/detail tables, list/filter/search/detail API + web.
+4. **Listing write vertical slice:** create/edit/state transitions, EİDS provider/mock, media, publish flow + forms.
+5. **Moderation + production operations:** reports/moderation, Caddy/full production Compose, backups, deploy/security checks.
 
 ## Target File Structure After This Plan
 
 ```text
 bizzat/
-  .github/
-    workflows/
-      ci.yml
+  .github/workflows/ci.yml
   apps/
     api/
       package.json
@@ -55,50 +51,36 @@ bizzat/
       src/
         app.ts
         server.ts
-        config/
-          env.ts
-        common/
-          errors/
-            app-error.ts
-            error-handler.ts
-        db/
-          client.ts
-          check.ts
-          migrator.ts
-          migrations/
-            0001_create_auth_schema.ts
-        modules/
-          system/
-            system.routes.ts
-      test/
-        app.test.ts
-        db.integration.test.ts
+        config/env.ts
+        common/errors/app-error.ts
+        common/errors/error-handler.ts
+        db/client.ts
+        db/check.ts
+        db/migrator.ts
+        db/migrate-cli.ts
+        db/migrations/0001_create_auth_schema.ts
+        modules/system/system.routes.ts
+      test/app.test.ts
+      test/db.integration.test.ts
     web/
       package.json
       tsconfig.json
       vitest.config.ts
       next.config.ts
       next-env.d.ts
-      app/
-        globals.css
-        layout.tsx
-        page.tsx
-      test/
-        page.test.tsx
-  packages/
-    contracts/
-      package.json
-      tsconfig.json
-      src/
-        api-error.ts
-        system.ts
-        index.ts
-  infra/
-    postgres/
-      init/
-        001-create-test-db.sql
+      app/globals.css
+      app/layout.tsx
+      app/page.tsx
+      test/page.test.tsx
+  packages/contracts/
+    package.json
+    tsconfig.json
+    src/api-error.ts
+    src/system.ts
+    src/index.ts
+  infra/postgres/init/001-create-test-db.sql
+  scripts/run-pnpm.mjs
   .env.example
-  .gitignore
   .nvmrc
   compose.dev.yml
   eslint.config.mjs
@@ -110,7 +92,7 @@ bizzat/
 
 ---
 
-### Task 1: Workspace Toolchain + Shared Contract Package
+### Task 1: Workspace Toolchain + Shared Contracts
 
 **Files:**
 - Create: `package.json`
@@ -127,11 +109,11 @@ bizzat/
 - Generated: `pnpm-lock.yaml`
 
 **Interfaces:**
-- Produces package `@bizzat/contracts` with `ApiErrorResponseSchema`, `HealthResponseSchema`, and `ReadyResponseSchema` for later API tasks.
-- Produces root commands `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, and later `pnpm dev`.
-- Establishes Node/pnpm/TypeScript version constraints for every later plan.
+- Produces package `@bizzat/contracts`.
+- Produces `ApiErrorResponseSchema`, `HealthResponseSchema`, `ReadyResponseSchema`.
+- Establishes root lint/typecheck/build conventions used by all later tasks.
 
-- [ ] **Step 1: Add the root workspace manifest**
+- [ ] **Step 1: Create root workspace files**
 
 Create `package.json`:
 
@@ -145,13 +127,9 @@ Create `package.json`:
   },
   "scripts": {
     "contracts:build": "pnpm --filter @bizzat/contracts build",
-    "predev": "pnpm contracts:build",
-    "dev": "pnpm --parallel --filter @bizzat/contracts --filter @bizzat/api --filter @bizzat/web dev",
     "lint": "pnpm -r --if-present lint",
     "typecheck": "pnpm contracts:build && pnpm -r --if-present typecheck",
-    "test": "pnpm contracts:build && pnpm -r --if-present test",
-    "build": "pnpm -r --if-present build",
-    "db:migrate": "pnpm --filter @bizzat/api db:migrate"
+    "build": "pnpm -r --if-present build"
   },
   "devDependencies": {
     "eslint": "9.39.5",
@@ -175,7 +153,7 @@ Create `.nvmrc`:
 24.20.0
 ```
 
-- [ ] **Step 2: Add strict shared TypeScript defaults**
+- [ ] **Step 2: Add strict TypeScript defaults**
 
 Create `tsconfig.base.json`:
 
@@ -193,7 +171,7 @@ Create `tsconfig.base.json`:
 }
 ```
 
-- [ ] **Step 3: Add the smallest useful lint configuration**
+- [ ] **Step 3: Add minimal ESLint config**
 
 Create `eslint.config.mjs`:
 
@@ -223,11 +201,11 @@ export default tseslint.config(
 )
 ```
 
-Do not add Prettier/Biome/format-on-save policy in this task; formatting policy is independent and not required to get a tested foundation running.
+Do not add a formatter or framework-specific lint plugin just to make the foundation look more complete.
 
-- [ ] **Step 4: Expand `.gitignore` for the real codebase**
+- [ ] **Step 4: Expand `.gitignore` without weakening secret rules**
 
-Preserve the existing secret/key rules and add:
+Ensure `.gitignore` contains:
 
 ```gitignore
 node_modules/
@@ -294,7 +272,7 @@ Create `packages/contracts/tsconfig.json`:
 }
 ```
 
-- [ ] **Step 6: Define the shared error contract**
+- [ ] **Step 6: Define shared API error contract**
 
 Create `packages/contracts/src/api-error.ts`:
 
@@ -324,9 +302,7 @@ export const ApiErrorResponseSchema = Type.Object({
 })
 ```
 
-`ROUTE_NOT_FOUND` and `DEPENDENCY_UNAVAILABLE` are infrastructure-level additions to the architecture's initial error list; do not reuse listing-specific codes for generic routing/readiness failures.
-
-- [ ] **Step 7: Define system endpoint contracts**
+- [ ] **Step 7: Define system contracts and exports**
 
 Create `packages/contracts/src/system.ts`:
 
@@ -350,7 +326,7 @@ export * from './api-error.js'
 export * from './system.js'
 ```
 
-- [ ] **Step 8: Install and pin dependencies**
+- [ ] **Step 8: Install and verify package resolution**
 
 Run:
 
@@ -358,23 +334,14 @@ Run:
 corepack enable
 corepack prepare pnpm@10.34.5 --activate
 pnpm install
-```
-
-Expected: `pnpm-lock.yaml` is created and no prerelease packages are intentionally selected.
-
-- [ ] **Step 9: Verify the contracts package compiles and lints**
-
-Run:
-
-```bash
 pnpm contracts:build
 pnpm --filter @bizzat/contracts typecheck
 pnpm --filter @bizzat/contracts lint
 ```
 
-Expected: all three commands exit `0`, and `packages/contracts/dist/index.js` + declarations exist.
+Expected: all commands exit `0`; `pnpm-lock.yaml`, `packages/contracts/dist/index.js`, and declarations exist.
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
 git add package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json eslint.config.mjs .nvmrc .gitignore packages/contracts
@@ -383,7 +350,7 @@ git commit -m "chore: initialize TypeScript workspace and contracts"
 
 ---
 
-### Task 2: Fastify API Boundary, Liveness, Readiness Interface, and Error Shape
+### Task 2: Fastify API Boundary + Standard Errors
 
 **Files:**
 - Create: `apps/api/package.json`
@@ -396,16 +363,13 @@ git commit -m "chore: initialize TypeScript workspace and contracts"
 - Create: `apps/api/test/app.test.ts`
 
 **Interfaces:**
-- Consumes: `HealthResponseSchema`, `ReadyResponseSchema`, `ApiErrorResponseSchema` from `@bizzat/contracts`.
-- Produces: `buildApp(options: BuildAppOptions): FastifyInstance`.
-- Produces: injectable `readinessCheck: () => Promise<void>` boundary; Task 3 connects it to PostgreSQL.
-- Produces API behavior:
-  - `GET /api/v1/health` -> 200 `{ status: 'ok' }`
-  - `GET /api/v1/ready` -> 200 when readiness succeeds
-  - `GET /api/v1/ready` -> 503 standard error when dependency is unavailable
-  - unknown route -> 404 standard error
+- Consumes shared system/error contracts.
+- Produces `buildApp(options: BuildAppOptions): FastifyInstance`.
+- Produces injectable `readinessCheck: () => Promise<void>`; Task 3 connects it to PostgreSQL.
+- `GET /api/v1/health` is liveness.
+- `GET /api/v1/ready` is dependency-aware readiness.
 
-- [ ] **Step 1: Add API package dependencies and scripts**
+- [ ] **Step 1: Create API package**
 
 Create `apps/api/package.json`:
 
@@ -416,12 +380,10 @@ Create `apps/api/package.json`:
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src test --max-warnings=0",
-    "test": "vitest run test/app.test.ts",
-    "test:integration": "vitest run test/db.integration.test.ts"
+    "test": "vitest run test/app.test.ts"
   },
   "dependencies": {
     "@bizzat/contracts": "workspace:*",
@@ -431,7 +393,6 @@ Create `apps/api/package.json`:
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
-    "tsx": "^4.0.0",
     "vitest": "4.1.11"
   }
 }
@@ -468,9 +429,9 @@ export default defineConfig({
 })
 ```
 
-Run `pnpm install` after adding the package manifest.
+Run `pnpm install`.
 
-- [ ] **Step 2: Write failing API tests first**
+- [ ] **Step 2: Write API tests before app code**
 
 Create `apps/api/test/app.test.ts`:
 
@@ -487,7 +448,7 @@ afterEach(async () => {
 })
 
 describe('system endpoints', () => {
-  it('returns liveness without touching dependencies', async () => {
+  it('keeps liveness independent from readiness dependencies', async () => {
     app = buildApp({
       logger: false,
       readinessCheck: async () => {
@@ -501,7 +462,7 @@ describe('system endpoints', () => {
     expect(response.json()).toEqual({ status: 'ok' })
   })
 
-  it('returns readiness when dependency check succeeds', async () => {
+  it('returns ready when dependency check succeeds', async () => {
     app = buildApp({ logger: false, readinessCheck: async () => undefined })
 
     const response = await app.inject({ method: 'GET', url: '/api/v1/ready' })
@@ -510,7 +471,7 @@ describe('system endpoints', () => {
     expect(response.json()).toEqual({ status: 'ready', database: 'ok' })
   })
 
-  it('returns standard 503 when dependency check fails', async () => {
+  it('returns standard 503 when readiness dependency fails', async () => {
     app = buildApp({
       logger: false,
       readinessCheck: async () => {
@@ -526,7 +487,7 @@ describe('system endpoints', () => {
     expect(body.error.requestId).toEqual(expect.any(String))
   })
 
-  it('returns the common error shape for an unknown route', async () => {
+  it('returns the common shape for unknown routes', async () => {
     app = buildApp({ logger: false, readinessCheck: async () => undefined })
 
     const response = await app.inject({ method: 'GET', url: '/api/v1/not-real' })
@@ -539,7 +500,7 @@ describe('system endpoints', () => {
 })
 ```
 
-- [ ] **Step 3: Run the test and verify RED**
+- [ ] **Step 3: Verify RED**
 
 Run:
 
@@ -548,9 +509,9 @@ pnpm contracts:build
 pnpm --filter @bizzat/api test
 ```
 
-Expected: FAIL because `../src/app.js` / `buildApp` does not exist yet.
+Expected: FAIL because `buildApp` does not exist.
 
-- [ ] **Step 4: Implement explicit application errors**
+- [ ] **Step 4: Implement explicit application error type**
 
 Create `apps/api/src/common/errors/app-error.ts`:
 
@@ -580,7 +541,7 @@ export class AppError extends Error {
 }
 ```
 
-- [ ] **Step 5: Implement the global error + not-found handlers**
+- [ ] **Step 5: Implement global error/not-found handling**
 
 Create `apps/api/src/common/errors/error-handler.ts`:
 
@@ -633,13 +594,17 @@ export function registerErrorHandling(app: FastifyInstance): void {
 }
 ```
 
-- [ ] **Step 6: Implement the system module**
+- [ ] **Step 6: Implement system routes**
 
 Create `apps/api/src/modules/system/system.routes.ts`:
 
 ```ts
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
-import { ApiErrorResponseSchema, HealthResponseSchema, ReadyResponseSchema } from '@bizzat/contracts'
+import {
+  ApiErrorResponseSchema,
+  HealthResponseSchema,
+  ReadyResponseSchema,
+} from '@bizzat/contracts'
 import { AppError } from '../../common/errors/app-error.js'
 
 export interface SystemRoutesOptions {
@@ -651,9 +616,7 @@ export const systemRoutes: FastifyPluginAsyncTypebox<SystemRoutesOptions> = asyn
   options,
 ) => {
   app.get('/health', {
-    schema: {
-      response: { 200: HealthResponseSchema },
-    },
+    schema: { response: { 200: HealthResponseSchema } },
   }, async () => ({ status: 'ok' as const }))
 
   app.get('/ready', {
@@ -675,7 +638,7 @@ export const systemRoutes: FastifyPluginAsyncTypebox<SystemRoutesOptions> = asyn
 }
 ```
 
-- [ ] **Step 7: Implement the Fastify app factory**
+- [ ] **Step 7: Implement app factory**
 
 Create `apps/api/src/app.ts`:
 
@@ -690,9 +653,7 @@ export interface BuildAppOptions {
 }
 
 export function buildApp(options: BuildAppOptions): FastifyInstance {
-  const app = Fastify({
-    logger: options.logger ?? true,
-  })
+  const app = Fastify({ logger: options.logger ?? true })
 
   registerErrorHandling(app)
   app.register(systemRoutes, {
@@ -704,7 +665,7 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
 }
 ```
 
-- [ ] **Step 8: Verify GREEN + typecheck + lint**
+- [ ] **Step 8: Verify GREEN**
 
 Run:
 
@@ -713,9 +674,10 @@ pnpm contracts:build
 pnpm --filter @bizzat/api test
 pnpm --filter @bizzat/api typecheck
 pnpm --filter @bizzat/api lint
+pnpm --filter @bizzat/api build
 ```
 
-Expected: 4 API tests PASS; typecheck/lint exit `0`.
+Expected: 4 tests PASS; lint/typecheck/build exit `0`.
 
 - [ ] **Step 9: Commit**
 
@@ -726,7 +688,7 @@ git commit -m "feat: bootstrap Fastify API boundary"
 
 ---
 
-### Task 3: PostgreSQL 18, Kysely Connection, Explicit Migrations, and Real Readiness
+### Task 3: PostgreSQL 18 + Kysely + Explicit Migrations + Real Readiness
 
 **Files:**
 - Create: `compose.dev.yml`
@@ -737,23 +699,33 @@ git commit -m "feat: bootstrap Fastify API boundary"
 - Create: `apps/api/src/db/client.ts`
 - Create: `apps/api/src/db/check.ts`
 - Create: `apps/api/src/db/migrator.ts`
+- Create: `apps/api/src/db/migrate-cli.ts`
 - Create: `apps/api/src/db/migrations/0001_create_auth_schema.ts`
 - Create: `apps/api/src/server.ts`
 - Create: `apps/api/test/db.integration.test.ts`
 
 **Interfaces:**
-- Produces `createDatabase(connectionString: string): Kysely<Database>`.
-- Produces `checkDatabase(db: Kysely<Database>): Promise<void>` used by `/api/v1/ready`.
-- Produces explicit `pnpm db:migrate`; server startup never runs migrations.
-- Creates PostgreSQL schema `auth`, but does not create Better Auth tables yet.
-- Local dev DB: `bizzat`; isolated integration DB: `bizzat_test`.
+- Produces `createDatabase(connectionString): Kysely<Database>`.
+- Produces `checkDatabase(db): Promise<void>`.
+- Produces `migrateToLatest(db): Promise<void>` and CLI script `db:migrate:raw`.
+- Local DB `bizzat`, isolated integration DB `bizzat_test`.
+- Creates only PostgreSQL schema `auth`; Better Auth tables come in Plan 2.
 
-- [ ] **Step 1: Add PostgreSQL/Kysely dependencies and DB scripts**
+- [ ] **Step 1: Add DB/runtime dependencies and scripts**
 
-Modify `apps/api/package.json` dependencies:
+Modify `apps/api/package.json` to include:
 
 ```json
 {
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test --max-warnings=0",
+    "test": "vitest run test/app.test.ts",
+    "test:integration": "vitest run test/db.integration.test.ts",
+    "db:migrate:raw": "tsx src/db/migrate-cli.ts"
+  },
   "dependencies": {
     "@bizzat/contracts": "workspace:*",
     "@fastify/type-provider-typebox": "6.1.0",
@@ -767,24 +739,13 @@ Modify `apps/api/package.json` dependencies:
     "@types/pg": "^8.20.0",
     "tsx": "^4.0.0",
     "vitest": "4.1.11"
-  },
-  "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint src test --max-warnings=0",
-    "test": "vitest run test/app.test.ts",
-    "test:integration": "vitest run test/db.integration.test.ts",
-    "db:migrate": "tsx src/db/migrate-cli.ts"
   }
 }
 ```
 
-Add `apps/api/src/db/migrate-cli.ts` to the file list for this task. It is the command entrypoint; migration logic remains in `migrator.ts`.
-
 Run `pnpm install`.
 
-- [ ] **Step 2: Create local PostgreSQL 18 Compose service**
+- [ ] **Step 2: Create PostgreSQL 18 local service**
 
 Create `compose.dev.yml`:
 
@@ -811,7 +772,7 @@ volumes:
   bizzat_postgres_data:
 ```
 
-Important: PostgreSQL 18+ official Docker images persist at `/var/lib/postgresql`, not the old `/var/lib/postgresql/data` mount used by PostgreSQL 17 and older.
+For PostgreSQL 18+, use `/var/lib/postgresql`; do not copy the old PostgreSQL 17 `/var/lib/postgresql/data` volume convention.
 
 Create `infra/postgres/init/001-create-test-db.sql`:
 
@@ -827,15 +788,12 @@ Create `.env.example`:
 NODE_ENV=development
 API_HOST=0.0.0.0
 API_PORT=4000
-LOG_LEVEL=info
 DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat
 TEST_DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test
 API_PROXY_TARGET=http://127.0.0.1:4000
 ```
 
-Do not add real production secrets to this file.
-
-- [ ] **Step 4: Write the failing DB integration test**
+- [ ] **Step 4: Write DB integration tests first**
 
 Create `apps/api/test/db.integration.test.ts`:
 
@@ -848,14 +806,11 @@ import { checkDatabase } from '../src/db/check.js'
 import { migrateToLatest } from '../src/db/migrator.js'
 
 const databaseUrl = process.env.TEST_DATABASE_URL
-
-if (!databaseUrl) {
-  throw new Error('TEST_DATABASE_URL is required for DB integration tests')
-}
+if (!databaseUrl) throw new Error('TEST_DATABASE_URL is required')
 
 let db: Kysely<Database>
 
-beforeAll(async () => {
+beforeAll(() => {
   db = createDatabase(databaseUrl)
 })
 
@@ -882,7 +837,7 @@ describe('database foundation', () => {
 })
 ```
 
-- [ ] **Step 5: Start PostgreSQL and verify RED**
+- [ ] **Step 5: Start DB and verify RED**
 
 Run:
 
@@ -893,9 +848,9 @@ TEST_DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test \
   pnpm --filter @bizzat/api test:integration
 ```
 
-Expected: FAIL because DB helper modules do not exist yet.
+Expected: FAIL because DB helper modules do not exist.
 
-- [ ] **Step 6: Implement environment parsing without another config framework**
+- [ ] **Step 6: Implement transparent environment parsing**
 
 Create `apps/api/src/config/env.ts`:
 
@@ -904,7 +859,6 @@ export interface AppConfig {
   nodeEnv: 'development' | 'test' | 'production'
   host: string
   port: number
-  logLevel: string
   databaseUrl: string
 }
 
@@ -926,15 +880,14 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     nodeEnv: nodeEnv as AppConfig['nodeEnv'],
     host: env.API_HOST ?? '0.0.0.0',
     port,
-    logLevel: env.LOG_LEVEL ?? 'info',
     databaseUrl,
   }
 }
 ```
 
-Do not introduce `dotenv` here. Node/process environment is the app boundary; local shell/Compose/CI supplies values. If the executor wants `.env` auto-loading for host development, use Node's supported env-file invocation in scripts rather than adding a config service abstraction.
+No config framework and no implicit production `.env` loading inside the API process.
 
-- [ ] **Step 7: Implement Kysely connection and DB health check**
+- [ ] **Step 7: Implement Kysely DB connection and readiness check**
 
 Create `apps/api/src/db/client.ts`:
 
@@ -944,7 +897,7 @@ import pg from 'pg'
 
 const { Pool } = pg
 
-export interface Database {}
+export type Database = Record<never, never>
 
 export function createDatabase(connectionString: string): Kysely<Database> {
   return new Kysely<Database>({
@@ -952,6 +905,8 @@ export function createDatabase(connectionString: string): Kysely<Database> {
       pool: new Pool({
         connectionString,
         max: 10,
+        connectionTimeoutMillis: 2000,
+        idleTimeoutMillis: 30000,
       }),
     }),
   })
@@ -969,18 +924,19 @@ export async function checkDatabase(db: Kysely<Database>): Promise<void> {
 }
 ```
 
-- [ ] **Step 8: Implement explicit migration infrastructure**
+- [ ] **Step 8: Implement migration provider using Kysely's supported migration subpath**
 
 Create `apps/api/src/db/migrations/0001_create_auth_schema.ts`:
 
 ```ts
 import type { Kysely } from 'kysely'
+import type { Database } from '../client.js'
 
-export async function up(db: Kysely<unknown>): Promise<void> {
+export async function up(db: Kysely<Database>): Promise<void> {
   await db.schema.createSchema('auth').ifNotExists().execute()
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
+export async function down(db: Kysely<Database>): Promise<void> {
   await db.schema.dropSchema('auth').ifExists().cascade().execute()
 }
 ```
@@ -991,7 +947,8 @@ Create `apps/api/src/db/migrator.ts`:
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { FileMigrationProvider, Migrator, type Kysely } from 'kysely'
+import type { Kysely } from 'kysely'
+import { FileMigrationProvider, Migrator } from 'kysely/migration'
 import type { Database } from './client.js'
 
 const migrationFolder = path.join(
@@ -1002,11 +959,7 @@ const migrationFolder = path.join(
 export async function migrateToLatest(db: Kysely<Database>): Promise<void> {
   const migrator = new Migrator({
     db,
-    provider: new FileMigrationProvider({
-      fs,
-      path,
-      migrationFolder,
-    }),
+    provider: new FileMigrationProvider({ fs, path, migrationFolder }),
   })
 
   const { error, results } = await migrator.migrateToLatest()
@@ -1039,9 +992,9 @@ try {
 }
 ```
 
-The API server must never import/call `migrateToLatest` on normal startup.
+API startup must never import/call `migrateToLatest`.
 
-- [ ] **Step 9: Implement real server composition + graceful shutdown**
+- [ ] **Step 9: Compose the real server and graceful shutdown**
 
 Create `apps/api/src/server.ts`:
 
@@ -1077,28 +1030,27 @@ try {
 }
 ```
 
-Do not run migrations in this file.
-
-- [ ] **Step 10: Run migration + integration tests and verify GREEN**
+- [ ] **Step 10: Verify migration, tests, typecheck, lint, build**
 
 Run:
 
 ```bash
 DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat \
-  pnpm --filter @bizzat/api db:migrate
+  pnpm --filter @bizzat/api db:migrate:raw
 
 TEST_DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test \
   pnpm --filter @bizzat/api test:integration
 
+pnpm contracts:build
 pnpm --filter @bizzat/api test
 pnpm --filter @bizzat/api typecheck
 pnpm --filter @bizzat/api lint
 pnpm --filter @bizzat/api build
 ```
 
-Expected: migration exits `0`, both DB tests PASS, API unit tests PASS, build/typecheck/lint exit `0`.
+Expected: migration exits `0`, 2 DB tests PASS, 4 API tests PASS, lint/typecheck/build exit `0`.
 
-- [ ] **Step 11: Manually verify liveness vs readiness**
+- [ ] **Step 11: Verify liveness and readiness differ correctly**
 
 Start API:
 
@@ -1107,7 +1059,7 @@ DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat \
   pnpm --filter @bizzat/api dev
 ```
 
-In another shell:
+Check:
 
 ```bash
 curl -s http://127.0.0.1:4000/api/v1/health
@@ -1121,7 +1073,7 @@ Expected:
 {"status":"ready","database":"ok"}
 ```
 
-Then stop PostgreSQL only:
+Stop only DB and recheck:
 
 ```bash
 docker compose -f compose.dev.yml stop postgres
@@ -1129,18 +1081,18 @@ curl -i http://127.0.0.1:4000/api/v1/health
 curl -i http://127.0.0.1:4000/api/v1/ready
 ```
 
-Expected: `/health` remains 200; `/ready` returns 503 with `DEPENDENCY_UNAVAILABLE`. Restart PostgreSQL afterwards.
+Expected: `/health` stays 200; `/ready` becomes 503 with `DEPENDENCY_UNAVAILABLE`. Restart DB afterwards.
 
 - [ ] **Step 12: Commit**
 
 ```bash
-git add compose.dev.yml infra/postgres .env.example apps/api package.json pnpm-lock.yaml
+git add compose.dev.yml infra/postgres .env.example apps/api pnpm-lock.yaml
 git commit -m "feat: add PostgreSQL and migration foundation"
 ```
 
 ---
 
-### Task 4: Minimal Next.js Web Application + Self-Host-Friendly Configuration
+### Task 4: Minimal Next.js Web + Same-Origin Local API Proxy
 
 **Files:**
 - Create: `apps/web/package.json`
@@ -1152,15 +1104,15 @@ git commit -m "feat: add PostgreSQL and migration foundation"
 - Create: `apps/web/app/layout.tsx`
 - Create: `apps/web/app/page.tsx`
 - Create: `apps/web/test/page.test.tsx`
-- Modify: `.env.example`
+- Modify: `package.json`
 
 **Interfaces:**
-- Produces `@bizzat/web` Next.js App Router application.
-- Browser API calls keep same-origin `/api/*`; local dev optionally rewrites to Fastify using `API_PROXY_TARGET`.
-- Production build uses `output: 'standalone'` to support the later Docker/Caddy plan.
-- No listing UI, auth UI, or Sahibinden clone components are added in this foundation task.
+- Produces `@bizzat/web` App Router app.
+- Browser requests keep same-origin `/api/*`; local Next rewrites to Fastify via `API_PROXY_TARGET`.
+- `output: 'standalone'` prepares for later Docker/Caddy work.
+- No auth/listing UI yet.
 
-- [ ] **Step 1: Add web package manifest**
+- [ ] **Step 1: Create web package**
 
 Create `apps/web/package.json`:
 
@@ -1178,7 +1130,6 @@ Create `apps/web/package.json`:
     "test": "vitest run"
   },
   "dependencies": {
-    "@bizzat/contracts": "workspace:*",
     "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
@@ -1194,7 +1145,7 @@ Create `apps/web/package.json`:
 
 Run `pnpm install`.
 
-- [ ] **Step 2: Add Next TypeScript + standalone config**
+- [ ] **Step 2: Add Next TypeScript and standalone config**
 
 Create `apps/web/tsconfig.json`:
 
@@ -1214,12 +1165,7 @@ Create `apps/web/tsconfig.json`:
     "plugins": [{ "name": "next" }],
     "types": ["node"]
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
 ```
@@ -1237,13 +1183,15 @@ Create `apps/web/next.config.ts`:
 
 ```ts
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import type { NextConfig } from 'next'
 
 const apiProxyTarget = process.env.API_PROXY_TARGET
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  outputFileTracingRoot: path.join(process.cwd(), '../..'),
+  outputFileTracingRoot: repoRoot,
   async rewrites() {
     if (!apiProxyTarget) return []
 
@@ -1259,9 +1207,7 @@ const nextConfig: NextConfig = {
 export default nextConfig
 ```
 
-The monorepo tracing root matters because Next standalone output otherwise traces from `apps/web` and may miss workspace dependencies outside that directory.
-
-- [ ] **Step 3: Write the failing page smoke test**
+- [ ] **Step 3: Write page smoke test first**
 
 Create `apps/web/vitest.config.ts`:
 
@@ -1269,9 +1215,7 @@ Create `apps/web/vitest.config.ts`:
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  test: {
-    environment: 'node',
-  },
+  test: { environment: 'node' },
 })
 ```
 
@@ -1283,7 +1227,7 @@ import { describe, expect, it } from 'vitest'
 import HomePage from '../app/page'
 
 describe('foundation home page', () => {
-  it('renders Bizzat identity and development status', () => {
+  it('renders Bizzat identity', () => {
     const html = renderToStaticMarkup(<HomePage />)
 
     expect(html).toContain('bizzat')
@@ -1292,18 +1236,17 @@ describe('foundation home page', () => {
 })
 ```
 
-- [ ] **Step 4: Run test and verify RED**
+- [ ] **Step 4: Verify RED**
 
 Run:
 
 ```bash
-pnpm contracts:build
 pnpm --filter @bizzat/web test
 ```
 
 Expected: FAIL because `app/page.tsx` does not exist.
 
-- [ ] **Step 5: Add the minimal app shell**
+- [ ] **Step 5: Add minimal app shell**
 
 Create `apps/web/app/layout.tsx`:
 
@@ -1383,28 +1326,48 @@ body {
 }
 ```
 
-This is intentionally a throwaway foundation shell, not the product homepage implementation. Do not expand this into the Sahibinden-inspired design during this task.
+This shell is intentionally temporary. Do not start the real Sahibinden-inspired homepage in this task.
 
-- [ ] **Step 6: Verify web tests, typecheck, lint, and production build**
+- [ ] **Step 6: Add final root test script now that API + web both exist**
 
-Run:
+Modify root `package.json` scripts to include:
+
+```json
+{
+  "scripts": {
+    "contracts:build": "pnpm --filter @bizzat/contracts build",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm contracts:build && pnpm -r --if-present typecheck",
+    "test": "pnpm contracts:build && pnpm --filter @bizzat/api test && pnpm --filter @bizzat/api test:integration && pnpm --filter @bizzat/web test",
+    "build": "pnpm -r --if-present build"
+  }
+}
+```
+
+The root `test` command intentionally includes the real PostgreSQL integration suite.
+
+- [ ] **Step 7: Verify web + full workspace**
+
+With PostgreSQL up and `TEST_DATABASE_URL` exported:
 
 ```bash
-pnpm contracts:build
 pnpm --filter @bizzat/web test
 pnpm --filter @bizzat/web typecheck
 pnpm --filter @bizzat/web lint
 pnpm --filter @bizzat/web build
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
-Expected: test PASS, build exits `0`, and `.next/standalone` exists.
+Expected: all commands exit `0`; `apps/web/.next/standalone` exists.
 
-- [ ] **Step 7: Verify local API proxy without creating a frontend API abstraction yet**
+- [ ] **Step 8: Verify local Next -> Fastify rewrite**
 
-Start PostgreSQL + API:
+Start API:
 
 ```bash
-docker compose -f compose.dev.yml up -d postgres
 DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat \
   pnpm --filter @bizzat/api dev
 ```
@@ -1415,7 +1378,7 @@ Start web in another shell:
 API_PROXY_TARGET=http://127.0.0.1:4000 pnpm --filter @bizzat/web dev
 ```
 
-Verify:
+Check:
 
 ```bash
 curl -s http://127.0.0.1:3000/api/v1/health
@@ -1427,47 +1390,108 @@ Expected:
 {"status":"ok"}
 ```
 
-Do not add a generic fetch/client abstraction until a real product endpoint exists; otherwise the foundation would be designing an API client without requirements.
+Do not invent a frontend API-client abstraction yet; add it with the first real product endpoint.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
-git add apps/web .env.example package.json pnpm-lock.yaml
+git add apps/web package.json pnpm-lock.yaml
 git commit -m "feat: add self-hosted Next.js web foundation"
 ```
 
 ---
 
-### Task 5: Repository-Level Developer Workflow + Agent Instructions
+### Task 5: One-Command Local Developer Workflow + Updated Repo Instructions
 
 **Files:**
+- Create: `scripts/run-pnpm.mjs`
+- Modify: `package.json`
 - Modify: `README.md`
 - Modify: `AGENTS.md`
-- Modify: `package.json` if the exact dev scripts need correction after real execution
 
 **Interfaces:**
-- Produces one documented local workflow a frontend-oriented developer can follow without knowing Docker/PostgreSQL internals.
-- Produces authoritative build/test commands for future coding agents.
+- `pnpm dev` loads root `.env` if present and starts contracts watcher + API + web.
+- `pnpm db:migrate` loads root `.env` if present and runs explicit API migration CLI.
+- Future agents get authoritative build/test commands in `AGENTS.md`.
 
-- [ ] **Step 1: Verify the root commands before documenting them**
+- [ ] **Step 1: Add tiny transparent env-aware pnpm runner**
 
-With PostgreSQL running:
+Create `scripts/run-pnpm.mjs`:
+
+```js
+import { spawn } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { loadEnvFile } from 'node:process'
+
+if (existsSync('.env')) {
+  loadEnvFile('.env')
+}
+
+const command = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
+const child = spawn(command, process.argv.slice(2), {
+  stdio: 'inherit',
+  env: process.env,
+})
+
+child.on('error', (error) => {
+  console.error(error)
+  process.exit(1)
+})
+
+child.on('exit', (code) => {
+  process.exit(code ?? 1)
+})
+```
+
+This is intentionally not a config framework. It only makes root `.env` available to child processes.
+
+- [ ] **Step 2: Add ergonomic root scripts**
+
+Modify root `package.json` scripts to:
+
+```json
+{
+  "scripts": {
+    "contracts:build": "pnpm --filter @bizzat/contracts build",
+    "dev": "node scripts/run-pnpm.mjs --parallel --filter @bizzat/contracts --filter @bizzat/api --filter @bizzat/web dev",
+    "db:up": "docker compose -f compose.dev.yml up -d postgres",
+    "db:down": "docker compose -f compose.dev.yml down",
+    "db:migrate": "node scripts/run-pnpm.mjs --filter @bizzat/api db:migrate:raw",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm contracts:build && pnpm -r --if-present typecheck",
+    "test": "pnpm contracts:build && node scripts/run-pnpm.mjs --filter @bizzat/api test && node scripts/run-pnpm.mjs --filter @bizzat/api test:integration && node scripts/run-pnpm.mjs --filter @bizzat/web test",
+    "build": "pnpm -r --if-present build"
+  }
+}
+```
+
+- [ ] **Step 3: Verify root developer commands before documenting**
+
+Run from repo root:
 
 ```bash
-pnpm contracts:build
+cp .env.example .env
+pnpm db:up
+pnpm db:migrate
 pnpm lint
 pnpm typecheck
-TEST_DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test pnpm test
+pnpm test
 pnpm build
 ```
 
-If a root script does not correctly traverse the workspace, fix the root script now rather than documenting a workaround.
-
 Expected: all commands exit `0`.
 
-- [ ] **Step 2: Add a concise developer quick start to `README.md`**
+Then run:
 
-Add a `## Development` section with this exact flow:
+```bash
+pnpm dev
+```
+
+Expected: contracts watcher, API on `4000`, web on `3000`; `curl http://127.0.0.1:3000/api/v1/health` returns `{"status":"ok"}`.
+
+- [ ] **Step 4: Add exact quick-start to README**
+
+Add:
 
 ```markdown
 ## Development
@@ -1478,29 +1502,19 @@ Requirements:
 - pnpm 10.34.5 via Corepack
 - Docker Desktop / Docker Engine with Compose
 
-Start the local database:
-
-```bash
-docker compose -f compose.dev.yml up -d postgres
-```
-
-Install dependencies and migrate the development DB:
+Install and start:
 
 ```bash
 corepack enable
 corepack prepare pnpm@10.34.5 --activate
 pnpm install
 cp .env.example .env
-DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat pnpm db:migrate
-```
-
-Run API and web during development:
-
-```bash
+pnpm db:up
+pnpm db:migrate
 pnpm dev
 ```
 
-Default local addresses:
+Local addresses:
 
 - Web: `http://localhost:3000`
 - API health: `http://localhost:4000/api/v1/health`
@@ -1511,63 +1525,61 @@ Before opening a PR:
 ```bash
 pnpm lint
 pnpm typecheck
-TEST_DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test pnpm test
+pnpm test
 pnpm build
 ```
 ```
 
-If `pnpm dev` cannot consume `.env` automatically, do not tell developers to export five variables manually on every shell. Adjust the root dev command to use Node's supported env-file mechanism or a tiny transparent script; do not add a configuration framework.
+- [ ] **Step 5: Update `AGENTS.md` executable rules**
 
-- [ ] **Step 3: Update `AGENTS.md` with the executable project rules**
-
-Add a `## Teknik çalışma komutları` section:
+Add/update:
 
 ```markdown
 ## Teknik çalışma komutları
 
 - Node baseline: 24 LTS; `.nvmrc` is authoritative.
 - Package manager: pnpm 10.34.5; do not replace it with npm/yarn.
-- Local PostgreSQL: `docker compose -f compose.dev.yml up -d postgres`.
+- Local PostgreSQL: `pnpm db:up`.
 - DB migrations: `pnpm db:migrate`; API startup must not auto-run migrations.
-- Validate changes with `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
-- DB/repository behavior requires real PostgreSQL integration tests; do not replace SQL tests with repository mocks.
-- Do not add Redis, queue, external search, microservice, Kubernetes or a managed backend service without a measured requirement and an architecture decision update.
+- Validate code changes with `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
+- Repository/SQL behavior requires real PostgreSQL integration tests; do not replace them with repository mocks.
+- Do not add Redis, queues, external search, microservices, Kubernetes, or managed backend services without a measured requirement and architecture update.
 ```
 
-Also update the old text that says there is no application code/build/CI; it becomes stale after this plan is implemented.
+Remove/replace the old statement that the repo has no app code, tests, build, or CI.
 
-- [ ] **Step 4: Run the documented commands exactly as written**
-
-Copy/paste the README commands in a clean shell. Do not mentally substitute different commands.
+- [ ] **Step 6: Copy/paste README commands in a fresh shell**
 
 Expected:
 
 - DB becomes healthy.
-- migration succeeds.
+- explicit migration succeeds.
 - `pnpm dev` starts API/web.
-- health endpoint responds.
+- proxied health endpoint works.
 - lint/typecheck/test/build all pass.
 
-- [ ] **Step 5: Commit**
+If any README command fails, fix the command or script now; do not document a workaround.
+
+- [ ] **Step 7: Commit**
 
 ```bash
-git add README.md AGENTS.md package.json pnpm-lock.yaml
-git commit -m "docs: document local development workflow"
+git add scripts/run-pnpm.mjs package.json README.md AGENTS.md
+git commit -m "docs: add repeatable local development workflow"
 ```
 
 ---
 
-### Task 6: GitHub CI for Lint, Typecheck, Real PostgreSQL Tests, and Builds
+### Task 6: GitHub CI on PostgreSQL 18
 
 **Files:**
 - Create: `.github/workflows/ci.yml`
 
 **Interfaces:**
-- Produces one PR CI workflow that uses PostgreSQL 18 and the same Node/pnpm baselines as local development.
-- CI proves contracts/API/web compile, API unit tests pass, real PostgreSQL integration tests pass, and production builds succeed.
-- Does not deploy anything.
+- PR/main CI uses same Node/pnpm/PostgreSQL baselines as local development.
+- CI proves lint, typecheck, explicit migration CLI, API unit tests, real DB integration tests, web tests, and builds.
+- No deploy/publish step.
 
-- [ ] **Step 1: Create the CI workflow**
+- [ ] **Step 1: Create workflow**
 
 Create `.github/workflows/ci.yml`:
 
@@ -1624,36 +1636,30 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Unit tests
-        run: pnpm --filter @bizzat/api test
+      - name: Explicit migration command
+        run: pnpm --filter @bizzat/api db:migrate:raw
 
-      - name: Database migration
-        run: pnpm --filter @bizzat/api db:migrate
-
-      - name: Database integration tests
-        run: pnpm --filter @bizzat/api test:integration
-
-      - name: Web tests
-        run: pnpm --filter @bizzat/web test
+      - name: Tests
+        run: pnpm test
 
       - name: Build
         run: pnpm build
 ```
 
-Do not add deployment, Docker image publishing, coverage gates, security scanners, Playwright, or matrix builds in this foundation CI. They belong to later plans when the relevant software exists.
+Do not add deployment, Docker publishing, coverage gates, security scanners, Playwright, or matrix builds before the corresponding product/ops plan exists.
 
-- [ ] **Step 2: Run the CI command sequence locally before pushing**
+- [ ] **Step 2: Run the same CI sequence locally**
 
-Run:
+With local PostgreSQL up:
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm lint
 pnpm typecheck
-pnpm --filter @bizzat/api test
-DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test pnpm --filter @bizzat/api db:migrate
-TEST_DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test pnpm --filter @bizzat/api test:integration
-pnpm --filter @bizzat/web test
+DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test \
+  pnpm --filter @bizzat/api db:migrate:raw
+TEST_DATABASE_URL=postgresql://bizzat:bizzat_dev@127.0.0.1:5432/bizzat_test \
+  pnpm test
 pnpm build
 ```
 
@@ -1666,43 +1672,38 @@ git add .github/workflows/ci.yml
 git commit -m "ci: verify foundation on PostgreSQL 18"
 ```
 
-- [ ] **Step 4: Push and verify the actual GitHub Actions run**
+- [ ] **Step 4: Push and verify actual GitHub Actions**
 
-After opening/updating the implementation PR, inspect the CI run. Completion criterion is an actual green `CI / verify` job, not only a locally valid YAML file.
+Open/update the implementation PR and inspect the run.
 
-If CI differs from local behavior, fix the real underlying environment mismatch; do not add `continue-on-error` or skip failing steps.
+Completion criterion: actual `CI / verify` job is green. Do not use `continue-on-error` or skip a failing verification step.
 
 ---
 
 ## Foundation Acceptance Checklist
 
-The foundation plan is complete only when all of these are true on the implementation branch:
+Foundation is complete only when:
 
-- [ ] `pnpm-lock.yaml` exists and uses the reviewed stable dependency lines; no intentional prerelease dependencies.
+- [ ] `pnpm-lock.yaml` exists with no intentional prerelease dependency.
 - [ ] `pnpm lint` passes.
 - [ ] `pnpm typecheck` passes.
-- [ ] API unit tests pass.
-- [ ] PostgreSQL integration tests pass against PostgreSQL 18.
+- [ ] `pnpm test` includes API unit + real PostgreSQL integration + web tests and passes.
 - [ ] `pnpm build` builds contracts, API, and Next.js.
-- [ ] `GET /api/v1/health` returns 200 independent of DB readiness.
-- [ ] `GET /api/v1/ready` returns 200 with DB up and 503 with DB down.
-- [ ] migrations run only through explicit `pnpm db:migrate`, not API startup.
-- [ ] PostgreSQL 18 local volume is mounted at `/var/lib/postgresql`.
-- [ ] web app runs on port 3000 and local `/api/*` proxy reaches Fastify.
-- [ ] `.next/standalone` is produced.
-- [ ] README quick-start commands work when copied literally.
-- [ ] `AGENTS.md` no longer claims the repo has no code/tests/build.
+- [ ] `/api/v1/health` is 200 even when DB is down.
+- [ ] `/api/v1/ready` is 200 with DB up and 503 with DB down.
+- [ ] migrations run only through explicit migration command, never API startup.
+- [ ] local PostgreSQL 18 persists at `/var/lib/postgresql`.
+- [ ] web runs on 3000; local `/api/*` rewrite reaches Fastify on 4000.
+- [ ] Next produces `.next/standalone`.
+- [ ] README quick-start works literally.
+- [ ] `AGENTS.md` no longer claims there is no code/tests/build.
 - [ ] GitHub Actions `CI / verify` is green.
-- [ ] No auth/listing/EİDS/media/moderation product implementation has leaked into this foundation plan.
-- [ ] No Redis, queue, search cluster, Kubernetes, microservice, managed backend, or other rejected infrastructure was added.
+- [ ] no Better Auth/listing/EİDS/media/moderation implementation leaked into this plan.
+- [ ] no Redis/queue/search cluster/Kubernetes/microservice/managed backend was added.
 
-## References Rechecked While Writing This Plan
+## Plan Self-Review Result
 
-- Node.js release status: Node 24 is LTS; Node 26 is Current.
-- Next.js 16.3 is the active LTS line; recent 16.3 security patches are available. Next self-hosting supports Node/Docker and recommends a reverse proxy for production.
-- Next standalone output is supported and monorepos need deliberate output file tracing roots.
-- Fastify latest stable major is v5; its official TypeBox type-provider integration is supported in v5.
-- Kysely 0.29.4 is the latest stable release while 0.30 is beta; `Migrator` + `FileMigrationProvider` are the supported migration primitives.
-- PostgreSQL 18 official Docker image changed its persistent volume root to `/var/lib/postgresql`.
-- TypeScript 7 is stable, but the current typescript-eslint 8 line explicitly warns when TS7 is detected; this plan therefore pins TS 6.0.3 conservatively.
-
+- **Spec coverage:** foundation requirements are covered; intentionally independent auth, listings, write flows, moderation, and production ops are assigned to Plans 2–5 instead of being hidden in this plan.
+- **Placeholder scan:** no `TBD`, `TODO`, “similar to”, or unspecified “add tests/error handling” steps remain.
+- **Type/interface consistency:** `buildApp`, `readinessCheck`, `Database`, `createDatabase`, `checkDatabase`, and `migrateToLatest` names/signatures are consistent across consuming tasks.
+- **Known corrections made during review:** Kysely migration imports use `kysely/migration`; the foundation `Database` type does not use an empty interface; API `dev` is added only when `server.ts` exists; root `pnpm test` explicitly includes DB integration; root `.env` handling is a transparent script rather than framework magic; Next tracing root is resolved from the config file instead of process cwd.
