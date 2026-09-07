@@ -4,37 +4,69 @@
 
 Bizzat'ın temel amacı, emlakçı ve galerici ilanlarının olmadığı, bireysel kullanıcıların ilan verebildiği bir emlak ve araç platformu oluşturmaktır.
 
-Kategori bilgilerinin belirgin olduğu, araç marka ve modellerinin tanımlı olduğu ve ayrıntılı filtrelerin kullanılabildiği düzenli bir ilan deneyimi hedeflenir. Kullanıcının son kararıyla filtreler, Sahibinden'in ilgili emlak ve araç kategorilerindeki filtrelerle birebir aynı olacak. Ana sayfa, ilan listesi ve ilan detayı için Sahibinden esas alınacak; ilan verme adımları da benzer olacak. Bu aşamada bu alanlar için ayrı bir ürün keşfi veya yeni akış tasarımı yapılması istenmiyor. Bizzat'ın onaylanan marka ve görsel kimliği uygulanacak.
+Kategori bilgilerinin belirgin olduğu, araç marka ve modellerinin tanımlı olduğu ve ayrıntılı filtrelerin kullanılabildiği düzenli bir ilan deneyimi hedeflenir. Filtreler Sahibinden'in ilgili emlak ve araç kategorileri referans alınarak uygulanır; ana sayfa, ilan listesi ve ilan detayı için Sahibinden esas alınır; ilan verme adımları da benzer tutulur. Bizzat'ın onaylanan marka ve görsel kimliği kullanılır.
+
+Ayrıntılı referans: [docs/reference/SAHIBINDEN_REFERENCE.md](docs/reference/SAHIBINDEN_REFERENCE.md).
 
 ## Hedef kullanıcılar
 
-- Evini, arsasını veya başka bir emlak varlığını satmak ya da kiraya vermek isteyen bireyler.
+- Evini veya başka bir emlak varlığını satmak ya da kiraya vermek isteyen bireyler.
 - Aracını satmak veya kiraya vermek isteyen bireyler.
-- Bir yakınının veya başka bir bireyin ilanına yardımcı olan kişiler.
+- EİDS'nin izin verdiği malik/eş/1.-2. derece hısım sınırı içinde bir yakınının ilanına yardımcı olan kişiler.
 - Satılık veya kiralık emlak ve araç arayan kişiler.
 
-## Kapsam
+## Uzun vadeli kapsam
 
 | Kategori | Satış | Kiralama |
 |---|---|---|
 | Emlak | Kapsamda | Kapsamda |
 | Araç | Kapsamda | Kapsamda |
 
-Filtreler için ürün yönü kararlaştırıldı: ilgili Sahibinden kategorilerindeki filtreler birebir referans alınacak. Kesin alan, seçenek ve kategori envanteri henüz kaynaktan çıkarılmadı. Bu bir referansı belgeleme ve uygulamaya aktarma işidir; hangi filtrelerin olması gerektiğini yeniden tartışma başlığı değildir. İlk yayına alınacak alt kategorilerin kapsamı ayrıca netleştirilebilir.
+Bu tablo platform vizyonunu gösterir; ilk implementasyon milestone'u daha dardır.
+
+## İlk MVP kapsamı
+
+7 Eylül 2026'da ilk implementasyon kapsamı donduruldu:
+
+- Emlak → Konut → Daire → Satılık
+- Emlak → Konut → Daire → Kiralık
+- Araç → Otomobil → Satılık
+
+İlk istemci responsive web'dir.
+
+İlk MVP'de:
+
+- ana sayfa,
+- ilan listesi,
+- kategoriye özel filtreler ve sıralama,
+- ilan detayı,
+- hesap oluşturma/giriş,
+- EİDS/yetki doğrulama kapısı,
+- ilan oluşturma,
+- kendi ilanlarını yönetme,
+- telefon odaklı doğrudan iletişim,
+- ilan raporlama,
+- minimum moderasyon
+
+bulunur.
+
+Favoriler, site içi mesajlaşma, ödeme/abonelik, ücretli öne çıkarma, ekspertiz, rezervasyon, native mobil uygulama ve profesyonel mağaza hesapları ilk MVP kapsamında değildir.
+
+Ayrıntı ve kabul kriterleri: [docs/MVP_SCOPE.md](docs/MVP_SCOPE.md).
 
 ## Katılım yaklaşımı
 
-Temel ayrım mal sahibi ile yardımcı olan yakını arasında değildir. Bireysel kullanıcılarla emlakçı ve galericiler arasında ayrım yapılmak istenir.
+Temel ayrım bireysel kullanıcılarla emlakçı ve galericiler arasındadır.
 
-Bir kişinin başka bir bireyin malını ilana koyması, tek başına dışlanma nedeni sayılmaz. Bu nedenle tüm platform için “ilan veren mutlaka kayıtlı mal sahibidir” garantisi verilmez.
+Marka yaklaşımı, bir bireyin izin verilen yakınlık ilişkisi içinde başka bir bireyin malına yardımcı olabilmesini dışlamaz. Ancak güncel EİDS gereksinimleri elektronik taşınmaz ve taşıt ilanlarında yayın yetkisini sınırlar. Bizzat production akışı bu doğrulamayı bypass edemez.
 
-Başlangıçta anlaşılır kurallar ve makul kontroller tercih edilir. Her istisnayı ilk günden tamamen ortadan kaldırmaya çalışmak istenmez. İstisnalara tolerans, emlakçı ve galerici ilanlarını kabul etme yönünde bir karar değildir.
+Başlangıçta anlaşılır kurallar ve makul kontroller tercih edilir. Her fraud/ticari kullanım istisnasını ilk günden tamamen ortadan kaldırmaya çalışmak istenmez. İstisnalara tolerans, emlakçı ve galerici ilanlarını kabul etme yönünde bir karar değildir.
 
 ## Beklenen ilan deneyimi
 
-- Sahibinden'in ilgili kategorileriyle birebir aynı arama filtreleri.
+- Sahibinden'in ilgili kategorilerindeki filtreleri referans alan ayrıntılı arama.
 - Belirgin emlak ve araç kategorileri.
-- Araçlarda tanımlı marka ve model seçimi.
+- Araçlarda tanımlı marka, seri ve model seçimi.
 - Satılık ve kiralık ilanların anlaşılır biçimde sunulması.
 - İlan veren kişiyle doğrudan görüşme olanağı.
 - Sade, profesyonel ve rahat okunabilen bir görünüm.
@@ -43,20 +75,28 @@ Başlangıçta anlaşılır kurallar ve makul kontroller tercih edilir. Her isti
 
 | Alan | Karar |
 |---|---|
-| Emlak ve araç filtreleri | İlgili Sahibinden kategorilerindeki filtrelerle birebir aynı |
+| Emlak ve araç filtreleri | İlgili Sahibinden kategori filtrelerini referans al; profesyonel satıcı seçeneklerini Bizzat kapsamına göre çıkar |
 | Ana sayfa | Sahibinden'i esas al; Bizzat'ın görsel kimliğini uygula |
 | İlan listesi | Sahibinden'i esas al; Bizzat'ın görsel kimliğini uygula |
 | İlan detayı | Sahibinden'i esas al; Bizzat'ın görsel kimliğini uygula |
-| İlan verme adımları | Sahibinden'e benzer akış |
+| İlan verme adımları | Sahibinden'e benzer akış; EİDS doğrulamasını erken aşamada uygula |
 
-Bu karar, Bizzat'ın açık mavi kimliğini, “sen” hitabını ve bireysel ilan odağını değiştirmez. İlk ana sayfa görsel taslağı [HOMEPAGE.md](docs/design/HOMEPAGE.md) dosyasında bulunur. Canlı Sahibinden ana sayfasına erişilemedi; güncel ekranın birebir eşlemesi veya ayrıntılı filtre envanteri henüz tamamlanmadı.
+İlk ana sayfa görsel taslağı [HOMEPAGE.md](docs/design/HOMEPAGE.md) dosyasında bulunur. İlk referans envanteri çıkarılmış olsa da Sahibinden'in canlı kategori sayfalarının otomatik erişimde 403 vermesi nedeniyle seçilen kategori alanları implementasyon sırasında son kez canlı tarayıcıyla karşılaştırılmalıdır.
 
-İletişimin telefon, site içi mesaj veya başka bir kanaldan yapılacağı henüz kararlaştırılmadı. Mobil uygulama, favoriler, ödeme, ekspertiz, rezervasyon veya benzeri ek özellikler için bu görüşmede kapsam kararı alınmadı.
+## İletişim
+
+İlk MVP iletişim kanalı telefon odaklıdır. Site içi mesajlaşma ilk milestone'da yoktur. Telefon görünürlüğü kullanıcı tercihi/izniyle yönetilmelidir.
 
 ## Başarı beklentisi
 
-Aranan fayda, bireysel ilan arayan kişinin emlakçı ve galerici ilanları arasında ayıklama yapmak zorunda kalmadan düzenli bir ilan deneyimi yaşayabilmesidir. Sayısal başarı hedefleri veya ölçüm metrikleri henüz belirlenmedi.
+Aranan fayda, bireysel ilan arayan kişinin emlakçı ve galerici ilanları arasında ayıklama yapmak zorunda kalmadan düzenli bir ilan deneyimi yaşayabilmesidir.
+
+İlk MVP teknik başarı ölçütü, Satılık/Kiralık Daire ve Satılık Otomobil için ana sayfa → liste/filtre → detay ile auth → EİDS → ilan oluşturma → yayın/yönetim döngülerinin gerçek veritabanıyla uçtan uca çalışmasıdır.
+
+Sayısal iş/KPI hedefleri henüz belirlenmedi.
 
 ## Henüz kararlaştırılmayanlar
 
-Ücretlendirme, gelir modeli, lansman bölgesi, ilk yayınlanacak alt kategoriler, operasyon süreçleri ve teknik altyapı açık konulardır. Ayrıntılar [OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md) dosyasında tutulur.
+EİDS entegrasyon yöntemi, araç marka/model veri kaynağı, konum veri kaynağı, teknik stack, gelir modeli, lansman bölgesi, detaylı moderasyon operasyonu ve production altyapısı açık konulardır.
+
+Ayrıntılar [docs/OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md) dosyasında tutulur.
