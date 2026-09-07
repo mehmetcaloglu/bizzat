@@ -1,7 +1,7 @@
 # Bizzat — Technical Architecture Design
 
 **Date:** 2026-09-07  
-**Status:** Approved architecture design for implementation planning  
+**Status:** Draft for user review  
 **Scope:** First MVP defined in `docs/MVP_SCOPE.md`
 
 ## 1. Goal
@@ -9,10 +9,10 @@
 Build Bizzat as a system that is:
 
 - easy for a frontend-oriented developer to understand end to end,
-- cheap to operate at the beginning,
+- cheap to operate initially,
 - self-hosted on a normal Linux VM/VDS,
-- fast enough for the first production stages without premature infrastructure,
-- structured so that database, API, storage, search, and background work can be separated later without rewriting the product.
+- fast enough for early production without premature infrastructure,
+- structured so DB, API, storage, search, and background work can be separated later without rewriting the product.
 
 The architecture deliberately chooses a **modular monolith**. Scalability means preserving clean extraction points, not running distributed infrastructure before measurements justify it.
 
@@ -33,7 +33,7 @@ The first architecture will not introduce:
 - a managed database/auth/backend platform,
 - a generic EAV metadata database.
 
-These technologies are not rejected permanently. They require a measured production need before adoption.
+These are not banned forever. Each requires a measured product/operational problem before adoption.
 
 ## 3. Architecture summary
 
@@ -58,14 +58,15 @@ Next.js web                 Fastify API
 
 Persistent host volumes:
 - PostgreSQL data
-- listing image files
+- private listing media
+- public processed listing media
 
 Off-site backup target:
 - database dumps
 - uploaded listing media
 ```
 
-Only Caddy is exposed publicly. The API and PostgreSQL communicate on the Docker private network.
+Only Caddy is public. Fastify and PostgreSQL are reachable only over the Docker private network.
 
 The cloud provider is treated as a replaceable Linux machine. AWS EC2, Azure VM, or another VDS provider can host the same Compose stack.
 
@@ -73,25 +74,23 @@ The cloud provider is treated as a replaceable Linux machine. AWS EC2, Azure VM,
 
 | Area | Decision | Reason |
 |---|---|---|
-| Frontend | Next.js + TypeScript | Existing frontend familiarity, SSR/SEO, responsive web MVP |
-| Backend | Fastify + TypeScript | Explicit request/route model, low framework magic, schema support, good modular boundaries |
-| DB access | Kysely + `pg` | Type-safe SQL without hiding relational/query behavior behind a heavy ORM |
-| Database | PostgreSQL 18 | Mature relational database, built-in FTS/GIN, partial indexes, native `uuidv7()` |
-| Authentication | Better Auth, self-hosted | Avoid custom password/session security while keeping auth and data on our server/PostgreSQL |
-| API style | REST under `/api/v1` | Explicit, debuggable, future mobile-friendly, low conceptual overhead |
-| Validation/contracts | Fastify schema + TypeBox/shared contracts | Runtime validation and TypeScript types from one contract source |
-| Image processing | `sharp` | Generate deterministic image variants on upload |
-| Reverse proxy/TLS | Caddy | Simple automatic HTTPS and reverse proxy configuration |
-| Process packaging | Docker Compose | Reproducible local/production runtime without an orchestrator |
-| Monorepo | pnpm workspace | Shared TypeScript contracts/schema while keeping web and API separate applications |
+| Frontend | Next.js + TypeScript | Frontend familiarity, SSR/SEO, responsive web MVP |
+| Backend | Fastify + TypeScript | Explicit route model, low framework magic, schema support, modular boundaries |
+| DB access | Kysely + `pg` | Type-safe SQL without hiding relational/query behavior |
+| Database | PostgreSQL 18 | Mature relational DB, FTS/GIN, partial indexes, native `uuidv7()` |
+| Authentication | Better Auth, self-hosted | Avoid custom password/session security while keeping data on our infrastructure |
+| API style | REST under `/api/v1` | Explicit, debuggable, future mobile-friendly |
+| Validation/contracts | Fastify schema + TypeBox/shared contracts | Runtime validation and TypeScript types from one source |
+| Image processing | `sharp` | Deterministic optimized variants |
+| Reverse proxy/TLS | Caddy | Simple HTTPS and reverse proxy configuration |
+| Packaging | Docker Compose | Reproducible local/production runtime without an orchestrator |
+| Monorepo | pnpm workspace | Shared TypeScript contracts/schema with separate web/API apps |
 
 Library minor versions are not architecture decisions. At implementation start, stable mutually compatible releases are selected and pinned by the lockfile. Beta/RC releases are excluded from the production baseline.
 
-PostgreSQL 18 is a deliberate baseline because `uuidv7()` is available in core and the project benefits from time-ordered external-safe identifiers.
+PostgreSQL 18 is deliberate because `uuidv7()` is available in core.
 
 ## 5. Repository layout
-
-Target structure:
 
 ```text
 bizzat/
@@ -116,17 +115,15 @@ bizzat/
 
 Responsibilities:
 
-- `apps/web`: pages, components, forms, server rendering, API client usage.
-- `apps/api`: authentication integration, domain/business rules, persistence, external providers.
+- `apps/web`: pages, components, forms, SSR, API client usage.
+- `apps/api`: auth integration, domain rules, persistence, external providers.
 - `packages/contracts`: API request/response/error schemas shared by web and API.
-- `packages/listing-schema`: machine-readable listing/filter field definitions for supported listing types.
-- `infra`: deployment configuration only; no product/domain code.
+- `packages/listing-schema`: machine-readable listing/filter field definitions.
+- `infra`: deployment configuration only; no domain code.
 
 ## 6. Backend module model
 
-The API remains one deployable process but is divided by business capability.
-
-Initial modules:
+One deployable API process, separated by business capability:
 
 ```text
 modules/
@@ -168,11 +165,11 @@ Rules:
 1. Routes do not contain SQL.
 2. Repositories do not decide product/business policy.
 3. Services own authorization decisions and state transitions.
-4. A module does not reach into another module's repository. It calls the other module's service/public interface.
-5. No dependency-injection framework is required. Plain TypeScript composition is preferred until complexity proves otherwise.
-6. Files should stay focused; modules are split by clear responsibility rather than arbitrary technical layers.
+4. Modules do not reach into another module's repository; they use that module's service/public interface.
+5. No dependency-injection framework initially. Plain TypeScript composition is preferred.
+6. Split files/modules by responsibility, not ceremonial layers.
 
-## 7. API contract strategy
+## 7. API contracts
 
 REST is the public application API.
 
@@ -189,7 +186,7 @@ POST   /api/v1/listings/:id/reports
 GET    /api/v1/me/listings
 ```
 
-Shared contract package:
+Shared package:
 
 ```text
 packages/contracts/
@@ -200,21 +197,15 @@ packages/contracts/
   common.ts
 ```
 
-The contract defines:
+Contracts define params, query, request body, response body, and errors.
 
-- request params,
-- query params,
-- request bodies,
-- response bodies,
-- error shapes.
+`packages/listing-schema` is separate: it defines **what fields a listing type has and how forms/filters behave**, not the transport contract.
 
-`packages/listing-schema` is separate. It defines **what fields a listing type has and how UI/filter forms behave**; it is not the transport/API contract layer.
-
-OpenAPI may be generated from route schemas later. A second manually maintained API specification is not introduced.
+OpenAPI may later be generated from route schemas. Do not maintain a second handwritten API spec.
 
 ## 8. Error model
 
-All API failures use one predictable shape:
+All API failures use one shape:
 
 ```json
 {
@@ -226,7 +217,7 @@ All API failures use one predictable shape:
 }
 ```
 
-Initial stable codes include:
+Initial stable codes:
 
 ```text
 VALIDATION_ERROR
@@ -240,29 +231,36 @@ RATE_LIMITED
 INTERNAL_ERROR
 ```
 
-The web application branches on `code`, never by parsing human-readable `message`.
+The web branches on `code`, never by parsing the human-readable message.
 
-Unexpected exceptions are logged with request ID and converted to `INTERNAL_ERROR`; stack traces are not sent to clients in production.
+Unexpected exceptions are logged with request ID and converted to `INTERNAL_ERROR`; production responses do not expose stack traces.
 
 ## 9. Authentication
 
 Authentication is self-hosted inside the Fastify API using Better Auth.
 
-Principles:
+Decisions:
 
-- User/session records live in our PostgreSQL database.
-- Better Auth owns its required auth tables/migrations; application profile/domain data remains separate.
-- Browser authentication uses secure HttpOnly cookies.
-- Do not implement password hashing or session token security manually.
-- First roles: `user`, `moderator`, `admin`.
-- Authorization remains application service logic; authentication library roles do not replace domain checks.
+- auth/session records live in our PostgreSQL database,
+- Better Auth manages its auth schema/migrations,
+- browser auth uses HttpOnly + Secure cookies in production,
+- password hashing/session token security is not implemented manually,
+- initial roles: `user`, `moderator`, `admin`,
+- domain authorization still belongs to services.
 
-Recommended DB separation:
+Database organization:
 
-- Better Auth tables in PostgreSQL schema `auth`.
-- Bizzat product tables in `public` initially.
+- Better Auth tables in PostgreSQL schema `auth`,
+- Bizzat product tables in `public` initially,
+- one PostgreSQL database/service, not two databases.
 
-This is organization inside one PostgreSQL database, not a separate database/service.
+### 9.1 User ID compatibility
+
+Better Auth supports UUID ID generation for PostgreSQL. Configure its database ID strategy to UUID so application references and auth IDs use a compatible UUID type.
+
+The implementation must verify the generated Better Auth migration before adding application foreign keys.
+
+`listings.owner_user_id` and similar application references use the auth user UUID. Do not assume Better Auth's default base62/string ID strategy.
 
 ## 10. Listing data model
 
@@ -273,15 +271,15 @@ Use a relational hybrid:
 - common listing fields in `listings`,
 - category-specific queryable fields in typed one-to-one detail tables,
 - UI/filter definitions in code/schema metadata,
-- JSONB only for genuinely unstructured metadata, not as the primary listing filter store.
+- JSONB only for genuinely unstructured metadata.
 
-Do not build a generic EAV `listing_attribute_values` engine.
+Do **not** build generic EAV storage and do not put the main filter surface into JSONB.
 
 ### 10.2 Listing types
 
-`listing_types` represents valid publishable product combinations.
+`listing_types` represents valid publishable combinations.
 
-Initial rows conceptually:
+Initial codes:
 
 ```text
 apartment_sale
@@ -289,11 +287,9 @@ apartment_rent
 car_sale
 ```
 
-This prevents unsupported combinations from appearing merely because a generic category + transaction pair happens to exist.
+This prevents unsupported category/transaction combinations from existing accidentally.
 
 ### 10.3 Core tables
-
-Conceptual core:
 
 ```text
 profiles
@@ -318,7 +314,7 @@ reports
 moderation_actions
 ```
 
-Better Auth tables are managed separately in schema `auth`.
+Better Auth tables live separately in schema `auth`.
 
 ### 10.4 `listings`
 
@@ -341,7 +337,7 @@ created_at            timestamptz
 updated_at            timestamptz
 ```
 
-Status model at minimum:
+Minimum status model:
 
 ```text
 draft
@@ -352,7 +348,7 @@ rejected
 inactive
 ```
 
-State transitions are enforced by the listing service rather than allowing arbitrary status updates from the API.
+Clients never directly set arbitrary states. Listing service enforces allowed transitions.
 
 ### 10.5 `apartment_details`
 
@@ -382,7 +378,7 @@ credit_eligible        boolean nullable
 swap_available         boolean nullable
 ```
 
-Exact fields/options must come from the approved Sahibinden reference and machine-readable schema work, not from this abbreviated table.
+Exact fields/options come from `docs/reference/SAHIBINDEN_REFERENCE.md` and the machine-readable schema work.
 
 ### 10.6 `car_details`
 
@@ -415,19 +411,19 @@ replacement_status         text nullable
 
 ### 10.7 Enum-like values
 
-Avoid creating a PostgreSQL ENUM for every product option.
+Avoid PostgreSQL ENUM for every product option.
 
 Prefer:
 
 - stable readable string codes in DB,
 - shared allowed-value definitions in listing schema/contracts,
-- DB `CHECK` constraints where the allowed set is truly stable and useful for integrity.
+- DB `CHECK` constraints only where the set is genuinely stable/useful.
 
-This avoids unnecessary database enum migrations for ordinary catalog changes.
+This keeps ordinary catalog changes from becoming awkward enum migrations.
 
 ## 11. Machine-readable listing schema
 
-The frontend needs dynamic forms and filters; the database does not need to become dynamically typed.
+Dynamic forms do not require dynamically typed storage.
 
 ```text
 packages/listing-schema/
@@ -436,7 +432,7 @@ packages/listing-schema/
   car-sale.ts
 ```
 
-Each field definition can describe:
+A field can describe:
 
 ```text
 key
@@ -450,20 +446,11 @@ min/max/unit
 UI grouping
 ```
 
-Both API validation and frontend form/filter generation should reuse these definitions where practical.
+Web form/filter generation and API validation reuse these definitions where practical.
 
-Important distinction:
+> Dynamic UI schema does not imply EAV storage.
 
-> Dynamic UI schema does not imply dynamic EAV storage.
-
-Adding a major new category may require:
-
-1. listing schema definition,
-2. migration/new typed detail table or extension,
-3. repository query support,
-4. UI route/category exposure.
-
-That explicit work is accepted in exchange for simpler SQL and operational clarity.
+Adding a major category may require a schema definition, DB migration/detail table, repository query support, and UI exposure. That explicit work is accepted for simpler SQL/debugging.
 
 ## 12. IDs and timestamps
 
@@ -471,32 +458,30 @@ Application/domain primary keys use PostgreSQL UUID with `uuidv7()` default wher
 
 Reasons:
 
-- safe to expose publicly compared with sequential numeric IDs,
-- naturally sortable/time-ordered,
+- safe to expose publicly versus sequential IDs,
+- time ordered,
 - better index locality than purely random UUIDv4 for insert-heavy tables.
 
-`created_at` and `updated_at` are still explicit columns. Business logic must not depend on decoding creation time from a UUID.
+`created_at` and `updated_at` remain explicit. Business logic does not decode creation time from UUIDs.
+
+Auth IDs are UUID-compatible via Better Auth configuration, but Better Auth owns generation/schema details for its tables.
 
 ## 13. Search and filtering
 
-Initial listing search stays in PostgreSQL.
+Initial search stays in PostgreSQL:
 
-Capabilities:
-
-- B-tree indexes for equality/range/sorting,
-- partial indexes for published-only search paths,
+- B-tree indexes for equality/range/sort,
+- partial indexes for published-only paths,
 - PostgreSQL full-text search for title/description keyword search,
-- GIN index for full-text search vector if/when keyword search is enabled.
+- GIN index for the FTS vector when keyword search is enabled.
 
-No external search engine is introduced initially.
+No external search engine initially.
 
-External search becomes an option only when production measurements show PostgreSQL search cannot meet latency/load requirements or when product requirements need features PostgreSQL FTS cannot reasonably provide.
+External search is considered only when measured query load/latency or required search features exceed what PostgreSQL can reasonably provide.
 
 ## 14. Initial index strategy
 
-Indexes are intentional, not automatic on every filter field.
-
-Initial candidates:
+Start intentionally, not with an index on every filter field.
 
 ```text
 listings:
@@ -522,13 +507,11 @@ reports:
   (status, created_at)
 ```
 
-Additional indexes require evidence from real query shapes and `EXPLAIN (ANALYZE, BUFFERS)`.
-
-The index list above is a starting hypothesis, not permission to index every field listed in the UI.
+This is a starting hypothesis. Add/change indexes from actual query shapes and `EXPLAIN (ANALYZE, BUFFERS)` evidence.
 
 ## 15. Media storage
 
-Use a small internal storage abstraction:
+Internal abstraction:
 
 ```text
 Storage
@@ -537,9 +520,9 @@ Storage
   url()
 ```
 
-First provider: local filesystem on persistent host volume.
+First provider: local filesystem on persistent host volumes.
 
-Directory/key convention:
+Image processing uses `sharp` to produce variants such as:
 
 ```text
 listings/{listingId}/{imageId}/original.webp
@@ -547,9 +530,7 @@ listings/{listingId}/{imageId}/thumb.webp
 listings/{listingId}/{imageId}/card.webp
 ```
 
-The API validates the upload and `sharp` produces required variants.
-
-`listing_images` stores metadata and storage keys, not image binary data.
+`listing_images` stores metadata/storage keys, never image binary.
 
 Representative metadata:
 
@@ -565,13 +546,26 @@ size_bytes
 created_at
 ```
 
-When multiple API machines become necessary, replace `LocalDiskStorage` with an S3-compatible provider and optionally a CDN. Listing/domain code must not depend on the concrete storage backend.
+### 15.1 Private draft vs public media
+
+Do not expose the raw upload/private storage volume directly through Caddy.
+
+Initial local-storage rule:
+
+- draft/unpublished media is stored in a private media root and fetched only through an authenticated/authorized API path,
+- processed media for a published listing may be promoted/copied/moved to a public media root mounted read-only into Caddy,
+- deleting/deactivating a listing follows explicit media lifecycle rules; public URLs are never treated as the source of truth,
+- storage keys remain provider-neutral.
+
+This avoids treating an unguessable filename as authorization.
+
+When multiple API machines become necessary, replace local storage with S3-compatible object storage and optionally a CDN. Domain/listing code stays unchanged.
 
 ## 16. EİDS verification boundary
 
-EİDS is a production publish gate, but the exact provider/protocol is an external integration dependency.
+EİDS is a production publish gate. Exact provider/protocol details remain an external integration dependency.
 
-Define a provider boundary from day one:
+Define:
 
 ```text
 VerificationProvider
@@ -579,15 +573,15 @@ VerificationProvider
   verifyVehicleAuthority(...)
 ```
 
-Environments:
+Environment behavior:
 
 - local/test: explicit mock provider allowed,
 - production: real approved provider required,
-- production failure/unavailability: fail closed; do not silently publish.
+- production failure/unavailability: fail closed; never silently publish.
 
-Do not persist raw provider responses unless a concrete operational/legal need is identified.
+Do not persist raw provider responses unless a concrete legal/operational need exists.
 
-Persist only the minimum verification state needed for audit/product behavior, for example:
+Minimal persisted shape:
 
 ```text
 verification_checks
@@ -602,46 +596,50 @@ verification_checks
   created_at
 ```
 
-TC identity number, plate, property number, and relationship data are treated as sensitive. Logging/redaction and retention are defined before production EİDS activation.
+TC identity number, plate, property number, and relationship data are sensitive. Redaction/retention rules are finalized before production EİDS activation.
 
 ## 17. Transaction rules
 
-Transactions belong to services and cover only operations that must succeed or fail atomically.
+Services own transaction boundaries. Transactions cover only DB operations that must be atomic.
 
-Example listing creation transaction:
+Listing core creation example:
 
 ```text
 BEGIN
   insert listings
   insert apartment_details/car_details
-  insert listing image metadata as appropriate
 COMMIT
 ```
 
-External HTTP calls do **not** run inside an open database transaction.
+Media filesystem/object-storage writes are not part of a PostgreSQL transaction. Media service uses explicit ordering and compensation/cleanup:
+
+1. validate/upload/process file,
+2. persist metadata transactionally,
+3. if DB persistence fails, clean up orphaned uploaded files,
+4. periodic cleanup can remove stale orphan files if a process dies between steps.
+
+External HTTP calls are never made inside an open DB transaction.
 
 EİDS pattern:
 
 ```text
 DB transaction:
-  create/update verification = pending
+  verification = pending
 COMMIT
 
 call EİDS
 
 DB transaction:
-  persist verification result
-  perform allowed listing status transition
+  persist result
+  perform allowed listing state transition
 COMMIT
 ```
 
-This avoids holding database connections/locks while waiting on an external service.
-
-If asynchronous/retryable verification later becomes necessary, the same provider/service boundary can be moved to a worker/queue without redesigning listing storage.
+This avoids holding DB connections/locks while waiting on external services.
 
 ## 18. Single-VM production topology
 
-Docker Compose services:
+Compose services:
 
 ```text
 caddy
@@ -651,331 +649,315 @@ postgres
 backup
 ```
 
-No Redis/worker container initially.
+No Redis/worker initially.
 
 Network rules:
 
 - public firewall: 80/443 and restricted SSH only,
 - Caddy is the only public application entry point,
-- Fastify is reachable only on Compose private network,
-- PostgreSQL is reachable only on Compose private network,
-- database port is not published to the internet.
+- Fastify private to Compose network,
+- PostgreSQL private to Compose network,
+- DB port not published publicly.
 
-Recommended origin layout:
+Origin layout:
 
 ```text
 https://bizzat.tr/          -> Next.js
 https://bizzat.tr/api/*     -> Fastify
-https://bizzat.tr/media/*   -> listing media delivery strategy
+https://bizzat.tr/media/*   -> only processed public listing media
 ```
 
 Same-origin web/API simplifies cookies and avoids unnecessary CORS exposure.
 
 ## 19. Deployment
 
-Do not deploy with ad-hoc `git pull && npm install` on production.
+Do not use ad-hoc `git pull && npm install` as the production process.
 
-Target flow:
+Target:
 
 ```text
-main branch
-  -> CI validates/builds
-  -> Docker images produced
+main
+  -> CI validate/build
+  -> Docker images
   -> VM pulls approved images
   -> controlled migrations
   -> docker compose up -d targeted services
 ```
 
-Database is persistent and is not recreated on ordinary app deploys.
+PostgreSQL is persistent and is not recreated on ordinary app deploys.
 
-First-stage availability target accepts short deployment interruption rather than introducing a load balancer/orchestrator only for zero-downtime releases.
+Early production accepts a short deploy interruption instead of introducing load balancing/orchestration solely for zero downtime.
 
 Migration rules:
 
-- migrations are version-controlled,
-- migrations run explicitly before compatible app release,
-- destructive migrations use expand/migrate/contract style when data volume or deployment compatibility requires it,
-- no automatic schema mutation at app startup in production.
+- version controlled,
+- explicit before compatible release,
+- destructive changes use expand/migrate/contract when required by data volume/deployment compatibility,
+- no automatic production schema mutation at API startup.
 
 ## 20. Backup and recovery
 
-A Docker volume on the same VM is persistence, **not backup**.
+A same-VM Docker volume is persistence, not backup.
 
-Initial backup baseline:
+Initial baseline:
 
-- scheduled PostgreSQL logical dump,
-- scheduled backup/sync of uploaded media,
-- copy to an off-site target physically/provider-separated from the VM,
-- retention policy with multiple generations,
+- scheduled PostgreSQL logical dumps,
+- scheduled media backup/sync,
+- off-site/provider-separated destination,
+- multiple retained generations,
 - periodic restore test.
 
-When recovery requirements become stricter, upgrade database strategy to WAL archiving/PITR. Do not operate PITR infrastructure before the product needs the recovery objective.
-
-Backup secrets and destination credentials are kept outside git.
+When recovery objectives require it, upgrade DB backup to WAL archiving/PITR. Do not run PITR infrastructure before the product requires it.
 
 ## 21. Security baseline
 
-Production minimum:
+Minimum production baseline:
 
 - HTTPS via Caddy,
-- SSH key authentication; no password SSH,
-- firewall with only required ports,
+- SSH keys; no password SSH,
+- firewall only required ports,
 - PostgreSQL not public,
-- secrets outside repository,
+- secrets outside git,
 - HttpOnly/Secure auth cookies,
-- API input validation at boundaries,
-- upload file type/size validation,
-- request IDs and safe structured logs,
-- sensitive value redaction,
-- least-privilege application DB credentials practical for the first deployment,
+- Better Auth CSRF/origin protections remain enabled,
+- API input validation,
+- upload type/size validation,
+- request IDs + safe structured logs,
+- sensitive-value redaction,
+- least-privilege practical DB credentials,
 - dependency update process,
 - off-site backup.
 
-The design does not claim this list replaces a production security review, KVKK review, or EİDS-specific legal/technical requirements.
+This does not replace KVKK, EİDS, or production security review.
 
 ## 22. Observability
 
 Start small:
 
 - structured Fastify logs,
-- request ID propagated through web/API logs where practical,
+- request IDs,
 - Docker/container health checks,
 - `/health` and DB-aware readiness endpoint,
 - VM CPU/RAM/disk monitoring,
-- PostgreSQL slow-query visibility/logging with conservative thresholds.
+- PostgreSQL slow-query visibility with conservative thresholds.
 
-Do not deploy Prometheus/Grafana/ELK solely to satisfy an architecture checklist.
-
-Add richer observability when operating the service manually becomes difficult or production incident diagnosis proves insufficient.
+Do not deploy Prometheus/Grafana/ELK solely for architecture completeness. Add richer observability when manual operation/incident diagnosis proves insufficient.
 
 ## 23. Testing strategy
 
-### Unit tests
+### Unit — Vitest
 
-Use Vitest for service-level business rules where isolated tests provide value.
-
-Examples:
+Focus on service business rules:
 
 - listing state transitions,
-- ownership/authorization rules,
-- verification gate rules,
+- ownership/authorization,
+- verification gate,
 - schema mapping helpers.
 
-Do not mock every internal function merely to obtain coverage.
+Do not mock every internal function for coverage.
 
-### Integration tests
+### Integration — real PostgreSQL
 
-Use a real PostgreSQL test database/container for:
+Test:
 
 - Kysely repositories,
 - migrations,
 - Fastify route + DB behavior,
-- transaction rollback behavior,
+- rollback behavior,
 - filtering/query correctness.
 
-SQL behavior is not considered proven by repository mocks.
+Repository mocks do not prove SQL behavior.
 
-### E2E tests
+### E2E — Playwright
 
-Use Playwright for a small number of user-visible critical journeys:
+Keep a small critical set:
 
 1. browse/filter listings,
-2. open listing detail,
+2. listing detail,
 3. register/login,
 4. create apartment/car listing using test verification provider,
 5. edit/deactivate own listing,
 6. report listing,
 7. moderator removes reported listing.
 
-E2E tests assert visible product behavior, not component implementation details.
+Assert user-visible behavior, not component internals.
 
-### Pull request CI
-
-Minimum:
+### PR CI
 
 ```text
 lint
 typecheck
 unit tests
-integration tests with PostgreSQL
+integration tests + PostgreSQL
 web build
 api build
 critical E2E set when practical
 ```
 
-A giant E2E suite is explicitly not a first-stage goal.
+A huge E2E suite is not a first-stage goal.
 
 ## 24. Scalability path
 
 Scale only after measurement.
 
-### Stage 1 — initial
-
-One VM:
+### Stage 1 — one VM
 
 ```text
 Caddy + web + API + PostgreSQL + media + backup job
 ```
 
-Vertical scaling is allowed and expected before distributed infrastructure.
+Vertical scaling comes first.
 
-### Stage 2 — database pressure or reliability need
+### Stage 2 — DB pressure/reliability
 
-Move PostgreSQL to a dedicated VM while leaving app architecture unchanged.
+Move PostgreSQL to a dedicated VM without changing application architecture.
 
-Trigger examples:
+Signals:
 
-- DB memory/IO competes materially with app workloads,
-- backup/recovery requirements justify isolation,
-- vertical VM scaling becomes inefficient.
+- DB memory/IO materially competes with app workloads,
+- recovery/backup isolation becomes important,
+- vertical scaling becomes inefficient.
 
-### Stage 3 — API CPU/concurrency pressure
+### Stage 3 — API pressure
 
-Run multiple stateless API instances behind a load balancer/reverse proxy.
+Run multiple stateless API instances behind reverse proxy/load balancer.
 
-Prerequisites already preserved:
+The design already keeps auth/session/domain state in PostgreSQL rather than process memory.
 
-- auth/session state in PostgreSQL,
-- domain data in PostgreSQL,
-- API code does not depend on process-local durable state.
-
-At this point local media storage must be moved to shared/object storage if multiple app hosts serve uploads.
+At this point local media must move to shared/object storage.
 
 ### Stage 4 — media pressure
 
-Move media to S3-compatible object storage and optionally CDN.
-
-The storage abstraction is the extraction seam.
+Move to S3-compatible object storage and optionally CDN. `Storage` is the extraction seam.
 
 ### Stage 5 — background jobs
 
-Introduce a worker and queue only when there are real asynchronous workloads such as:
+Introduce worker + queue only when real async workloads exist, for example:
 
 - expensive image processing,
 - notification fan-out,
 - retryable EİDS workflows,
-- scheduled cleanup/imports that should not run in API request lifecycle.
+- scheduled heavy imports/cleanup.
 
-Redis/queue technology is selected then based on actual job semantics.
+Queue technology is selected from actual job semantics; Redis is not preselected now.
 
 ### Stage 6 — search pressure
 
-Consider external search only when query measurements/product requirements justify it.
-
-The listing search repository/service is the extraction seam.
+Consider external search only when PostgreSQL search measurements or product requirements justify it. Listing search repository/service is the extraction seam.
 
 ### Stage 7 — service extraction
 
-A module may become a separate service only when it has a concrete operational reason, such as:
+Extract a module only for a concrete operational reason:
 
-- independent scaling profile,
-- independent failure/retry needs,
+- different scaling profile,
+- different failure/retry behavior,
 - separate team ownership,
-- security/network isolation requirement.
+- security/network isolation.
 
-The first likely candidate is external verification/background processing, not the core listing CRUD path.
+External verification/background processing is more likely to be extracted before core listing CRUD.
 
 ## 25. Explicitly rejected alternatives
 
 ### Next.js-only backend
 
-Rejected as the primary architecture because Bizzat is expected to gain a reusable API surface for verification, moderation, possible mobile clients, and background workflows. Keeping a dedicated Fastify API gives a clearer mental model and extraction boundary with limited extra infrastructure because it runs on the same VM.
+Not selected because Bizzat is expected to have a reusable API surface for verification, moderation, possible mobile clients, and background work. A Fastify API gives a clear boundary at modest cost because it runs on the same VM.
 
 ### NestJS
 
-Rejected for the first version because its module/provider/decorator/guard/interceptor/DI model adds framework concepts that are not necessary for this small backend team. Fastify plus explicit module composition is easier to trace for a frontend-oriented developer.
+Not selected because module/provider/decorator/guard/interceptor/DI concepts add framework learning that is not needed for this team size. Fastify plus explicit composition is easier to trace.
 
 ### Express
 
-Not chosen because Fastify gives stronger schema/validation/plugin primitives while remaining explicit and small.
+Fastify provides stronger schema/validation/plugin primitives while remaining explicit.
 
-### Prisma-heavy ORM model
+### Prisma-heavy ORM
 
-Not chosen because the team wants SQL/query behavior to remain visible and understandable. Kysely provides type safety without replacing the SQL mental model.
+The team wants SQL/query behavior visible. Kysely provides type safety without replacing the SQL mental model.
 
-### Supabase/Vercel-managed backend
+### Managed Supabase/Vercel backend
 
-Not chosen due to cost predictability and learning/operational preference. Standard PostgreSQL and Docker retain provider portability.
+Not selected due to cost predictability and learning/operational preference. PostgreSQL + Docker preserves provider portability.
 
 ### Generic EAV
 
-Rejected because high-cardinality/filter-heavy listing queries become complex, hard to index, and hard to debug. New category migrations are accepted as the simpler tradeoff.
+Rejected because filter-heavy listing queries become harder to query, index, and debug. Category migrations are accepted as the simpler tradeoff.
 
 ### Everything in JSONB
 
-Rejected because the primary product is filter/range/sort heavy. Typed relational columns remain the main query surface; JSONB is reserved for genuinely flexible metadata.
+Rejected because the product is range/filter/sort heavy. Typed relational columns remain the main query surface.
 
 ### Microservices/Kubernetes
 
-Rejected because they add deployment, networking, observability, failure-mode, and local-development cost without a present scaling/team need.
+Rejected because they add deployment/networking/observability/failure-mode cost without a current scaling/team need.
 
-## 26. Known external dependencies that do not block architecture
+## 26. External dependencies that do not block architecture
 
-The following remain product/integration inputs rather than architecture ambiguity:
+These remain integration/product inputs, not architecture ambiguity:
 
-1. Exact EİDS access/application/protocol details.
-   - Architecture decision is fixed: adapter boundary, production fail-closed, mock only in local/test.
-2. Vehicle make/series/model source and license.
-   - Architecture decision is fixed: normalized reference tables + importer/seed path.
+1. Exact EİDS access/protocol.
+   - Fixed architecture: adapter, production fail-closed, mock local/test only.
+2. Vehicle make/series/model source/license.
+   - Fixed architecture: normalized reference tables + importer/seed path.
 3. Turkey city/district/neighborhood source.
-   - Architecture decision is fixed: normalized location reference tables + importer/seed path.
-4. Exact production VM provider and size.
-   - Architecture decision is fixed: portable Docker Compose Linux deployment.
-5. Final domain/brand operational setup.
+   - Fixed architecture: normalized location tables + importer/seed path.
+4. Production VM provider/size.
+   - Fixed architecture: portable Compose Linux deployment.
+5. Final domain operational setup.
    - Does not alter application architecture.
 
-## 27. Implementation order implied by this design
+## 27. Implementation order implied by the design
 
-The implementation plan should sequence work roughly as:
+The implementation plan should roughly sequence:
 
 1. monorepo/tooling skeleton,
-2. local Docker PostgreSQL and migration foundation,
+2. local Docker PostgreSQL + migration foundation,
 3. API bootstrap + health/error/contracts,
-4. Better Auth integration,
-5. core reference tables and listing schema package,
-6. listing relational schema + repositories,
+4. Better Auth configuration and generated schema verification,
+5. reference tables + machine-readable listing schemas,
+6. listing relational schema/repositories,
 7. browse/list/filter/detail API,
 8. listing creation/state transitions,
-9. verification provider interface + test/mock implementation,
-10. media storage abstraction/local provider/image processing,
+9. verification provider interface + mock/test implementation,
+10. media abstraction/local provider/image processing,
 11. moderation/reporting,
 12. Next.js user journeys,
-13. production Compose/Caddy/backup configuration,
-14. CI and critical test suite.
+13. production Compose/Caddy/backup,
+14. CI + critical tests.
 
-The implementation plan may split these into smaller reviewable tasks but must not silently introduce architecture components rejected by this design.
+The implementation plan may split these into smaller reviewable tasks but must not silently introduce rejected architecture components.
 
-## 28. Architecture guardrails for future agents
+## 28. Guardrails for future agents
 
-Before adding a new infrastructure component, answer all three:
+Before adding infrastructure, answer:
 
 1. What measured/current problem does it solve?
 2. Why can the existing simpler component not solve it acceptably?
 3. What operational burden does the new component add?
 
-If the answers are speculative, do not add it.
+If answers are speculative, do not add it.
 
-Before making a shortcut that collapses boundaries, answer:
+Before taking a shortcut, ask:
 
 1. Does it put SQL in routes/UI?
-2. Does it make domain rules depend directly on infrastructure/provider SDKs?
+2. Does it make domain rules depend directly on provider SDKs/infrastructure?
 3. Does it make future mobile/API/storage/verification extraction require a rewrite?
 
-If yes, keep the existing boundary even if the first implementation is slightly more verbose.
+If yes, preserve the existing boundary even if slightly more verbose.
 
-## 29. Primary references checked for technology feasibility
+## 29. Primary feasibility references
 
-- PostgreSQL 18 documentation and release notes: https://www.postgresql.org/docs/18/
-- Better Auth PostgreSQL adapter: https://better-auth.com/docs/adapters/postgresql
-- Better Auth Fastify integration: https://better-auth.com/docs/integrations/fastify
-- Fastify documentation: https://fastify.dev/docs/latest/
-- Kysely documentation: https://www.kysely.dev/docs/
-- Next.js deployment/self-hosting documentation: https://nextjs.org/docs/app/getting-started/deploying
-- Docker Compose production guidance: https://docs.docker.com/compose/how-tos/production/
+- PostgreSQL 18: https://www.postgresql.org/docs/18/
+- Better Auth PostgreSQL: https://better-auth.com/docs/adapters/postgresql
+- Better Auth database/ID generation: https://better-auth.com/docs/concepts/database
+- Better Auth Fastify: https://better-auth.com/docs/integrations/fastify
+- Fastify: https://fastify.dev/docs/latest/
+- Kysely: https://www.kysely.dev/docs/
+- Next.js self-host/deploy: https://nextjs.org/docs/app/getting-started/deploying
+- Docker Compose production: https://docs.docker.com/compose/how-tos/production/
 
-## 30. Final decision
+## 30. Final proposed decision
 
-Bizzat will begin as a **self-hosted TypeScript modular monolith**:
+Bizzat begins as a **self-hosted TypeScript modular monolith**:
 
 ```text
 Next.js web
@@ -988,13 +970,13 @@ Kysely
 
 with:
 
-- Better Auth in the API,
+- Better Auth in the API with UUID-compatible IDs,
 - category-specific relational detail tables,
 - schema-driven forms/filters,
-- local media storage behind an abstraction,
+- private/public local media behind a storage abstraction,
 - EİDS behind a provider abstraction,
 - Docker Compose + Caddy on one Linux VM,
 - off-site backups,
-- measured, staged scaling instead of speculative distributed infrastructure.
+- measured staged scaling instead of speculative distributed infrastructure.
 
-This design intentionally optimizes for **clarity first, operational simplicity second, and clean scaling exits third**.
+The priority order is **clarity first, operational simplicity second, clean scaling exits third**.
