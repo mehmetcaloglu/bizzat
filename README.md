@@ -28,7 +28,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Hitap | Sen |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
 | Düşünülen adres | `bizzat.tr`; satın alma ve uygunluk durumu doğrulanmadı |
-| Mevcut aşama | Foundation uygulanıyor; auth/reference data sonraki faz |
+| Mevcut aşama | Foundation tamamlandı; auth/reference data sıradaki faz |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
