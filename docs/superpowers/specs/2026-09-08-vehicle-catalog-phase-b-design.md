@@ -24,6 +24,7 @@ tsb-kasko:122-1260:2024
 is replaced by:
 
 ```text
+provider = tsb-kasko
 source_key = 122-1260
 ```
 
@@ -36,10 +37,10 @@ Add a maintenance-only Turkey vehicle coverage and curation layer around the Pha
 Phase B must let Bizzat:
 
 1. import normalized TSB vehicle-code facts with provenance;
-2. preserve source-record identity across monthly/source updates;
+2. preserve source-record identity across source updates;
 3. detect stale mappings when a TSB code's normalized identity changes;
 4. maintain reviewed mappings from TSB codes to Bizzat canonical models;
-5. generate deterministic mapped/unmapped/review-required reports;
+5. generate deterministic mapped/unmapped/review-required/invalid-mapping reports;
 6. use TSB and curated aliases to help populate a real Turkey automobile catalog;
 7. keep all live listing/public reads on PostgreSQL canonical tables only.
 
@@ -48,7 +49,7 @@ Phase B must let Bizzat:
 Phase B does not add:
 
 - TSB as a runtime API dependency;
-- automatic scheduled scraping or downloading;
+- automatic scheduled scraping/downloading;
 - public redistribution of raw TSB exports;
 - TSB kasko prices as a Bizzat feature;
 - VIN decoding;
@@ -63,9 +64,9 @@ Phase B does not add:
 
 The official TSB Kasko Value List is useful as Turkish-market coverage evidence. The official page currently states that the list covers up to 15 model years and exposes an interactive archive/file-generation flow rather than a documented stable public API contract.
 
-The TSB website also does not present an open redistribution license for the raw Kasko dataset. Therefore Bizzat takes the conservative operational approach below.
+The TSB website also does not present an open redistribution license for the raw Kasko dataset. Bizzat therefore uses a conservative operational boundary.
 
-### Allowed maintenance use
+### Allowed maintenance flow
 
 ```text
 Official TSB file/export
@@ -81,15 +82,15 @@ PostgreSQL vehicle_source_* tables
 ### Hard rules
 
 - Normal product/runtime requests never fetch TSB.
-- API startup never downloads or imports TSB.
-- Deploy/migration never downloads TSB.
+- API startup never downloads/imports TSB.
+- Deploy/migration never downloads/imports TSB.
 - Raw TSB spreadsheets/exports are not committed to the public Bizzat repository.
-- TSB kasko price values are not stored in the Bizzat source catalog.
-- The source layer stores only the minimal vehicle-identification facts required for coverage/mapping.
-- A normalized test fixture with invented/example records may live in the repository.
+- TSB kasko price values are not stored in Bizzat's source catalog.
+- The source layer stores only the minimum vehicle-identification facts needed for coverage/mapping.
+- A small invented/example normalized fixture may live in the repository for tests.
 - A production normalized TSB snapshot is operational input, not a repository-owned public redistribution artifact.
 
-This is a data-engineering boundary, not a legal opinion. If TSB later publishes explicit API/licensing terms, the acquisition process can be reconsidered without changing the canonical Bizzat identity model.
+This is a data-engineering boundary, not a legal opinion. If TSB later publishes explicit API/licensing terms, source acquisition may change without changing Bizzat canonical identity.
 
 ## Why TSB vehicle code is the source identity
 
@@ -109,9 +110,7 @@ years: [2013, 2014, 2015, 2016, 2017, 2018]
 Toyota / Corolla / 1.33 Life
 ```
 
-Mapping the same TSB code once is preferable to creating one mapping per model year.
-
-`available_model_years` is descriptive source metadata only. It is never a listing-validity gate because TSB's coverage window is incomplete for older vehicles.
+`available_model_years` is descriptive source metadata only. It is never a listing-validity gate because TSB coverage is incomplete for older vehicles.
 
 ## Phase B decomposition
 
@@ -127,39 +126,37 @@ B1 implements:
 - `vehicle_source_mappings`;
 - normalized TSB snapshot validation;
 - explicit source import CLI;
-- explicit mapping import/apply CLI;
+- explicit mapping apply CLI;
 - stale-mapping detection;
-- deterministic mapped/unmapped/review-required report;
+- deterministic source coverage report;
 - small deterministic source/mapping fixtures;
 - PostgreSQL integration tests;
 - CI/docs.
 
-B1 does **not** attempt to build the full Turkey catalog.
+B1 does **not** build the full Turkey canonical catalog.
 
 ### B2 — Turkey catalog curation and population
 
 B2 implements:
 
-- canonical brand normalization rules;
+- canonical brand aliases;
 - repository-owned series aliases;
-- candidate generator;
+- deterministic candidate generator;
 - reviewed `tsb-mappings.json`;
 - reviewed real Turkey automobile `catalog.json`;
+- source manifest;
 - coverage report;
-- canonical import of the populated catalog;
-- integration verification against the public Phase A endpoints.
+- canonical import and public API verification.
 
-This split keeps source ingestion mechanics separate from the large human-reviewable taxonomy/data change.
+This split keeps source mechanics separate from the large taxonomy/data review.
 
 ---
 
-# B1 design — source ingestion and mapping
+# B1 — source ingestion and mapping
 
 ## Database model
 
 ### `vehicle_source_providers`
-
-Fields:
 
 ```text
 id           uuid PK default uuidv7()
@@ -182,8 +179,6 @@ source_url  = https://www.tsb.org.tr/tr/kasko-arsiv-listesi
 
 ### `vehicle_source_imports`
 
-Each accepted normalized snapshot has one provenance row.
-
 ```text
 id               uuid PK default uuidv7()
 provider_id      uuid FK -> vehicle_source_providers.id
@@ -198,17 +193,11 @@ Unique:
 (provider_id, version, checksum_sha256)
 ```
 
-`version` is an operator-supplied source period/version such as:
+`version` is operator-supplied source period/version, for example `2026-09`.
 
-```text
-2026-09
-```
-
-The checksum is computed from the normalized source snapshot, not from a private/raw spreadsheet file.
+The checksum is computed from the validated normalized snapshot, never from a private/raw spreadsheet file.
 
 ### `vehicle_source_records`
-
-One active row represents one provider vehicle identity.
 
 ```text
 id                     uuid PK default uuidv7()
@@ -234,21 +223,14 @@ Unique:
 For TSB:
 
 ```text
-source_key = Araç Kodu
+source_key = trimmed Araç Kodu
 ```
 
-Examples:
-
-```text
-144-1064
-122-1260
-```
-
-Do not prefix the stored key with provider code; provider scope is already represented by `provider_id`.
+Provider code is not duplicated inside `source_key`; provider scope already exists in `provider_id`.
 
 ### `available_model_years`
 
-Years are stored as a sorted, unique PostgreSQL integer array.
+Stored as a sorted unique PostgreSQL integer array.
 
 Example:
 
@@ -258,15 +240,13 @@ Example:
 
 Rules:
 
-- duplicate years are rejected by validator or normalized deterministically before DB import;
-- stored order is ascending;
-- year values do not create canonical catalog rows;
-- year values do not create separate source records;
-- year values do not restrict `car_details.model_year`.
+- years are ascending and unique after normalization;
+- each year must be an integer from 1886 through `current UTC year + 1`;
+- years do not create canonical catalog rows;
+- years do not create separate source records;
+- years do not restrict `car_details.model_year`.
 
 ### `vehicle_source_mappings`
-
-A reviewed mapping links one source vehicle type to one Bizzat canonical model.
 
 ```text
 source_record_id  uuid PK/FK -> vehicle_source_records.id
@@ -286,9 +266,7 @@ curated-import
 
 No confidence score is stored initially.
 
-### Indexes
-
-Initial indexes only:
+### Initial indexes
 
 ```text
 vehicle_source_records(provider_id, active)
@@ -297,13 +275,11 @@ vehicle_source_imports(provider_id, imported_at desc)
 vehicle_source_mappings(vehicle_model_id)
 ```
 
-Do not build text-search or fuzzy-match indexes in B1.
+Do not add fuzzy/text-search indexes in B1.
 
 ## Normalized TSB snapshot contract
 
 B1 starts at a normalized JSON boundary. The production raw TSB export remains outside the repository.
-
-Conceptual normalized shape:
 
 ```json
 {
@@ -324,35 +300,34 @@ Conceptual normalized shape:
 }
 ```
 
-B1 does not require a public raw-file parser contract. It requires a deterministic normalized snapshot contract that can be populated from an official export during maintenance.
+B1 does not require a public raw-file parser contract. A future local XLS/XLSX/CSV adapter may emit this exact normalized shape, but must not alter DB/domain contracts.
 
-A future raw XLS/XLSX/CSV adapter is permitted only as a thin maintenance adapter that emits this same normalized shape; it must not alter DB/domain contracts.
-
-## Source snapshot validation
+## Snapshot validation
 
 Validation is fail-closed and occurs before a DB transaction.
 
 Exact rules:
 
 ```text
-provider.code == "tsb-kasko" for the TSB adapter
+provider.code == "tsb-kasko"
 provider.sourceName.trim() non-empty
 provider.version.trim() non-empty
-records is an array
+records is a NON-EMPTY array
 sourceKey.trim() non-empty
 brandRaw.trim() non-empty
 typeRaw.trim() non-empty
 availableModelYears is a non-empty integer array
-model years are plausible 4-digit positive years
+each year is within 1886..current UTC year+1
 sourceKey unique within snapshot
-same TSB code cannot appear twice as separate records
 ```
 
-The validator must accept `unknown` input and assert/narrow it at runtime. No TypeScript cast is trusted as input validation.
+A completely empty source snapshot is rejected. It must never be interpreted as "deactivate the entire TSB catalog" because an extraction/parser failure could otherwise cause mass deactivation.
 
-### Aggregating model-year rows
+The validator accepts `unknown` and narrows/asserts the runtime shape. TypeScript casts do not count as input validation.
 
-If maintenance extraction initially sees multiple rows for the same TSB code/year data, normalization aggregates them before the B1 snapshot:
+## Aggregating year rows
+
+If maintenance extraction sees multiple year rows for one TSB code, normalization aggregates them before B1 import:
 
 ```text
 144-1064 / 2016
@@ -362,46 +337,40 @@ If maintenance extraction initially sees multiple rows for the same TSB code/yea
 144-1064 / [2016, 2017, 2018]
 ```
 
-If the same TSB code appears with conflicting normalized brand/type identities in one snapshot, normalization fails instead of guessing which identity is correct.
+If one TSB code appears with conflicting normalized brand/type identities in one snapshot, normalization fails rather than choosing one identity.
 
-## Source string normalization for change detection
+## Source identity comparison
 
-Raw strings are preserved for audit/inspection, but stale-mapping comparison uses deterministic normalized identity strings.
+Raw strings are preserved for inspection, but stale-mapping comparison uses deterministic normalized strings.
 
-Initial normalization is deliberately small:
+Initial normalization:
 
 ```text
-Unicode normalize
+Unicode NFKC
 trim
 collapse repeated whitespace
 case-fold for comparison
-normalize common punctuation spacing
+normalize whitespace around simple punctuation
 ```
 
-Do not strip engine sizes, trim names, gearbox words, numbers, or meaningful tokens for identity-change detection.
+Do **not** strip engine size, trim, transmission, power, body, numeric, or other meaningful tokens.
 
-Example:
+Whitespace/case-only changes are equivalent. Meaningful brand/type changes are different.
 
-```text
-"  COROLLA   1.33 LIFE "
-```
+## Deterministic checksum
 
-and
+Checksum input is the normalized logical snapshot, not original JSON property order.
 
-```text
-"COROLLA 1.33 LIFE"
-```
+Canonicalization before SHA-256:
 
-are equivalent.
+1. trim provider string values;
+2. normalize each record's source/brand/type values according to the validated representation;
+3. sort and deduplicate `availableModelYears` ascending;
+4. sort records by `sourceKey` ascending;
+5. serialize a fixed-key-order object with UTF-8 JSON and no insignificant whitespace;
+6. SHA-256 the resulting bytes.
 
-But:
-
-```text
-COROLLA 1.33 LIFE
-COROLLA 1.6 DREAM
-```
-
-are materially different.
+Equivalent logical snapshots therefore produce the same checksum despite input record ordering.
 
 ## Source import algorithm
 
@@ -413,56 +382,56 @@ pnpm reference:import:vehicle-source -- tsb <normalized-json-path>
 
 Algorithm:
 
-1. Parse input as `unknown`.
-2. Validate and normalize the complete snapshot.
-3. Compute deterministic SHA-256 checksum of normalized content.
+1. Parse file as `unknown`.
+2. Validate/normalize entire snapshot.
+3. Compute deterministic normalized SHA-256 checksum.
 4. Open one PostgreSQL transaction.
 5. Upsert/find provider by `code`.
 6. Insert/find import provenance by provider/version/checksum.
 7. For every source record:
-   - look up previous row by `(provider_id, source_key)`;
+   - load previous row by `(provider_id, source_key)`;
    - compare previous/new normalized brand/type identity;
    - upsert raw fields and sorted years;
-   - set `active = true`;
+   - set `active=true`;
    - preserve `first_seen_import_id`;
    - update `last_seen_import_id`;
-   - if a mapping already exists and normalized identity changed materially, set `mapping_needs_review = true`.
-8. Mark provider records missing from the new snapshot `active = false`.
-9. Preserve mapping rows for inactive records for historical/audit continuity.
+   - if a mapping already exists and normalized identity changed materially, set `mapping_needs_review=true`.
+8. Mark provider records missing from the new non-empty snapshot `active=false`.
+9. Preserve mapping rows for inactive records.
 10. Commit.
-11. Return deterministic summary.
+11. Return deterministic inserted/updated/reactivated/deactivated/review-required-set counts.
 
-Idempotent replay of the same normalized snapshot must not create duplicate provider/import/source rows and must not change clean mapping state.
+Replay of the same normalized snapshot is idempotent and must not manufacture new rows or dirty clean mappings.
 
-## Reactivation behavior
+## Reactivation
 
-If a previously inactive TSB code reappears:
+If an inactive TSB code reappears:
 
-- reuse the same `vehicle_source_records.id`;
-- set `active = true`;
-- update `last_seen_import_id` and metadata;
-- preserve the existing mapping;
-- if normalized identity differs from the previously stored identity, set `mapping_needs_review = true`.
+- reuse the same source-record UUID;
+- set `active=true`;
+- update last-seen import and metadata;
+- preserve mapping row;
+- if normalized identity differs materially, set `mapping_needs_review=true`.
 
-## Stale mapping behavior
-
-The key guardrail is:
+## Stale mapping guard
 
 ```text
-same source key + materially changed normalized source identity + existing mapping
+same source key
++ materially changed normalized source identity
++ existing mapping
         ↓
 mapping_needs_review = true
 ```
 
-The mapping row is retained, but reporting treats it as untrusted until explicitly confirmed or changed.
+The mapping row remains, but is not treated as trusted until explicit review.
 
-The source importer itself never clears `mapping_needs_review`.
+The source importer never clears `mapping_needs_review`.
 
-Only an explicit reviewed mapping apply/confirm operation may clear it.
+Only explicit mapping apply/confirm may clear it.
 
-## Repository-owned mapping file
+## Repository mapping file
 
-Reviewed source-to-canonical decisions live in Git as a small curation artifact, not as raw TSB data.
+Reviewed decisions live in Git as a small curation artifact, not as raw TSB data.
 
 Path:
 
@@ -470,7 +439,7 @@ Path:
 data/reference/vehicles/tsb-mappings.json
 ```
 
-Conceptual shape:
+Shape:
 
 ```json
 {
@@ -485,12 +454,7 @@ Conceptual shape:
 }
 ```
 
-The mapping file references stable repository identities:
-
-- TSB `sourceKey`;
-- Bizzat canonical `vehicle_models.catalog_key`.
-
-It does **not** hard-code database UUIDs.
+The file uses TSB source code + Bizzat `vehicle_models.catalog_key`, never DB UUIDs.
 
 ## Mapping apply algorithm
 
@@ -502,72 +466,70 @@ pnpm reference:apply:vehicle-mappings -- tsb data/reference/vehicles/tsb-mapping
 
 Algorithm:
 
-1. Parse mapping file as `unknown` and validate it.
+1. Parse mapping file as `unknown`; validate version, unique source keys, model keys, allowed methods.
 2. Open one DB transaction.
 3. Resolve provider `tsb-kasko`.
 4. For each mapping:
-   - resolve source record by provider + `sourceKey`;
-   - resolve canonical model by `catalog_key`;
+   - resolve source record by provider + sourceKey;
+   - resolve canonical model by catalog_key;
    - reject missing source record;
    - reject missing canonical model;
-   - upsert `vehicle_source_mappings`;
-   - set/replace `mapping_method`;
-   - clear that source record's `mapping_needs_review`.
-5. Do not delete unrelated mappings merely because they are absent from the mapping file unless the file explicitly adopts full-snapshot semantics in a later design.
+   - reject an inactive canonical target for a new/updated mapping;
+   - upsert mapping/method;
+   - clear `mapping_needs_review` on that source record.
+5. Do not delete unrelated mappings merely because they are absent from the file.
 6. Commit.
 
-Initial mapping files are therefore **patch/apply artifacts**, not authoritative delete-all snapshots.
+Initial mapping files are patch/apply artifacts, not delete-all authoritative snapshots.
 
-This avoids accidental mapping loss while the Turkey catalog is being curated incrementally.
+## Source coverage report
 
-## Mapping report
-
-B1 provides a deterministic maintenance report command.
-
-Concept:
+Maintenance command concept:
 
 ```text
 pnpm reference:report:vehicle-source -- tsb
 ```
 
-Summary:
+Summary shape:
 
 ```json
 {
   "provider": "tsb-kasko",
   "activeRecords": 100,
-  "trustedMapped": 60,
+  "trustedMapped": 55,
   "unmapped": 35,
   "reviewRequired": 5,
+  "invalidMappings": 5,
   "inactiveRecords": 7
 }
 ```
 
 Definitions:
 
-- `trustedMapped`: active source record + mapping exists + `mapping_needs_review = false`;
-- `unmapped`: active source record + no mapping;
-- `reviewRequired`: active source record + mapping exists + `mapping_needs_review = true`;
-- `inactiveRecords`: source record no longer present in current snapshot.
+- `trustedMapped`: active source + mapping + `mapping_needs_review=false` + canonical target active;
+- `unmapped`: active source + no mapping;
+- `reviewRequired`: active source + mapping + `mapping_needs_review=true`;
+- `invalidMappings`: active source + mapping target exists but canonical model is inactive;
+- `inactiveRecords`: source no longer present in current snapshot.
 
-A mapping to an inactive canonical model is not counted as trusted for active source coverage and is reported as review-required or a separate invalid-mapping detail in the human-readable output.
+`invalidMappings` is derived report state; it does not mutate `mapping_needs_review` because source identity may be perfectly stable while product taxonomy has been deactivated.
 
-The report may include deterministic detail rows sorted by brand/type/source key, but must not expose TSB kasko price data because it is not stored.
+Detail rows are deterministic and sorted by normalized brand/type/source key.
+
+TSB kasko prices never appear because they are not stored.
 
 ---
 
-# B2 design — Turkey catalog curation and population
+# B2 — Turkey catalog curation and population
 
 ## Purpose
 
-B2 turns source coverage into a reviewed product taxonomy. It does not let the importer invent taxonomy automatically.
-
-The workflow is:
+B2 turns source coverage into a reviewed product taxonomy. It does not let TSB import reshape canonical taxonomy automatically.
 
 ```text
 TSB source records
  + canonical brands/series
- + brand normalization
+ + brand aliases
  + series aliases
         ↓
 candidate generator
@@ -581,73 +543,89 @@ catalog.json + tsb-mappings.json
 canonical import + mapping apply
 ```
 
-## Brand normalization
+## Brand aliases
 
-Repository-owned file:
+Path:
 
 ```text
 data/reference/vehicles/brand-aliases.json
 ```
 
-Conceptual shape:
+Exact shape:
 
 ```json
 {
-  "RENAULT (OYAK)": "renault",
-  "RENAULT": "renault",
-  "VW": "volkswagen",
-  "VOLKSWAGEN": "volkswagen"
+  "version": "2026-09-08.1",
+  "aliases": [
+    { "raw": "RENAULT (OYAK)", "brandKey": "renault" },
+    { "raw": "RENAULT", "brandKey": "renault" },
+    { "raw": "VW", "brandKey": "volkswagen" },
+    { "raw": "VOLKSWAGEN", "brandKey": "volkswagen" }
+  ]
 }
 ```
 
 Rules:
 
-- alias targets are Bizzat `vehicle_brands.catalog_key` values;
-- unknown brand => unmapped candidate, never new canonical brand automatically;
-- one raw brand must resolve to at most one canonical brand;
-- changes are code-reviewed Git changes.
+- each normalized `raw` alias is unique;
+- `brandKey` must resolve to a canonical `vehicle_brands.catalog_key`;
+- unknown brand aliases do not create canonical brands automatically;
+- changes are ordinary reviewed Git changes.
 
 ## Series aliases
 
-Repository-owned file:
+Path:
 
 ```text
 data/reference/vehicles/series-aliases.json
 ```
 
-Conceptual shape:
+Exact shape:
 
 ```json
 {
-  "renault": {
-    "clio": ["CLIO"],
-    "megane": ["MEGANE", "MEGANE SEDAN"]
-  },
-  "fiat": {
-    "egea": ["EGEA", "EGEA SEDAN", "EGEA CROSS"]
-  }
+  "version": "2026-09-08.1",
+  "entries": [
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:clio",
+      "aliases": ["CLIO"]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:megane",
+      "aliases": ["MEGANE", "MEGANE SEDAN"]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:egea",
+      "aliases": ["EGEA", "EGEA SEDAN", "EGEA CROSS"]
+    }
+  ]
 }
 ```
 
-Alias targets are Bizzat `vehicle_series.catalog_key` values or are nested under a canonical brand/series key in the concrete implementation.
+Validation:
 
-The final implementation chooses one unambiguous JSON representation and validates all targets against the canonical catalog.
+- `brandKey` must exist and be active in canonical input;
+- `seriesKey` must exist, be active, and belong to `brandKey`;
+- normalized aliases are non-empty;
+- within one brand, one normalized alias may map to only one series;
+- duplicates within an entry are rejected/normalized deterministically.
 
 ## Candidate-series matching
 
-Candidate matching is deterministic and conservative.
-
 Rules:
 
-1. Resolve brand first.
-2. Consider aliases only for that canonical brand.
+1. Resolve canonical brand first.
+2. Consider series aliases only for that brand.
 3. Match normalized token boundaries, not arbitrary substring containment.
-4. Prefer the longest explicit alias when one alias is a strict extension of another.
-5. If multiple distinct series remain plausible, mark ambiguous.
-6. If no alias matches, mark unmapped.
-7. Never create a canonical series automatically from an unmatched token.
+4. Prefer the longest matching alias when aliases for the same brand overlap.
+5. If equally specific aliases point to different series, result is ambiguous.
+6. No match => unmapped/no-series.
+7. Never create a canonical series automatically.
 
-Examples:
+Example:
 
 ```text
 CLIO EVOLUTION 1.0 TCE X-TRONIC 90
@@ -655,17 +633,11 @@ CLIO EVOLUTION 1.0 TCE X-TRONIC 90
 series candidate = renault:clio
 ```
 
-```text
-GRAND CHEROKEE 3.0 ...
-```
-
-must not be misclassified as another series merely because a shorter token appears inside the string.
+The matcher must not classify a longer nameplate as a shorter unrelated series merely because a substring appears inside it.
 
 ## Candidate model labels
 
-Candidate generation may propose a final model label after removing an explicitly matched series alias from the source type, but it must remain reviewable.
-
-A proposal may be more explicit than the final desired product label.
+After exact brand/series resolution, the generator may propose a model label by removing the matched series alias and normalizing presentation.
 
 Example:
 
@@ -680,119 +652,101 @@ reviewed canonical label may become:
 1.0 TCe Evolution
 ```
 
-The generator does not need to solve a universal engine/trim grammar.
+The generator does not need a universal engine/trim grammar. The proposal remains a review artifact.
 
-## Canonical identity during curation
+## Candidate output
 
-New canonical keys are repository-owned and explicitly reviewed.
-
-Example:
-
-```text
-toyota:corolla:1-33-life
-```
-
-The key is not mechanically regenerated if display naming is later cleaned up.
-
-B2 may add many canonical models, but it must not introduce `vehicle_generations`, `vehicle_engines`, `vehicle_trims`, or spec tables solely to make parsing easier.
-
-## Candidate generator output
-
-The generator produces a deterministic review artifact/report containing at least:
+At minimum:
 
 ```text
 sourceKey
 brandRaw
 typeRaw
-canonicalBrandCandidate
-canonicalSeriesCandidate
+brandKeyCandidate
+seriesKeyCandidate
 proposedModelLabel
 status: exact-series | ambiguous-series | unknown-brand | no-series
 ```
 
-This generated report is not a runtime API and does not become a public data source.
-
-It may be a local/CI artifact rather than a permanently committed large file.
+Generated candidate output is not a runtime API or authoritative public data source. It may be local/CI artifact instead of a permanently committed large file.
 
 ## Human/agent review boundary
-
-An agent or human may assist curation, but approved source-control changes are the authority.
 
 Allowed:
 
 ```text
 agent proposes catalog/mapping diffs
-human/reviewer inspects PR
-normal CI validates deterministic rules
-merge commits the decisions
+reviewer inspects PR
+CI validates deterministic contracts
+merge commits decisions
 ```
 
 Not allowed:
 
 ```text
-live LLM call -> direct production taxonomy mutation
+live LLM/provider call -> direct production taxonomy mutation
 ```
 
 ## Real Turkey canonical catalog
 
-B2 replaces the tiny Phase A fixture as the operational catalog input with a reviewed file:
+B2 creates the operational canonical file:
 
 ```text
 data/reference/vehicles/catalog.json
 ```
 
-The existing Phase A fixture remains a small deterministic test fixture and must not be renamed to imply complete Turkey coverage.
+It follows the existing Phase A canonical import contract.
 
-`catalog.json` is Bizzat-owned taxonomy and can contain derived/curated labels; it must not reproduce TSB price data.
+The small Phase A fixture remains a test/dev fixture and must not be renamed to imply complete Turkey coverage.
+
+The canonical file contains Bizzat-owned taxonomy labels only; no TSB kasko prices.
 
 ## Source manifest
 
-B2 maintains:
+Path:
 
 ```text
 data/reference/vehicles/source-manifest.json
 ```
 
-It records the provenance and role of external inputs used during curation.
-
-For TSB, record at minimum:
+For each material external input record:
 
 ```text
 name
-official page URL
-source period/version used
+source URL
+pinned commit/version/source period
 accessed date
+license/terms note
+role
+```
+
+For TSB:
+
+```text
 role = turkey-coverage
 license/terms note = no open redistribution license observed; raw export not committed
 ```
 
-For open datasets, record:
-
-```text
-repository/source URL
-pinned commit/version
-license
-role = nameplate-bootstrap or manual-reference
-```
+For open bootstrap sources, record exact pinned commit/version + license.
 
 ## Coverage success criteria
 
-B2 is not required to map 100% of every TSB vehicle type before the MVP can progress.
+B2 does not require 100% of every TSB type before the rest of the MVP can progress.
 
-The quality gate is:
+Quality gates:
 
-- all canonical rows in `catalog.json` are valid and reviewable;
-- all committed TSB mappings resolve to existing canonical models;
-- no ambiguous candidate is silently mapped;
-- coverage report clearly shows remaining unmapped/review-required records;
-- the MVP automobile catalog has sufficient Turkish-market breadth for listing creation/filtering;
-- low-confidence/rare cases may remain unmapped and be curated incrementally.
+- every canonical row is valid/reviewable;
+- every committed mapping resolves to an existing active canonical model at apply time;
+- ambiguous candidates are never silently mapped;
+- report exposes remaining unmapped/review-required/invalid cases;
+- canonical catalog has practical Turkish-market breadth for automobile listing creation/filtering;
+- rare/uncertain types may remain unmapped and be curated incrementally.
 
-A numeric minimum percentage is intentionally not hard-coded before the real TSB snapshot is measured.
+No numeric percentage is hard-coded before the first real normalized TSB snapshot is measured.
 
-## Runtime architecture after Phase B
+## Runtime after Phase B
 
-Nothing changes in the live read path:
+Live read path stays unchanged:
 
 ```text
 Next.js
@@ -806,17 +760,11 @@ vehicle_brands / vehicle_series / vehicle_models
 PostgreSQL
 ```
 
-The live API does not join TSB source tables to build dropdowns.
-
-Source tables are maintenance/provenance infrastructure only.
+The public API never joins source tables to construct dropdowns.
 
 ## Transaction boundaries
 
-All source imports and mapping applies use short PostgreSQL transactions.
-
-No external HTTP request or raw file download occurs while a DB transaction is open.
-
-Recommended operational sequence:
+No external HTTP/file acquisition occurs inside a DB transaction.
 
 ```text
 acquire official export locally
@@ -831,158 +779,140 @@ report/candidate generation
         ↓
 review Git changes
         ↓
-canonical import / mapping apply transactions
+short canonical-import / mapping-apply transactions
 ```
 
 ## Error behavior
 
 Maintenance commands fail non-zero on:
 
-- malformed normalized snapshot;
+- malformed snapshot/mapping/alias file;
+- empty TSB snapshot;
 - duplicate source keys;
-- conflicting identity for one TSB code within a snapshot;
+- conflicting identity for one TSB code in one snapshot;
 - invalid year arrays;
-- missing provider requirements;
 - missing source record during mapping apply;
-- missing canonical model key during mapping apply;
+- missing/inactive canonical model during mapping apply;
+- invalid alias targets;
 - DB transaction failure.
 
-Ambiguous mapping candidates are **not command errors**. They are report outcomes and remain unmapped.
+Ambiguous candidate results are report outcomes, not command errors.
 
 ## Testing strategy
 
 ### B1 unit tests
 
-Cover:
-
-- runtime validation accepts valid normalized TSB snapshot;
+- valid runtime snapshot validation;
 - malformed shape rejected;
+- empty snapshot rejected;
 - duplicate source code rejected;
-- duplicate/unsorted years normalized or rejected according to concrete validator contract;
-- whitespace/case-only identity changes compare equal;
-- meaningful brand/type changes compare different;
-- deterministic normalized checksum.
+- year normalization/range behavior;
+- case/whitespace-only identity change compares equal;
+- meaningful source identity change compares different;
+- deterministic checksum independent of record/year input order;
+- mapping file runtime validation.
 
 ### B1 PostgreSQL integration tests
 
-Cover:
-
-- source tables/FKs/indexes created;
-- first import creates provider/import/source rows;
-- identical import is idempotent;
-- same TSB code keeps the same source-record UUID;
-- model-year metadata updates on the same source row;
-- missing source code becomes inactive;
-- reappearing source code reuses the same UUID;
-- mapped source identity change sets `mapping_needs_review=true`;
-- unmapped identity change does not manufacture a mapping;
-- mapping apply resolves source key + canonical catalog key;
-- mapping apply clears review-required state;
-- failed import/apply transaction rolls back;
-- report counts trusted/unmapped/review-required deterministically.
+- source tables/FKs/indexes;
+- first import creates provenance/source rows;
+- identical import idempotent;
+- same TSB code preserves source UUID;
+- year metadata updates on same source row;
+- missing source becomes inactive;
+- reappearing source reuses UUID;
+- mapped identity change sets review flag;
+- unmapped identity change does not manufacture mapping;
+- mapping apply resolves source + active canonical key;
+- mapping apply clears review flag;
+- mapping to inactive canonical target rejected;
+- failed import/apply rolls back;
+- report counts trusted/unmapped/review-required/invalid deterministically.
 
 ### B2 tests
 
-Cover:
-
-- brand alias target validity;
-- series alias target validity;
+- brand alias target validity/uniqueness;
+- series alias target validity/uniqueness;
 - deterministic brand normalization;
 - token-boundary series matching;
 - longest-alias preference;
-- ambiguous series remains ambiguous;
+- equal-specificity ambiguity fails closed;
 - unknown brand remains unmapped;
 - committed mapping file references valid source/canonical keys;
-- canonical catalog remains valid under the Phase A validator/importer;
-- public vehicle reference API reads the populated canonical catalog without source metadata.
+- `catalog.json` passes Phase A validator/importer;
+- public vehicle API reads populated canonical catalog with no source metadata.
 
 ## Performance
 
-TSB source data is small enough for ordinary PostgreSQL tables and indexed maintenance queries.
+Ordinary PostgreSQL tables and B-tree indexes are sufficient. Candidate matching is maintenance batch work and can use in-memory alias maps.
 
-Do not add caching/search infrastructure for Phase B.
-
-Candidate matching can run as a maintenance batch in Node/TypeScript using in-memory normalized alias structures plus PostgreSQL/source JSON input.
+No Redis/search/cache infrastructure is added.
 
 ## Security/privacy
 
-TSB source facts are catalog/reference data, not personal vehicle records.
+Source facts are catalog/reference data only.
 
-Do not add:
+Do not store:
 
 - VIN;
 - plate;
 - owner/user data;
-- EİDS authorization responses;
-- personal insurance policy data.
+- policy/personal insurance data;
+- EİDS authorization responses.
 
-## Observability
+## Explicit rejected approaches
 
-Maintenance CLI output should be structured enough to understand:
+### TSB mapping by vehicle code + model year
 
-```text
-source version
-checksum
-inserted/updated/reactivated/deactivated counts
-trusted mapped
-unmapped
-review required
-```
+Rejected because it duplicates one source type across years.
 
-Do not add a metrics/observability platform solely for these maintenance jobs.
+### Storing TSB kasko prices
 
-## Explicit decisions / rejected alternatives
-
-### Mapping by TSB code + model year
-
-Rejected. It duplicates one source vehicle type across years and creates repeated mapping work.
-
-### Storing TSB prices
-
-Rejected. Price data is not needed for the current Bizzat product requirement and increases data/licensing/scope risk.
+Rejected because Bizzat does not need them for the current product requirement and they increase scope/data-rights risk.
 
 ### Committing raw TSB exports
 
-Rejected. The public repository does not need raw provider files and no open redistribution license has been established.
+Rejected because the public repo does not need provider raw files and no open redistribution license has been established.
 
 ### Runtime TSB fetch
 
-Rejected. It creates availability, latency, terms, and schema-change coupling in the product path.
+Rejected because it couples product availability/latency/schema/terms to an external maintenance source.
 
 ### Automatically creating canonical models for every TSB type
 
-Rejected. TSB `type` is a provider coverage string, not Bizzat's product taxonomy.
+Rejected because TSB `type` is provider coverage text, not Bizzat product taxonomy.
 
 ### Fuzzy/LLM auto-mapping to reach 100%
 
-Rejected. Ambiguity remains visible rather than being hidden as false precision.
+Rejected. Ambiguity remains visible.
 
 ## B1 acceptance criteria
 
 B1 is complete when:
 
 1. TSB source identity is one record per vehicle code, not per year.
-2. Multiple model years are stored as metadata on that source record.
-3. Raw TSB price values are not persisted.
-4. Source/provider/import provenance is persisted.
-5. Source imports are idempotent and deactivate/reactivate without changing source UUID.
-6. Existing mappings become review-required when normalized source identity changes materially.
-7. Explicit mapping apply resolves repository source/canonical keys and can clear review-required state.
-8. Deterministic mapped/unmapped/review-required reporting exists.
-9. Normal runtime still performs zero TSB/provider calls.
-10. PostgreSQL 18 integration tests cover the critical source/mapping lifecycle.
+2. Multiple model years are metadata on that source record.
+3. Empty source snapshots fail closed.
+4. TSB kasko prices are not persisted.
+5. provider/import provenance is persisted.
+6. source imports are idempotent and preserve UUID through deactivate/reactivate.
+7. materially changed mapped source identity sets `mapping_needs_review=true`.
+8. explicit mapping apply uses source code + canonical catalog key and can clear review state.
+9. deterministic trusted/unmapped/review-required/invalid reporting exists.
+10. runtime still performs zero TSB/provider calls.
+11. PostgreSQL 18 integration tests cover the source/mapping lifecycle.
 
 ## B2 acceptance criteria
 
 B2 is complete when:
 
-1. brand normalization and series aliases are repository-owned and validated;
+1. brand/series aliases are repository-owned and validated;
 2. candidate generation is deterministic and ambiguity fails closed;
-3. a reviewed Turkey automobile `catalog.json` exists;
-4. reviewed TSB mappings use source codes + canonical catalog keys, not DB UUIDs;
-5. source provenance is documented without committing raw TSB exports/prices;
-6. canonical import successfully populates PostgreSQL;
+3. reviewed Turkey automobile `catalog.json` exists;
+4. reviewed TSB mappings use source codes + canonical keys, not DB UUIDs;
+5. provenance is documented without committing raw TSB exports/prices;
+6. canonical import populates PostgreSQL successfully;
 7. public vehicle endpoints return the populated canonical hierarchy;
-8. coverage reporting exposes remaining unmapped/review-required cases;
+8. coverage reporting exposes remaining unmapped/review-required/invalid cases;
 9. no runtime LLM/provider dependency is introduced;
 10. no unnecessary generation/engine/trim/spec subsystem is introduced.
