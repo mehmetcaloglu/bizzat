@@ -301,6 +301,7 @@ Fields:
 - `type_raw` text
 - `model_year` integer nullable
 - `active` boolean default true
+- `mapping_needs_review` boolean default false
 - `first_seen_import_id` FK
 - `last_seen_import_id` FK
 - `created_at` timestamptz
@@ -321,6 +322,8 @@ tsb-kasko:122-1260:2024
 ```
 
 The source key is infrastructure detail and never leaks into public listing contracts.
+
+Source identity fields are normalized before comparison. If a previously mapped source record keeps the same `source_key` but its normalized brand/type identity changes materially, the import sets `mapping_needs_review = true`. An existing mapping is not treated as trusted until maintenance review confirms or updates it.
 
 ### `vehicle_source_mappings`
 
@@ -343,6 +346,10 @@ curated-import
 No numeric confidence model is needed initially.
 
 No mapping row means `unmapped`.
+
+A mapping with `vehicle_source_records.mapping_needs_review = true` is reported separately as stale/review-required and is not counted as a clean trusted mapping.
+
+Creating or confirming a mapping clears `mapping_needs_review` in the same maintenance transaction.
 
 The importer does not silently invent a mapping just to reach 100% coverage.
 
@@ -446,6 +453,7 @@ Rules:
 - series candidate must use explicit alias/name boundaries, not arbitrary substring guessing;
 - multiple plausible series candidates => unmapped;
 - no matching series => unmapped;
+- stale mappings with `mapping_needs_review = true` require review before being counted as trusted;
 - an LLM is never called in the live listing request path;
 - an LLM must not directly mutate production taxonomy without a reviewed repository change;
 - a maintenance agent may help propose mappings, but the result is a normal code/data review artifact.
@@ -523,10 +531,11 @@ Algorithm:
 3. Compute checksum.
 4. Insert/find provider and import metadata.
 5. Upsert source records by provider + source key.
-6. Update `last_seen_import_id` and raw fields.
-7. Mark source records missing from the new snapshot inactive.
-8. Preserve existing canonical mappings unless the maintenance review explicitly changes them.
-9. Produce mapped/unmapped/change summary.
+6. Update `last_seen_import_id` and normalized raw fields.
+7. If normalized source identity changes for an already mapped record, set `mapping_needs_review = true`.
+8. Mark source records missing from the new snapshot inactive.
+9. Preserve mapping rows, but treat review-required mappings as stale until explicitly confirmed or changed.
+10. Produce mapped/unmapped/stale/change summary.
 
 This command does not create new canonical brand/series/model rows automatically.
 
@@ -587,7 +596,8 @@ Maintenance imports fail closed:
 - orphan series/model => reject import;
 - malformed source record => reject source import;
 - DB failure => rollback transaction;
-- ambiguous source mapping => remain unmapped, not guessed.
+- ambiguous source mapping => remain unmapped, not guessed;
+- stale source mapping => requires review, not silently trusted.
 
 ## Initial implementation decomposition
 
@@ -617,7 +627,8 @@ Implement:
 - `vehicle_source_records`
 - `vehicle_source_mappings`
 - normalized TSB source importer
-- candidate/unmapped report
+- stale-mapping guard
+- candidate/unmapped/stale report
 - repository mapping/alias workflow
 - real initial Turkish catalog population/curation
 
@@ -657,6 +668,8 @@ Phase B additionally tests:
 - same source key preserves row ID;
 - missing source record becomes inactive;
 - mapped and unmapped counts are deterministic;
+- normalized identity change marks an existing mapping review-required;
+- confirming/changing the mapping clears review-required state;
 - ambiguous candidate is not automatically mapped.
 
 ### API tests
@@ -767,6 +780,7 @@ The overall vehicle-catalog subsystem is complete when:
 7. TSB records can be tracked separately with provider/import provenance.
 8. TSB mappings never replace Bizzat canonical IDs.
 9. Ambiguous source records remain unmapped rather than guessed.
-10. `model_year` remains an independent listing field and older vehicles are not blocked by TSB's 15-year coverage window.
-11. Real PostgreSQL integration tests cover import identity/deactivation/FK behavior.
-12. No unnecessary vehicle-spec engine, cache, search service or microservice is introduced.
+10. Changed source identity cannot silently keep a stale mapping trusted.
+11. `model_year` remains an independent listing field and older vehicles are not blocked by TSB's 15-year coverage window.
+12. Real PostgreSQL integration tests cover import identity/deactivation/FK behavior.
+13. No unnecessary vehicle-spec engine, cache, search service or microservice is introduced.
