@@ -1,0 +1,29 @@
+{
+  "name": "@bizzat/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test --max-warnings=0",
+    "test": "vitest run test/app.test.ts",
+    "test:integration": "vitest run test/db.integration.test.ts",
+    "db:migrate:raw": "tsx src/db/migrate-cli.ts"
+  },
+  "dependencies": {
+    "@bizzat/contracts": "workspace:*",
+    "@fastify/type-provider-typebox": "6.1.0",
+    "fastify": "5.12.3",
+    "kysely": "0.29.4",
+    "pg": "^8.22.0",
+    "typebox": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.20.0",
+    "tsx": "^4.0.0",
+    "vitest": "4.1.11"
+  }
+}

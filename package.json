@@ -1,0 +1,24 @@
+{
+  "name": "bizzat",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24.20.0 <25"
+  },
+  "scripts": {
+    "contracts:build": "pnpm --filter @bizzat/contracts build",
+    "dev": "pnpm contracts:build && node scripts/run-pnpm.mjs --parallel --filter @bizzat/contracts --filter @bizzat/api --filter @bizzat/web dev",
+    "db:up": "docker compose -f compose.dev.yml up -d postgres",
+    "db:down": "docker compose -f compose.dev.yml down",
+    "db:migrate": "node scripts/run-pnpm.mjs --filter @bizzat/api db:migrate:raw",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm contracts:build && pnpm -r --if-present typecheck",
+    "test": "pnpm contracts:build && node scripts/run-pnpm.mjs --filter @bizzat/api test && node scripts/run-pnpm.mjs --filter @bizzat/api test:integration && node scripts/run-pnpm.mjs --filter @bizzat/web test",
+    "build": "pnpm -r --if-present build"
+  },
+  "devDependencies": {
+    "eslint": "10.10.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0"
+  }
+}

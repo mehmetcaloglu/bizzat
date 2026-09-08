@@ -1,0 +1,17 @@
+import { Kysely, PostgresDialect } from 'kysely'
+import { Pool } from 'pg'
+
+export type Database = Record<never, never>
+
+export function createDatabase(connectionString: string): Kysely<Database> {
+  return new Kysely<Database>({
+    dialect: new PostgresDialect({
+      pool: new Pool({
+        connectionString,
+        max: 10,
+        connectionTimeoutMillis: 2000,
+        idleTimeoutMillis: 30000,
+      }),
+    }),
+  })
+}
