@@ -58,6 +58,9 @@ jobs:
       - name: Import deterministic location fixture
         run: pnpm reference:import:locations -- data/reference/locations/fixture.locations.json
 
+      - name: Import deterministic vehicle catalog fixture
+        run: pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json
+
       - name: Tests
         run: pnpm test
 

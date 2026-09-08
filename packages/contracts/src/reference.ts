@@ -28,3 +28,30 @@ export const ReferenceDistrictListResponseSchema = Type.Object({
 export const ReferenceNeighborhoodListResponseSchema = Type.Object({
   items: Type.Array(ReferenceNeighborhoodSchema),
 })
+
+export const ReferenceVehicleBrandSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  name: Type.String(),
+})
+
+export const ReferenceVehicleSeriesSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  name: Type.String(),
+})
+
+export const ReferenceVehicleModelSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  name: Type.String(),
+})
+
+export const ReferenceVehicleBrandListResponseSchema = Type.Object({
+  items: Type.Array(ReferenceVehicleBrandSchema),
+})
+
+export const ReferenceVehicleSeriesListResponseSchema = Type.Object({
+  items: Type.Array(ReferenceVehicleSeriesSchema),
+})
+
+export const ReferenceVehicleModelListResponseSchema = Type.Object({
+  items: Type.Array(ReferenceVehicleModelSchema),
+})

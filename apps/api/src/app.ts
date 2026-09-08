@@ -7,6 +7,7 @@ import type { Database } from './db/client.js'
 import { systemRoutes } from './modules/system/system.routes.js'
 import { meRoutes } from './modules/users/me.routes.js'
 import { locationRoutes } from './reference/location.routes.js'
+import { vehicleCatalogRoutes } from './reference/vehicle/vehicle-catalog.routes.js'
 
 export interface BuildAppOptions {
   readinessCheck: () => Promise<void>
@@ -27,6 +28,10 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
 
   if (options.db) {
     app.register(locationRoutes, {
+      prefix: '/api/v1',
+      db: options.db,
+    })
+    app.register(vehicleCatalogRoutes, {
       prefix: '/api/v1',
       db: options.db,
     })

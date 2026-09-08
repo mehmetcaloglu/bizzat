@@ -61,6 +61,35 @@ export interface NeighborhoodsTable {
   updated_at: Generated<Date>
 }
 
+export interface VehicleBrandsTable {
+  id: Generated<string>
+  catalog_key: string
+  name: string
+  active: Generated<boolean>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
+export interface VehicleSeriesTable {
+  id: Generated<string>
+  brand_id: string
+  catalog_key: string
+  name: string
+  active: Generated<boolean>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
+export interface VehicleModelsTable {
+  id: Generated<string>
+  series_id: string
+  catalog_key: string
+  name: string
+  active: Generated<boolean>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
 export interface Database {
   profiles: ProfilesTable
   reference_data_providers: ReferenceDataProvidersTable
@@ -68,6 +97,9 @@ export interface Database {
   provinces: ProvincesTable
   districts: DistrictsTable
   neighborhoods: NeighborhoodsTable
+  vehicle_brands: VehicleBrandsTable
+  vehicle_series: VehicleSeriesTable
+  vehicle_models: VehicleModelsTable
 }
 
 export function createDatabase(connectionString: string): Kysely<Database> {
