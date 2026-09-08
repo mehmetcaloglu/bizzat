@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { checksumVehicleSourceSnapshot } from '../src/reference/vehicle/source/source-checksum.js'
+import {
+  VehicleSourceMappingValidationError,
+  validateVehicleSourceMappingFile,
+} from '../src/reference/vehicle/source/mapping-validator.js'
 import { normalizeVehicleSourceIdentity } from '../src/reference/vehicle/source/source-normalization.js'
 import {
   VehicleSourceValidationError,
@@ -28,6 +32,19 @@ function makeInput(): unknown {
         brandRaw: 'RENAULT (OYAK)',
         typeRaw: 'CLIO EVOLUTION 1.0 TCE X-TRONIC 90',
         availableModelYears: [2024, 2023, 2022],
+      },
+    ],
+  }
+}
+
+function makeMappingInput(): unknown {
+  return {
+    version: ' fixture-1 ',
+    mappings: [
+      {
+        sourceKey: ' 144-1064 ',
+        vehicleModelKey: ' toyota:corolla:1-33-life ',
+        method: 'curated-import',
       },
     ],
   }
@@ -115,5 +132,57 @@ describe('vehicle source checksum', () => {
     const second = validateAndNormalizeVehicleSourceSnapshot(reorderedInput, fixedNow)
 
     expect(checksumVehicleSourceSnapshot(second)).toBe(checksumVehicleSourceSnapshot(first))
+  })
+})
+
+describe('vehicle source mapping file validation', () => {
+  it('accepts unknown input, trims identity fields, and accepts the three mapping methods', () => {
+    const value = makeMappingInput() as {
+      version: string
+      mappings: Array<Record<string, unknown>>
+    }
+    value.mappings.push(
+      { sourceKey: '122-1260', vehicleModelKey: 'renault:clio:1-0-tce-evolution', method: 'manual' },
+      { sourceKey: '100-0001', vehicleModelKey: 'fiat:egea:1-4-fire-easy', method: 'exact-rule' },
+    )
+
+    expect(validateVehicleSourceMappingFile(value)).toEqual({
+      version: 'fixture-1',
+      mappings: [
+        { sourceKey: '144-1064', vehicleModelKey: 'toyota:corolla:1-33-life', method: 'curated-import' },
+        { sourceKey: '122-1260', vehicleModelKey: 'renault:clio:1-0-tce-evolution', method: 'manual' },
+        { sourceKey: '100-0001', vehicleModelKey: 'fiat:egea:1-4-fire-easy', method: 'exact-rule' },
+      ],
+    })
+  })
+
+  it('rejects malformed shapes, blank fields, duplicate source keys and unknown methods', () => {
+    expect(() => validateVehicleSourceMappingFile(null)).toThrow(VehicleSourceMappingValidationError)
+
+    const blankVersion = makeMappingInput() as { version: string }
+    blankVersion.version = '   '
+    expect(() => validateVehicleSourceMappingFile(blankVersion)).toThrow(VehicleSourceMappingValidationError)
+
+    const notArray = makeMappingInput() as { mappings: unknown }
+    notArray.mappings = {}
+    expect(() => validateVehicleSourceMappingFile(notArray)).toThrow(VehicleSourceMappingValidationError)
+
+    for (const field of ['sourceKey', 'vehicleModelKey'] as const) {
+      const blank = makeMappingInput() as { mappings: Array<Record<string, unknown>> }
+      blank.mappings[0]![field] = '   '
+      expect(() => validateVehicleSourceMappingFile(blank)).toThrow(VehicleSourceMappingValidationError)
+    }
+
+    const duplicate = makeMappingInput() as { mappings: Array<Record<string, unknown>> }
+    duplicate.mappings.push({
+      sourceKey: '144-1064',
+      vehicleModelKey: 'other:model',
+      method: 'manual',
+    })
+    expect(() => validateVehicleSourceMappingFile(duplicate)).toThrow(VehicleSourceMappingValidationError)
+
+    const badMethod = makeMappingInput() as { mappings: Array<Record<string, unknown>> }
+    badMethod.mappings[0]!.method = 'fuzzy'
+    expect(() => validateVehicleSourceMappingFile(badMethod)).toThrow(VehicleSourceMappingValidationError)
   })
 })
