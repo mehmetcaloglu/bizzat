@@ -1,246 +1,300 @@
 # Location Reference Data Design
 
 Date: 2026-09-08
-Status: Approved in chat, awaiting written-spec review
+Status: Approved
 
 ## Goal
 
-Provide Bizzat with stable, queryable Turkish location reference data for the MVP without making normal application traffic depend on an external address service.
+Provide Bizzat with stable, queryable Turkish province/district/neighborhood reference data without making normal application traffic depend on an external address service.
 
-The first implementation covers:
+This subsystem covers:
 
 - provinces
 - districts
 - neighborhoods
-- source/version metadata
-- explicit import/update tooling
-- read-only REST endpoints used by the web listing/search flows
+- stable provider identity
+- per-import version/checksum provenance
+- explicit normalized-snapshot import tooling
+- public read-only hierarchy endpoints
 
-Vehicle make/series/model reference data is intentionally a separate follow-up design and PR.
+Vehicle make/series/model data is a separate follow-up subsystem and PR.
 
 ## Product boundary
 
-This reference-data subsystem is supporting infrastructure, not a new product feature. It exists so listing creation and filtering can use normalized Turkish locations consistently.
+The subsystem supports listing creation and filtering. It must not:
 
-It must not:
-
-- call a third-party location API during ordinary page/API requests
-- introduce Redis, queues, Elasticsearch, replicas, partitioning, or a new service
-- silently replace current rows from an unversioned remote response
+- call a third-party location API during ordinary web/API requests
+- import data during API startup or deploy
+- introduce Redis, queues, Elasticsearch, GIS, replicas, partitioning, or another service
 - treat a community dataset as an official government source
-- couple listing domain logic to the import source format
+- match administrative entities by display name alone
+- hard-delete disappeared administrative entities
+- expose source/provider metadata through the public reference API
 
 ## Source strategy
 
-### Canonical public-sector reference
+Turkey's official administrative/address truth is maintained by public-sector systems such as NVI/AKS and related official datasets. Bizzat preserves that distinction.
 
-Turkey's official address/administrative truth is maintained through the national address system and related public-sector datasets. The implementation preserves that distinction in documentation and metadata.
+The initial operational source is pinned to:
 
-### Import snapshot
+```text
+provider code: turkey-geo-api
+repository: https://github.com/onurusluca/turkey-geo-api
+version: 1.3
+commit: 5a16cef20f2335e3fe643c9618f931866bb8134c
+source date: 2026-04-14
+license: MIT
+```
 
-For the initial implementation, Bizzat may consume a pinned, versioned, openly licensed snapshot whose maintainers state that it is aligned with current NVI/TUIK administrative data.
+The pinned upstream snapshot reports 81 provinces, 973 districts, and 73,496 neighborhoods. Street-level data is intentionally excluded.
 
-The imported dataset is an operational snapshot, not Bizzat's claim of being an official NVI mirror.
+This is an operational snapshot, not an official NVI mirror.
 
-Every import records:
-
-- provider/source code
-- human-readable source name
-- source version or release date
-- source URL or repository URL
-- license identifier when known
-- checksum of the normalized import payload
-- import timestamp
-
-Changing source provider is allowed later without changing the public application API or listing schema.
+The application importer consumes a **normalized Bizzat snapshot JSON**. Source-specific extraction/normalization is a maintenance pre-step, not part of runtime request handling. The repository stores a small deterministic normalized fixture and a pinned source manifest rather than vendoring the upstream street-heavy dataset.
 
 ## Runtime architecture
 
-Normal runtime flow:
+Normal read flow:
 
 ```text
 Web -> Fastify /api/v1/reference/* -> PostgreSQL
 ```
 
-Import/update flow:
+Maintenance flow:
 
 ```text
-Pinned source snapshot -> normalizer -> validator -> PostgreSQL transaction
+Reviewed pinned source
+  -> normalize to Bizzat snapshot JSON
+  -> explicit CLI validator/importer
+  -> PostgreSQL transaction
 ```
 
-No external HTTP dependency exists in the read path.
+No external HTTP dependency exists in the runtime read path.
 
 ## Data model
 
-### `reference_data_sources`
+### `reference_data_providers`
 
-Represents a stable provider/source, not an individual snapshot.
+Stable source/provider identity.
 
 Fields:
 
-- `id` UUID primary key
-- `code` text unique, stable provider identifier
-- `name` text
+- `id` UUID primary key, generated with PostgreSQL `uuidv7()`
+- `code` text unique
+- `source_name` text
 - `source_url` text nullable
 - `license` text nullable
 - `created_at` timestamptz
 
-Example provider code: `turkey-geo-api`.
-
 ### `reference_data_imports`
 
-Represents one imported source snapshot/release.
+One imported provider snapshot/version.
 
 Fields:
 
 - `id` UUID primary key
-- `source_id` FK -> `reference_data_sources.id`
+- `provider_id` FK -> `reference_data_providers.id`
 - `version` text
 - `checksum_sha256` text
 - `imported_at` timestamptz
 
-Uniqueness:
+Unique:
 
-- unique `(source_id, version, checksum_sha256)`
+```text
+(provider_id, version, checksum_sha256)
+```
 
 ### `provinces`
 
-Fields:
-
 - `id` UUID primary key
-- `source_id` FK -> `reference_data_sources.id`
+- `provider_id` FK
 - `source_key` text
-- `code` text; Turkish province code, normalized as two digits
+- `code` text, normalized two-digit Turkish province code
 - `name` text
-- `active` boolean default true
-- `created_at` timestamptz
-- `updated_at` timestamptz
+- `active` boolean
+- timestamps
 
-Constraints/indexes:
+Unique:
 
-- unique `(source_id, source_key)`
-- unique `code`
-- index `(active, code, name)`
+```text
+(provider_id, source_key)
+```
+
+Only one active province may own a given province code.
+
+Index:
+
+```text
+(active, code, name)
+```
 
 ### `districts`
 
-Fields:
-
 - `id` UUID primary key
-- `source_id` FK -> `reference_data_sources.id`
+- `provider_id` FK
 - `source_key` text
 - `province_id` FK -> `provinces.id`
 - `name` text
-- `active` boolean default true
-- `created_at` timestamptz
-- `updated_at` timestamptz
+- `active` boolean
+- timestamps
 
-Constraints/indexes:
+Unique:
 
-- unique `(source_id, source_key)`
-- index `(province_id, active, name)`
+```text
+(provider_id, source_key)
+```
+
+Index:
+
+```text
+(province_id, active, name)
+```
 
 ### `neighborhoods`
 
-Fields:
-
 - `id` UUID primary key
-- `source_id` FK -> `reference_data_sources.id`
+- `provider_id` FK
 - `source_key` text
 - `district_id` FK -> `districts.id`
 - `name` text
-- `kind` text nullable; preserves source distinction such as mahalle/koy when present without forcing the UI to expose it
-- `active` boolean default true
-- `created_at` timestamptz
-- `updated_at` timestamptz
+- `kind` text nullable
+- `active` boolean
+- timestamps
 
-Constraints/indexes:
+Unique:
 
-- unique `(source_id, source_key)`
-- index `(district_id, active, name)`
+```text
+(provider_id, source_key)
+```
+
+Index:
+
+```text
+(district_id, active, name)
+```
 
 ## Identity and stability
 
-Application IDs are independent UUIDs. Import rows are matched by stable provider + source key, never by display names alone and never by snapshot/import ID.
+Application IDs are independent UUIDs. Imported entities are matched by:
 
-Reason:
+```text
+(provider_id, source_key)
+```
 
-- Turkish administrative names can change
-- duplicate names can exist under different parents
-- punctuation/casing changes should not create duplicate entities
-- a new snapshot version must update the same logical entity rather than insert a second copy
+Display names are never identity.
 
-If the chosen initial source lacks a trustworthy stable key at one level, the normalizer must construct a deterministic provider-scoped key from stable parent identifiers plus the provider's raw identifier. A plain normalized display name by itself is not sufficient.
+This allows:
+
+- spelling/name changes without new rows
+- duplicate names under different parents
+- stable historical listing references
+- reactivation of previously removed source entities with the same ID
+
+Provider identity is separate from snapshot/import identity, so a newer provider version updates the same logical rows.
+
+## Normalized snapshot contract
+
+The importer accepts:
+
+```ts
+interface NormalizedLocationSnapshot {
+  provider: {
+    code: string
+    sourceName: string
+    sourceUrl?: string
+    license?: string
+    version: string
+  }
+  provinces: Array<{
+    sourceKey: string
+    code: string
+    name: string
+  }>
+  districts: Array<{
+    sourceKey: string
+    provinceSourceKey: string
+    name: string
+  }>
+  neighborhoods: Array<{
+    sourceKey: string
+    districtSourceKey: string
+    name: string
+    kind?: string
+  }>
+}
+```
+
+The importer validates before opening a write transaction.
+
+Validation rejects:
+
+- missing provider metadata
+- empty hierarchy levels
+- duplicate source keys
+- duplicate province codes
+- empty/whitespace names
+- orphan districts
+- orphan neighborhoods
+
+A deterministic SHA-256 checksum is computed from a trimmed, source-key-sorted canonical representation. Runtime timestamps are not included.
 
 ## Import behavior
 
-The root command is:
+Command:
 
-```text
-pnpm reference:locations:import -- <snapshot-path>
+```bash
+pnpm reference:import:locations -- <normalized-snapshot.json>
 ```
 
-The initial repository snapshot path is:
+Development/CI fixture:
 
 ```text
-data/reference/locations/turkey-locations.json
+data/reference/locations/fixture.locations.json
+```
+
+Pinned operational source metadata:
+
+```text
+data/reference/locations/source-manifest.json
 ```
 
 Import algorithm:
 
-1. Load the pinned snapshot.
-2. Normalize source-specific fields into Bizzat's internal import DTO.
-3. Validate the complete hierarchy before mutating the database.
-4. Compute SHA-256 over the normalized payload.
-5. Start one PostgreSQL transaction.
-6. Insert/find the stable `reference_data_sources` provider record by `code`.
-7. Insert/find the `reference_data_imports` snapshot record.
-8. Upsert provinces by `(source_id, source_key)`.
-9. Upsert districts by `(source_id, source_key)` and resolve province foreign keys.
-10. Upsert neighborhoods by `(source_id, source_key)` and resolve district foreign keys.
-11. Mark rows for the same provider that are absent from the new snapshot as `active = false` instead of deleting them.
-12. Commit.
+1. Load normalized snapshot JSON.
+2. Validate the full hierarchy.
+3. Compute deterministic SHA-256 checksum.
+4. Start one PostgreSQL transaction.
+5. Insert/update stable provider by provider `code`.
+6. If switching operational provider, deactivate active rows belonging to the previous provider; retain them for history.
+7. Insert/find import metadata by `(provider_id, version, checksum)`.
+8. Upsert provinces by `(provider_id, source_key)`.
+9. Upsert districts by `(provider_id, source_key)` and resolve parent IDs from source keys.
+10. Upsert neighborhoods by `(provider_id, source_key)` and resolve parent IDs from source keys.
+11. Reactivate rows present in the new snapshot.
+12. Deactivate current-provider rows absent from the new snapshot, child-to-parent.
+13. Commit.
 
-If validation or persistence fails, the transaction rolls back. The previously imported reference data remains usable.
+Validation failure happens before the transaction. Persistence failure rolls the transaction back. Existing working reference data remains usable.
 
-Re-importing the same provider/version/checksum is a no-op from the application's point of view and must not create duplicate entities or duplicate import metadata.
+Re-importing the same provider/version/checksum must not duplicate entities or import metadata.
 
 ## Why deactivate instead of delete
 
-Listings may eventually reference a location that has been renamed, merged, split, or removed. Hard deletion would break historical referential integrity.
+A listing may reference a location that is later renamed, merged, or removed. Hard deletion could invalidate old listings.
 
 Inactive rows:
 
-- remain resolvable for old listings
-- are not returned by default in new listing/filter selection
-- can be explicitly included by internal tooling later if needed
-
-## Validation rules
-
-Before a snapshot may be committed:
-
-- provider code and source metadata are present
-- province source keys are unique
-- there are exactly 81 active provinces in the initial Turkey snapshot
-- province codes are unique and are two-digit strings from `01` through valid Turkish plate codes
-- district source keys are unique
-- every district references an existing province
-- neighborhood source keys are unique
-- every neighborhood references an existing district
-- names are non-empty after trimming
-- district and neighborhood counts exceed minimum sanity thresholds derived from the inspected pinned snapshot
-
-The exact district/neighborhood minimum thresholds are recorded alongside the pinned snapshot manifest during implementation. The importer fails closed on malformed or suspiciously incomplete snapshots.
+- remain available for historical foreign keys
+- are omitted from new listing/filter choices
+- may be reactivated with the same application ID if the source entity returns
 
 ## API
 
-All endpoints are read-only and public for MVP.
+All endpoints are public and read-only for MVP.
 
 ### `GET /api/v1/reference/provinces`
 
-Returns active provinces sorted by province code.
-
-Response shape:
+Returns active provinces sorted by code, then name.
 
 ```json
 {
@@ -252,132 +306,128 @@ Response shape:
 
 ### `GET /api/v1/reference/provinces/:provinceId/districts`
 
-Returns active districts belonging to the active province, alphabetically by Turkish display name.
+Returns active districts for an active province, alphabetically.
 
-Unknown or inactive province: `404`.
+Unknown or inactive parent: HTTP 404 with `REFERENCE_PARENT_NOT_FOUND`.
 
 ### `GET /api/v1/reference/districts/:districtId/neighborhoods`
 
-Returns active neighborhoods belonging to the active district, alphabetically by Turkish display name.
+Returns active neighborhoods for an active district, alphabetically.
 
-Unknown or inactive district: `404`.
+Unknown or inactive parent: HTTP 404 with `REFERENCE_PARENT_NOT_FOUND`.
 
-No generic arbitrary search endpoint is added in this phase.
+Public responses do not include provider IDs, source keys, source URLs, versions, or checksums.
 
-## Contracts
+## Contracts and module boundaries
 
-Public response schemas live in `packages/contracts` and are reused by Fastify and Next.js.
+Public response schemas live in `packages/contracts/src/reference.ts`.
 
-The importer DTO is internal to the API package because source normalization is infrastructure detail, not a public contract.
-
-## Repository structure
-
-Expected implementation areas:
+API code follows existing boundaries:
 
 ```text
-apps/api/src/reference/
-  location.repository.ts
-  location.service.ts
-  location.routes.ts
-  import/
-    location-import.types.ts
-    location-normalizer.ts
-    location-validator.ts
-    location-importer.ts
-    import-cli.ts
-
-apps/api/src/db/domain-migrations/
-  0003_create_location_reference_tables.ts
-
-packages/contracts/src/
-  reference.ts
-
-data/reference/locations/
-  turkey-locations.json
-  manifest.json
+route
+  -> LocationService
+  -> LocationRepository
+  -> PostgreSQL
 ```
 
-The default implementation stores a pinned normalized snapshot in the repository so local development and CI are deterministic and offline. Before committing the dataset, implementation must verify that its license permits redistribution and that its size is reasonable for the repository.
+Import infrastructure remains separate:
 
-If either condition fails, stop and revise this design before substituting a live-download runtime dependency.
+```text
+reference/import/
+  location-import.types.ts
+  location-validator.ts
+  location-checksum.ts
+  location-importer.ts
+  import-cli.ts
+```
+
+Listing modules must consume reference IDs/API contracts rather than know provider-specific source formats.
 
 ## Testing
 
-### Unit tests
+### Unit
 
-- source normalizer maps raw source data correctly
-- validator rejects duplicate/orphan/empty records
-- validator rejects snapshots without 81 provinces
-- checksum generation is deterministic
+- valid snapshot accepted
+- duplicate source keys rejected
+- duplicate province codes rejected
+- orphan district/neighborhood rejected
+- missing metadata/names rejected
+- checksum is independent of array insertion order
 
-### PostgreSQL integration tests
+### PostgreSQL 18 integration
 
-Run against real PostgreSQL 18:
-
-- migration creates all tables/constraints
-- first import inserts hierarchy
-- importing the same snapshot is idempotent
-- a newer snapshot from the same provider updates existing source-key rows instead of duplicating them
-- changed names update existing rows
-- missing rows become inactive
-- failure mid-import rolls back the transaction
+- migration creates provider/import/location tables
 - parent foreign keys are enforced
-- provider and import provenance records are preserved
+- first import creates hierarchy
+- repeated import is idempotent
+- renamed entity preserves ID
+- missing entity becomes inactive
+- reintroduced entity preserves ID and reactivates
+- invalid snapshot leaves existing data unchanged
 
-### API tests
+### API integration
 
-- province list returns only active rows
-- district endpoint scopes to province
-- neighborhood endpoint scopes to district
-- inactive/unknown parent returns 404
-- ordering is deterministic
+- only active rows returned
+- deterministic ordering
+- child queries scoped to parent
+- unknown parent returns 404
+- inactive parent returns 404
+- source/provider metadata is not exposed
 
-No repository mock may substitute for the PostgreSQL integration coverage.
+CI additionally runs the same root fixture-import CLI documented for developers.
 
 ## Performance and scalability
 
-The location dataset is small relative to listing data. PostgreSQL indexes on parent IDs and active/name ordering are sufficient.
+This dataset is small compared with listings. PostgreSQL indexes are sufficient.
 
-Do not add caching infrastructure in this phase. If later metrics show this traffic is material, HTTP/application caching can be considered without changing the database model or API.
+Do not add Redis/cache/search infrastructure for this phase. If measured traffic later justifies caching, it can be introduced without changing the public API or location data model.
 
 ## Operational update policy
 
-Location updates are deliberate maintenance operations, not automatic startup work.
-
-Rules:
-
-- API startup never runs location imports.
-- Deploy does not fetch a live location dataset implicitly.
-- A new snapshot/source version is reviewed and imported explicitly.
-- Each successful import leaves provider/version/checksum provenance metadata.
-- Import failure never deactivates the existing working dataset.
+- imports are deliberate maintenance operations
+- API startup never imports
+- deploy never downloads/imports a live snapshot implicitly
+- source version/commit is reviewed before a production import
+- each successful import records version/checksum provenance
+- runtime keeps serving PostgreSQL if external upstream is unavailable
 
 ## Security and privacy
 
-This subsystem contains public administrative reference data only. It must not contain user addresses, TC numbers, listing-owner information, or EİDS verification data.
+Only public administrative reference data belongs here.
+
+Do not store:
+
+- user addresses
+- TC numbers
+- listing-owner information
+- EİDS verification data
+
+inside this subsystem.
 
 ## Out of scope
 
 - vehicle make/series/model data
-- coordinates, polygons, GIS boundaries
-- address-number/building-level UAVT data
+- streets
+- coordinates/polygons/GIS
+- building/address-number UAVT data
 - postal codes
 - geocoding
 - map search
 - fuzzy location search
 - automatic external synchronization
-- admin UI for reference data
+- reference-data admin UI
 
 ## Acceptance criteria
 
 This phase is complete when:
 
-1. PostgreSQL stores normalized province/district/neighborhood reference data with stable provider identity and import provenance.
-2. A pinned snapshot can be imported repeatedly without duplicate entities or import records.
-3. A newer snapshot from the same provider updates the same logical rows.
-4. Removed source entities become inactive rather than being deleted.
-5. Public read-only hierarchy endpoints work through `/api/v1/reference/*`.
-6. Contracts are shared with the web package.
-7. Real PostgreSQL integration tests verify migration/import behavior.
-8. CI passes frozen install, migrations, lint, typecheck, tests, and build.
-9. Normal application runtime has zero dependency on an external location API.
+1. PostgreSQL stores province/district/neighborhood data with stable provider identity and import provenance.
+2. A normalized snapshot can be imported repeatedly without duplicates.
+3. A newer snapshot updates the same logical rows by provider/source key.
+4. Removed entities become inactive rather than being deleted.
+5. Public read-only hierarchy endpoints work under `/api/v1/reference/*`.
+6. Contracts are shared through `packages/contracts`.
+7. PostgreSQL 18 integration tests verify migration/import/FK behavior.
+8. CI verifies the explicit root import CLI plus lint, typecheck, tests, build, and frozen lockfile.
+9. Normal runtime has zero external location-service dependency.
