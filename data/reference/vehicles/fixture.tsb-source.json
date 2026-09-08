@@ -1,0 +1,28 @@
+{
+  "provider": {
+    "code": "tsb-kasko",
+    "sourceName": "Türkiye Sigorta Birliği Kasko Değer Listesi - CI fixture",
+    "sourceUrl": "https://www.tsb.org.tr/tr/kasko-arsiv-listesi",
+    "version": "fixture-2026-09"
+  },
+  "records": [
+    {
+      "sourceKey": "144-1064",
+      "brandRaw": "TOYOTA",
+      "typeRaw": "COROLLA 1.33 LIFE",
+      "availableModelYears": [2016, 2017, 2018]
+    },
+    {
+      "sourceKey": "122-1260",
+      "brandRaw": "RENAULT (OYAK)",
+      "typeRaw": "CLIO EVOLUTION 1.0 TCE X-TRONIC 90",
+      "availableModelYears": [2022, 2023, 2024]
+    },
+    {
+      "sourceKey": "100-0001",
+      "brandRaw": "FIAT",
+      "typeRaw": "EGEA SEDAN EASY 1.4 FIRE 95",
+      "availableModelYears": [2020, 2021]
+    }
+  ]
+}
