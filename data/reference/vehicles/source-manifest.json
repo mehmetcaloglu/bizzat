@@ -1,0 +1,31 @@
+{
+  "version": "2026-09-08.1",
+  "sources": [
+    {
+      "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
+      "sourceUrl": "https://www.tsb.org.tr/tr/kasko-arsiv-listesi",
+      "sourcePeriod": "2026-08",
+      "accessedDate": "2026-09-08",
+      "licenseOrTerms": "No open redistribution license observed; raw export and operational normalized snapshot are not committed; kasko price values are discarded.",
+      "role": "turkey-coverage"
+    },
+    {
+      "name": "global-car-models",
+      "sourceUrl": "https://github.com/serhatkildaci/global-car-models",
+      "pinnedCommit": "44da5c9e5e0f3162d65579033f7a641473308b11",
+      "accessedDate": "2026-09-08",
+      "licenseOrTerms": "MIT",
+      "role": "nameplate-bootstrap"
+    }
+  ],
+  "curation": {
+    "method": "Explicit brand aliases and deterministic longest token-boundary series aliases; ambiguous/colliding candidates remain unmapped.",
+    "tsbSnapshotRecords": 27906,
+    "mappedSourceCodes": 6685,
+    "canonicalBrands": 27,
+    "canonicalSeries": 245,
+    "canonicalModels": 6652,
+    "slugCollisionsExcluded": 11,
+    "ambiguousSeriesExcluded": 1
+  }
+}
