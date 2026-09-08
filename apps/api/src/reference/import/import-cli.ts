@@ -4,7 +4,7 @@ import { createDatabase } from '../../db/client.js'
 import type { NormalizedLocationSnapshot } from './location-import.types.js'
 import { importLocationSnapshot } from './location-importer.js'
 
-const inputPath = process.argv[2]
+const inputPath = process.argv.slice(2).find((argument) => argument !== '--')
 if (!inputPath) {
   console.error('Usage: reference:import:locations <snapshot.json>')
   process.exitCode = 1
