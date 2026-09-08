@@ -8,8 +8,10 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - `PROJECT.md`: Uzun vadeli ürün kapsamı ve hedef kullanıcılar.
 - `docs/MVP_SCOPE.md`: İlk implementasyon milestone'u ve kabul kriterleri.
 - `docs/superpowers/specs/2026-09-07-technical-architecture-design.md`: Onaylanan teknik mimari ve guardrail'ler.
+- `docs/superpowers/specs/2026-09-08-location-reference-data-design.md`: Konum reference-data tasarımı.
 - `docs/superpowers/plans/2026-09-07-foundation-implementation.md`: Foundation implementasyon sırası.
 - `docs/superpowers/plans/2026-09-08-identity-implementation.md`: Auth/profile/role implementasyon sınırı.
+- `docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md`: Konum reference-data implementasyon sırası.
 - `docs/reference/SAHIBINDEN_REFERENCE.md`: Sahibinden kategori/filtre/akış envanteri ve EİDS araştırması.
 - `DESIGN.md`: Onaylanan tasarım yönü.
 - `docs/DECISIONS.md`: Alınmış kararlar.
@@ -56,15 +58,27 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - Social login, email verification ve password reset şu an uygulanmış değildir; ayrı ürün/provider kararı olmadan ekleme.
 - Production secret'larını repoya yazma; `.env.example` sadece local/CI örneğidir.
 
+## Konum reference-data kuralları
+
+- Runtime konum okumaları yalnız PostgreSQL'den gelir; normal API/page request'lerinde dış konum servisi çağırma.
+- Konum importu explicit bakım işlemidir; API startup, deploy veya migration içine remote fetch/import ekleme.
+- Provider kimliği ile import version/checksum provenance'ını ayrı tut.
+- İl/ilçe/mahalle kayıtlarını display name ile eşleme; `(provider_id, source_key)` kimliğini koru.
+- Yeni snapshot'ta kaybolan idari kayıtları silme; `active = false` yap ki eski ilan referansları bozulmasın.
+- Public reference API provider/source/checksum metadata'sını döndürmez.
+- Repo'daki küçük location fixture yalnız test/development içindir. Operasyonel source manifest `onurusluca/turkey-geo-api` v1.3 commit `5a16cef20f2335e3fe643c9618f931866bb8134c` kaynağına pinlidir ve resmi NVI mirror'ı değildir.
+- Araç marka/seri/model reference-data işi bu subsystem'e karıştırılmaz; ayrı plan/PR olarak ele alınır.
+
 ## Teknik çalışma komutları
 
 - Node baseline: 24 LTS; `.nvmrc` authoritative.
 - Package manager: pnpm 10.34.5.
 - Local PostgreSQL: `pnpm db:up`; kapatmak için `pnpm db:down`.
 - DB + auth migrations: `pnpm db:migrate`.
+- Test/development konum fixture importu: `pnpm reference:import:locations -- data/reference/locations/fixture.locations.json`.
 - Local web + API + contracts watcher: `pnpm dev`.
 - Kod değişikliklerini `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` ile doğrula.
-- DB/auth davranışı gerçek PostgreSQL integration testleri gerektirir; mock ile ikame etme.
+- DB/auth/reference-data davranışı gerçek PostgreSQL integration testleri gerektirir; mock ile ikame etme.
 - `pnpm test` için local PostgreSQL ayakta ve `.env` test bağlantısı erişilebilir olmalı.
 
 ## İlk MVP'nin ana akışları
@@ -76,6 +90,6 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 
 ## Mevcut doğrulama
 
-CI PostgreSQL 18 üzerinde frozen lockfile, explicit migrations, Better Auth signup/signin/session/signout integration testleri, `/me` profil/rol doğrulaması, web auth smoke testleri, lint, typecheck ve build çalıştırır.
+CI PostgreSQL 18 üzerinde frozen lockfile, explicit migrations, Better Auth auth integration testleri, location migration/import/API integration testleri, web smoke testleri, lint, typecheck ve build çalıştırır.
 
-DB/auth kullanan değişikliklerde gerçek integration testi olmadan başarı iddiasında bulunma. Production deploy/Caddy/backup hâlâ sonraki fazdadır.
+DB/auth/reference-data kullanan değişikliklerde gerçek integration testi olmadan başarı iddiasında bulunma. Production deploy/Caddy/backup hâlâ sonraki fazdadır.
