@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { sql, type Kysely } from 'kysely'
 import { createAuth, createAuthPool } from '../src/auth/auth.js'
 import { migrateAuth } from '../src/auth/auth-migrator.js'
@@ -40,6 +40,12 @@ beforeAll(async () => {
   await migrateBootstrap(db)
   await migrateAuth(auth)
   await migrateDomain(db)
+})
+
+beforeEach(async () => {
+  await db.deleteFrom('vehicle_models').execute()
+  await db.deleteFrom('vehicle_series').execute()
+  await db.deleteFrom('vehicle_brands').execute()
 })
 
 afterAll(async () => {
