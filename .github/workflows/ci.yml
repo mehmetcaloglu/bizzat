@@ -61,6 +61,15 @@ jobs:
       - name: Import deterministic vehicle catalog fixture
         run: pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json
 
+      - name: Import deterministic TSB source fixture
+        run: pnpm reference:import:vehicle-source -- tsb data/reference/vehicles/fixture.tsb-source.json
+
+      - name: Apply deterministic TSB mapping fixture
+        run: pnpm reference:apply:vehicle-mappings -- tsb data/reference/vehicles/fixture.tsb-mappings.json
+
+      - name: Report deterministic TSB source coverage
+        run: pnpm reference:report:vehicle-source -- tsb
+
       - name: Tests
         run: pnpm test
 

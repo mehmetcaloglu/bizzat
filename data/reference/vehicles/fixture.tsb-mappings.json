@@ -1,0 +1,15 @@
+{
+  "version": "fixture-2026-09.1",
+  "mappings": [
+    {
+      "sourceKey": "122-1260",
+      "vehicleModelKey": "renault:clio:1-0-tce-evolution",
+      "method": "curated-import"
+    },
+    {
+      "sourceKey": "100-0001",
+      "vehicleModelKey": "fiat:egea:1-4-fire-easy",
+      "method": "curated-import"
+    }
+  ]
+}
