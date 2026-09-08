@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned Marka → Seri → Model UUID kimliği; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum reference-data + canonical araç katalog foundation tamamlandı; TSB mapping/population sonraki faz |
+| Mevcut aşama | Identity + konum + canonical araç katalog + TSB source/mapping B1 tamamlandı; gerçek Türkiye katalog curation B2 sırada |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -95,13 +95,40 @@ Public read-only API:
 - `GET /api/v1/reference/vehicle/brands/:brandId/series`
 - `GET /api/v1/reference/vehicle/series/:seriesId/models`
 
-Runtime hiçbir araç katalog servisine veya TSB'ye HTTP isteği yapmaz; yalnız PostgreSQL okur. Canonical katalog explicit bakım komutuyla import edilir:
+Runtime hiçbir araç katalog servisine veya TSB'ye HTTP isteği yapmaz; yalnız PostgreSQL canonical tablolarını okur. Canonical katalog explicit bakım komutuyla import edilir:
 
 ```bash
 pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json
 ```
 
-`data/reference/vehicles/fixture.catalog.json` yalnız development/CI fixture'ıdır ve **Türkiye araç kataloğunun tamamı değildir**. TSB source ingestion, provider mapping, unmapped review ve gerçek Türkiye kataloğunun populate edilmesi ayrı Phase B işidir.
+`data/reference/vehicles/fixture.catalog.json` yalnız development/CI fixture'ıdır ve **Türkiye araç kataloğunun tamamı değildir**.
+
+### TSB source ingestion ve mapping — Phase B1
+
+TSB, canonical taxonomy'nin sahibi değil; Türkiye pazar coverage ve mapping kaynağıdır. B1 source katmanı şu dört tabloyu kullanır:
+
+- `vehicle_source_providers`
+- `vehicle_source_imports`
+- `vehicle_source_records`
+- `vehicle_source_mappings`
+
+TSB için `source_key` yalnız **Araç Kodu**dur. Model yılları aynı source kaydında `available_model_years` metadata'sı olarak tutulur; source identity'nin veya ilan geçerliliğinin parçası değildir.
+
+Ham TSB spreadsheet/export dosyaları public repoya commit edilmez ve kasko fiyatları DB'de saklanmaz. B1, operatörün TSB kaynağından dışarıda hazırladığı normalize JSON sınırından başlar. API startup, deploy, migration ve normal kullanıcı request'leri TSB'ye bağlanmaz.
+
+Bakım komutları:
+
+```bash
+pnpm reference:import:vehicle-source -- tsb <normalized-json>
+pnpm reference:apply:vehicle-mappings -- tsb <mapping-json>
+pnpm reference:report:vehicle-source -- tsb
+```
+
+Mapping dosyaları DB UUID değil `TSB Araç Kodu → Bizzat vehicle_models.catalog_key` tutar. Mapping dosyasındaki eksik bir kayıt mevcut başka mapping'i silmez; dosyalar patch/apply artifact'ıdır. Kaynak marka/tip kimliği anlamlı biçimde değişirse mapped source `mapping_needs_review=true` olur ve explicit mapping apply/confirm edilene kadar trusted sayılmaz. Canonical hedef sonradan inactive olursa report bunu ayrı `invalid-mapping` durumu olarak gösterir.
+
+Repo'daki `fixture.tsb-source.json` ve `fixture.tsb-mappings.json` yalnız **uydurulmuş deterministic test/CI verisidir**; gerçek TSB datasetinin yeniden dağıtımı değildir.
+
+B2'de brand/series alias'ları, deterministic candidate generation, reviewed gerçek Türkiye `catalog.json` ve daha geniş source mapping curation yapılacaktır.
 
 Model yılı canonical katalog hiyerarşisinin parçası değildir. İlan tarafında bağımsız `car_details.model_year` alanı olarak kalır; böylece TSB'nin sınırlı yıl coverage'ı eski araç ilanlarını engellemez.
 
@@ -124,6 +151,9 @@ pnpm db:up
 pnpm db:migrate
 pnpm reference:import:locations -- data/reference/locations/fixture.locations.json
 pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json
+pnpm reference:import:vehicle-source -- tsb data/reference/vehicles/fixture.tsb-source.json
+pnpm reference:apply:vehicle-mappings -- tsb data/reference/vehicles/fixture.tsb-mappings.json
+pnpm reference:report:vehicle-source -- tsb
 pnpm dev
 ```
 
@@ -158,11 +188,13 @@ pnpm build
 | [docs/MVP_SCOPE.md](docs/MVP_SCOPE.md) | İlk implementasyon milestone'u |
 | [docs/superpowers/specs/2026-09-07-technical-architecture-design.md](docs/superpowers/specs/2026-09-07-technical-architecture-design.md) | Onaylanan teknik mimari ve scaling guardrail'leri |
 | [docs/superpowers/specs/2026-09-08-location-reference-data-design.md](docs/superpowers/specs/2026-09-08-location-reference-data-design.md) | Konum reference-data tasarımı |
-| [docs/superpowers/specs/2026-09-08-vehicle-catalog-design.md](docs/superpowers/specs/2026-09-08-vehicle-catalog-design.md) | Canonical araç katalog tasarımı ve TSB mapping sınırı |
+| [docs/superpowers/specs/2026-09-08-vehicle-catalog-design.md](docs/superpowers/specs/2026-09-08-vehicle-catalog-design.md) | Canonical araç katalog tasarımı |
+| [docs/superpowers/specs/2026-09-08-vehicle-catalog-phase-b-design.md](docs/superpowers/specs/2026-09-08-vehicle-catalog-phase-b-design.md) | TSB source/mapping Phase B tasarımı ve B1/B2 ayrımı |
 | [docs/superpowers/plans/2026-09-07-foundation-implementation.md](docs/superpowers/plans/2026-09-07-foundation-implementation.md) | Foundation implementasyon planı |
 | [docs/superpowers/plans/2026-09-08-identity-implementation.md](docs/superpowers/plans/2026-09-08-identity-implementation.md) | Identity implementasyon planı |
 | [docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md](docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md) | Konum reference-data implementasyon planı |
 | [docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-a-implementation.md](docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-a-implementation.md) | Canonical araç katalog Phase A implementasyon planı |
+| [docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b1-implementation.md](docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b1-implementation.md) | TSB source ingestion/mapping B1 implementasyon planı |
 | [docs/reference/SAHIBINDEN_REFERENCE.md](docs/reference/SAHIBINDEN_REFERENCE.md) | Sahibinden ekran/kategori/filtre/ilan verme referansı ve EİDS notları |
 | [DESIGN.md](DESIGN.md) | Onaylanan görsel yön |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Kesinleşmiş kararlar |
