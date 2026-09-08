@@ -1,0 +1,27 @@
+name: Bootstrap lockfile
+
+on:
+  push:
+    branches: [feat/foundation]
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+      - run: pnpm install --lockfile-only
+      - run: pnpm contracts:build
+      - run: pnpm --filter @bizzat/contracts typecheck
+      - run: pnpm --filter @bizzat/contracts lint
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bootstrap-lock
+          path: pnpm-lock.yaml

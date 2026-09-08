@@ -1,0 +1,19 @@
+{
+  "name": "bizzat",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24.20.0 <25"
+  },
+  "scripts": {
+    "contracts:build": "pnpm --filter @bizzat/contracts build",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm contracts:build && pnpm -r --if-present typecheck",
+    "build": "pnpm -r --if-present build"
+  },
+  "devDependencies": {
+    "eslint": "9.39.5",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.69.0"
+  }
+}

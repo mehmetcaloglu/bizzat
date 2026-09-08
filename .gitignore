@@ -1,8 +1,13 @@
-.DS_Store
-Thumbs.db
+node_modules/
+dist/
+.next/
+coverage/
+*.tsbuildinfo
 .env
 .env.*
 !.env.example
+.DS_Store
+Thumbs.db
 *.log
 *.pem
 *.key
