@@ -10,6 +10,7 @@ export const ApiErrorCodeSchema = Type.Union([
   Type.Literal('LISTING_NOT_EDITABLE'),
   Type.Literal('VERIFICATION_REQUIRED'),
   Type.Literal('VERIFICATION_FAILED'),
+  Type.Literal('REFERENCE_PARENT_NOT_FOUND'),
   Type.Literal('RATE_LIMITED'),
   Type.Literal('INTERNAL_ERROR'),
 ])
