@@ -4,6 +4,9 @@ on:
   push:
     branches: [feat/foundation]
 
+permissions:
+  contents: write
+
 jobs:
   lockfile:
     runs-on: ubuntu-latest
@@ -20,7 +23,11 @@ jobs:
       - run: pnpm contracts:build
       - run: pnpm --filter @bizzat/contracts typecheck
       - run: pnpm --filter @bizzat/contracts lint
-      - uses: actions/upload-artifact@v4
-        with:
-          name: bootstrap-lock
-          path: pnpm-lock.yaml
+      - name: Commit generated lockfile and remove bootstrap workflow
+        run: |
+          rm .github/workflows/bootstrap-lock.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml .github/workflows/bootstrap-lock.yml
+          git commit -m "chore: commit generated pnpm lockfile"
+          git push
