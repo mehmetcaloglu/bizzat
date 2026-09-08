@@ -52,6 +52,7 @@ beforeAll(async () => {
 })
 
 beforeEach(async () => {
+  await db.deleteFrom('vehicle_source_mappings').execute()
   await db.deleteFrom('vehicle_models').execute()
   await db.deleteFrom('vehicle_series').execute()
   await db.deleteFrom('vehicle_brands').execute()
