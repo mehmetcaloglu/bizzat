@@ -47,6 +47,24 @@ jobs:
         run: |
           mkdir -p data/reference/vehicles
           cp /tmp/b2-data/{brand-aliases,series-aliases,catalog,tsb-mappings,source-manifest}.json data/reference/vehicles/
+      - name: Flatten canonical catalog to Phase A contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/reference/vehicles/catalog.json')
+          nested=json.loads(p.read_text(encoding='utf-8'))
+          brands=[]; series=[]; models=[]
+          for brand in nested['brands']:
+              brands.append({'key':brand['key'],'name':brand['name']})
+              for item in brand['series']:
+                  series.append({'key':item['key'],'brandKey':brand['key'],'name':item['name']})
+                  for model in item['models']:
+                      models.append({'key':model['key'],'seriesKey':item['key'],'name':model['name']})
+          flat={'version':nested['version'],'brands':brands,'series':series,'models':models}
+          p.write_text(json.dumps(flat,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print({'brands':len(brands),'series':len(series),'models':len(models)})
+          PY
       - uses: pnpm/action-setup@v4
         with: { version: 10.34.5, run_install: false }
       - uses: actions/setup-node@v4
