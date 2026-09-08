@@ -41,12 +41,12 @@ jobs:
         with:
           node-version: 24.20.0
       - run: pnpm install --no-frozen-lockfile
-      - run: pnpm contracts:build
       - run: pnpm --filter @bizzat/api db:migrate:raw
-      - run: pnpm --filter @bizzat/api test:integration
-      - run: pnpm --filter @bizzat/api typecheck
-      - run: pnpm --filter @bizzat/api lint
-      - run: pnpm --filter @bizzat/api build
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: test -f apps/web/.next/standalone/apps/web/server.js
       - name: Persist lockfile if changed
         run: |
           if ! git diff --quiet -- pnpm-lock.yaml; then

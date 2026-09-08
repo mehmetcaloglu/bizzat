@@ -9,6 +9,7 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - `docs/MVP_SCOPE.md`: İlk implementasyon milestone'u ve kabul kriterleri.
 - `docs/superpowers/specs/2026-09-07-technical-architecture-design.md`: Onaylanan teknik mimari ve guardrail'ler.
 - `docs/superpowers/plans/2026-09-07-foundation-implementation.md`: Foundation implementasyon sırası.
+- `docs/superpowers/plans/2026-09-08-identity-implementation.md`: Auth/profile/role implementasyon sınırı.
 - `docs/reference/SAHIBINDEN_REFERENCE.md`: Sahibinden kategori/filtre/akış envanteri ve EİDS araştırması.
 - `DESIGN.md`: Onaylanan tasarım yönü.
 - `docs/DECISIONS.md`: Alınmış kararlar.
@@ -18,48 +19,53 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 ## Çalışma ilkeleri
 
 - Kullanıcının yeni açık talimatları bu belgelerden önceliklidir. Karar değişirse ilgili belgeleri birlikte güncelle.
-- Türkçe, açık ve anlaşılır yaz. Kullanıcıya ve ürün metinlerinde son kullanıcıya “sen” diye hitap et.
-- Onaylanmış kararlarla başlangıç fikirlerini ayrı tut; önerileri geçmişte kesinleşmiş gibi sunma.
-- Bizzat bireysel emlak ve araç ilanlarına odaklanır. Uzun vadede her iki ana kategoride satış ve kiralama kapsam içindedir.
-- İlk MVP yalnızca `Satılık Daire`, `Kiralık Daire` ve `Satılık Otomobil` ilanlarını kapsar. Yeni bir kullanıcı kararı olmadan ilk milestone'a başka kategori ekleme.
-- İlk istemci responsive web'dir. Native mobil uygulama ilk MVP kapsamında değildir.
-- Temel amaç emlakçı ve galerici ilanlarını dışarıda tutmaktır. Profesyonel hesap/mağaza akışları oluşturma.
-- Başkası adına bireysel ilan yaklaşımını EİDS sınırından bağımsız yorumlama. Production'da malik/eş/izin verilen 1.-2. derece hısım yetkisi doğrulanmadan ilan yayınlama.
-- EİDS gerçek entegrasyonu hazır değilse provider/adapter sınırı tasarlanabilir ve local/test'te açıkça işaretli mock kullanılabilir. Production'da mock fallback kullanma.
-- TC başına 3–4 ilan fikrini kesin veya uygulanmış bir kural gibi kodlama.
-- MVP iletişimi telefon odaklıdır; site içi mesajlaşmayı ilk milestone'a ekleme. Telefon görünürlüğünü kullanıcı tercihi/izni olmadan varsayma.
-- İlk MVP'de favori, kaydedilmiş arama, ödeme/abonelik, doping, ekspertiz, rezervasyon, AI önerileri ve profesyonel mağaza özellikleri yoktur.
-- Onaylanan açık mavi, sade ve profesyonel görsel yönü esas al. Koyu tema veya yeni bir logo yönünü mevcut kullanıcı tercihi gibi sunma.
-- Ana slogan “Bireysel ilanların adresi.”, genel iletişim çağrısı “İlan verenle görüş.” şeklindedir.
-- Filtre ve temel akışları yeniden icat etme. `docs/reference/SAHIBINDEN_REFERENCE.md` dosyasındaki Sahibinden referansını kullan; Bizzat'ın yasakladığı `Emlak Ofisinden` / `Galeriden` gibi profesyonel satıcı seçeneklerini körlemesine taşıma.
-- Seçilen üç MVP ilan türünün alanlarını implementasyon öncesinde makine-okunur attribute şemasına dönüştür.
-- Sahibinden canlı kategori sayfalarının önceki araştırmada 403 verdiğini unutma. Snapshot ile çıkarılan ayrıntıları production davranışı gibi mutlaklaştırma; erişim mümkün olduğunda seçilen MVP kategorilerini son kez doğrula.
-- Repo belgelerine gerçek TC, plaka, taşınmaz numarası, erişim anahtarı veya başka özel kullanıcı verileri ekleme; örnek gerekiyorsa açıkça sahte örnek olduğunu belirt.
+- Türkçe, açık ve anlaşılır yaz; ürün metinlerinde son kullanıcıya “sen” diye hitap et.
+- İlk MVP yalnızca `Satılık Daire`, `Kiralık Daire` ve `Satılık Otomobil` ilanlarını kapsar.
+- İlk istemci responsive web'dir; native mobil uygulama MVP kapsamında değildir.
+- Profesyonel emlakçı/galerici hesap ve mağaza akışları oluşturma.
+- Production'da EİDS yetkisi doğrulanmadan ilan yayınlama; mock fallback production'da yasaktır.
+- TC başına 3–4 ilan fikrini kesin ürün kuralı gibi kodlama.
+- MVP iletişimi telefon odaklıdır; site içi mesajlaşma ekleme.
+- Favori, ödeme/abonelik, doping, ekspertiz, rezervasyon ve AI önerileri ilk MVP kapsamında değildir.
+- Onaylanan açık mavi, sade ve profesyonel görsel yönü esas al.
+- Filtre ve temel akışları yeniden icat etme; Sahibinden referans dokümanını kullan, profesyonel satıcı seçeneklerini taşımama kuralını koru.
+- Repo belgelerine gerçek TC, plaka, taşınmaz numarası, erişim anahtarı veya özel kullanıcı verisi ekleme.
 
 ## Teknik mimari
 
-- Self-hosted TypeScript **modular monolith** kullanılır.
+- Self-hosted TypeScript **modular monolith**.
 - Frontend: Next.js + TypeScript (`apps/web`).
 - Backend: Fastify + TypeScript (`apps/api`).
-- DB: PostgreSQL 18; erişim Kysely + `pg` üzerinden.
-- Transport: REST `/api/v1`; ortak runtime/type contract'ları `packages/contracts` içinde.
-- Monorepo: pnpm workspace.
-- Local DB: Docker Compose.
-- Migrations explicit komutla çalışır; API startup migration çalıştırmaz.
-- PostgreSQL başlangıç source-of-truth'tur. Ölçülmüş gereksinim olmadan Redis, queue, external search, replica veya partitioning ekleme.
-- Mikroservis, Kubernetes veya managed backend servisi eklemek için güncel/ölçülmüş gerekçe ve mimari güncelleme gerekir.
+- DB: PostgreSQL 18; Kysely + `pg`.
+- REST uygulama API'si `/api/v1`; auth HTTP yüzeyi `/api/auth/*`.
+- Monorepo: pnpm workspace; local DB: Docker Compose.
+- Migration'lar explicit komutla çalışır; API startup migration çalıştırmaz.
+- Ölçülmüş gereksinim olmadan Redis, queue, external search, replica, partitioning, microservice veya Kubernetes ekleme.
+
+## Identity kuralları
+
+- Better Auth self-hosted olarak Fastify API içinde çalışır; managed auth servisi ekleme.
+- Better Auth tabloları PostgreSQL `auth` schema'sındadır ve user ID tipi UUID'dir.
+- Browser auth için Better Auth session API/cookie mekanizmasını kullan; custom JWT veya cookie parser yazma.
+- Bizzat authorization rolünün kaynağı `public.profiles.role` alanıdır: `user | moderator | admin`.
+- Public sign-up payload'ından **role kabul etme**; yeni kullanıcı her zaman `user` olur.
+- Role/state değiştirme ileride yalnız server-owned moderator/admin akışından yapılır.
+- `/api/v1/me` session user'ını ve Bizzat profil rolünü birleştirir.
+- Auth migration sırası `auth schema bootstrap → Better Auth tabloları → Bizzat domain tabloları` şeklindedir.
+- Better Auth veya domain migration'larını API startup'a taşıma.
+- Social login, email verification ve password reset şu an uygulanmış değildir; ayrı ürün/provider kararı olmadan ekleme.
+- Production secret'larını repoya yazma; `.env.example` sadece local/CI örneğidir.
 
 ## Teknik çalışma komutları
 
 - Node baseline: 24 LTS; `.nvmrc` authoritative.
-- Package manager: pnpm 10.34.5; npm/yarn ile değiştirme.
+- Package manager: pnpm 10.34.5.
 - Local PostgreSQL: `pnpm db:up`; kapatmak için `pnpm db:down`.
-- DB migrations: `pnpm db:migrate`; API startup migration çalıştırmamalı.
+- DB + auth migrations: `pnpm db:migrate`.
 - Local web + API + contracts watcher: `pnpm dev`.
 - Kod değişikliklerini `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` ile doğrula.
-- Repository/SQL davranışı gerçek PostgreSQL integration testleri gerektirir; repository mock'u ile ikame etme.
-- `pnpm test` için local PostgreSQL'in ayakta ve `.env` içindeki `TEST_DATABASE_URL`'in erişilebilir olması gerekir.
-- Redis, queue, external search, microservice, Kubernetes veya managed backend eklemeden önce teknik mimari guardrail'lerindeki üç soruyu cevapla.
+- DB/auth davranışı gerçek PostgreSQL integration testleri gerektirir; mock ile ikame etme.
+- `pnpm test` için local PostgreSQL ayakta ve `.env` test bağlantısı erişilebilir olmalı.
 
 ## İlk MVP'nin ana akışları
 
@@ -70,6 +76,6 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 
 ## Mevcut doğrulama
 
-Foundation aşamasında workspace contract build'i, Fastify API unit testleri, PostgreSQL 18 migration/integration testleri, Next.js smoke testi, lint, typecheck ve build GitHub Actions üzerinde çalıştırılır.
+CI PostgreSQL 18 üzerinde frozen lockfile, explicit migrations, Better Auth signup/signin/session/signout integration testleri, `/me` profil/rol doğrulaması, web auth smoke testleri, lint, typecheck ve build çalıştırır.
 
-DB kullanan değişiklikler için gerçek PostgreSQL testi olmadan başarı iddiasında bulunma. Production deploy/Caddy/backup henüz bu fazın parçası değildir.
+DB/auth kullanan değişikliklerde gerçek integration testi olmadan başarı iddiasında bulunma. Production deploy/Caddy/backup hâlâ sonraki fazdadır.
