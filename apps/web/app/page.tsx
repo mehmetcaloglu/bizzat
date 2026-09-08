@@ -1,3 +1,5 @@
+import { SessionPanel } from './components/session-panel'
+
 export default function HomePage() {
   return (
     <main className="foundation-shell">
@@ -5,6 +7,7 @@ export default function HomePage() {
         <p className="wordmark">bizzat</p>
         <h1>Bireysel ilanların adresi.</h1>
         <p>Uygulama altyapısı hazırlanıyor.</p>
+        <SessionPanel />
       </section>
     </main>
   )

@@ -12,6 +12,15 @@ body {
   margin: 0;
 }
 
+a {
+  color: #2479b4;
+}
+
+button,
+input {
+  font: inherit;
+}
+
 .foundation-shell {
   min-height: 100vh;
   display: grid;
@@ -33,4 +42,41 @@ body {
   color: #66b7f2;
   font-size: 32px;
   font-weight: 700;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccd9e2;
+  border-radius: 8px;
+}
+
+button {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.session-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.session-panel {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e5edf3;
 }
