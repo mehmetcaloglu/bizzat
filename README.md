@@ -22,9 +22,10 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Teknik mimari | Next.js + Fastify + Kysely + PostgreSQL 18; self-hosted modular monolith |
 | Auth | Self-hosted Better Auth; email/password + cookie session |
 | Roller | `public.profiles`: `user`, `moderator`, `admin` |
+| Konum referansı | PostgreSQL içinde il → ilçe → mahalle; explicit snapshot import |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity tamamlandı; reference data sıradaki faz |
+| Mevcut aşama | Identity + konum reference-data foundation tamamlandı; araç reference-data sıradaki faz |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -65,6 +66,18 @@ Identity katmanı self-hosted Better Auth kullanır:
 
 Auth HTTP yüzeyi `/api/auth/*` altındadır. Sosyal login, email verification ve password-reset mail akışı henüz etkin değildir. Bunlar ihtiyaç ve mail/provider kararıyla ayrı fazda eklenir.
 
+## Konum reference data
+
+Konum hiyerarşisi uygulama runtime'ında dış servisten okunmaz. İller, ilçeler ve mahalleler PostgreSQL'de tutulur ve public read-only API üzerinden sunulur:
+
+- `GET /api/v1/reference/provinces`
+- `GET /api/v1/reference/provinces/:provinceId/districts`
+- `GET /api/v1/reference/districts/:districtId/neighborhoods`
+
+Import yalnız explicit bakım komutudur. API startup veya deploy sırasında otomatik import yapılmaz. Kaybolan/yeniden adlandırılan idari kayıtlar hard-delete edilmez; eski ilan referanslarının korunması için pasifleştirilir.
+
+Repo'daki `data/reference/locations/fixture.locations.json` yalnız development/CI fixture'ıdır. Operasyonel kaynak manifesti `onurusluca/turkey-geo-api` v1.3 commit `5a16cef20f2335e3fe643c9618f931866bb8134c` sürümüne pinlidir; bu kaynak resmi NVI mirror'ı olarak sunulmaz.
+
 ## Development
 
 Gereksinimler:
@@ -82,6 +95,7 @@ pnpm install
 cp .env.example .env
 pnpm db:up
 pnpm db:migrate
+pnpm reference:import:locations -- data/reference/locations/fixture.locations.json
 pnpm dev
 ```
 
@@ -91,6 +105,7 @@ Local adresler:
 - API health: `http://localhost:4000/api/v1/health`
 - Auth endpoints: `http://localhost:3000/api/auth/*` (Next same-origin proxy üzerinden)
 - Authenticated profile: `http://localhost:3000/api/v1/me`
+- Location reference: `http://localhost:3000/api/v1/reference/provinces`
 - PostgreSQL: `127.0.0.1:5432`
 
 `.env.example` local-only Better Auth secret içerir. Production'da ayrı, güçlü `BETTER_AUTH_SECRET` ve gerçek public `BETTER_AUTH_URL` verilmelidir.
@@ -113,16 +128,10 @@ pnpm build
 | [PROJECT.md](PROJECT.md) | Amaç, hedef kullanıcılar ve uzun vadeli ürün kapsamı |
 | [docs/MVP_SCOPE.md](docs/MVP_SCOPE.md) | İlk implementasyon milestone'u |
 | [docs/superpowers/specs/2026-09-07-technical-architecture-design.md](docs/superpowers/specs/2026-09-07-technical-architecture-design.md) | Onaylanan teknik mimari ve scaling guardrail'leri |
+| [docs/superpowers/specs/2026-09-08-location-reference-data-design.md](docs/superpowers/specs/2026-09-08-location-reference-data-design.md) | Konum reference-data tasarımı |
 | [docs/superpowers/plans/2026-09-07-foundation-implementation.md](docs/superpowers/plans/2026-09-07-foundation-implementation.md) | Foundation implementasyon planı |
 | [docs/superpowers/plans/2026-09-08-identity-implementation.md](docs/superpowers/plans/2026-09-08-identity-implementation.md) | Identity implementasyon planı |
+| [docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md](docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md) | Konum reference-data implementasyon planı |
 | [docs/reference/SAHIBINDEN_REFERENCE.md](docs/reference/SAHIBINDEN_REFERENCE.md) | Sahibinden ekran/kategori/filtre/ilan verme referansı ve EİDS notları |
 | [DESIGN.md](DESIGN.md) | Onaylanan görsel yön |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Kesinleşmiş kararlar |
-| [docs/OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md) | EİDS entegrasyonu, veri kaynakları ve diğer açık konular |
-| [AGENTS.md](AGENTS.md) | Geliştirme bağlamı ve çalışma kuralları |
-
-## Mevcut aşamanın sınırı
-
-Foundation ve identity katmanı hazırdır. Sıradaki bağımsız iş MVP için **reference data**: Türkiye il/ilçe/mahalle verisinin ve otomobil marka/seri/model kataloğunun kaynak/seed yapısının kurulmasıdır. Ardından listing read ve listing write/EİDS/media vertical slice'ları gelir.
-
-Bu belgeler 6-8 Eylül 2026 tarihli proje çalışmalarını temel alır.

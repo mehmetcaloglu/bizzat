@@ -1,0 +1,24 @@
+{
+  "provider": {
+    "code": "fixture-tr",
+    "sourceName": "Bizzat deterministic location fixture",
+    "sourceUrl": "https://github.com/mehmetcaloglu/bizzat",
+    "license": "project-test-data",
+    "version": "1"
+  },
+  "provinces": [
+    { "sourceKey": "34", "code": "34", "name": "İstanbul" },
+    { "sourceKey": "06", "code": "06", "name": "Ankara" }
+  ],
+  "districts": [
+    { "sourceKey": "34-gungoren", "provinceSourceKey": "34", "name": "Güngören" },
+    { "sourceKey": "34-sariyer", "provinceSourceKey": "34", "name": "Sarıyer" },
+    { "sourceKey": "06-cankaya", "provinceSourceKey": "06", "name": "Çankaya" }
+  ],
+  "neighborhoods": [
+    { "sourceKey": "34-gungoren-haznedar", "districtSourceKey": "34-gungoren", "name": "Haznedar", "kind": "mahalle" },
+    { "sourceKey": "34-gungoren-mareşal-cakmak", "districtSourceKey": "34-gungoren", "name": "Mareşal Çakmak", "kind": "mahalle" },
+    { "sourceKey": "34-sariyer-maslak", "districtSourceKey": "34-sariyer", "name": "Maslak", "kind": "mahalle" },
+    { "sourceKey": "06-cankaya-balgat", "districtSourceKey": "06-cankaya", "name": "Balgat", "kind": "mahalle" }
+  ]
+}

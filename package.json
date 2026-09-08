@@ -11,6 +11,7 @@
     "db:up": "docker compose -f compose.dev.yml up -d postgres",
     "db:down": "docker compose -f compose.dev.yml down",
     "db:migrate": "node scripts/run-pnpm.mjs --filter @bizzat/api db:migrate:raw",
+    "reference:import:locations": "node scripts/run-pnpm.mjs --filter @bizzat/api reference:import:locations",
     "lint": "pnpm -r --if-present lint",
     "typecheck": "pnpm contracts:build && pnpm -r --if-present typecheck",
     "test": "pnpm contracts:build && node scripts/run-pnpm.mjs --filter @bizzat/api test && node scripts/run-pnpm.mjs --filter @bizzat/api test:integration && node scripts/run-pnpm.mjs --filter @bizzat/web test",
