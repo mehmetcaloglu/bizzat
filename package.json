@@ -7,7 +7,7 @@
   },
   "scripts": {
     "contracts:build": "pnpm --filter @bizzat/contracts build",
-    "dev": "node scripts/run-pnpm.mjs --parallel --filter @bizzat/contracts --filter @bizzat/api --filter @bizzat/web dev",
+    "dev": "pnpm contracts:build && node scripts/run-pnpm.mjs --parallel --filter @bizzat/contracts --filter @bizzat/api --filter @bizzat/web dev",
     "db:up": "docker compose -f compose.dev.yml up -d postgres",
     "db:down": "docker compose -f compose.dev.yml down",
     "db:migrate": "node scripts/run-pnpm.mjs --filter @bizzat/api db:migrate:raw",
