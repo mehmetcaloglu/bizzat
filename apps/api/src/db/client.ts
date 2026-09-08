@@ -1,7 +1,18 @@
-import { Kysely, PostgresDialect } from 'kysely'
+import { type Generated, Kysely, PostgresDialect } from 'kysely'
 import { Pool } from 'pg'
 
-export type Database = Record<never, never>
+export type UserRole = 'user' | 'moderator' | 'admin'
+
+export interface ProfilesTable {
+  user_id: string
+  role: UserRole
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
+export interface Database {
+  profiles: ProfilesTable
+}
 
 export function createDatabase(connectionString: string): Kysely<Database> {
   return new Kysely<Database>({
