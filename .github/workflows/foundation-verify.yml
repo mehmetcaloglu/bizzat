@@ -45,7 +45,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
-      - run: test -f apps/web/.next/standalone/server.js
+      - run: test -f apps/web/.next/standalone/apps/web/server.js
       - name: Persist lockfile if dependency graph changed
         run: |
           if ! git diff --quiet -- pnpm-lock.yaml; then
