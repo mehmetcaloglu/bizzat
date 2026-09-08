@@ -1,0 +1,36 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #30383f;
+  background: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.foundation-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #eff7fd;
+}
+
+.foundation-shell section {
+  width: min(560px, 100%);
+  padding: 32px;
+  background: #ffffff;
+  border: 1px solid #e5edf3;
+  border-radius: 16px;
+}
+
+.wordmark {
+  margin: 0 0 16px;
+  color: #66b7f2;
+  font-size: 32px;
+  font-weight: 700;
+}

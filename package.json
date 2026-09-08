@@ -9,6 +9,7 @@
     "contracts:build": "pnpm --filter @bizzat/contracts build",
     "lint": "pnpm -r --if-present lint",
     "typecheck": "pnpm contracts:build && pnpm -r --if-present typecheck",
+    "test": "pnpm contracts:build && pnpm --filter @bizzat/api test && pnpm --filter @bizzat/api test:integration && pnpm --filter @bizzat/web test",
     "build": "pnpm -r --if-present build"
   },
   "devDependencies": {

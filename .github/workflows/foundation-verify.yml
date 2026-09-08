@@ -29,6 +29,7 @@ jobs:
       DATABASE_URL: postgresql://bizzat:bizzat_ci@127.0.0.1:5432/bizzat_test
       TEST_DATABASE_URL: postgresql://bizzat:bizzat_ci@127.0.0.1:5432/bizzat_test
       NODE_ENV: test
+      API_PROXY_TARGET: http://127.0.0.1:4000
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -39,13 +40,12 @@ jobs:
         with:
           node-version: 24.20.0
       - run: pnpm install --no-frozen-lockfile
-      - run: pnpm contracts:build
       - run: pnpm --filter @bizzat/api db:migrate:raw
-      - run: pnpm --filter @bizzat/api test:integration
-      - run: pnpm --filter @bizzat/api test
-      - run: pnpm --filter @bizzat/api typecheck
-      - run: pnpm --filter @bizzat/api lint
-      - run: pnpm --filter @bizzat/api build
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: test -f apps/web/.next/standalone/server.js
       - name: Persist lockfile if dependency graph changed
         run: |
           if ! git diff --quiet -- pnpm-lock.yaml; then
