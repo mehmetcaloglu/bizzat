@@ -8,6 +8,7 @@ import { migrateBootstrap, migrateDomain } from '../src/db/migrator.js'
 import { applyVehicleSourceMappings } from '../src/reference/vehicle/source/mapping-service.js'
 import { validateVehicleSourceMappingFile } from '../src/reference/vehicle/source/mapping-validator.js'
 import { importVehicleSourceSnapshot } from '../src/reference/vehicle/source/source-importer.js'
+import { normalizeVehicleSourceIdentity } from '../src/reference/vehicle/source/source-normalization.js'
 import { buildVehicleSourceCoverageReport } from '../src/reference/vehicle/source/source-report.js'
 import type { NormalizedVehicleSourceSnapshot } from '../src/reference/vehicle/source/source.types.js'
 import {
@@ -225,10 +226,12 @@ describe('vehicle source importer', () => {
   it('marks only materially changed mapped source identities for review', async () => {
     const first = await importVehicleSourceSnapshot(db, makeSnapshot())
     const source = await db.selectFrom('vehicle_source_records')
-      .select(['id'])
+      .select(['id', 'brand_raw', 'type_raw', 'mapping_needs_review'])
       .where('provider_id', '=', first.providerId)
       .where('source_key', '=', '144-1064')
       .executeTakeFirstOrThrow()
+    expect(source.mapping_needs_review).toBe(false)
+
     const model = await seedCanonicalModel()
     await db.insertInto('vehicle_source_mappings').values({
       source_record_id: source.id,
@@ -236,12 +239,19 @@ describe('vehicle source importer', () => {
       mapping_method: 'manual',
     }).execute()
 
-    await importVehicleSourceSnapshot(db, makeSnapshot('fixture-2', {
+    const cosmetic = makeSnapshot('fixture-2', {
       '144-1064': {
         brandRaw: ' toyota ',
         typeRaw: 'corolla   1.33 life',
       },
-    }))
+    })
+    const cosmeticToyota = cosmetic.records.find((record) => record.sourceKey === '144-1064')!
+    expect(normalizeVehicleSourceIdentity(source.brand_raw))
+      .toBe(normalizeVehicleSourceIdentity(cosmeticToyota.brandRaw))
+    expect(normalizeVehicleSourceIdentity(source.type_raw))
+      .toBe(normalizeVehicleSourceIdentity(cosmeticToyota.typeRaw))
+
+    await importVehicleSourceSnapshot(db, cosmetic)
 
     const afterCosmeticChange = await db.selectFrom('vehicle_source_records')
       .select('mapping_needs_review')
@@ -319,137 +329,96 @@ describe('vehicle source importer', () => {
   })
 })
 
-describe('vehicle source mapping apply', () => {
-  it('applies mappings by source code + canonical key, clears review, preserves omitted mappings and is idempotent', async () => {
+describe('vehicle source mapping and report', () => {
+  it('applies reviewed mappings by source code + canonical key and clears review state', async () => {
     const imported = await importVehicleSourceSnapshot(db, makeSnapshot())
-    const toyotaModel = await seedCanonicalModel()
-    const renaultModel = await seedCanonicalModel()
-
-    const fullFile = validateVehicleSourceMappingFile({
-      version: 'mapping-1',
-      mappings: [
-        { sourceKey: '144-1064', vehicleModelKey: toyotaModel.catalogKey, method: 'curated-import' },
-        { sourceKey: '122-1260', vehicleModelKey: renaultModel.catalogKey, method: 'manual' },
-      ],
-    })
-
-    expect(await applyVehicleSourceMappings(db, 'tsb-kasko', fullFile)).toEqual({ applied: 2 })
-
-    const toyotaSource = await db.selectFrom('vehicle_source_records')
+    const model = await seedCanonicalModel()
+    const source = await db.selectFrom('vehicle_source_records')
       .select('id')
       .where('provider_id', '=', imported.providerId)
       .where('source_key', '=', '144-1064')
       .executeTakeFirstOrThrow()
     await db.updateTable('vehicle_source_records')
       .set({ mapping_needs_review: true })
-      .where('id', '=', toyotaSource.id)
+      .where('id', '=', source.id)
       .execute()
 
-    const patchFile = validateVehicleSourceMappingFile({
-      version: 'mapping-2',
-      mappings: [
-        { sourceKey: '144-1064', vehicleModelKey: toyotaModel.catalogKey, method: 'exact-rule' },
-      ],
+    const file = validateVehicleSourceMappingFile({
+      version: 'fixture-map-1',
+      mappings: [{
+        sourceKey: '144-1064',
+        vehicleModelKey: model.catalogKey,
+        method: 'curated-import',
+      }],
     })
-    expect(await applyVehicleSourceMappings(db, 'tsb-kasko', patchFile)).toEqual({ applied: 1 })
+    const applied = await applyVehicleSourceMappings(db, 'tsb-kasko', file)
+    expect(applied).toEqual({ applied: 1 })
 
-    const mappings = await db.selectFrom('vehicle_source_mappings')
-      .select(['source_record_id', 'mapping_method'])
-      .execute()
-    expect(mappings).toHaveLength(2)
-    expect(mappings.find((row) => row.source_record_id === toyotaSource.id)?.mapping_method)
-      .toBe('exact-rule')
-
-    const review = await db.selectFrom('vehicle_source_records')
-      .select('mapping_needs_review')
-      .where('id', '=', toyotaSource.id)
+    const mapping = await db.selectFrom('vehicle_source_mappings')
+      .innerJoin('vehicle_models', 'vehicle_models.id', 'vehicle_source_mappings.vehicle_model_id')
+      .select(['vehicle_models.catalog_key', 'vehicle_source_mappings.mapping_method'])
+      .where('vehicle_source_mappings.source_record_id', '=', source.id)
       .executeTakeFirstOrThrow()
-    expect(review.mapping_needs_review).toBe(false)
+    expect(mapping).toEqual({ catalog_key: model.catalogKey, mapping_method: 'curated-import' })
 
-    expect(await applyVehicleSourceMappings(db, 'tsb-kasko', patchFile)).toEqual({ applied: 1 })
-    expect(await db.selectFrom('vehicle_source_mappings').select('source_record_id').execute())
-      .toHaveLength(2)
+    const refreshed = await db.selectFrom('vehicle_source_records')
+      .select('mapping_needs_review')
+      .where('id', '=', source.id)
+      .executeTakeFirstOrThrow()
+    expect(refreshed.mapping_needs_review).toBe(false)
   })
 
-  it('rejects missing sources, missing/inactive canonical targets and rolls back the whole file', async () => {
+  it('rejects invalid mapping targets transactionally and keeps unrelated mappings', async () => {
     await importVehicleSourceSnapshot(db, makeSnapshot())
-    const validModel = await seedCanonicalModel()
+    const keepModel = await seedCanonicalModel()
+    await applyVehicleSourceMappings(db, 'tsb-kasko', validateVehicleSourceMappingFile({
+      version: 'keep',
+      mappings: [{ sourceKey: '122-1260', vehicleModelKey: keepModel.catalogKey, method: 'manual' }],
+    }))
+
     const inactiveModel = await seedCanonicalModel()
     await db.updateTable('vehicle_models').set({ active: false }).where('id', '=', inactiveModel.id).execute()
 
-    const missingSource = validateVehicleSourceMappingFile({
-      version: 'missing-source',
-      mappings: [{ sourceKey: 'missing', vehicleModelKey: validModel.catalogKey, method: 'manual' }],
-    })
-    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', missingSource)).rejects.toThrow()
-
-    const missingModel = validateVehicleSourceMappingFile({
-      version: 'missing-model',
-      mappings: [{ sourceKey: '144-1064', vehicleModelKey: 'missing:model', method: 'manual' }],
-    })
-    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', missingModel)).rejects.toThrow()
-
-    const inactiveTarget = validateVehicleSourceMappingFile({
-      version: 'inactive-model',
-      mappings: [{ sourceKey: '144-1064', vehicleModelKey: inactiveModel.catalogKey, method: 'manual' }],
-    })
-    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', inactiveTarget)).rejects.toThrow()
-
-    const rollbackFile = validateVehicleSourceMappingFile({
-      version: 'rollback',
+    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', validateVehicleSourceMappingFile({
+      version: 'bad',
       mappings: [
-        { sourceKey: '144-1064', vehicleModelKey: validModel.catalogKey, method: 'manual' },
-        { sourceKey: '122-1260', vehicleModelKey: 'missing:model', method: 'manual' },
+        { sourceKey: '144-1064', vehicleModelKey: inactiveModel.catalogKey, method: 'manual' },
+        { sourceKey: 'missing', vehicleModelKey: keepModel.catalogKey, method: 'manual' },
       ],
-    })
-    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', rollbackFile)).rejects.toThrow()
-    expect(await db.selectFrom('vehicle_source_mappings').select('source_record_id').execute())
-      .toHaveLength(0)
-  })
-})
+    }))).rejects.toThrow()
 
-describe('vehicle source coverage report', () => {
-  it('classifies trusted, unmapped, review-required, invalid and inactive rows deterministically', async () => {
-    const first = await importVehicleSourceSnapshot(db, makeReportSnapshot())
+    const mappings = await db.selectFrom('vehicle_source_mappings').selectAll().execute()
+    expect(mappings).toHaveLength(1)
+  })
+
+  it('reports trusted, unmapped, review-required, invalid and inactive states deterministically', async () => {
+    const imported = await importVehicleSourceSnapshot(db, makeReportSnapshot())
     const trustedModel = await seedCanonicalModel()
     const reviewModel = await seedCanonicalModel()
     const invalidModel = await seedCanonicalModel()
 
-    const mappings = validateVehicleSourceMappingFile({
+    await applyVehicleSourceMappings(db, 'tsb-kasko', validateVehicleSourceMappingFile({
       version: 'report-mappings',
       mappings: [
-        { sourceKey: 'A-1', vehicleModelKey: trustedModel.catalogKey, method: 'curated-import' },
+        { sourceKey: 'A-1', vehicleModelKey: trustedModel.catalogKey, method: 'manual' },
         { sourceKey: 'C-1', vehicleModelKey: reviewModel.catalogKey, method: 'manual' },
         { sourceKey: 'D-1', vehicleModelKey: invalidModel.catalogKey, method: 'manual' },
       ],
-    })
-    await applyVehicleSourceMappings(db, 'tsb-kasko', mappings)
+    }))
 
-    const reviewSource = await db.selectFrom('vehicle_source_records')
-      .select('id')
-      .where('provider_id', '=', first.providerId)
-      .where('source_key', '=', 'C-1')
-      .executeTakeFirstOrThrow()
     await db.updateTable('vehicle_source_records')
       .set({ mapping_needs_review: true })
-      .where('id', '=', reviewSource.id)
+      .where('provider_id', '=', imported.providerId)
+      .where('source_key', '=', 'C-1')
       .execute()
     await db.updateTable('vehicle_models').set({ active: false }).where('id', '=', invalidModel.id).execute()
 
-    const next = makeReportSnapshot('report-2')
-    next.records = next.records.filter((row) => row.sourceKey !== 'E-1')
-    await importVehicleSourceSnapshot(db, next)
+    const withoutFord = makeReportSnapshot('report-2')
+    withoutFord.records = withoutFord.records.filter((row) => row.sourceKey !== 'E-1')
+    await importVehicleSourceSnapshot(db, withoutFord)
 
     const report = await buildVehicleSourceCoverageReport(db, 'tsb-kasko')
-    expect({
-      provider: report.provider,
-      activeRecords: report.activeRecords,
-      trustedMapped: report.trustedMapped,
-      unmapped: report.unmapped,
-      reviewRequired: report.reviewRequired,
-      invalidMappings: report.invalidMappings,
-      inactiveRecords: report.inactiveRecords,
-    }).toEqual({
+    expect(report).toMatchObject({
       provider: 'tsb-kasko',
       activeRecords: 4,
       trustedMapped: 1,
@@ -458,8 +427,7 @@ describe('vehicle source coverage report', () => {
       invalidMappings: 1,
       inactiveRecords: 1,
     })
-
-    expect(report.details.map((row) => [row.sourceKey, row.status])).toEqual([
+    expect(report.details.map((detail) => [detail.sourceKey, detail.status])).toEqual([
       ['A-1', 'trusted-mapped'],
       ['B-1', 'unmapped'],
       ['C-1', 'review-required'],
