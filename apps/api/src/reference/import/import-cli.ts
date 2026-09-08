@@ -12,7 +12,8 @@ if (!inputPath) {
   const databaseUrl = process.env.DATABASE_URL
   if (!databaseUrl) throw new Error('DATABASE_URL is required')
 
-  const raw = await readFile(resolve(inputPath), 'utf8')
+  const invocationRoot = process.env.INIT_CWD ?? process.cwd()
+  const raw = await readFile(resolve(invocationRoot, inputPath), 'utf8')
   const snapshot = JSON.parse(raw) as NormalizedLocationSnapshot
   const db = createDatabase(databaseUrl)
 
