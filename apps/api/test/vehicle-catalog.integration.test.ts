@@ -1,7 +1,10 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import type { FastifyInstance } from 'fastify'
 import { sql, type Kysely } from 'kysely'
 import { createAuth, createAuthPool } from '../src/auth/auth.js'
 import { migrateAuth } from '../src/auth/auth-migrator.js'
+import { buildApp } from '../src/app.js'
+import { checkDatabase } from '../src/db/check.js'
 import { createDatabase, type Database } from '../src/db/client.js'
 import { migrateBootstrap, migrateDomain } from '../src/db/migrator.js'
 import type { CanonicalVehicleCatalog } from '../src/reference/vehicle/catalog.types.js'
@@ -13,6 +16,7 @@ const secret = process.env.BETTER_AUTH_SECRET ?? 'bizzat-test-auth-secret-000000
 const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
 
 let db: Kysely<Database>
+let app: FastifyInstance
 const authPool = createAuthPool(databaseUrl)
 const auth = createAuth({ databaseUrl, baseUrl, secret }, authPool)
 
@@ -40,6 +44,11 @@ beforeAll(async () => {
   await migrateBootstrap(db)
   await migrateAuth(auth)
   await migrateDomain(db)
+  app = buildApp({
+    logger: false,
+    readinessCheck: () => checkDatabase(db),
+    db,
+  })
 })
 
 beforeEach(async () => {
@@ -49,6 +58,7 @@ beforeEach(async () => {
 })
 
 afterAll(async () => {
+  await app.close()
   await db.destroy()
   await authPool.end()
 })
@@ -153,5 +163,87 @@ describe('vehicle catalog importer', () => {
       .orderBy('catalog_key')
       .execute()
     expect(after).toEqual(before)
+  })
+})
+
+describe('vehicle catalog reference API', () => {
+  it('returns active hierarchy without exposing catalog keys', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+
+    const brands = await app.inject({ method: 'GET', url: '/api/v1/reference/vehicle/brands' })
+    expect(brands.statusCode).toBe(200)
+    expect(brands.json().items.map((item: { name: string }) => item.name)).toEqual(['Fiat', 'Renault'])
+    expect(brands.json().items[0]).not.toHaveProperty('catalog_key')
+
+    const renault = await db.selectFrom('vehicle_brands')
+      .select('id')
+      .where('catalog_key', '=', 'renault')
+      .executeTakeFirstOrThrow()
+    const clio = await db.selectFrom('vehicle_series')
+      .select('id')
+      .where('catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+
+    const series = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/brands/${renault.id}/series`,
+    })
+    expect(series.statusCode).toBe(200)
+    expect(series.json().items.map((item: { name: string }) => item.name)).toEqual(['Clio'])
+    expect(series.json().items[0]).not.toHaveProperty('catalog_key')
+
+    const models = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${clio.id}/models`,
+    })
+    expect(models.statusCode).toBe(200)
+    expect(models.json().items.map((item: { name: string }) => item.name)).toEqual([
+      '1.0 TCe Evolution',
+      '1.0 TCe Joy',
+    ])
+    expect(models.json().items[0]).not.toHaveProperty('catalog_key')
+  })
+
+  it('returns the common 404 for unknown or inactive parents', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+
+    const renault = await db.selectFrom('vehicle_brands')
+      .select('id')
+      .where('catalog_key', '=', 'renault')
+      .executeTakeFirstOrThrow()
+    const clio = await db.selectFrom('vehicle_series')
+      .select('id')
+      .where('catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+
+    const unknownBrand = await app.inject({
+      method: 'GET',
+      url: '/api/v1/reference/vehicle/brands/00000000-0000-0000-0000-000000000000/series',
+    })
+    expect(unknownBrand.statusCode).toBe(404)
+    expect(unknownBrand.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
+
+    const unknownSeries = await app.inject({
+      method: 'GET',
+      url: '/api/v1/reference/vehicle/series/00000000-0000-0000-0000-000000000000/models',
+    })
+    expect(unknownSeries.statusCode).toBe(404)
+    expect(unknownSeries.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
+
+    await db.updateTable('vehicle_brands').set({ active: false }).where('id', '=', renault.id).execute()
+    const inactiveBrand = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/brands/${renault.id}/series`,
+    })
+    expect(inactiveBrand.statusCode).toBe(404)
+    expect(inactiveBrand.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
+
+    await db.updateTable('vehicle_series').set({ active: false }).where('id', '=', clio.id).execute()
+    const inactiveSeries = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${clio.id}/models`,
+    })
+    expect(inactiveSeries.statusCode).toBe(404)
+    expect(inactiveSeries.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
   })
 })
