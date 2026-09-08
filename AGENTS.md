@@ -10,10 +10,12 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - `docs/superpowers/specs/2026-09-07-technical-architecture-design.md`: Onaylanan teknik mimari ve guardrail'ler.
 - `docs/superpowers/specs/2026-09-08-location-reference-data-design.md`: Konum reference-data tasarımı.
 - `docs/superpowers/specs/2026-09-08-vehicle-catalog-design.md`: Canonical araç katalog tasarımı ve source/mapping sınırı.
+- `docs/superpowers/specs/2026-09-08-vehicle-catalog-phase-b-design.md`: TSB source ingestion/mapping Phase B tasarımı.
 - `docs/superpowers/plans/2026-09-07-foundation-implementation.md`: Foundation implementasyon sırası.
 - `docs/superpowers/plans/2026-09-08-identity-implementation.md`: Auth/profile/role implementasyon sınırı.
 - `docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md`: Konum reference-data implementasyon sırası.
 - `docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-a-implementation.md`: Canonical araç katalog Phase A implementasyon sırası.
+- `docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b1-implementation.md`: TSB source ingestion/mapping B1 implementasyon sırası.
 - `docs/reference/SAHIBINDEN_REFERENCE.md`: Sahibinden kategori/filtre/akış envanteri ve EİDS araştırması.
 - `DESIGN.md`: Onaylanan tasarım yönü.
 - `docs/DECISIONS.md`: Alınmış kararlar.
@@ -74,14 +76,31 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 
 - `vehicle_brands`, `vehicle_series`, `vehicle_models` Bizzat'ın canonical araç kimliğidir; listing'ler ileride bu UUID'leri referanslar.
 - `catalog_key` repository-owned ve sabit kimliktir. Display name düzeltmesinde yeni row/key üretme; mevcut kaydı güncelle.
-- Canonical hiyerarşi yalnız `Marka → Seri → Model`dir. Phase A içinde generation/engine/trim/spec/VIN tabloları ekleme.
+- Canonical hiyerarşi yalnız `Marka → Seri → Model`dir. Gereksinim olmadan generation/engine/trim/spec/VIN tabloları ekleme.
 - Model yılı canonical taxonomy'nin parçası değildir; `car_details.model_year` bağımsız ilan alanı olarak kalır. `vehicle_model_years` tablosu ekleme.
 - TSB veya başka provider ID/source string'ini listing domain ID'si yapma.
-- TSB/source-provider ingestion ve mapping `vehicle_source_*` katmanı ayrı Phase B işidir; canonical foundation PR'ına karıştırma.
-- Runtime araç reference endpointleri yalnız PostgreSQL'den okur; TSB/OtoAPI/başka araç API'sine normal request sırasında çağrı yapma.
+- Runtime araç reference endpointleri yalnız canonical PostgreSQL tablolarından okur; TSB/OtoAPI/başka araç API'sine normal request sırasında çağrı yapma.
 - Canonical catalog import explicit bakım işlemidir; API startup/deploy içine implicit import ekleme.
 - Canonical kaynaktan kaybolan marka/seri/model kayıtlarını hard-delete etme; `active = false` yap.
 - `data/reference/vehicles/fixture.catalog.json` yalnız test/development fixture'ıdır; gerçek Türkiye araç kataloğu gibi sunma.
+
+### TSB source/mapping Phase B1 guardrail'leri
+
+- `vehicle_source_*` tabloları coverage/curation altyapısıdır; canonical listing kimliği değildir.
+- TSB `source_key` değeri yalnız trimlenmiş **Araç Kodu**dur. Model yılını source key'e ekleme.
+- `available_model_years` yalnız source metadata'sıdır; ilan model yılı geçerliliği üretme.
+- Ham TSB XLS/XLSX/CSV/export dosyalarını public repoya commit etme.
+- Kasko değer/fiyat alanlarını mevcut ürün ihtiyacı yokken DB'ye taşıma.
+- TSB source importu explicit bakım işlemidir; runtime/API startup/deploy/migration içinde remote fetch veya implicit import ekleme.
+- Source importer canonical `vehicle_brands/series/models` tablolarını oluşturamaz, yeniden adlandıramaz veya otomatik map edemez.
+- Source importer `mapping_needs_review=true` durumunu kendiliğinden temizleyemez; yalnız explicit mapping apply/confirm temizler.
+- Anlamlı mapped source brand/type değişimi `mapping_needs_review=true` yapar; case/whitespace-only değişiklik bunu tetiklemez.
+- Mapping apply yalnız aktif `vehicle_models.catalog_key` hedeflerine yapılır; inactive hedef reddedilir.
+- Mapping dosyası patch/apply artifact'ıdır; dosyada olmayan mevcut mapping'leri silme.
+- Canonical hedef sonradan inactive olursa source identity review flag'ini değiştirme; report bunu `invalid-mapping` olarak türetsin.
+- Public araç dropdown/API response'larını oluşturmak için source tablolarını join etme; public runtime canonical tabloları kullanır.
+- B1 fixture source/mapping dosyaları uydurulmuş deterministic test verisidir; gerçek TSB dataset'i gibi sunma.
+- B2 brand/series alias, candidate generator ve gerçek Türkiye `catalog.json` curation işini B1'e geri taşımama.
 
 ## Teknik çalışma komutları
 
@@ -91,6 +110,9 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - DB + auth migrations: `pnpm db:migrate`.
 - Test/development konum fixture importu: `pnpm reference:import:locations -- data/reference/locations/fixture.locations.json`.
 - Test/development araç katalog fixture importu: `pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json`.
+- Test/development TSB source fixture importu: `pnpm reference:import:vehicle-source -- tsb data/reference/vehicles/fixture.tsb-source.json`.
+- Test/development TSB mapping apply: `pnpm reference:apply:vehicle-mappings -- tsb data/reference/vehicles/fixture.tsb-mappings.json`.
+- TSB source coverage report: `pnpm reference:report:vehicle-source -- tsb`.
 - Local web + API + contracts watcher: `pnpm dev`.
 - Kod değişikliklerini `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` ile doğrula.
 - DB/auth/reference-data davranışı gerçek PostgreSQL integration testleri gerektirir; mock ile ikame etme.
@@ -105,6 +127,6 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 
 ## Mevcut doğrulama
 
-CI PostgreSQL 18 üzerinde frozen lockfile, explicit migrations, Better Auth auth integration testleri, location migration/import/API testleri, canonical vehicle catalog migration/import/API testleri, web smoke testleri, lint, typecheck ve build çalıştırır.
+CI PostgreSQL 18 üzerinde frozen lockfile, explicit migrations, Better Auth auth integration testleri, location migration/import/API testleri, canonical vehicle catalog migration/import/API testleri, TSB normalized source import/mapping/report testleri, web smoke testleri, lint, typecheck ve build çalıştırır.
 
 DB/auth/reference-data kullanan değişikliklerde gerçek integration testi olmadan başarı iddiasında bulunma. Production deploy/Caddy/backup hâlâ sonraki fazdadır.
