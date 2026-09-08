@@ -56,7 +56,7 @@ afterAll(async () => {
 })
 
 describe('location reference schema', () => {
-  it('creates reference tables and enforces foreign keys', async () => {
+  it('creates reference tables and enforces parent foreign keys', async () => {
     const result = await sql<{ table_name: string }>`
       select table_name from information_schema.tables
       where table_schema = 'public'
@@ -67,6 +67,18 @@ describe('location reference schema', () => {
     expect(result.rows.map((row) => row.table_name)).toEqual([
       'districts', 'neighborhoods', 'provinces', 'reference_data_imports', 'reference_data_providers',
     ])
+
+    const provider = await db.insertInto('reference_data_providers')
+      .values({ code: `fk-${Date.now()}`, source_name: 'FK test', source_url: null, license: null })
+      .returning('id')
+      .executeTakeFirstOrThrow()
+
+    await expect(db.insertInto('districts').values({
+      provider_id: provider.id,
+      source_key: 'orphan-district',
+      province_id: '00000000-0000-0000-0000-000000000000',
+      name: 'Orphan',
+    }).execute()).rejects.toThrow()
   })
 })
 
@@ -135,7 +147,7 @@ describe('location importer', () => {
 })
 
 describe('location reference API', () => {
-  it('returns active hierarchy only and 404s unknown parents', async () => {
+  it('returns active hierarchy only and 404s unknown or inactive parents', async () => {
     const value = makeSnapshot(`api-${Date.now()}`)
     const imported = await importLocationSnapshot(db, value)
 
@@ -169,5 +181,10 @@ describe('location reference API', () => {
     const unknown = await app.inject({ method: 'GET', url: '/api/v1/reference/provinces/00000000-0000-0000-0000-000000000000/districts' })
     expect(unknown.statusCode).toBe(404)
     expect(unknown.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
+
+    await db.updateTable('provinces').set({ active: false }).where('id', '=', istanbul.id).execute()
+    const inactive = await app.inject({ method: 'GET', url: `/api/v1/reference/provinces/${istanbul.id}/districts` })
+    expect(inactive.statusCode).toBe(404)
+    expect(inactive.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
   })
 })
