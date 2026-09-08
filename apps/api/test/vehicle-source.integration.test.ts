@@ -5,7 +5,10 @@ import { createAuth, createAuthPool } from '../src/auth/auth.js'
 import { migrateAuth } from '../src/auth/auth-migrator.js'
 import { createDatabase, type Database } from '../src/db/client.js'
 import { migrateBootstrap, migrateDomain } from '../src/db/migrator.js'
+import { applyVehicleSourceMappings } from '../src/reference/vehicle/source/mapping-service.js'
+import { validateVehicleSourceMappingFile } from '../src/reference/vehicle/source/mapping-validator.js'
 import { importVehicleSourceSnapshot } from '../src/reference/vehicle/source/source-importer.js'
+import { buildVehicleSourceCoverageReport } from '../src/reference/vehicle/source/source-report.js'
 import type { NormalizedVehicleSourceSnapshot } from '../src/reference/vehicle/source/source.types.js'
 import {
   VehicleSourceValidationError,
@@ -63,6 +66,23 @@ function makeSnapshot(
       version,
     },
     records: rows,
+  }, fixedNow)
+}
+
+function makeReportSnapshot(version = 'report-1'): NormalizedVehicleSourceSnapshot {
+  return validateAndNormalizeVehicleSourceSnapshot({
+    provider: {
+      code: 'tsb-kasko',
+      sourceName: 'TSB report fixture',
+      version,
+    },
+    records: [
+      { sourceKey: 'A-1', brandRaw: 'ALFA', typeRaw: 'ALFA TYPE', availableModelYears: [2024] },
+      { sourceKey: 'B-1', brandRaw: 'BMW', typeRaw: 'BMW TYPE', availableModelYears: [2024] },
+      { sourceKey: 'C-1', brandRaw: 'CITROEN', typeRaw: 'CITROEN TYPE', availableModelYears: [2024] },
+      { sourceKey: 'D-1', brandRaw: 'DACIA', typeRaw: 'DACIA TYPE', availableModelYears: [2024] },
+      { sourceKey: 'E-1', brandRaw: 'FORD', typeRaw: 'FORD TYPE', availableModelYears: [2024] },
+    ],
   }, fixedNow)
 }
 
@@ -293,5 +313,155 @@ describe('vehicle source importer', () => {
       .orderBy('source_key')
       .execute()
     expect(after).toEqual(before)
+  })
+})
+
+describe('vehicle source mapping apply', () => {
+  it('applies mappings by source code + canonical key, clears review, preserves omitted mappings and is idempotent', async () => {
+    const imported = await importVehicleSourceSnapshot(db, makeSnapshot())
+    const toyotaModel = await seedCanonicalModel()
+    const renaultModel = await seedCanonicalModel()
+
+    const fullFile = validateVehicleSourceMappingFile({
+      version: 'mapping-1',
+      mappings: [
+        { sourceKey: '144-1064', vehicleModelKey: toyotaModel.catalogKey, method: 'curated-import' },
+        { sourceKey: '122-1260', vehicleModelKey: renaultModel.catalogKey, method: 'manual' },
+      ],
+    })
+
+    expect(await applyVehicleSourceMappings(db, 'tsb-kasko', fullFile)).toEqual({ applied: 2 })
+
+    const toyotaSource = await db.selectFrom('vehicle_source_records')
+      .select('id')
+      .where('provider_id', '=', imported.providerId)
+      .where('source_key', '=', '144-1064')
+      .executeTakeFirstOrThrow()
+    await db.updateTable('vehicle_source_records')
+      .set({ mapping_needs_review: true })
+      .where('id', '=', toyotaSource.id)
+      .execute()
+
+    const patchFile = validateVehicleSourceMappingFile({
+      version: 'mapping-2',
+      mappings: [
+        { sourceKey: '144-1064', vehicleModelKey: toyotaModel.catalogKey, method: 'exact-rule' },
+      ],
+    })
+    expect(await applyVehicleSourceMappings(db, 'tsb-kasko', patchFile)).toEqual({ applied: 1 })
+
+    const mappings = await db.selectFrom('vehicle_source_mappings')
+      .select(['source_record_id', 'mapping_method'])
+      .execute()
+    expect(mappings).toHaveLength(2)
+    expect(mappings.find((row) => row.source_record_id === toyotaSource.id)?.mapping_method)
+      .toBe('exact-rule')
+
+    const review = await db.selectFrom('vehicle_source_records')
+      .select('mapping_needs_review')
+      .where('id', '=', toyotaSource.id)
+      .executeTakeFirstOrThrow()
+    expect(review.mapping_needs_review).toBe(false)
+
+    expect(await applyVehicleSourceMappings(db, 'tsb-kasko', patchFile)).toEqual({ applied: 1 })
+    expect(await db.selectFrom('vehicle_source_mappings').select('source_record_id').execute())
+      .toHaveLength(2)
+  })
+
+  it('rejects missing sources, missing/inactive canonical targets and rolls back the whole file', async () => {
+    await importVehicleSourceSnapshot(db, makeSnapshot())
+    const validModel = await seedCanonicalModel()
+    const inactiveModel = await seedCanonicalModel()
+    await db.updateTable('vehicle_models').set({ active: false }).where('id', '=', inactiveModel.id).execute()
+
+    const missingSource = validateVehicleSourceMappingFile({
+      version: 'missing-source',
+      mappings: [{ sourceKey: 'missing', vehicleModelKey: validModel.catalogKey, method: 'manual' }],
+    })
+    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', missingSource)).rejects.toThrow()
+
+    const missingModel = validateVehicleSourceMappingFile({
+      version: 'missing-model',
+      mappings: [{ sourceKey: '144-1064', vehicleModelKey: 'missing:model', method: 'manual' }],
+    })
+    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', missingModel)).rejects.toThrow()
+
+    const inactiveTarget = validateVehicleSourceMappingFile({
+      version: 'inactive-model',
+      mappings: [{ sourceKey: '144-1064', vehicleModelKey: inactiveModel.catalogKey, method: 'manual' }],
+    })
+    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', inactiveTarget)).rejects.toThrow()
+
+    const rollbackFile = validateVehicleSourceMappingFile({
+      version: 'rollback',
+      mappings: [
+        { sourceKey: '144-1064', vehicleModelKey: validModel.catalogKey, method: 'manual' },
+        { sourceKey: '122-1260', vehicleModelKey: 'missing:model', method: 'manual' },
+      ],
+    })
+    await expect(applyVehicleSourceMappings(db, 'tsb-kasko', rollbackFile)).rejects.toThrow()
+    expect(await db.selectFrom('vehicle_source_mappings').select('source_record_id').execute())
+      .toHaveLength(0)
+  })
+})
+
+describe('vehicle source coverage report', () => {
+  it('classifies trusted, unmapped, review-required, invalid and inactive rows deterministically', async () => {
+    const first = await importVehicleSourceSnapshot(db, makeReportSnapshot())
+    const trustedModel = await seedCanonicalModel()
+    const reviewModel = await seedCanonicalModel()
+    const invalidModel = await seedCanonicalModel()
+
+    const mappings = validateVehicleSourceMappingFile({
+      version: 'report-mappings',
+      mappings: [
+        { sourceKey: 'A-1', vehicleModelKey: trustedModel.catalogKey, method: 'curated-import' },
+        { sourceKey: 'C-1', vehicleModelKey: reviewModel.catalogKey, method: 'manual' },
+        { sourceKey: 'D-1', vehicleModelKey: invalidModel.catalogKey, method: 'manual' },
+      ],
+    })
+    await applyVehicleSourceMappings(db, 'tsb-kasko', mappings)
+
+    const reviewSource = await db.selectFrom('vehicle_source_records')
+      .select('id')
+      .where('provider_id', '=', first.providerId)
+      .where('source_key', '=', 'C-1')
+      .executeTakeFirstOrThrow()
+    await db.updateTable('vehicle_source_records')
+      .set({ mapping_needs_review: true })
+      .where('id', '=', reviewSource.id)
+      .execute()
+    await db.updateTable('vehicle_models').set({ active: false }).where('id', '=', invalidModel.id).execute()
+
+    const next = makeReportSnapshot('report-2')
+    next.records = next.records.filter((row) => row.sourceKey !== 'E-1')
+    await importVehicleSourceSnapshot(db, next)
+
+    const report = await buildVehicleSourceCoverageReport(db, 'tsb-kasko')
+    expect({
+      provider: report.provider,
+      activeRecords: report.activeRecords,
+      trustedMapped: report.trustedMapped,
+      unmapped: report.unmapped,
+      reviewRequired: report.reviewRequired,
+      invalidMappings: report.invalidMappings,
+      inactiveRecords: report.inactiveRecords,
+    }).toEqual({
+      provider: 'tsb-kasko',
+      activeRecords: 4,
+      trustedMapped: 1,
+      unmapped: 1,
+      reviewRequired: 1,
+      invalidMappings: 1,
+      inactiveRecords: 1,
+    })
+
+    expect(report.details.map((row) => [row.sourceKey, row.status])).toEqual([
+      ['A-1', 'trusted-mapped'],
+      ['B-1', 'unmapped'],
+      ['C-1', 'review-required'],
+      ['D-1', 'invalid-mapping'],
+      ['E-1', 'inactive'],
+    ])
   })
 })
