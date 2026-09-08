@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Temporary B2 maintenance script: acquire a price-free normalized TSB snapshot.
 
-This file is intentionally deleted before Phase B2 merges. It reads the official
-monthly TSB workbook in memory and writes only Bizzat's normalized source facts:
-vehicle code, brand/type text, and available model years. Kasko values are never
-written to the output.
+This file is intentionally deleted before Phase B2 merges. It reads the latest
+published official monthly TSB workbook at or before the requested period in
+memory and writes only Bizzat's normalized source facts: vehicle code,
+brand/type text, and available model years. Kasko values are never written to
+the output.
 """
 
 from __future__ import annotations
@@ -12,7 +13,6 @@ from __future__ import annotations
 import argparse
 import io
 import json
-import re
 import sys
 import unicodedata
 from collections import defaultdict
@@ -27,6 +27,7 @@ MONTHS_URL = f"{BASE_URL}/InsuranceData/GetMonthList"
 ARCHIVE_URL = f"{BASE_URL}/InsuranceData/GetInsuranceDataArchiveFile"
 SOURCE_PAGE = f"{BASE_URL}/tr/kasko-arsiv-listesi"
 HEADER_SCAN_ROWS = 25
+ARCHIVE_LOOKBACK_MONTHS = 18
 
 
 def fold(value: Any) -> str:
@@ -77,34 +78,71 @@ def request_json(session: requests.Session, url: str, **params: Any) -> Any:
         raise RuntimeError(f"Expected JSON from {response.url}") from error
 
 
-def resolve_archive_url(session: requests.Session, year: int, month: int) -> str:
+def previous_periods(year: int, month: int, limit: int) -> list[tuple[int, int]]:
+    periods: list[tuple[int, int]] = []
+    current_year, current_month = year, month
+    for _ in range(limit):
+        periods.append((current_year, current_month))
+        current_month -= 1
+        if current_month == 0:
+            current_year -= 1
+            current_month = 12
+    return periods
+
+
+def resolve_latest_archive_url(
+    session: requests.Session,
+    year: int,
+    month: int,
+) -> tuple[int, int, str]:
     months = request_json(session, MONTHS_URL)
     if not isinstance(months, list):
         raise RuntimeError("TSB month list response is not an array")
 
-    month_id: int | None = None
+    month_ids: dict[int, int] = {}
     for item in months:
         if not isinstance(item, dict):
             continue
         try:
             order = int(item.get("MonthOrder"))
-        except (TypeError, ValueError):
+            month_id = int(item["Id"])
+        except (KeyError, TypeError, ValueError):
             continue
-        if order == month:
-            try:
-                month_id = int(item["Id"])
-            except (KeyError, TypeError, ValueError) as error:
-                raise RuntimeError("TSB month item has no usable Id") from error
-            break
+        if 1 <= order <= 12:
+            month_ids[order] = month_id
 
-    if month_id is None:
-        raise RuntimeError(f"TSB does not expose calendar month {month}")
+    if not month_ids:
+        raise RuntimeError("TSB month list has no usable calendar month identifiers")
 
-    payload = request_json(session, ARCHIVE_URL, Year=year, MonthId=month_id)
-    if not isinstance(payload, str) or not payload.strip():
-        raise RuntimeError(f"TSB archive path missing for {year}-{month:02d}")
-    path = payload.strip()
-    return path if path.startswith("http") else f"{BASE_URL}/{path.lstrip('/')}"
+    checked: list[str] = []
+    for candidate_year, candidate_month in previous_periods(
+        year,
+        month,
+        ARCHIVE_LOOKBACK_MONTHS,
+    ):
+        month_id = month_ids.get(candidate_month)
+        if month_id is None:
+            continue
+        payload = request_json(
+            session,
+            ARCHIVE_URL,
+            Year=candidate_year,
+            MonthId=month_id,
+        )
+        checked.append(f"{candidate_year}-{candidate_month:02d}")
+        if payload in (None, ""):
+            continue
+        if not isinstance(payload, str):
+            raise RuntimeError(
+                f"Unexpected TSB archive path response for {candidate_year}-{candidate_month:02d}"
+            )
+        path = payload.strip()
+        if not path:
+            continue
+        url = path if path.startswith("http") else f"{BASE_URL}/{path.lstrip('/')}"
+        return candidate_year, candidate_month, url
+
+    raise RuntimeError(f"TSB published no archive in checked periods: {', '.join(checked)}")
 
 
 FIELD_KEYWORDS: dict[str, tuple[str, ...]] = {
@@ -169,7 +207,7 @@ def cell(row: tuple[Any, ...], index: int | None) -> Any:
     return row[index]
 
 
-def parse_workbook(content: bytes, *, year: int, month: int) -> list[dict[str, Any]]:
+def parse_workbook(content: bytes, *, publication_year: int) -> list[dict[str, Any]]:
     try:
         workbook = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
     except Exception as error:  # openpyxl raises several workbook-specific exceptions
@@ -191,7 +229,7 @@ def parse_workbook(content: bytes, *, year: int, month: int) -> list[dict[str, A
         model_year = as_int(cell(row, columns.get("model_year")))
         if brand_code is None or model_code is None or model_year is None:
             continue
-        if model_year < 1886 or model_year > year + 1:
+        if model_year < 1886 or model_year > publication_year + 1:
             continue
 
         if COMBINED in columns:
@@ -244,16 +282,16 @@ def acquire(year: int, month: int) -> dict[str, Any]:
             "Referer": SOURCE_PAGE,
         }
     )
-    archive_url = resolve_archive_url(session, year, month)
+    actual_year, actual_month, archive_url = resolve_latest_archive_url(session, year, month)
     response = session.get(archive_url, timeout=60)
     response.raise_for_status()
-    records = parse_workbook(response.content, year=year, month=month)
+    records = parse_workbook(response.content, publication_year=actual_year)
     return {
         "provider": {
             "code": "tsb-kasko",
             "sourceName": "Türkiye Sigorta Birliği Kasko Değer Listesi",
             "sourceUrl": SOURCE_PAGE,
-            "version": f"{year}-{month:02d}",
+            "version": f"{actual_year}-{actual_month:02d}",
         },
         "records": records,
     }
