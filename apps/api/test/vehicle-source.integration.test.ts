@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { sql, type Kysely } from 'kysely'
 import { createAuth, createAuthPool } from '../src/auth/auth.js'
 import { migrateAuth } from '../src/auth/auth-migrator.js'
@@ -104,6 +104,13 @@ async function seedCanonicalModel(): Promise<{ id: string; catalogKey: string }>
   return { id: model.id, catalogKey }
 }
 
+async function clearVehicleSourceState(): Promise<void> {
+  await db.deleteFrom('vehicle_source_mappings').execute()
+  await db.deleteFrom('vehicle_source_records').execute()
+  await db.deleteFrom('vehicle_source_imports').execute()
+  await db.deleteFrom('vehicle_source_providers').execute()
+}
+
 beforeAll(async () => {
   db = createDatabase(databaseUrl)
   await migrateBootstrap(db)
@@ -111,12 +118,8 @@ beforeAll(async () => {
   await migrateDomain(db)
 })
 
-beforeEach(async () => {
-  await db.deleteFrom('vehicle_source_mappings').execute()
-  await db.deleteFrom('vehicle_source_records').execute()
-  await db.deleteFrom('vehicle_source_imports').execute()
-  await db.deleteFrom('vehicle_source_providers').execute()
-})
+beforeEach(clearVehicleSourceState)
+afterEach(clearVehicleSourceState)
 
 afterAll(async () => {
   await db.destroy()
