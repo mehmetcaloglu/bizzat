@@ -10,8 +10,64 @@ export interface ProfilesTable {
   updated_at: Generated<Date>
 }
 
+export interface ReferenceDataProvidersTable {
+  id: Generated<string>
+  code: string
+  source_name: string
+  source_url: string | null
+  license: string | null
+  created_at: Generated<Date>
+}
+
+export interface ReferenceDataImportsTable {
+  id: Generated<string>
+  provider_id: string
+  version: string
+  checksum_sha256: string
+  imported_at: Generated<Date>
+}
+
+export interface ProvincesTable {
+  id: Generated<string>
+  provider_id: string
+  source_key: string
+  code: string
+  name: string
+  active: Generated<boolean>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
+export interface DistrictsTable {
+  id: Generated<string>
+  provider_id: string
+  source_key: string
+  province_id: string
+  name: string
+  active: Generated<boolean>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
+export interface NeighborhoodsTable {
+  id: Generated<string>
+  provider_id: string
+  source_key: string
+  district_id: string
+  name: string
+  kind: string | null
+  active: Generated<boolean>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
 export interface Database {
   profiles: ProfilesTable
+  reference_data_providers: ReferenceDataProvidersTable
+  reference_data_imports: ReferenceDataImportsTable
+  provinces: ProvincesTable
+  districts: DistrictsTable
+  neighborhoods: NeighborhoodsTable
 }
 
 export function createDatabase(connectionString: string): Kysely<Database> {
