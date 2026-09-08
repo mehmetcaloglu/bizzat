@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""Temporary B2 maintenance script: acquire a price-free normalized TSB snapshot.
-
-This file is intentionally deleted before Phase B2 merges. It reads the latest
-published official monthly TSB workbook at or before the requested period in
-memory and writes only Bizzat's normalized source facts: vehicle code,
-brand/type text, and available model years. Kasko values are never written to
-the output.
-"""
+"""Temporary B2 maintenance script: acquire a price-free normalized TSB snapshot."""
 
 from __future__ import annotations
 
@@ -35,9 +28,7 @@ def fold(value: Any) -> str:
     text = text.replace("ı", "i").replace("İ", "I")
     decomposed = unicodedata.normalize("NFKD", text)
     return " ".join(
-        "".join(ch for ch in decomposed if not unicodedata.combining(ch))
-        .lower()
-        .split()
+        "".join(ch for ch in decomposed if not unicodedata.combining(ch)).lower().split()
     )
 
 
@@ -111,14 +102,9 @@ def resolve_latest_archive_url(
         if 1 <= order <= 12:
             month_ids[order] = month_id
 
-    if not month_ids:
-        raise RuntimeError("TSB month list has no usable calendar month identifiers")
-
     checked: list[str] = []
     for candidate_year, candidate_month in previous_periods(
-        year,
-        month,
-        ARCHIVE_LOOKBACK_MONTHS,
+        year, month, ARCHIVE_LOOKBACK_MONTHS
     ):
         month_id = month_ids.get(candidate_month)
         if month_id is None:
@@ -137,10 +123,9 @@ def resolve_latest_archive_url(
                 f"Unexpected TSB archive path response for {candidate_year}-{candidate_month:02d}"
             )
         path = payload.strip()
-        if not path:
-            continue
-        url = path if path.startswith("http") else f"{BASE_URL}/{path.lstrip('/')}"
-        return candidate_year, candidate_month, url
+        if path:
+            url = path if path.startswith("http") else f"{BASE_URL}/{path.lstrip('/')}"
+            return candidate_year, candidate_month, url
 
     raise RuntimeError(f"TSB published no archive in checked periods: {', '.join(checked)}")
 
@@ -148,12 +133,11 @@ def resolve_latest_archive_url(
 FIELD_KEYWORDS: dict[str, tuple[str, ...]] = {
     "brand_code": ("marka kodu", "markakodu", "brand code"),
     "model_code": ("model kodu", "modelkodu", "tip kodu", "tipkodu", "model code"),
-    "model_year": ("model yili", "modelyili", "model year", "yil"),
+    "model_year": ("model yili", "modelyili", "model year"),
     "brand": ("marka", "brand"),
     "model": ("model", "tip", "arac", "vehicle"),
-    "amount": ("kasko bedeli", "kaskobedeli", "bedel", "deger", "tutar", "amount", "value"),
 }
-FIELD_PRIORITY = ("brand_code", "model_code", "model_year", "amount", "brand", "model")
+FIELD_PRIORITY = ("brand_code", "model_code", "model_year", "brand", "model")
 COMBINED = "brand_model"
 
 
@@ -169,24 +153,52 @@ def match_header(value: Any) -> str | None:
     return None
 
 
-def locate_header(rows: list[tuple[Any, ...]]) -> tuple[int, dict[str, int]]:
+def header_year(value: Any, publication_year: int) -> int | None:
+    year = as_int(value)
+    if year is None or year < 1886 or year > publication_year + 1:
+        return None
+    return year
+
+
+def locate_header(
+    rows: list[tuple[Any, ...]],
+    publication_year: int,
+) -> tuple[int, dict[str, int], dict[int, int]]:
     best_index = -1
-    best: dict[str, int] = {}
+    best_fields: dict[str, int] = {}
+    best_years: dict[int, int] = {}
+    best_score = -1
+
     for row_index, row in enumerate(rows[:HEADER_SCAN_ROWS]):
-        mapping: dict[str, int] = {}
+        fields: dict[str, int] = {}
+        years: dict[int, int] = {}
         for column_index, value in enumerate(row):
             field = match_header(value)
-            if field and field not in mapping:
-                mapping[field] = column_index
-        if len(mapping) > len(best):
-            best_index, best = row_index, mapping
+            if field and field not in fields:
+                fields[field] = column_index
+            year = header_year(value, publication_year)
+            if year is not None:
+                years[year] = column_index
 
-    required = {"brand_code", "model_code", "model_year"}
-    if best_index < 0 or not required.issubset(best):
-        raise RuntimeError(f"Could not locate required TSB workbook columns; found {sorted(best)}")
-    if COMBINED not in best and not {"brand", "model"}.issubset(best):
+        score = len(fields) * 100 + len(years)
+        if score > best_score:
+            best_index, best_fields, best_years, best_score = (
+                row_index,
+                fields,
+                years,
+                score,
+            )
+
+    required = {"brand_code", "model_code"}
+    if best_index < 0 or not required.issubset(best_fields):
+        raise RuntimeError(
+            f"Could not locate required TSB workbook columns; found {sorted(best_fields)}"
+        )
+    if COMBINED not in best_fields and not {"brand", "model"}.issubset(best_fields):
         raise RuntimeError("TSB workbook has no usable brand/model text columns")
-    return best_index, best
+    if "model_year" not in best_fields and not best_years:
+        raise RuntimeError("TSB workbook has neither a model-year column nor year value columns")
+    return best_index, best_fields, best_years
 
 
 def split_combined(value: Any) -> tuple[str, str]:
@@ -207,10 +219,17 @@ def cell(row: tuple[Any, ...], index: int | None) -> Any:
     return row[index]
 
 
+def has_year_value(value: Any) -> bool:
+    text = clean_text(value)
+    if not text:
+        return False
+    return text not in {"0", "0.0", "0,0", "-"}
+
+
 def parse_workbook(content: bytes, *, publication_year: int) -> list[dict[str, Any]]:
     try:
         workbook = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
-    except Exception as error:  # openpyxl raises several workbook-specific exceptions
+    except Exception as error:
         raise RuntimeError(f"Could not open TSB workbook: {error}") from error
 
     try:
@@ -219,17 +238,26 @@ def parse_workbook(content: bytes, *, publication_year: int) -> list[dict[str, A
     finally:
         workbook.close()
 
-    header_index, columns = locate_header(rows)
+    header_index, columns, year_columns = locate_header(rows, publication_year)
     grouped: dict[str, dict[str, Any]] = {}
     years_by_key: dict[str, set[int]] = defaultdict(set)
 
     for row in rows[header_index + 1 :]:
         brand_code = as_int(cell(row, columns.get("brand_code")))
         model_code = as_int(cell(row, columns.get("model_code")))
-        model_year = as_int(cell(row, columns.get("model_year")))
-        if brand_code is None or model_code is None or model_year is None:
+        if brand_code is None or model_code is None:
             continue
-        if model_year < 1886 or model_year > publication_year + 1:
+
+        row_years: set[int] = set()
+        if "model_year" in columns:
+            model_year = as_int(cell(row, columns.get("model_year")))
+            if model_year is not None and 1886 <= model_year <= publication_year + 1:
+                row_years.add(model_year)
+        else:
+            for year, column_index in year_columns.items():
+                if has_year_value(cell(row, column_index)):
+                    row_years.add(year)
+        if not row_years:
             continue
 
         if COMBINED in columns:
@@ -256,21 +284,18 @@ def parse_workbook(content: bytes, *, publication_year: int) -> list[dict[str, A
                 f"Conflicting brand/type identity for TSB code {source_key}: "
                 f"{existing['brandRaw']} / {existing['typeRaw']} vs {brand_raw} / {type_raw}"
             )
-        years_by_key[source_key].add(model_year)
+        years_by_key[source_key].update(row_years)
 
     if not grouped:
         raise RuntimeError("TSB workbook produced zero normalized vehicle records")
 
-    records = []
-    for source_key in sorted(grouped):
-        row = grouped[source_key]
-        records.append(
-            {
-                **row,
-                "availableModelYears": sorted(years_by_key[source_key]),
-            }
-        )
-    return records
+    return [
+        {
+            **grouped[source_key],
+            "availableModelYears": sorted(years_by_key[source_key]),
+        }
+        for source_key in sorted(grouped)
+    ]
 
 
 def acquire(year: int, month: int) -> dict[str, Any]:
