@@ -5,7 +5,8 @@ export function normalizeVehicleSourceText(value: string): string {
 export function normalizeVehicleSourceIdentity(value: string): string {
   return normalizeVehicleSourceText(value)
     .replace(/\s*([/,-])\s*/g, '$1')
-    .toLocaleUpperCase('tr-TR')
+    .toUpperCase()
+    .replace(/İ/g, 'I')
 }
 
 export function normalizeVehicleSourceYears(years: number[]): number[] {
