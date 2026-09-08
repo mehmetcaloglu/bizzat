@@ -1,0 +1,22 @@
+{
+  "name": "@bizzat/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test --max-warnings=0",
+    "test": "vitest run test/app.test.ts"
+  },
+  "dependencies": {
+    "@bizzat/contracts": "workspace:*",
+    "@fastify/type-provider-typebox": "6.1.0",
+    "fastify": "5.12.3",
+    "typebox": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "vitest": "4.1.11"
+  }
+}
