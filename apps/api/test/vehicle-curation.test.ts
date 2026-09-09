@@ -468,8 +468,65 @@ describe('marketplace selection paths and review boundaries', () => {
     }
   })
 
-  it('keeps real Accent Blue and Accent Era rows out through the generic Accent fallback', () => {
+  it.each([
+    ['volkswagen:polo', '1.0 75 TRENDLINE', 'POLO 1.0 75 TRENDLINE', ['1.0', 'Trendline']],
+    ['volkswagen:polo', '1.0 TSI 95 TRENDLINE', 'POLO 1.0 TSI 95 TRENDLINE', ['1.0 TSI', 'Trendline']],
+  ])('accepts engine-adjacent bare power in %s', (series, proposed, raw, path) => {
+    expect(canonicalModelSelection(series, proposed, raw)?.path).toEqual(path)
+  })
+
+  it('accepts reviewed Clio 1.2 bare power while rejecting ambiguous 120 rows', () => {
+    expect(canonicalModelSelection(
+      'renault:clio',
+      'JOY 1.2 16V 75',
+      'CLIO JOY 1.2 16V 75',
+    )?.path).toEqual(['1.2', 'Joy'])
+
+    for (const label of [
+      'HB ICON 1.2 120',
+      'HB GT LINE 1.2 120',
+      'HB ICON 1.2 (120)',
+      'HB ICON 1.2 120 HP',
+      'HB ICON 1.2 120 PS',
+      'HB ICON 1.2 120 BG',
+    ]) {
+      expect(canonicalModelSelection('renault:clio', label, `CLIO ${label}`)).toBeNull()
+    }
+  })
+
+  it.each([
+    ['19-1035', '1.4 (85) REFERENCE', ['1.4', 'Reference']],
+    ['19-245', 'REFERANCE 1.4 (85)', ['1.4', 'Reference']],
+    ['19-1097', '1.0 75 S&S STYLE', ['1.0', 'Style']],
+    ['19-1124', '1.0 EVO 80 S&S STYLE', ['1.0', 'Style']],
+    ['19-1140', 'FL 1.0 EVO 80 STYLE', ['1.0', 'Style']],
+    ['19-1103', '1.0 ECOTSI 115 DSG S&S FR', ['1.0 EcoTSI', 'FR']],
+    ['19-1153', 'FL 1.0 ECOTSI 115 DSG FR', ['1.0 EcoTSI', 'FR']],
+  ])('maps reviewed Ibiza source %s to its indexed full path', (_sourceKey, proposed, path) => {
+    expect(canonicalModelSelection('seat:ibiza', proposed, `IBIZA ${proposed}`)?.path)
+      .toEqual(path)
+  })
+
+  it.each([
+    ['seat:ibiza', '1.4 STYLE'],
+    ['seat:ibiza', '1.0 REFERENCE'],
+    ['seat:ibiza', '1.0 ECOTSI 115 DSG S&S STYLE'],
+    ['seat:ibiza', '1.0 FR'],
+    ['seat:ibiza', 'SC 1.4 (85) REFERENCE'],
+    ['seat:ibiza', 'ST 1.0 75 S&S STYLE'],
+    ['seat:ibiza', 'SPORT TOURER 1.0 75 S&S STYLE'],
+    ['seat:ibiza', 'SEDAN 1.0 75 S&S STYLE'],
+    ['seat:ibiza', 'HB 1.0 75 S&S STYLE'],
+    ['seat:ibiza', '1.2 STYLE'],
+    ['seat:leon', 'REFERANCE 1.4 (85)'],
+    ['volkswagen:polo', '1.0 ECOTSI 115 FR'],
+  ])('keeps unreviewed engine, trim, body, and scoped-token combination out of %s', (series, proposed) => {
+    expect(canonicalModelSelection(series, proposed, `${series} ${proposed}`)).toBeNull()
+  })
+
+  it('maps real Accent Blue and Accent Era rows to separate reviewed nameplates', () => {
     const committedAliases: unknown = JSON.parse(readFileSync(committedSeriesAliasesPath, 'utf8'))
+    const seriesAliases = validateVehicleSeriesAliases(committedAliases)
     const result = generateCuratedVehicleCatalog({
       snapshot: {
         provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '2026-08' },
@@ -486,30 +543,92 @@ describe('marketplace selection paths and review boundaries', () => {
             typeRaw: 'ACCENT ERA 1.5 CRDI MODE',
             availableModelYears: [2012],
           },
+          {
+            sourceKey: '177-1015',
+            brandRaw: 'HYUNDAI',
+            typeRaw: 'ACCENT BLUE 1.6 CRDI MODE PLUS OV',
+            availableModelYears: [2012, 2013, 2014],
+          },
+          {
+            sourceKey: '177-191',
+            brandRaw: 'HYUNDAI',
+            typeRaw: 'ACCENT ERA 1.5 CRDi VGT TEAM (Y)',
+            availableModelYears: [2012],
+          },
         ],
       },
       brandAliases: { version: '1', aliases: [{ raw: 'HYUNDAI', brandKey: 'hyundai' }] },
-      seriesAliases: validateVehicleSeriesAliases(committedAliases),
-      bootstrapModels: {},
+      seriesAliases,
+      bootstrapModels: { Hyundai: ['Accent', 'Accent Blue', 'Accent Era'] },
       version: '1',
     })
 
-    expect(result.catalog.models).toEqual([])
-    expect(result.mappings.mappings).toEqual([])
-    expect(result.candidates).toEqual([
+    expect(seriesAliases.entries.find((entry) => entry.seriesKey === 'hyundai:accent')?.aliases)
+      .toEqual(['ACCENT'])
+    expect(result.catalog.series).toEqual([
+      { key: 'hyundai:accent-blue', brandKey: 'hyundai', name: 'Accent Blue' },
+      { key: 'hyundai:accent-era', brandKey: 'hyundai', name: 'Accent Era' },
+    ])
+    expect(result.catalog.models).toEqual([
+      {
+        key: 'hyundai:accent-blue:1-6-crdi-mode-plus',
+        seriesKey: 'hyundai:accent-blue',
+        name: '1.6 CRDi Mode Plus',
+        selectionPath: [
+          { key: 'hyundai:accent-blue:1-6-crdi', name: '1.6 CRDi' },
+          { key: 'hyundai:accent-blue:1-6-crdi-mode-plus', name: 'Mode Plus' },
+        ],
+      },
+      {
+        key: 'hyundai:accent-era:1-5-crdi-mode',
+        seriesKey: 'hyundai:accent-era',
+        name: '1.5 CRDi Mode',
+        selectionPath: [
+          { key: 'hyundai:accent-era:1-5-crdi', name: '1.5 CRDi' },
+          { key: 'hyundai:accent-era:1-5-crdi-mode', name: 'Mode' },
+        ],
+      },
+    ])
+    expect(result.mappings.mappings).toEqual([
+      {
+        sourceKey: '177-1014',
+        vehicleModelKey: 'hyundai:accent-blue:1-6-crdi-mode-plus',
+        method: 'exact-rule',
+      },
+      {
+        sourceKey: '177-406',
+        vehicleModelKey: 'hyundai:accent-era:1-5-crdi-mode',
+        method: 'exact-rule',
+      },
+    ])
+    expect(result.candidates).toEqual(expect.arrayContaining([
       expect.objectContaining({
         sourceKey: '177-1014',
-        proposedModelLabel: 'BLUE 1.6 CRDI MODE PLUS',
-        modelStatus: 'model-review',
-        vehicleModelKey: null,
+        seriesKeyCandidate: 'hyundai:accent-blue',
+        proposedModelLabel: '1.6 CRDI MODE PLUS',
+        modelStatus: 'mapped',
+        vehicleModelKey: 'hyundai:accent-blue:1-6-crdi-mode-plus',
       }),
       expect.objectContaining({
         sourceKey: '177-406',
-        proposedModelLabel: 'ERA 1.5 CRDI MODE',
+        seriesKeyCandidate: 'hyundai:accent-era',
+        proposedModelLabel: '1.5 CRDI MODE',
+        modelStatus: 'mapped',
+        vehicleModelKey: 'hyundai:accent-era:1-5-crdi-mode',
+      }),
+      expect.objectContaining({
+        sourceKey: '177-1015',
+        seriesKeyCandidate: 'hyundai:accent-blue',
         modelStatus: 'model-review',
         vehicleModelKey: null,
       }),
-    ])
+      expect.objectContaining({
+        sourceKey: '177-191',
+        seriesKeyCandidate: 'hyundai:accent-era',
+        modelStatus: 'model-review',
+        vehicleModelKey: null,
+      }),
+    ]))
   })
 
   it('normalizes reviewed Clio tokens but leaves equivalent unreviewed Civic variants for review', () => {

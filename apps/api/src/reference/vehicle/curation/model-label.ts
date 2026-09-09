@@ -65,6 +65,16 @@ const SERIES_NORMALIZATION_POLICIES: Record<string, SeriesNormalizationPolicy> =
   'audi:a4': {},
 }
 
+const IBIZA_REVIEWED_SELECTIONS: Record<string, string[]> = {
+  '1.4 (85) REFERENCE': ['1.4', 'Reference'],
+  'REFERANCE 1.4 (85)': ['1.4', 'Reference'],
+  '1.0 75 S&S STYLE': ['1.0', 'Style'],
+  '1.0 EVO 80 S&S STYLE': ['1.0', 'Style'],
+  'FL 1.0 EVO 80 STYLE': ['1.0', 'Style'],
+  '1.0 ECOTSI 115 DSG S&S FR': ['1.0 EcoTSI', 'FR'],
+  'FL 1.0 ECOTSI 115 DSG FR': ['1.0 EcoTSI', 'FR'],
+}
+
 export interface ModelSelection { path: string[]; name: string }
 function selection(path: string[]): ModelSelection { return { path, name: path.join(' ') } }
 
@@ -84,12 +94,25 @@ function stripDisplacement(value: string): string {
   )
 }
 
+function hasUnreviewedClio12Power(value: string): boolean {
+  const match = value.match(
+    /\b1\.2\s+(?:\(\s*(\d{2,3})\s*\)|(\d{2,3})(?:\s*(?:KW|HP|PS|BG|BEYGIR))?)(?=\s|$)/,
+  )
+  const power = match?.[1] ?? match?.[2]
+  return power !== undefined && power !== '75'
+}
+
 
 export function canonicalModelSelection(seriesKey: string, proposed: string, typeRaw: string): ModelSelection | null {
   const brand = seriesKey.split(':')[0]!
   let label = normalizeVehicleSourceIdentity(proposed)
   const raw = normalizeVehicleSourceIdentity(typeRaw)
   const policy = SERIES_NORMALIZATION_POLICIES[seriesKey]
+  if (seriesKey === 'seat:ibiza') {
+    const path = IBIZA_REVIEWED_SELECTIONS[label]
+    return path ? selection(path) : null
+  }
+  if (seriesKey === 'renault:clio' && hasUnreviewedClio12Power(label)) return null
   // Known source labels only; no inference of battery/trim from kW or model year.
   if (brand === 'tesla') {
     if (seriesKey === 'tesla:model-3') {
@@ -151,7 +174,7 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
     for (const pattern of TECHNICAL) label = label.replace(pattern, ' ')
   }
   const technologies = Object.keys(ENGINE_SPELLING).sort((a, b) => b.length - a.length).join('|')
-  const engine = label.match(new RegExp(`\\b(\\d\\.\\d{1,2})\\s*(${technologies})?\\b`))
+  const engine = label.match(new RegExp(`\\b(\\d\\.\\d{1,2})(?:\\s*(${technologies}))?\\b`))
   if (!group && engine) {
     group = `${engine[1]}${engine[2] ? ` ${ENGINE_SPELLING[engine[2]]}` : ''}`
     const engineEnd = engine.index! + engine[0].length

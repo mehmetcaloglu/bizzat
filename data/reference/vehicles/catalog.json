@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.2",
+  "version": "2026-09-09.3",
   "brands": [
     {
       "key": "audi",
@@ -56,6 +56,10 @@
     {
       "key": "renault",
       "name": "Renault"
+    },
+    {
+      "key": "seat",
+      "name": "Seat"
     },
     {
       "key": "suzuki",
@@ -161,6 +165,16 @@
       "name": "Jazz"
     },
     {
+      "key": "hyundai:accent-blue",
+      "brandKey": "hyundai",
+      "name": "Accent Blue"
+    },
+    {
+      "key": "hyundai:accent-era",
+      "brandKey": "hyundai",
+      "name": "Accent Era"
+    },
+    {
       "key": "hyundai:elantra",
       "brandKey": "hyundai",
       "name": "Elantra"
@@ -264,6 +278,11 @@
       "key": "renault:clio",
       "brandKey": "renault",
       "name": "Clio"
+    },
+    {
+      "key": "seat:ibiza",
+      "brandKey": "seat",
+      "name": "Ibiza"
     },
     {
       "key": "suzuki:alto",
@@ -4005,6 +4024,96 @@
       ]
     },
     {
+      "key": "hyundai:accent-blue:1-6-crdi-biz",
+      "seriesKey": "hyundai:accent-blue",
+      "name": "1.6 CRDi Biz",
+      "selectionPath": [
+        {
+          "key": "hyundai:accent-blue:1-6-crdi",
+          "name": "1.6 CRDi"
+        },
+        {
+          "key": "hyundai:accent-blue:1-6-crdi-biz",
+          "name": "Biz"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:accent-blue:1-6-crdi-mode",
+      "seriesKey": "hyundai:accent-blue",
+      "name": "1.6 CRDi Mode",
+      "selectionPath": [
+        {
+          "key": "hyundai:accent-blue:1-6-crdi",
+          "name": "1.6 CRDi"
+        },
+        {
+          "key": "hyundai:accent-blue:1-6-crdi-mode",
+          "name": "Mode"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:accent-blue:1-6-crdi-mode-plus",
+      "seriesKey": "hyundai:accent-blue",
+      "name": "1.6 CRDi Mode Plus",
+      "selectionPath": [
+        {
+          "key": "hyundai:accent-blue:1-6-crdi",
+          "name": "1.6 CRDi"
+        },
+        {
+          "key": "hyundai:accent-blue:1-6-crdi-mode-plus",
+          "name": "Mode Plus"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:accent-blue:1-6-crdi-prime",
+      "seriesKey": "hyundai:accent-blue",
+      "name": "1.6 CRDi Prime",
+      "selectionPath": [
+        {
+          "key": "hyundai:accent-blue:1-6-crdi",
+          "name": "1.6 CRDi"
+        },
+        {
+          "key": "hyundai:accent-blue:1-6-crdi-prime",
+          "name": "Prime"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:accent-era:1-5-crdi-mode",
+      "seriesKey": "hyundai:accent-era",
+      "name": "1.5 CRDi Mode",
+      "selectionPath": [
+        {
+          "key": "hyundai:accent-era:1-5-crdi",
+          "name": "1.5 CRDi"
+        },
+        {
+          "key": "hyundai:accent-era:1-5-crdi-mode",
+          "name": "Mode"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:accent-era:1-5-crdi-prime",
+      "seriesKey": "hyundai:accent-era",
+      "name": "1.5 CRDi Prime",
+      "selectionPath": [
+        {
+          "key": "hyundai:accent-era:1-5-crdi",
+          "name": "1.5 CRDi"
+        },
+        {
+          "key": "hyundai:accent-era:1-5-crdi-prime",
+          "name": "Prime"
+        }
+      ]
+    },
+    {
       "key": "hyundai:elantra:1-6-crdi-elite",
       "seriesKey": "hyundai:elantra",
       "name": "1.6 CRDi Elite",
@@ -6300,6 +6409,51 @@
       ]
     },
     {
+      "key": "renault:clio:1-2-authentique-edition",
+      "seriesKey": "renault:clio",
+      "name": "1.2 Authentique Edition",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "renault:clio:1-2-authentique-edition",
+          "name": "Authentique Edition"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-2-extreme-edition",
+      "seriesKey": "renault:clio",
+      "name": "1.2 Extreme Edition",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "renault:clio:1-2-extreme-edition",
+          "name": "Extreme Edition"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-2-grandtour-authentique",
+      "seriesKey": "renault:clio",
+      "name": "1.2 Grandtour Authentique",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-2-grandtour",
+          "name": "1.2 Grandtour"
+        },
+        {
+          "key": "renault:clio:1-2-grandtour-authentique",
+          "name": "Authentique"
+        }
+      ]
+    },
+    {
       "key": "renault:clio:1-2-grandtour-executive",
       "seriesKey": "renault:clio",
       "name": "1.2 Grandtour Executive",
@@ -6330,6 +6484,66 @@
       ]
     },
     {
+      "key": "renault:clio:1-2-grandtour-extreme-edition",
+      "seriesKey": "renault:clio",
+      "name": "1.2 Grandtour Extreme Edition",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-2-grandtour",
+          "name": "1.2 Grandtour"
+        },
+        {
+          "key": "renault:clio:1-2-grandtour-extreme-edition",
+          "name": "Extreme Edition"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-2-icon",
+      "seriesKey": "renault:clio",
+      "name": "1.2 Icon",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "renault:clio:1-2-icon",
+          "name": "Icon"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-2-joy",
+      "seriesKey": "renault:clio",
+      "name": "1.2 Joy",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "renault:clio:1-2-joy",
+          "name": "Joy"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-2-sport-tourer-joy",
+      "seriesKey": "renault:clio",
+      "name": "1.2 Sport Tourer Joy",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-2-sport-tourer",
+          "name": "1.2 Sport Tourer"
+        },
+        {
+          "key": "renault:clio:1-2-sport-tourer-joy",
+          "name": "Joy"
+        }
+      ]
+    },
+    {
       "key": "renault:clio:1-2-tce-esprit-alpine",
       "seriesKey": "renault:clio",
       "name": "1.2 TCe Esprit Alpine",
@@ -6356,6 +6570,21 @@
         {
           "key": "renault:clio:1-2-tce-evolution-plus",
           "name": "Evolution Plus"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-2-touch",
+      "seriesKey": "renault:clio",
+      "name": "1.2 Touch",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "renault:clio:1-2-touch",
+          "name": "Touch"
         }
       ]
     },
@@ -6716,6 +6945,66 @@
         {
           "key": "renault:clio:1-6-grandtour-extreme",
           "name": "Extreme"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-6-grandtour-extreme-edition",
+      "seriesKey": "renault:clio",
+      "name": "1.6 Grandtour Extreme Edition",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-6-grandtour",
+          "name": "1.6 Grandtour"
+        },
+        {
+          "key": "renault:clio:1-6-grandtour-extreme-edition",
+          "name": "Extreme Edition"
+        }
+      ]
+    },
+    {
+      "key": "seat:ibiza:1-0-ecotsi-fr",
+      "seriesKey": "seat:ibiza",
+      "name": "1.0 EcoTSI FR",
+      "selectionPath": [
+        {
+          "key": "seat:ibiza:1-0-ecotsi",
+          "name": "1.0 EcoTSI"
+        },
+        {
+          "key": "seat:ibiza:1-0-ecotsi-fr",
+          "name": "FR"
+        }
+      ]
+    },
+    {
+      "key": "seat:ibiza:1-0-style",
+      "seriesKey": "seat:ibiza",
+      "name": "1.0 Style",
+      "selectionPath": [
+        {
+          "key": "seat:ibiza:1-0",
+          "name": "1.0"
+        },
+        {
+          "key": "seat:ibiza:1-0-style",
+          "name": "Style"
+        }
+      ]
+    },
+    {
+      "key": "seat:ibiza:1-4-reference",
+      "seriesKey": "seat:ibiza",
+      "name": "1.4 Reference",
+      "selectionPath": [
+        {
+          "key": "seat:ibiza:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "seat:ibiza:1-4-reference",
+          "name": "Reference"
         }
       ]
     },
@@ -8793,6 +9082,36 @@
       ]
     },
     {
+      "key": "volkswagen:polo:1-0-impression",
+      "seriesKey": "volkswagen:polo",
+      "name": "1.0 Impression",
+      "selectionPath": [
+        {
+          "key": "volkswagen:polo:1-0",
+          "name": "1.0"
+        },
+        {
+          "key": "volkswagen:polo:1-0-impression",
+          "name": "Impression"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:polo:1-0-trendline",
+      "seriesKey": "volkswagen:polo",
+      "name": "1.0 Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:polo:1-0",
+          "name": "1.0"
+        },
+        {
+          "key": "volkswagen:polo:1-0-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
       "key": "volkswagen:polo:1-0-tsi-comfortline",
       "seriesKey": "volkswagen:polo",
       "name": "1.0 TSI Comfortline",
@@ -8958,6 +9277,21 @@
       ]
     },
     {
+      "key": "volkswagen:polo:1-4-chrome-edition",
+      "seriesKey": "volkswagen:polo",
+      "name": "1.4 Chrome Edition",
+      "selectionPath": [
+        {
+          "key": "volkswagen:polo:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "volkswagen:polo:1-4-chrome-edition",
+          "name": "Chrome Edition"
+        }
+      ]
+    },
+    {
       "key": "volkswagen:polo:1-4-fan-edition",
       "seriesKey": "volkswagen:polo",
       "name": "1.4 Fan Edition",
@@ -8969,6 +9303,21 @@
         {
           "key": "volkswagen:polo:1-4-fan-edition",
           "name": "Fan Edition"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:polo:1-4-pulse",
+      "seriesKey": "volkswagen:polo",
+      "name": "1.4 Pulse",
+      "selectionPath": [
+        {
+          "key": "volkswagen:polo:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "volkswagen:polo:1-4-pulse",
+          "name": "Pulse"
         }
       ]
     },

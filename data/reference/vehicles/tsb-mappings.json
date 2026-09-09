@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.2",
+  "version": "2026-09-09.3",
   "mappings": [
     {
       "sourceKey": "100-1138",
@@ -832,13 +832,48 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-1032",
+      "vehicleModelKey": "renault:clio:1-2-authentique-edition",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-1033",
       "vehicleModelKey": "renault:clio:1-5-dci-authentique-edition",
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-1034",
+      "vehicleModelKey": "renault:clio:1-2-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1035",
+      "vehicleModelKey": "renault:clio:1-6-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1040",
+      "vehicleModelKey": "renault:clio:1-2-grandtour-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1074",
+      "vehicleModelKey": "renault:clio:1-6-grandtour-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1075",
+      "vehicleModelKey": "renault:clio:1-2-joy",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-1076",
       "vehicleModelKey": "renault:clio:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1077",
+      "vehicleModelKey": "renault:clio:1-2-touch",
       "method": "exact-rule"
     },
     {
@@ -852,6 +887,11 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-1081",
+      "vehicleModelKey": "renault:clio:1-2-icon",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-1083",
       "vehicleModelKey": "renault:clio:1-5-dci-icon",
       "method": "exact-rule"
@@ -859,6 +899,11 @@
     {
       "sourceKey": "122-1084",
       "vehicleModelKey": "renault:clio:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1119",
+      "vehicleModelKey": "renault:clio:1-2-sport-tourer-joy",
       "method": "exact-rule"
     },
     {
@@ -922,8 +967,18 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-1165",
+      "vehicleModelKey": "renault:clio:1-2-joy",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-1167",
       "vehicleModelKey": "renault:clio:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1168",
+      "vehicleModelKey": "renault:clio:1-2-touch",
       "method": "exact-rule"
     },
     {
@@ -939,6 +994,11 @@
     {
       "sourceKey": "122-1173",
       "vehicleModelKey": "renault:clio:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1174",
+      "vehicleModelKey": "renault:clio:1-2-icon",
       "method": "exact-rule"
     },
     {
@@ -969,6 +1029,11 @@
     {
       "sourceKey": "122-1183",
       "vehicleModelKey": "renault:clio:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1184",
+      "vehicleModelKey": "renault:clio:1-2-sport-tourer-joy",
       "method": "exact-rule"
     },
     {
@@ -1169,6 +1234,11 @@
     {
       "sourceKey": "122-497",
       "vehicleModelKey": "renault:clio:1-5-dci-grandtour-authentique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-499",
+      "vehicleModelKey": "renault:clio:1-2-grandtour-authentique",
       "method": "exact-rule"
     },
     {
@@ -1942,6 +2012,26 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-1023",
+      "vehicleModelKey": "volkswagen:polo:1-4-pulse",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1077",
+      "vehicleModelKey": "volkswagen:polo:1-4-chrome-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1078",
+      "vehicleModelKey": "volkswagen:polo:1-4-chrome-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1124",
+      "vehicleModelKey": "volkswagen:polo:1-0-trendline",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-1125",
       "vehicleModelKey": "volkswagen:polo:1-2-tsi-comfortline",
       "method": "exact-rule"
@@ -2212,6 +2302,11 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-1535",
+      "vehicleModelKey": "volkswagen:polo:1-0-impression",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-1536",
       "vehicleModelKey": "volkswagen:polo:1-0-tsi-life",
       "method": "exact-rule"
@@ -2224,6 +2319,11 @@
     {
       "sourceKey": "153-1538",
       "vehicleModelKey": "volkswagen:polo:1-0-tsi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1610",
+      "vehicleModelKey": "volkswagen:polo:1-0-trendline",
       "method": "exact-rule"
     },
     {
@@ -2302,6 +2402,11 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "177-1014",
+      "vehicleModelKey": "hyundai:accent-blue:1-6-crdi-mode-plus",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "177-1016",
       "vehicleModelKey": "hyundai:i30:1-6-gdi-style",
       "method": "exact-rule"
@@ -2339,6 +2444,11 @@
     {
       "sourceKey": "177-1037",
       "vehicleModelKey": "hyundai:i20:1-4-crdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1040",
+      "vehicleModelKey": "hyundai:accent-blue:1-6-crdi-biz",
       "method": "exact-rule"
     },
     {
@@ -2444,6 +2554,61 @@
     {
       "sourceKey": "177-281",
       "vehicleModelKey": "hyundai:i20:1-2-team",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-402",
+      "vehicleModelKey": "hyundai:accent-blue:1-6-crdi-mode",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-404",
+      "vehicleModelKey": "hyundai:accent-blue:1-6-crdi-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-406",
+      "vehicleModelKey": "hyundai:accent-era:1-5-crdi-mode",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-408",
+      "vehicleModelKey": "hyundai:accent-era:1-5-crdi-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1035",
+      "vehicleModelKey": "seat:ibiza:1-4-reference",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1097",
+      "vehicleModelKey": "seat:ibiza:1-0-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1103",
+      "vehicleModelKey": "seat:ibiza:1-0-ecotsi-fr",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1124",
+      "vehicleModelKey": "seat:ibiza:1-0-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1140",
+      "vehicleModelKey": "seat:ibiza:1-0-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1153",
+      "vehicleModelKey": "seat:ibiza:1-0-ecotsi-fr",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-245",
+      "vehicleModelKey": "seat:ibiza:1-4-reference",
       "method": "exact-rule"
     },
     {

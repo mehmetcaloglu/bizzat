@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.2",
+  "version": "2026-09-09.3",
   "sources": [
     {
       "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
@@ -17,7 +17,7 @@
       "accessedDate": "2026-09-08",
       "licenseOrTerms": "MIT",
       "role": "inherited-nameplate-bootstrap",
-      "usageNote": "Existing B2 display names inherited from the pinned bootstrap; local reviewed BMW/Mercedes-Benz/Audi nameplate labels added on 2026-09-09. No new upstream bootstrap download."
+      "usageNote": "Existing B2 display names inherited from the pinned bootstrap; local reviewed BMW/Mercedes-Benz/Audi nameplate labels added on 2026-09-09. No new upstream bootstrap download. Follow-up adds reviewed Accent Blue/Era labels to inherited bootstrap; no new upstream download."
     },
     {
       "name": "Sahibinden public category reference examples",
@@ -29,18 +29,18 @@
   ],
   "curation": {
     "sourceRecords": 27906,
-    "exactCandidates": 790,
-    "mappedSourceCodes": 790,
-    "canonicalBrands": 18,
-    "canonicalSeries": 50,
-    "canonicalModels": 567,
+    "exactCandidates": 823,
+    "mappedSourceCodes": 823,
+    "canonicalBrands": 19,
+    "canonicalSeries": 53,
+    "canonicalModels": 589,
     "slugCollisionsExcluded": 0,
     "ambiguousSeriesExcluded": 21,
     "unknownBrandExcluded": 13955,
     "noSeriesExcluded": 7051,
-    "modelReviewRequired": 6089,
+    "modelReviewRequired": 6056,
     "tsbSnapshotRecords": 27906,
-    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees.",
+    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza uses seven exact normalized label aliases for three reviewed paths; its acceptance does not enable general technical stripping.",
     "coverageStatus": "partial-review; not a complete Sahibinden catalog",
     "excludedPreviouslyPresentBrands": [
       "Alfa Romeo",
@@ -52,7 +52,6 @@
       "Kia",
       "MINI",
       "Mazda",
-      "Seat",
       "Skoda",
       "Subaru"
     ],
@@ -62,7 +61,7 @@
       "Audi default-body rows without explicit body; most Audi series beyond A3/A4",
       "Unknown source trim spellings; drivetrain branches such as xDrive",
       "Fiat500family hierarchy requires explicit series/path curation; SUV/pickup/commercial categories are outside the current Otomobil MVP.",
-      "Hyundai Accent Blue/Era need separate reviewed nameplate identities; they are excluded from the common Accent path."
+      "Accent Blue/Era contain only explicit engine + known trim source rows; technical variants remain in review."
     ],
     "reviewedReferenceExamples": [
       "Renault/Clio/1.0 TCe/Evolution",
@@ -275,9 +274,9 @@
         "brandKey": "hyundai",
         "sourceRows": 556,
         "excluded": 183,
-        "model-review": 343,
-        "mapped": 30,
-        "selectableLeaves": 30
+        "model-review": 337,
+        "mapped": 36,
+        "selectableLeaves": 36
       },
       {
         "brandKey": "kia",
@@ -343,17 +342,18 @@
       {
         "brandKey": "renault",
         "sourceRows": 958,
-        "model-review": 402,
-        "mapped": 81,
+        "model-review": 388,
+        "mapped": 95,
         "excluded": 475,
-        "selectableLeaves": 42
+        "selectableLeaves": 51
       },
       {
         "brandKey": "seat",
         "sourceRows": 189,
-        "model-review": 146,
+        "model-review": 139,
         "excluded": 43,
-        "selectableLeaves": 0
+        "mapped": 7,
+        "selectableLeaves": 3
       },
       {
         "brandKey": "skoda",
@@ -397,10 +397,19 @@
         "brandKey": "volkswagen",
         "sourceRows": 838,
         "excluded": 469,
-        "model-review": 299,
-        "mapped": 70,
-        "selectableLeaves": 40
+        "model-review": 293,
+        "mapped": 76,
+        "selectableLeaves": 44
       }
+    ],
+    "backlogFile": "curation-backlog.json",
+    "lastIncrement": {
+      "baselineVersion": "2026-09-09.2",
+      "purpose": "Restore contextual bare-engine power parsing, separate Accent Blue/Era nameplates, and three indexed Seat Ibiza selection paths.",
+      "newReferenceRetrieval": "Three exact Seat Ibiza category paths verified from the public index; page fetches returned403. Other Seat/Skoda/Kia paths lacked exact indexed leaf URLs and remain unaccepted."
+    },
+    "reviewedExactSelectionSeries": [
+      "seat:ibiza"
     ]
   }
 }

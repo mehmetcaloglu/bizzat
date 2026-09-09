@@ -15,7 +15,7 @@ Keep the final canonical model UUID and repository-owned key. Visible paths foll
 - [x] Verify fixture mapping targets and real Clio/Audi/Tesla picker traversal through added PostgreSQL integration tests (execution gate below).
 - [x] Run local lint, typecheck and unit tests; regenerate the full source with the reviewed baseline and compare outputs exactly.
 - [x] Complete independent backend/task and whole-change review, fix material findings.
-- [ ] Run full PostgreSQL CI and build on the updated draft PR head.
+- [x] Run full PostgreSQL CI and build on the updated draft PR head (bc61c7b, CI34361898082 passed).
 - [ ] Complete missing brand/nameplate/body/EV/historical curation before marking ready and merging. Current gaps are recorded in the manifest and spec.
 
 ## Decisions made during implementation
@@ -27,3 +27,5 @@ Keep the final canonical model UUID and repository-owned key. Visible paths foll
 ## Validation record
 
 Local Node 24.19.0 / pnpm 11.19.0 differs from the repository's Node 24.20.0 / pnpm 10.34.5 CI baseline. `pnpm lint`, `pnpm typecheck`, API unit suite (107 tests after final review fixes) and web suite (3 tests) passed. There is no local PostgreSQL service; DB changes require the real PostgreSQL 18 workflow. The final 55 curation regressions passed, including positional parenthetical power, Accent Blue/Era exclusion, and shared stable branch keys for new siblings. Full-source regeneration from the reviewed baseline reproduced catalog/mappings byte-for-byte at 18 brands / 50 series / 567 leaves / 790 mappings. Final-head PostgreSQL CI status is recorded on PR #11; CI is authoritative.
+
+Coverage continuation is tracked in [the follow-up plan](2026-09-09-vehicle-catalog-coverage-followup.md); the successful technical checkpoint above is not complete-catalog approval.

@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.2",
+  "version": "2026-09-09.3",
   "entries": [
     {
       "brandKey": "alfa-romeo",
@@ -557,6 +557,20 @@
       "seriesKey": "hyundai:accent",
       "aliases": [
         "ACCENT"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:accent-blue",
+      "aliases": [
+        "ACCENT BLUE"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:accent-era",
+      "aliases": [
+        "ACCENT ERA"
       ]
     },
     {
