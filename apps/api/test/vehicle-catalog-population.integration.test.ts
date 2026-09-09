@@ -77,4 +77,30 @@ describe('populated Turkish automobile catalog', () => {
     expect(models.statusCode).toBe(200)
     expect(models.json<{ items: unknown[] }>().items.length).toBeGreaterThan(0)
   })
+
+  it('traverses real Clio, Audi and Tesla paths to their stable canonical UUIDs', async () => {
+    for (const [brandKey, seriesKey, modelKey] of [
+      ['renault', 'renault:clio', 'renault:clio:1-0-tce-evolution'],
+      ['audi', 'audi:a3', 'audi:a3:a3-sedan-35-tfsi-advanced'],
+      ['tesla', 'tesla:model-3', 'tesla:model-3:long-range'],
+    ]) {
+      const brand = await db.selectFrom('vehicle_brands').select('id').where('catalog_key', '=', brandKey!).executeTakeFirstOrThrow()
+      const series = await db.selectFrom('vehicle_series').select('id').where('catalog_key', '=', seriesKey!).where('brand_id', '=', brand.id).executeTakeFirstOrThrow()
+      const leaf = await db.selectFrom('vehicle_models').select('id').where('catalog_key', '=', modelKey!).executeTakeFirstOrThrow()
+      const path = catalog.models.find((model) => model.key === modelKey)!.selectionPath!
+      let parentKey: string | undefined
+      for (const [index, node] of path.entries()) {
+        const response = await app.inject({ method: 'GET', url: `/api/v1/reference/vehicle/series/${series.id}/selection${parentKey ? `?parentKey=${encodeURIComponent(parentKey)}` : ''}` })
+        expect(response.statusCode).toBe(200)
+        const items = response.json<{ items: Array<{ key: string; name: string; kind: string; id?: string }> }>().items
+        const item = items.find((candidate) => candidate.key === node.key)
+        expect(item).toEqual(index === path.length - 1
+          ? { key: node.key, name: node.name, kind: 'model', id: leaf.id }
+          : { key: node.key, name: node.name, kind: 'group' })
+        expect(JSON.stringify(items)).not.toMatch(/sourceKey|provider|availableModelYears|kasko/i)
+        parentKey = node.key
+      }
+    }
+  })
+
 })

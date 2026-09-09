@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { canonicalModelSelection } from '../src/reference/vehicle/curation/model-label.js'
 import {
   VehicleAliasValidationError,
   validateVehicleBrandAliases,
@@ -242,6 +243,71 @@ describe('vehicle curation candidate generation', () => {
 })
 
 describe('vehicle curation catalog generation', () => {
+  it.each([
+    ['RENAULT (OYAK)', 'renault', 'renault:clio', 'CLIO', 'CLIO EVOLUTION 1.0 TCE X-TRONIC 90', '1.0 TCe Evolution'],
+    ['RENAULT (OYAK)', 'renault', 'renault:clio', 'CLIO', 'CLIO JOY 1.0 TCE 90 FAZ1', '1.0 TCe Joy'],
+    ['VOLKSWAGEN', 'volkswagen', 'volkswagen:polo', 'POLO', 'POLO 1.0 TSI 95 DSG LIFE', '1.0 TSI Life'],
+    ['FIAT', 'fiat', 'fiat:egea', 'EGEA', 'EGEA EASY 1.4 FIRE 95 E6D', '1.4 Fire Easy'],
+    ['PEUGEOT', 'peugeot', 'peugeot:308', '308', '308 5 KAPI ACTIVE 1.6 E-HDI (112) AUTO6R', '1.6 e-HDi Active'],
+    ['PEUGEOT', 'peugeot', 'peugeot:308', '308', '308 ALLURE 1.2 PURETECH 130 EAT8 S&S', '1.2 PureTech Allure'],
+    ['TOYOTA', 'toyota', 'toyota:corolla', 'COROLLA', 'COROLLA 1.5 FLAME X-PACK MULTIDRIVE S FL', '1.5 Flame X-Pack'],
+    ['BMW', 'bmw', 'bmw:3-serisi', '320D', '320d SEDAN COMFORT PLUS', '320d Comfort Plus'],
+    ['BMW', 'bmw', 'bmw:3-serisi', '320I', '320i SEDAN (184)', '320i Standart'],
+    ['MERCEDES', 'mercedes-benz', 'mercedes-benz:c-serisi', 'C', 'C 180 1.6 AMG 7G-TRONIC', 'C 180 AMG'],
+    ['AUDI', 'audi', 'audi:a3', 'A3', 'A3 SPORTBACK 35 TFSI S TRONIC ADVANCED', 'A3 Sportback 35 TFSI Advanced'],
+    ['AUDI', 'audi', 'audi:a4', 'A4', 'A4 AVANT 2.0 TDI 177 MULTITRONIC PI DESIGN', 'A4 Avant 2.0 TDI Design'],
+  ])('consolidates %s source type %s/%s/%s/%s to %s', (raw, brandKey, seriesKey, alias, typeRaw, name) => {
+    const result = generateCuratedVehicleCatalog({
+      snapshot: { provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '2026-08' }, records: [
+        { sourceKey: 'example', brandRaw: raw, typeRaw, availableModelYears: [2025] },
+      ] },
+      brandAliases: { version: '1', aliases: [{ raw, brandKey }] },
+      seriesAliases: { version: '1', entries: [{ brandKey, seriesKey, aliases: [alias] }] },
+      bootstrapModels: {}, version: '1',
+    })
+    expect(result.catalog.models.map((model) => model.name)).toEqual([name])
+    expect(result.mappings.mappings).toHaveLength(1)
+  })
+
+  it('maps technical variants together while preserving different engines and trims', () => {
+    const result = generateCuratedVehicleCatalog({
+      snapshot: { provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '2026-08' }, records: [
+        'CLIO EVOLUTION 1.0 TCE 90', 'CLIO EVOLUTION 1.0 TCE X-TRONIC 90',
+        'CLIO JOY 1.0 TCE 90', 'CLIO JOY 1.5 DCI 90',
+      ].map((typeRaw, i) => ({ sourceKey: String(i), brandRaw: 'RENAULT (OYAK)', typeRaw, availableModelYears: [2025] })) },
+      brandAliases: validateVehicleBrandAliases(brandAliasesInput()),
+      seriesAliases: validateVehicleSeriesAliases(seriesAliasesInput()),
+      bootstrapModels: {}, version: '1',
+    })
+    expect(result.catalog.models.map((model) => model.name)).toEqual(['1.0 TCe Evolution', '1.0 TCe Joy', '1.5 dCi Joy'])
+    expect(result.mappings.mappings[0]!.vehicleModelKey).toBe(result.mappings.mappings[1]!.vehicleModelKey)
+    expect(result.catalog.models[0]).toMatchObject({
+      selectionPath: [{ key: 'renault:clio:1-0-tce', name: '1.0 TCe' }, { key: 'renault:clio:1-0-tce-evolution', name: 'Evolution' }],
+    })
+  })
+
+  it('preserves marketplace group distinctions for BMW ED and Clio estate branches', () => {
+    const result = generateCuratedVehicleCatalog({
+      snapshot: { provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '2026-08' }, records: [
+        ['BMW', '320i SEDAN 1.6 170 SPORT LINE'],
+        ['BMW', '320i ED SEDAN 1.6 170 SPORT LINE'],
+        ['BMW', '320d TOURING SPORT LINE'],
+        ['RENAULT (OYAK)', 'CLIO SPORT TOURER JOY 0.9 TCE 90'],
+        ['RENAULT (OYAK)', 'CLIO JOY 0.9 TCE 90'],
+      ].map(([brandRaw, typeRaw], i) => ({ sourceKey: String(i), brandRaw: brandRaw!, typeRaw: typeRaw!, availableModelYears: [2025] })) },
+      brandAliases: { version: '1', aliases: [{ raw: 'BMW', brandKey: 'bmw' }, { raw: 'RENAULT (OYAK)', brandKey: 'renault' }] },
+      seriesAliases: { version: '1', entries: [
+        { brandKey: 'bmw', seriesKey: 'bmw:3-serisi', aliases: ['320I', '320D'] },
+        { brandKey: 'renault', seriesKey: 'renault:clio', aliases: ['CLIO'] },
+      ] }, bootstrapModels: {}, version: '1',
+    })
+    expect(result.catalog.models.map((model) => model.name)).toEqual([
+      '320d Touring Sport Line', '320i ED Sport Line', '320i Sport Line',
+      '0.9 TCe Joy', '0.9 TCe Sport Tourer Joy',
+    ])
+    expect(new Set(result.catalog.models.map((model) => model.selectionPath?.[0]?.key)).size).toBe(5)
+  })
+
   const snapshot: NormalizedVehicleSourceSnapshot = {
     provider: {
       code: 'tsb-kasko',
@@ -252,7 +318,7 @@ describe('vehicle curation catalog generation', () => {
       {
         sourceKey: '100-1',
         brandRaw: 'FIAT',
-        typeRaw: 'EGEA CROSS 1.5 T4 HYBRID',
+        typeRaw: 'EGEA EASY 1.4 FIRE 95',
         availableModelYears: [2025],
       },
       {
@@ -293,21 +359,22 @@ describe('vehicle curation catalog generation', () => {
         { key: 'renault:clio', brandKey: 'renault', name: 'Clio' },
       ],
       models: [
-        { key: 'fiat:egea:1-5-t4-hybrid', seriesKey: 'fiat:egea', name: '1.5 T4 HYBRID' },
+        { key: 'fiat:egea:1-4-fire-easy', seriesKey: 'fiat:egea', name: '1.4 Fire Easy', selectionPath: [{ key: 'fiat:egea:1-4-fire', name: '1.4 Fire' }, { key: 'fiat:egea:1-4-fire-easy', name: 'Easy' }] },
         {
-          key: 'renault:clio:evolution-1-0-tce-90',
+          key: 'renault:clio:1-0-tce-evolution',
           seriesKey: 'renault:clio',
-          name: 'EVOLUTION 1.0 TCE 90',
+          name: '1.0 TCe Evolution',
+          selectionPath: [{ key: 'renault:clio:1-0-tce', name: '1.0 TCe' }, { key: 'renault:clio:1-0-tce-evolution', name: 'Evolution' }],
         },
       ],
     })
     expect(result.mappings).toEqual({
       version: '2026-09-08.1',
       mappings: [
-        { sourceKey: '100-1', vehicleModelKey: 'fiat:egea:1-5-t4-hybrid', method: 'exact-rule' },
+        { sourceKey: '100-1', vehicleModelKey: 'fiat:egea:1-4-fire-easy', method: 'exact-rule' },
         {
           sourceKey: '122-1',
-          vehicleModelKey: 'renault:clio:evolution-1-0-tce-90',
+          vehicleModelKey: 'renault:clio:1-0-tce-evolution',
           method: 'exact-rule',
         },
       ],
@@ -322,7 +389,7 @@ describe('vehicle curation catalog generation', () => {
     })
   })
 
-  it('excludes materially different labels that collide on one generated key', () => {
+  it('keeps unreviewed source labels outside the selectable catalog', () => {
     const result = generateCuratedVehicleCatalog({
       snapshot: {
         ...snapshot,
@@ -330,13 +397,13 @@ describe('vehicle curation catalog generation', () => {
           {
             sourceKey: '100-2',
             brandRaw: 'FIAT',
-            typeRaw: 'EGEA A+B',
+            typeRaw: 'EGEA 1.4 FIRE A+B',
             availableModelYears: [2025],
           },
           {
             sourceKey: '100-3',
             brandRaw: 'FIAT',
-            typeRaw: 'EGEA A B',
+            typeRaw: 'EGEA 1.4 FIRE A B',
             availableModelYears: [2025],
           },
         ],
@@ -349,6 +416,66 @@ describe('vehicle curation catalog generation', () => {
 
     expect(result.catalog.models).toEqual([])
     expect(result.mappings.mappings).toEqual([])
+    expect(result.summary.modelReviewRequired).toBe(2)
+  })
+})
+
+
+describe('marketplace selection paths and review boundaries', () => {
+  it.each([
+    ['renault:clio', 'EVOLUTION 1.0 TCE X-TRONIC 90', 'CLIO EVOLUTION 1.0 TCE X-TRONIC 90', ['1.0 TCe', 'Evolution']],
+    ['audi:a3', 'SEDAN 35 TFSI 150 ADVANCED STRONIC', 'A3 SEDAN 35 TFSI 150 ADVANCED STRONIC', ['A3 Sedan', '35 TFSI', 'Advanced']],
+    ['tesla:model-3', 'LONG RANGE', 'MODEL 3 LONG RANGE', ['Long Range']],
+    ['bmw:3-serisi', 'ED 170 SEDAN SPORT LINE', '320i ED 170 SEDAN SPORT LINE', ['320i ED', 'Sport Line']],
+    ['bmw:3-serisi', 'SEDAN 1.6 170 50 JAHRE EDITION', '320i SEDAN 1.6 170 50 JAHRE EDITION', ['320i', '50 Jahre Edition']],
+    ['mercedes-benz:c-serisi', '180K 1.6 BLUEFFICIENCY AMG', 'C 180K 1.6 BLUEFFICIENCY AMG', ['C 180 Komp. BlueEfficiency', 'AMG']],
+  ])('preserves the reviewed path in %s', (series, proposed, raw, path) => {
+    expect(canonicalModelSelection(series, proposed, raw)?.path).toEqual(path)
+  })
+
+  it.each([
+    ['renault:clio', 'EVOLUTION MYSTERY 1.0 TCE 90', 'CLIO EVOLUTION MYSTERY 1.0 TCE 90'],
+    ['fiat:egea', 'URBAN 1.4 FIRE 95', 'EGEA CROSS URBAN 1.4 FIRE 95'],
+    ['audi:a3', '35 TFSI ADVANCED', 'A3 35 TFSI ADVANCED'],
+    ['bmw:3-serisi', 'SEDAN XDRIVE COMFORT PLUS', '320d SEDAN XDRIVE COMFORT PLUS'],
+    ['tesla:model-3', '150KW', 'MODEL 3 150KW'],
+    ['renault:clio', '1.0 TCE 90', 'CLIO 1.0 TCE 90'],
+    ['bmw:3-serisi', 'EDITION 100 M SPORT', '320i EDITION 100 M SPORT'],
+    ['renault:clio', 'EVOLUTION 100 1.0 TCE 90', 'CLIO EVOLUTION 100 1.0 TCE 90'],
+  ])('requires review instead of inventing a path in %s', (series, proposed, raw) => {
+    expect(canonicalModelSelection(series, proposed, raw)).toBeNull()
+  })
+
+  it('excludes distinct reviewed trim labels with colliding slugs', () => {
+    const result = generateCuratedVehicleCatalog({
+      snapshot: { provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '1' }, records: ['EXECUTIVE', 'EXECUTIVE+'].map((trim, i) => ({
+        sourceKey: String(i), brandRaw: 'HONDA', typeRaw: `CIVIC 1.6 ${trim}`, availableModelYears: [2025],
+      })) },
+      brandAliases: { version: '1', aliases: [{ raw: 'HONDA', brandKey: 'honda' }] },
+      seriesAliases: { version: '1', entries: [{ brandKey: 'honda', seriesKey: 'honda:civic', aliases: ['CIVIC'] }] },
+      bootstrapModels: {}, version: '1',
+    })
     expect(result.summary.slugCollisionsExcluded).toBe(2)
+    expect(result.catalog.models).toEqual([])
+    expect(result.mappings.mappings).toEqual([])
+  })
+
+  it('preserves reviewed leaf and branch keys across a display correction', () => {
+    const args: Parameters<typeof generateCuratedVehicleCatalog>[0] = {
+      snapshot: { provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '1' }, records: [{ sourceKey: 'r', brandRaw: 'RENAULT (OYAK)', typeRaw: 'CLIO EVOLUTION 1.0 TCE 90', availableModelYears: [2025] }] },
+      brandAliases: validateVehicleBrandAliases(brandAliasesInput()), seriesAliases: validateVehicleSeriesAliases(seriesAliasesInput()), bootstrapModels: {}, version: '1',
+    }
+    const original = generateCuratedVehicleCatalog(args)
+    const model = original.catalog.models[0]!
+    model.key = 'renault:clio:stable-leaf'
+    model.name = 'Old display label'
+    model.selectionPath = [{ key: 'renault:clio:stable-group', name: 'Old group spelling' }, { key: model.key, name: 'Old trim spelling' }]
+    original.mappings.mappings[0]!.vehicleModelKey = model.key
+    const next = generateCuratedVehicleCatalog({ ...args, baseline: original })
+    expect(next.catalog.models[0]).toMatchObject({ key: model.key, name: '1.0 TCe Evolution', selectionPath: [{ key: 'renault:clio:stable-group', name: '1.0 TCe' }, { key: model.key, name: 'Evolution' }] })
+    expect(next.mappings.mappings[0]!.vehicleModelKey).toBe(model.key)
+    args.snapshot.records.push({ ...args.snapshot.records[0]!, sourceKey: 'r2', typeRaw: 'CLIO JOY 1.0 TCE 90' })
+    original.mappings.mappings.push({ sourceKey: 'r2', vehicleModelKey: model.key, method: 'exact-rule' })
+    expect(() => generateCuratedVehicleCatalog({ ...args, baseline: original })).toThrow('Identity split requires review')
   })
 })

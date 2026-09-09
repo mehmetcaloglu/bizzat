@@ -79,12 +79,24 @@ export async function importVehicleCatalog(
           series_id: seriesId,
           catalog_key: model.key.trim(),
           name: model.name.trim(),
+          selection_path: model.selectionPath
+            ? JSON.stringify(model.selectionPath.map((node) => ({
+                key: node.key.trim(),
+                name: node.name.trim(),
+              })))
+            : null,
           active: true,
           updated_at: now,
         })
         .onConflict((oc) => oc.column('catalog_key').doUpdateSet({
           series_id: seriesId,
           name: model.name.trim(),
+          selection_path: model.selectionPath
+            ? JSON.stringify(model.selectionPath.map((node) => ({
+                key: node.key.trim(),
+                name: node.name.trim(),
+              })))
+            : null,
           active: true,
           updated_at: now,
         }))

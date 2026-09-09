@@ -1,19 +1,96 @@
 {
   "version": "fixture-1",
   "brands": [
-    { "key": "fiat", "name": "Fiat" },
-    { "key": "renault", "name": "Renault" },
-    { "key": "volkswagen", "name": "Volkswagen" }
+    {
+      "key": "fiat",
+      "name": "Fiat"
+    },
+    {
+      "key": "renault",
+      "name": "Renault"
+    },
+    {
+      "key": "volkswagen",
+      "name": "Volkswagen"
+    }
   ],
   "series": [
-    { "key": "fiat:egea", "brandKey": "fiat", "name": "Egea" },
-    { "key": "renault:clio", "brandKey": "renault", "name": "Clio" },
-    { "key": "volkswagen:golf", "brandKey": "volkswagen", "name": "Golf" }
+    {
+      "key": "fiat:egea",
+      "brandKey": "fiat",
+      "name": "Egea"
+    },
+    {
+      "key": "renault:clio",
+      "brandKey": "renault",
+      "name": "Clio"
+    },
+    {
+      "key": "volkswagen:golf",
+      "brandKey": "volkswagen",
+      "name": "Golf"
+    }
   ],
   "models": [
-    { "key": "fiat:egea:1-4-fire-easy", "seriesKey": "fiat:egea", "name": "1.4 Fire Easy" },
-    { "key": "renault:clio:1-0-tce-evolution", "seriesKey": "renault:clio", "name": "1.0 TCe Evolution" },
-    { "key": "renault:clio:1-0-tce-joy", "seriesKey": "renault:clio", "name": "1.0 TCe Joy" },
-    { "key": "volkswagen:golf:1-5-etsi-style", "seriesKey": "volkswagen:golf", "name": "1.5 eTSI Style" }
+    {
+      "key": "fiat:egea:1-4-fire-easy",
+      "seriesKey": "fiat:egea",
+      "name": "1.4 Fire Easy",
+      "selectionPath": [
+        {
+          "key": "fiat:egea:1-4-fire",
+          "name": "1.4 Fire"
+        },
+        {
+          "key": "fiat:egea:1-4-fire-easy",
+          "name": "Easy"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-0-tce-evolution",
+      "seriesKey": "renault:clio",
+      "name": "1.0 TCe Evolution",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-0-tce",
+          "name": "1.0 TCe"
+        },
+        {
+          "key": "renault:clio:1-0-tce-evolution",
+          "name": "Evolution"
+        }
+      ]
+    },
+    {
+      "key": "renault:clio:1-0-tce-joy",
+      "seriesKey": "renault:clio",
+      "name": "1.0 TCe Joy",
+      "selectionPath": [
+        {
+          "key": "renault:clio:1-0-tce",
+          "name": "1.0 TCe"
+        },
+        {
+          "key": "renault:clio:1-0-tce-joy",
+          "name": "Joy"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:golf:1-5-etsi-style",
+      "seriesKey": "volkswagen:golf",
+      "name": "1.5 eTSI Style",
+      "selectionPath": [
+        {
+          "key": "volkswagen:golf:1-5-etsi",
+          "name": "1.5 eTSI"
+        },
+        {
+          "key": "volkswagen:golf:1-5-etsi-style",
+          "name": "Style"
+        }
+      ]
+    }
   ]
 }

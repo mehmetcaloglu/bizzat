@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-08.1",
+  "version": "2026-09-09.1",
   "entries": [
     {
       "brandKey": "alfa-romeo",
@@ -2137,6 +2137,372 @@
       "aliases": [
         "UP!",
         "UP"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:1-serisi",
+      "aliases": [
+        "116D",
+        "116I",
+        "118D",
+        "118I",
+        "118IA",
+        "120",
+        "120D",
+        "120I",
+        "128TI"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:2-serisi",
+      "aliases": [
+        "216D",
+        "218D",
+        "218I",
+        "220",
+        "220D",
+        "220I",
+        "228I",
+        "230E",
+        "230I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:3-serisi",
+      "aliases": [
+        "316D",
+        "316I",
+        "318D",
+        "318I",
+        "320",
+        "320D",
+        "320I",
+        "328I",
+        "330D",
+        "330E",
+        "330I",
+        "340I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:4-serisi",
+      "aliases": [
+        "418D",
+        "418I",
+        "420D",
+        "420I",
+        "428I",
+        "430D",
+        "430I",
+        "435D",
+        "435I",
+        "440I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:5-serisi",
+      "aliases": [
+        "520D",
+        "520I",
+        "520LI",
+        "525D",
+        "528I",
+        "530",
+        "530D",
+        "530E",
+        "530I",
+        "535D",
+        "535I",
+        "540D",
+        "540I",
+        "550E",
+        "550I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:6-serisi",
+      "aliases": [
+        "620D",
+        "630I",
+        "640D",
+        "640I",
+        "650I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:7-serisi",
+      "aliases": [
+        "725D",
+        "725LD",
+        "730",
+        "730D",
+        "730I",
+        "730LD",
+        "730LI",
+        "740",
+        "740D",
+        "740E",
+        "740IA",
+        "740LD",
+        "740LE",
+        "740LI",
+        "745LE",
+        "750",
+        "750D",
+        "750I",
+        "750IA",
+        "750LD",
+        "750LI",
+        "760",
+        "760IA"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:8-serisi",
+      "aliases": [
+        "840D",
+        "840I"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:a-serisi",
+      "aliases": [
+        "A",
+        "A180",
+        "A200"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:b-serisi",
+      "aliases": [
+        "B"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:c-serisi",
+      "aliases": [
+        "C",
+        "C180",
+        "C180K",
+        "C63"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:e-serisi",
+      "aliases": [
+        "E",
+        "E220"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:s-serisi",
+      "aliases": [
+        "S",
+        "S350",
+        "S400D",
+        "S65"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:cla-serisi",
+      "aliases": [
+        "CLA"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:cls-serisi",
+      "aliases": [
+        "CLS"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:cl-serisi",
+      "aliases": [
+        "CL"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:sl-serisi",
+      "aliases": [
+        "SL"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:slk-serisi",
+      "aliases": [
+        "SLK"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:slc-serisi",
+      "aliases": [
+        "SLC"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:cle-serisi",
+      "aliases": [
+        "CLE"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a1",
+      "aliases": [
+        "A1"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a3",
+      "aliases": [
+        "A3"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a4",
+      "aliases": [
+        "A4"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a5",
+      "aliases": [
+        "A5"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a6",
+      "aliases": [
+        "A6"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a7",
+      "aliases": [
+        "A7"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a8",
+      "aliases": [
+        "A8"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:tt",
+      "aliases": [
+        "TT"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s3",
+      "aliases": [
+        "S3"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s4",
+      "aliases": [
+        "S4"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s5",
+      "aliases": [
+        "S5"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s6",
+      "aliases": [
+        "S6"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s7",
+      "aliases": [
+        "S7"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s8",
+      "aliases": [
+        "S8"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs3",
+      "aliases": [
+        "RS3"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs4",
+      "aliases": [
+        "RS4"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs5",
+      "aliases": [
+        "RS5"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs6",
+      "aliases": [
+        "RS6"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs7",
+      "aliases": [
+        "RS7"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:r8",
+      "aliases": [
+        "R8"
       ]
     }
   ]

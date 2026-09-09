@@ -78,4 +78,33 @@ describe('committed vehicle curation data', () => {
     expect(catalog).not.toMatch(/sourceKey|brandRaw|typeRaw|availableModelYears|kasko|price/i)
     expect(mappings).not.toMatch(/brandRaw|typeRaw|availableModelYears|kasko|price/i)
   })
+
+  it('covers the CI fixture targets and the reviewed marketplace paths', async () => {
+    const catalog = await json('catalog.json')
+    validateVehicleCatalog(catalog)
+    const models = new Map(catalog.models.map((model) => [model.key, model]))
+    const fixtureMappings = validateVehicleSourceMappingFile(await json('fixture.tsb-mappings.json'))
+    for (const mapping of fixtureMappings.mappings) expect(models.has(mapping.vehicleModelKey)).toBe(true)
+    expect(catalog.brands.map((brand) => brand.key)).toEqual(expect.arrayContaining(['renault', 'fiat', 'volkswagen', 'peugeot', 'bmw', 'mercedes-benz', 'audi', 'tesla']))
+    expect(models.get('renault:clio:1-0-tce-evolution')?.selectionPath?.map((node) => node.name)).toEqual(['1.0 TCe', 'Evolution'])
+    expect(models.get('audi:a3:a3-sedan-35-tfsi-advanced')?.selectionPath?.map((node) => node.name)).toEqual(['A3 Sedan', '35 TFSI', 'Advanced'])
+    expect(models.get('tesla:model-3:long-range')?.selectionPath?.map((node) => node.name)).toEqual(['Long Range'])
+    expect(models.has('bmw:3-serisi:320i-ed-sport-line')).toBe(true)
+    expect(models.has('bmw:3-serisi:320i-sport-line')).toBe(true)
+    expect(models.has('renault:clio:0-9-tce-sport-tourer-joy')).toBe(true)
+    const mappings = validateVehicleSourceMappingFile(await json('tsb-mappings.json'))
+    expect(mappings.mappings.find((mapping) => mapping.sourceKey === '122-1260')?.vehicleModelKey).toBe('renault:clio:1-0-tce-evolution')
+    expect(mappings.mappings.find((mapping) => mapping.sourceKey === '122-1266')?.vehicleModelKey).toBe('renault:clio:1-0-tce-evolution')
+  })
+
+  it('keeps operational leaves explicit and technical source notation out of picker labels', async () => {
+    const catalog = await json('catalog.json')
+    validateVehicleCatalog(catalog)
+    for (const model of catalog.models) {
+      expect(model.selectionPath?.length).toBeGreaterThan(0)
+      expect(model.selectionPath?.at(-1)?.key).toBe(model.key)
+      expect(model.name).not.toMatch(/\b(?:X-TRONIC|DSG|EDC|EAT8|7G-TRONIC|EURO6|FAZ1|\d+ HP)\b/i)
+    }
+  })
+
 })

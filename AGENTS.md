@@ -77,7 +77,7 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 
 - `vehicle_brands`, `vehicle_series`, `vehicle_models` Bizzat'ın canonical araç kimliğidir; listing'ler ileride bu UUID'leri referanslar.
 - `catalog_key` repository-owned ve sabit kimliktir. Display name düzeltmesinde yeni row/key üretme; mevcut kaydı güncelle.
-- Canonical hiyerarşi yalnız `Marka → Seri → Model`dir. Gereksinim olmadan generation/engine/trim/spec/VIN tabloları ekleme.
+- Canonical listing kimliği `vehicle_models` UUID'sidir. Kullanıcının 2026-09-09 kararı gereği görünür seçim ağacı Sahibinden referansındaki değişken derinliği izler; `selection_path` seri altındaki düğümleri ve yaprağı saklar. Her araca zorla engine/trim seviyeleri ekleme. Güncel tasarım: `docs/superpowers/specs/2026-09-09-vehicle-picker-parity.md`. Ayrı generation/engine/trim/spec/VIN tabloları ekleme.
 - Model yılı canonical taxonomy'nin parçası değildir; `car_details.model_year` bağımsız ilan alanı olarak kalır. `vehicle_model_years` tablosu ekleme.
 - TSB veya başka provider ID/source string'ini listing domain ID'si yapma.
 - Runtime araç reference endpointleri yalnız canonical PostgreSQL tablolarından okur; TSB/OtoAPI/başka araç API'sine normal request sırasında çağrı yapma.
@@ -115,7 +115,7 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - `source-manifest.json` gerçek kullanılan TSB dönemini ve bootstrap source/commit/license bilgisini güncel tutar. İlk reviewed curation TSB `2026-08` dönemidir.
 - `tsb-mappings.json` yalnız source code → canonical `catalog_key` mapping'idir; source raw text, model-year metadata veya fiyat taşımaz.
 - Aynı generated model key'e materially farklı label'lar çakışırsa otomatik seçim yapma; collision grubunu mapping dışında bırak.
-- `catalog_key` curation yeniden çalıştığında listing kimliği olarak stabil kalmalıdır; sırf display label değişti diye yeni key üretme.
+- `catalog_key` curation yeniden çalıştığında listing kimliği olarak stabil kalmalıdır. Sonraki generator çalıştırmalarında reviewed katalog/mapping baseline'ını ver; display label düzeltmesinde key üretme, kimlik birleşmesi/bölünmesi/reparenting için explicit review yap.
 - Permanent CI dış TSB endpointlerine bağlanmaz; committed alias/catalog/mapping/manifest verisini offline doğrular ve gerçek `catalog.json`ı PostgreSQL'e import ederek API/integration testlerini çalıştırır.
 - Katalog altyapısını daha fazla büyütmek yerine B2 sonrası MVP listing domainine (`listings` + `car_details`) geç; ölçülmüş gerçek katalog açığı olmadıkça generation/engine/trim/spec katmanı ekleme.
 
@@ -131,7 +131,7 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - Test/development TSB source fixture importu: `pnpm reference:import:vehicle-source -- tsb data/reference/vehicles/fixture.tsb-source.json`.
 - Test/development TSB mapping apply: `pnpm reference:apply:vehicle-mappings -- tsb data/reference/vehicles/fixture.tsb-mappings.json`.
 - TSB source coverage report: `pnpm reference:report:vehicle-source -- tsb`.
-- Offline/review curation generator: `pnpm reference:generate:vehicle-catalog -- <normalized-tsb.json> data/reference/vehicles/brand-aliases.json data/reference/vehicles/series-aliases.json <bootstrap-models.json> <output-dir> [version]`.
+- Offline/review curation generator: `pnpm reference:generate:vehicle-catalog -- <normalized-tsb.json> data/reference/vehicles/brand-aliases.json data/reference/vehicles/series-aliases.json <bootstrap-models.json> <output-dir> [version] [reviewed-baseline-dir]`.
 - Local web + API + contracts watcher: `pnpm dev`.
 - Kod değişikliklerini `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` ile doğrula.
 - DB/auth/reference-data davranışı gerçek PostgreSQL integration testleri gerektirir; mock ile ikame etme.

@@ -11,6 +11,7 @@ import type {
   VehicleSeriesAliasesFile,
 } from './alias.types.js'
 import { generateVehicleCurationCandidates } from './candidate-generator.js'
+import { canonicalModelSelection } from './model-label.js'
 
 export type VehicleBootstrapModels = Record<string, string[]>
 
@@ -25,12 +26,13 @@ export interface VehicleCatalogGenerationSummary {
   ambiguousSeriesExcluded: number
   unknownBrandExcluded: number
   noSeriesExcluded: number
+  modelReviewRequired: number
 }
 
 export interface GeneratedVehicleCatalogArtifacts {
   catalog: CanonicalVehicleCatalog
   mappings: VehicleSourceMappingFile
-  candidates: VehicleCurationCandidate[]
+  candidates: Array<VehicleCurationCandidate & { modelStatus: 'mapped' | 'model-review' | 'excluded'; vehicleModelKey: string | null }>
   summary: VehicleCatalogGenerationSummary
 }
 
@@ -91,6 +93,7 @@ export function generateCuratedVehicleCatalog(args: {
   seriesAliases: VehicleSeriesAliasesFile
   bootstrapModels: VehicleBootstrapModels
   version: string
+  baseline?: { catalog: CanonicalVehicleCatalog; mappings: VehicleSourceMappingFile }
 }): GeneratedVehicleCatalogArtifacts {
   const candidates = generateVehicleCurationCandidates({
     records: args.snapshot.records,
@@ -98,7 +101,15 @@ export function generateCuratedVehicleCatalog(args: {
     seriesAliases: args.seriesAliases,
   })
 
-  const exactCandidates = candidates.filter(
+  const selectionBySourceKey = new Map(candidates.map((candidate) => [
+    candidate.sourceKey,
+    candidate.seriesKeyCandidate && candidate.proposedModelLabel
+      ? canonicalModelSelection(candidate.seriesKeyCandidate, candidate.proposedModelLabel, candidate.typeRaw)
+      : null,
+  ]))
+  const exactCandidates = candidates.map((candidate) => ({
+    ...candidate, proposedModelLabel: selectionBySourceKey.get(candidate.sourceKey)?.name ?? null,
+  })).filter(
     (candidate): candidate is VehicleCurationCandidate & {
       brandKeyCandidate: string
       seriesKeyCandidate: string
@@ -125,14 +136,14 @@ export function generateCuratedVehicleCatalog(args: {
     const group = byModelKey.get(modelKey) ?? []
     group.push({
       candidate,
-      normalizedLabel: normalizeVehicleSourceIdentity(candidate.proposedModelLabel),
+      normalizedLabel: JSON.stringify(selectionBySourceKey.get(candidate.sourceKey)!.path.map(normalizeVehicleSourceIdentity)),
     })
     byModelKey.set(modelKey, group)
   }
 
   const acceptedModelKeys = new Map<
     string,
-    { seriesKey: string; name: string; sourceKeys: string[] }
+    { seriesKey: string; name: string; path: string[]; sourceKeys: string[] }
   >()
   let slugCollisionsExcluded = 0
 
@@ -150,8 +161,31 @@ export function generateCuratedVehicleCatalog(args: {
     acceptedModelKeys.set(modelKey, {
       seriesKey: first.candidate.seriesKeyCandidate,
       name: first.candidate.proposedModelLabel,
+      path: selectionBySourceKey.get(first.candidate.sourceKey)!.path,
       sourceKeys: sorted.map((item) => item.candidate.sourceKey),
     })
+  }
+
+  // After the first reviewed consolidation, source mappings anchor identities.
+  // Display spelling changes must not generate new listing UUIDs. A split/merge
+  // of already published identities requires an explicit reviewed migration.
+  const baselineModels = new Map(args.baseline?.catalog.models.map((model) => [model.key, model]) ?? [])
+  const baselineMappings = new Map(args.baseline?.mappings.mappings.map((mapping) => [mapping.sourceKey, mapping.vehicleModelKey]) ?? [])
+  const stableModelKeys = new Map<string, string>()
+  const claimedKeys = new Set<string>()
+  for (const [generatedKey, model] of acceptedModelKeys) {
+    const priorKeys = new Set(model.sourceKeys.map((key) => baselineMappings.get(key)).filter((key): key is string => !!key && baselineModels.has(key)))
+    if (priorKeys.size > 1) throw new Error(`Identity consolidation requires review: ${generatedKey}`)
+    const stableKey = [...priorKeys][0] ?? generatedKey
+    const old = baselineModels.get(stableKey)
+    if (old && old.seriesKey !== model.seriesKey) throw new Error(`Identity reparenting requires review: ${stableKey}`)
+    if (old?.selectionPath && old.selectionPath.length !== model.path.length) throw new Error(`Selection path restructuring requires review: ${stableKey}`)
+    if (old && priorKeys.size === 0 && JSON.stringify(old.selectionPath?.map((node) => normalizeVehicleSourceIdentity(node.name))) !== JSON.stringify(model.path.map(normalizeVehicleSourceIdentity))) {
+      throw new Error(`Existing key would be repurposed: ${stableKey}`)
+    }
+    if (claimedKeys.has(stableKey)) throw new Error(`Identity split requires review: ${stableKey}`)
+    claimedKeys.add(stableKey)
+    stableModelKeys.set(generatedKey, stableKey)
   }
 
   const usedSeriesKeys = new Set(
@@ -188,9 +222,13 @@ export function generateCuratedVehicleCatalog(args: {
 
   const models = [...acceptedModelKeys.entries()]
     .map(([key, model]) => ({
-      key,
+      key: stableModelKeys.get(key)!,
       seriesKey: model.seriesKey,
       name: model.name,
+      selectionPath: model.path.map((name, index) => ({
+        key: index === model.path.length - 1 ? stableModelKeys.get(key)! : baselineModels.get(stableModelKeys.get(key)!)?.selectionPath?.[index]?.key ?? `${model.seriesKey}:${model.path.slice(0, index + 1).map(slugify).join(':')}`,
+        name,
+      })),
     }))
     .sort((left, right) => left.key.localeCompare(right.key))
 
@@ -198,11 +236,13 @@ export function generateCuratedVehicleCatalog(args: {
     .flatMap(([vehicleModelKey, model]) =>
       model.sourceKeys.map((sourceKey) => ({
         sourceKey,
-        vehicleModelKey,
+        vehicleModelKey: stableModelKeys.get(vehicleModelKey)!,
         method: 'exact-rule' as const,
       })),
     )
     .sort((left, right) => left.sourceKey.localeCompare(right.sourceKey))
+
+  const mappedTargetBySource = new Map(mappings.map((mapping) => [mapping.sourceKey, mapping.vehicleModelKey]))
 
   const statusCount = (status: VehicleCurationCandidate['status']): number =>
     candidates.filter((candidate) => candidate.status === status).length
@@ -218,7 +258,10 @@ export function generateCuratedVehicleCatalog(args: {
       version: args.version,
       mappings,
     },
-    candidates,
+    candidates: candidates.map((candidate) => {
+      const target = mappedTargetBySource.get(candidate.sourceKey) ?? null
+      return { ...candidate, modelStatus: target ? 'mapped' : candidate.status === 'exact-series' ? 'model-review' : 'excluded', vehicleModelKey: target }
+    }),
     summary: {
       sourceRecords: args.snapshot.records.length,
       exactCandidates: exactCandidates.length,
@@ -230,6 +273,7 @@ export function generateCuratedVehicleCatalog(args: {
       ambiguousSeriesExcluded: statusCount('ambiguous-series'),
       unknownBrandExcluded: statusCount('unknown-brand'),
       noSeriesExcluded: statusCount('no-series'),
+      modelReviewRequired: candidates.filter((candidate) => candidate.status === 'exact-series' && !selectionBySourceKey.get(candidate.sourceKey)).length,
     },
   }
 }

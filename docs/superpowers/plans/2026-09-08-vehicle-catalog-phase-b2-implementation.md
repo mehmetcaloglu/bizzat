@@ -123,6 +123,7 @@ Rules:
 Reviewed initial result recorded in the manifest:
 
 ```text
+Historical pre-consolidation proposal (superseded by 2026-09-09-vehicle-picker-parity.md):
 TSB snapshot records: 27,906
 Mapped source codes: 6,685
 Canonical brands: 27

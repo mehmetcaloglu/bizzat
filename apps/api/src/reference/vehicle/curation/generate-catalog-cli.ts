@@ -1,5 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
+import { validateVehicleCatalog } from '../catalog-validator.js'
+import { validateVehicleSourceMappingFile } from '../source/mapping-validator.js'
 import { validateAndNormalizeVehicleSourceSnapshot } from '../source/source-validator.js'
 import { validateVehicleBrandAliases, validateVehicleSeriesAliases } from './alias-validator.js'
 import {
@@ -42,11 +44,11 @@ async function writeJson(path: string, value: unknown): Promise<void> {
 }
 
 const args = process.argv.slice(2).filter((arg) => arg !== '--')
-const [snapshotArg, brandAliasesArg, seriesAliasesArg, bootstrapArg, outputDirArg, versionArg] = args
+const [snapshotArg, brandAliasesArg, seriesAliasesArg, bootstrapArg, outputDirArg, versionArg, baselineDirArg] = args
 
 if (!snapshotArg || !brandAliasesArg || !seriesAliasesArg || !bootstrapArg || !outputDirArg) {
   console.error(
-    'Usage: reference:generate:vehicle-catalog <normalized-tsb.json> <brand-aliases.json> <series-aliases.json> <bootstrap-models.json> <output-dir> [version]',
+    'Usage: reference:generate:vehicle-catalog <normalized-tsb.json> <brand-aliases.json> <series-aliases.json> <bootstrap-models.json> <output-dir> [version] [reviewed-baseline-dir]',
   )
   process.exitCode = 1
 } else {
@@ -66,14 +68,22 @@ if (!snapshotArg || !brandAliasesArg || !seriesAliasesArg || !bootstrapArg || !o
   const outputDir = resolve(invocationRoot, outputDirArg)
   const version = versionArg?.trim() || snapshot.provider.version
 
+  const baselineCatalog = baselineDirArg ? await readJson(resolve(invocationRoot, baselineDirArg, 'catalog.json')) : undefined
+  let baseline: Parameters<typeof generateCuratedVehicleCatalog>[0]['baseline']
+  if (baselineCatalog !== undefined) {
+    validateVehicleCatalog(baselineCatalog)
+    baseline = { catalog: baselineCatalog, mappings: validateVehicleSourceMappingFile(await readJson(resolve(invocationRoot, baselineDirArg!, 'tsb-mappings.json'))) }
+  }
   const result = generateCuratedVehicleCatalog({
     snapshot,
     brandAliases,
     seriesAliases,
     bootstrapModels,
     version,
+    ...(baseline ? { baseline } : {}),
   })
 
+  validateVehicleCatalog(result.catalog)
   await mkdir(outputDir, { recursive: true })
   await Promise.all([
     writeJson(resolve(outputDir, 'catalog.generated.json'), result.catalog),

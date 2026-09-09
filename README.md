@@ -23,7 +23,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Auth | Self-hosted Better Auth; email/password + cookie session |
 | Roller | `public.profiles`: `user`, `moderator`, `admin` |
 | Konum referansı | PostgreSQL içinde il → ilçe → mahalle; explicit snapshot import |
-| Araç kataloğu | Bizzat-owned Marka → Seri → Model UUID kimliği; PostgreSQL runtime |
+| Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
 | Mevcut aşama | Identity + konum + canonical araç katalog + TSB source/mapping + Türkiye katalog curation tamamlandı; sıradaki domain ilanlar + `car_details` |
@@ -81,11 +81,7 @@ Repo'daki `data/reference/locations/fixture.locations.json` yalnız development/
 
 ## Araç katalog reference data
 
-Otomobil seçimi için canonical kimlik Bizzat'a aittir:
-
-```text
-Marka → Seri → Model
-```
+Otomobil seçimi Sahibinden referansındaki dal yapısını izler. Örneğin Renault → Clio → 1.0 TCe → Evolution; Audi → A3 → A3 Sedan → 35 TFSI → Advanced; Tesla → Model 3 → Long Range. Seviye sayısı sabit değildir; canonical son seçim kimliği Bizzat'a aittir.
 
 PostgreSQL tabloları `vehicle_brands`, `vehicle_series` ve `vehicle_models`dır. Her kaydın dış sağlayıcılardan bağımsız UUID'si ve repository-owned sabit `catalog_key` değeri vardır. Display name düzeltmeleri kimliği değiştirmez; katalogdan kaldırılan kayıtlar hard-delete edilmek yerine pasifleştirilir.
 
@@ -93,7 +89,8 @@ Public read-only API:
 
 - `GET /api/v1/reference/vehicle/brands`
 - `GET /api/v1/reference/vehicle/brands/:brandId/series`
-- `GET /api/v1/reference/vehicle/series/:seriesId/models`
+- `GET /api/v1/reference/vehicle/series/:seriesId/models` — legacy düz liste
+- `GET /api/v1/reference/vehicle/series/:seriesId/selection?parentKey=...` — bir sonraki seçim seviyesi; `kind: group` ile devam et, `kind: model` üzerindeki UUID ile seçimi tamamla
 
 Runtime hiçbir araç katalog servisine veya TSB'ye HTTP isteği yapmaz; yalnız PostgreSQL canonical tablolarını okur. Operasyonel canonical katalog explicit bakım komutuyla import edilir:
 
@@ -138,7 +135,7 @@ B2 runtime'a yeni provider bağımlılığı eklemez. Repository-owned review ar
 - `data/reference/vehicles/tsb-mappings.json`
 - `data/reference/vehicles/source-manifest.json`
 
-İlk curation snapshot'ı TSB'nin yayımlanmış **2026-08** dönemini kullanır. Manifestte kayıtlı review sonucu 27.906 TSB araç kodundan 6.685 kodun deterministic `exact-rule` mapping aldığı; canonical katalogda 27 marka, 245 seri ve 6.652 model bulunduğu; 11 slug collision kaydının ve 1 ambiguous-series adayının otomatik mapping dışında bırakıldığıdır.
+TSB'nin **2026-08** snapshot'ındaki 27.906 kayıttan 2.720 kaynak kodu 24 marka, 158 seri ve 1.824 seçilebilir kayda bağlanır. Önceki 6.652 TSB-tip satırı model olarak yayımlanmaz. 6.027 seri eşleşmesi model incelemesi bekler; 21 belirsiz seri eşleşmesi dışarıda kalır. Bu, **kısmi curation** sonucudur; tam Türkiye/Sahibinden kataloğu değildir. BYD, Chery, Cupra, DS Automobiles, MINI ve Mazda için eski taslaktaki doğrulanmamış kapsam yeni picker'a taşınmadı. Ayrıntılar ve merge engelleri [güncel seçim ağacı tasarımında](docs/superpowers/specs/2026-09-09-vehicle-picker-parity.md) kayıtlıdır.
 
 Ham TSB workbook/CSV veya kasko fiyatı repoya girmez. Acquisition yalnız bakım anında yapılır; geçici acquisition workflow/script'i final branch'te tutulmaz. Normal CI ve runtime dış TSB endpointine bağlanmadan çalışır.
 
@@ -153,8 +150,11 @@ pnpm reference:generate:vehicle-catalog -- \
   data/reference/vehicles/series-aliases.json \
   <global-car-models/models.json> \
   /tmp/bizzat-vehicle-curation \
-  <version>
+  <version> \
+  data/reference/vehicles
 ```
+
+Son argüman mevcut reviewed katalog/mapping baseline dizinidir; sonraki üretimlerde listing ve ara düğüm anahtarlarını korur, kimlik birleşmesi/bölünmesini review için reddeder. İlk üretimde baseline yoktur. Display-name bootstrap girdisi mevcut repo isimlerini devralabilir; kullanılan kaynak manifestte doğru belirtilmelidir.
 
 Çıktılar doğrudan production DB'ye yazılmaz; `catalog.generated.json`, `tsb-mappings.generated.json`, `candidates.json` ve `summary.json` önce review edilir. `source-manifest.json` kullanılan TSB dönemini ve pinned açık kaynak bootstrap commitini/provenance'ını kaydeder.
 

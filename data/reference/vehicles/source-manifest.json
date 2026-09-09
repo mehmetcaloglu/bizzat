@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-08.1",
+  "version": "2026-09-09.1",
   "sources": [
     {
       "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
@@ -15,17 +15,55 @@
       "pinnedCommit": "44da5c9e5e0f3162d65579033f7a641473308b11",
       "accessedDate": "2026-09-08",
       "licenseOrTerms": "MIT",
-      "role": "nameplate-bootstrap"
+      "role": "inherited-nameplate-bootstrap",
+      "usageNote": "Existing B2 display names inherited from the pinned bootstrap; local reviewed BMW/Mercedes-Benz/Audi nameplate labels added on 2026-09-09. No new upstream bootstrap download."
+    },
+    {
+      "name": "Sahibinden public category reference examples",
+      "sourceUrl": "https://www.sahibinden.com/otomobil",
+      "accessedDate": "2026-09-09",
+      "role": "selection-path-reference",
+      "licenseOrTerms": "Selected publicly indexed category paths inspected; no full category export, listing dump or runtime crawler. See vehicle-picker-parity spec for exact reference URLs."
     }
   ],
   "curation": {
-    "method": "Explicit brand aliases and deterministic longest token-boundary series aliases; ambiguous/colliding candidates remain unmapped.",
+    "sourceRecords": 27906,
+    "exactCandidates": 2720,
+    "mappedSourceCodes": 2720,
+    "canonicalBrands": 24,
+    "canonicalSeries": 158,
+    "canonicalModels": 1824,
+    "slugCollisionsExcluded": 0,
+    "ambiguousSeriesExcluded": 21,
+    "unknownBrandExcluded": 13955,
+    "noSeriesExcluded": 5183,
+    "modelReviewRequired": 6027,
     "tsbSnapshotRecords": 27906,
-    "mappedSourceCodes": 6685,
-    "canonicalBrands": 27,
-    "canonicalSeries": 245,
-    "canonicalModels": 6652,
-    "slugCollisionsExcluded": 11,
-    "ambiguousSeriesExcluded": 1
+    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees.",
+    "coverageStatus": "partial-review; not a complete Sahibinden catalog",
+    "excludedPreviouslyPresentBrands": [
+      "BYD",
+      "Chery",
+      "Cupra",
+      "DS Automobiles",
+      "MINI",
+      "Mazda"
+    ],
+    "knownGaps": [
+      "Historical model years outside the August 2026 snapshot",
+      "Unreviewed EV, SUV and body branches",
+      "Audi default-body rows without explicit body; most Audi series beyond A3/A4",
+      "Unknown source trim spellings; drivetrain branches such as xDrive"
+    ],
+    "reviewedReferenceExamples": [
+      "Renault/Clio/1.0 TCe/Evolution",
+      "Volkswagen/Polo/1.0 TSI/Comfortline",
+      "Peugeot/308/1.2 PureTech/GT",
+      "BMW/3 Serisi/320i ED/Sport Line",
+      "Mercedes-Benz/C Serisi/C 180/AMG",
+      "Audi/A3/A3 Sedan/35 TFSI/Advanced",
+      "Tesla/Model 3/Long Range"
+    ],
+    "identityPolicy": "First pre-merge consolidation replaces unreviewed type keys. Later runs must use the reviewed catalog/mappings baseline; splits/merges/reparenting are rejected for explicit review."
   }
 }

@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-08.1",
+  "version": "2026-09-09.1",
   "aliases": [
     {
       "raw": "ALFA ROMEO",
@@ -120,6 +120,18 @@
     {
       "raw": "VOLKSWAGEN",
       "brandKey": "volkswagen"
+    },
+    {
+      "raw": "BMW",
+      "brandKey": "bmw"
+    },
+    {
+      "raw": "MERCEDES",
+      "brandKey": "mercedes-benz"
+    },
+    {
+      "raw": "AUDI",
+      "brandKey": "audi"
     }
   ]
 }
