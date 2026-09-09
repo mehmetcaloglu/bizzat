@@ -25,7 +25,8 @@ describe('committed vehicle curation data', () => {
   })
 
   it('keeps the source manifest counts aligned with committed catalog and mappings', async () => {
-    const catalog = validateVehicleCatalog(await json('catalog.json'))
+    const catalog = await json('catalog.json')
+    validateVehicleCatalog(catalog)
     const mappings = validateVehicleSourceMappingFile(await json('tsb-mappings.json'))
     const manifest = await json('source-manifest.json') as {
       sources: Array<{ name: string; sourcePeriod?: string }>
