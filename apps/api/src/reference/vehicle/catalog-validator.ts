@@ -102,6 +102,15 @@ function parseModel(value: unknown, index: number): CanonicalVehicleModel {
         `models[${index}].selectionPath must not contain duplicate keys`,
       )
     }
+
+    const seriesNamespace = `${model.seriesKey}:`
+    for (const node of model.selectionPath.slice(0, -1)) {
+      if (!node.key.startsWith(seriesNamespace)) {
+        throw new VehicleCatalogValidationError(
+          `Intermediate selection node ${node.key} must use series namespace ${seriesNamespace}`,
+        )
+      }
+    }
   }
 
   return model

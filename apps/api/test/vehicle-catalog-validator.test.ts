@@ -147,6 +147,20 @@ describe('vehicle catalog validator', () => {
     expectInvalid(value)
   })
 
+  it('rejects a single intermediate node outside its series namespace', () => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models[1] = {
+      key: 'stable-legacy-leaf-key',
+      seriesKey: 'fiat:egea',
+      name: '1.4 Fire Easy',
+      selectionPath: [
+        { key: 'renault:clio:foreign-group', name: '1.4 Fire' },
+        { key: 'stable-legacy-leaf-key', name: 'Easy' },
+      ],
+    }
+    expectInvalid(value)
+  })
+
   it('rejects a shared node key reached through a different path', () => {
     const value = validCatalog() as { models: Array<Record<string, unknown>> }
     value.models.push({

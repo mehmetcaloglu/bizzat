@@ -1,5 +1,7 @@
 # Vehicle Catalog Phase B Design
 
+> 2026-09-09 update: The visible picker hierarchy is superseded by [vehicle picker parity](2026-09-09-vehicle-picker-parity.md), using variable-depth selection paths. Canonical leaf UUIDs and source/mapping guards remain in force.
+
 Date: 2026-09-08
 Status: Approved in chat, awaiting written-spec review
 

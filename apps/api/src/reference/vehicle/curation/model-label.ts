@@ -45,17 +45,43 @@ const TECHNICAL = [
   /\b\d+(?:[.,]\d+)?\s*(?:KW|HP|PS|BG|BEYGIR)\b/g,
 ]
 
+interface SeriesNormalizationPolicy {
+  defaultBody?: RegExp
+}
+
+// Every entry is a reviewed marketplace series policy. Do not derive this list
+// from aliases: an absent series must retain body/technical/power tokens and
+// fail the exact trim lookup instead of being silently consolidated.
+const SERIES_NORMALIZATION_POLICIES: Record<string, SeriesNormalizationPolicy> = {
+  'renault:clio': { defaultBody: /\b(?:HB|HATCHBACK)\b/g },
+  'volkswagen:polo': { defaultBody: /\b(?:HB|HATCHBACK)\b/g },
+  'volkswagen:golf': { defaultBody: /\b(?:HB|HATCHBACK)\b/g },
+  'peugeot:308': { defaultBody: /\b(?:5 ?KAPI|HB|HATCHBACK)\b/g },
+  'fiat:egea': { defaultBody: /\bSEDAN\b/g },
+  'toyota:corolla': { defaultBody: /\bSEDAN\b/g },
+  'bmw:3-serisi': { defaultBody: /\bSEDAN\b/g },
+  'mercedes-benz:c-serisi': { defaultBody: /\b(?:SEDAN|LIMOUSINE)\b/g },
+  'audi:a3': {},
+  'audi:a4': {},
+}
+
 export interface ModelSelection { path: string[]; name: string }
 function selection(path: string[]): ModelSelection { return { path, name: path.join(' ') } }
 
 function stripFollowingPower(value: string): string {
-  return value.replace(/^\s+\d{2,3}\b(?![.,]\s*(?:YEAR|YIL)|\s+(?:YEAR|YIL|JAHRE))/, ' ')
+  return value.replace(
+    /^\s+(?:\(\s*\d{2,3}\s*\)|\d{2,3}\b(?![.,]\s*(?:YEAR|YIL)|\s+(?:YEAR|YIL|JAHRE)))/,
+    ' ',
+  )
 }
 
 function stripDisplacement(value: string): string {
   // A bare power figure is recognized only immediately after displacement.
   // Numbers elsewhere can be edition names and must survive for exact review.
-  return value.replace(/\b\d\.\d{1,2}\b(?:\s+\d{2,3}\b(?![.,]\s*(?:YEAR|YIL)|\s+(?:YEAR|YIL|JAHRE)))?/g, ' ')
+  return value.replace(
+    /\b\d\.\d{1,2}\b(?:\s+(?:\(\s*\d{2,3}\s*\)|\d{2,3}\b(?![.,]\s*(?:YEAR|YIL)|\s+(?:YEAR|YIL|JAHRE))))?/g,
+    ' ',
+  )
 }
 
 
@@ -63,6 +89,7 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   const brand = seriesKey.split(':')[0]!
   let label = normalizeVehicleSourceIdentity(proposed)
   const raw = normalizeVehicleSourceIdentity(typeRaw)
+  const policy = SERIES_NORMALIZATION_POLICIES[seriesKey]
   // Known source labels only; no inference of battery/trim from kW or model year.
   if (brand === 'tesla') {
     if (seriesKey === 'tesla:model-3') {
@@ -81,23 +108,23 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
     const badge = raw.match(/^(M?\d{3}(?:LD|LI|LE|TI|IS|D|I|E))\b/)
     if (!badge) return null
     group = badge[1]!.replace(/[A-Z]+$/, (s) => s.toLowerCase())
-    label = stripDisplacement(raw.slice(badge[0].length))
-    if (/\bED\b/.test(label)) { group += ' ED'; label = label.replace(/\bED\b/, ' ') }
-    label = stripFollowingPower(label)
-    const shape = label.match(/\b(TOURING|GRAN TURISMO|GRAN COUPE|COUPE|CABRIOLET)\b/)
-    if (shape) { body = shape[0].toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase()); label = label.replace(shape[0], ' ') }
-    label = label.replace(/\b(?:SEDAN|HATCHBACK)\b/g, ' ')
+    label = policy ? stripDisplacement(raw.slice(badge[0].length)) : raw.slice(badge[0].length)
+    if (seriesKey === 'bmw:3-serisi') {
+      if (/\bED\b/.test(label)) { group += ' ED'; label = label.replace(/\bED\b/, ' ') }
+      const shape = label.match(/\b(TOURING|GRAN TURISMO|GRAN COUPE|COUPE|CABRIOLET)\b/)
+      if (shape) { body = shape[0].toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase()); label = label.replace(shape[0], ' ') }
+    }
     // Drivetrain sometimes IS a marketplace branch. Never silently collapse it.
     if (/\b(?:XDRIVE|SDRIVE)\b/.test(label)) return null
   } else if (brand === 'mercedes-benz') {
     const badge = raw.match(/^([A-Z]{1,3})\s?(\d{2,3})(?:\s?(D|K))?\b/)
     if (!badge) return null
     group = `${badge[1]} ${badge[2]}${badge[3] === 'D' ? ' d' : badge[3] === 'K' ? ' Komp.' : ''}`
-    label = stripDisplacement(raw.slice(badge[0].length))
-    const blue = label.match(/\b(?:BLUEEFFICIENCY|BLUEEFICIENCY|BLUEFFICIENCY)\b/)
-    if (blue) { group += ' BlueEfficiency'; label = label.replace(blue[0], ' ') }
-    // Coupe/estate category placement requires its own reviewed path.
-    label = label.replace(/\b(?:SEDAN|LIMOUSINE)\b/g, ' ')
+    label = policy ? stripDisplacement(raw.slice(badge[0].length)) : raw.slice(badge[0].length)
+    if (seriesKey === 'mercedes-benz:c-serisi') {
+      const blue = label.match(/\b(?:BLUEEFFICIENCY|BLUEEFICIENCY|BLUEFFICIENCY)\b/)
+      if (blue) { group += ' BlueEfficiency'; label = label.replace(blue[0], ' ') }
+    }
   } else if (brand === 'audi') {
     if (!['audi:a3', 'audi:a4'].includes(seriesKey)) return null
     const shape = label.match(/\b(SEDAN|SPORTBACK|AVANT)\b/)
@@ -113,30 +140,29 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   } else if (seriesKey === 'renault:clio') {
     const shape = label.match(/\b(SPORT ?TOURER|GRAND ?TOUR|G\.TOUR)\b/)
     if (shape) { body = shape[0].startsWith('SPORT') ? 'Sport Tourer' : 'Grandtour'; label = label.replace(shape[0], ' ') }
-    label = label.replace(/\b(?:HB|HATCHBACK)\b/g, ' ')
   }
-  // Only reviewed default-body presentation. Other body words remain and fail
-  // the exact trim vocabulary, so they cannot turn into a different vehicle.
-  if (!['audi', 'bmw', 'mercedes-benz'].includes(brand)) {
-    label = label.replace(/\b(?:SEDAN|HB|HATCHBACK|[345] KAPI)\b/g, ' ')
+  if (policy?.defaultBody) label = label.replace(policy.defaultBody, ' ')
+  if (seriesKey === 'bmw:3-serisi' || seriesKey === 'mercedes-benz:c-serisi') {
+    label = stripFollowingPower(label)
   }
   label = label.replace(/\bBLUE HDI\b/g, 'BLUEHDI').replace(/\bBLUE DCI\b/g, 'BLUEDCI')
     .replace(/\bM\.JET\b/g, 'MULTIJET').replace(/\bHIBRIT\b/g, 'HYBRID').replace(/\bE-TSI\b/g, 'ETSI')
-  for (const pattern of TECHNICAL) label = label.replace(pattern, ' ')
+  if (policy) {
+    for (const pattern of TECHNICAL) label = label.replace(pattern, ' ')
+  }
   const technologies = Object.keys(ENGINE_SPELLING).sort((a, b) => b.length - a.length).join('|')
   const engine = label.match(new RegExp(`\\b(\\d\\.\\d{1,2})\\s*(${technologies})?\\b`))
   if (!group && engine) {
     group = `${engine[1]}${engine[2] ? ` ${ENGINE_SPELLING[engine[2]]}` : ''}`
     const engineEnd = engine.index! + engine[0].length
-    const tail = stripFollowingPower(label.slice(engineEnd))
+    const tail = policy ? stripFollowingPower(label.slice(engineEnd)) : label.slice(engineEnd)
     label = `${label.slice(0, engine.index)} ${tail}`
   }
   if (!group) return null
-  label = label.replace(/\(\s*\d{2,4}\s*\)/g, ' ')
-    .replace(/\s+/g, ' ').trim()
+  label = label.replace(/\s+/g, ' ').trim()
   // Reviewed punctuation-only aliases; unknown typos are not guessed.
   if (brand === 'peugeot' || brand === 'renault') label = label.replace(/^GT-LINE\b/, 'GT LINE')
-  if (brand === 'bmw' && !label) label = 'STANDART' // Real BMW marketplace leaf.
+  if (seriesKey === 'bmw:3-serisi' && !label) label = 'STANDART' // Real BMW marketplace leaf.
   const trim = trimNames.get(brand)!.get(label)
   if (!trim) return null
   const path = brand === 'audi' ? [body, group, trim] : [`${group}${body ? ` ${body}` : ''}`, trim]

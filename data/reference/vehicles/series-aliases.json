@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.1",
+  "version": "2026-09-09.2",
   "entries": [
     {
       "brandKey": "alfa-romeo",
@@ -51,27 +51,6 @@
       ]
     },
     {
-      "brandKey": "alfa-romeo",
-      "seriesKey": "alfa-romeo:stelvio",
-      "aliases": [
-        "STELVIO"
-      ]
-    },
-    {
-      "brandKey": "alfa-romeo",
-      "seriesKey": "alfa-romeo:tonale",
-      "aliases": [
-        "TONALE"
-      ]
-    },
-    {
-      "brandKey": "byd",
-      "seriesKey": "byd:atto-3",
-      "aliases": [
-        "ATTO 3"
-      ]
-    },
-    {
       "brandKey": "byd",
       "seriesKey": "byd:dolphin",
       "aliases": [
@@ -93,52 +72,10 @@
       ]
     },
     {
-      "brandKey": "byd",
-      "seriesKey": "byd:seal-u",
-      "aliases": [
-        "SEAL U"
-      ]
-    },
-    {
-      "brandKey": "byd",
-      "seriesKey": "byd:tang",
-      "aliases": [
-        "TANG"
-      ]
-    },
-    {
-      "brandKey": "chery",
-      "seriesKey": "chery:omoda-5",
-      "aliases": [
-        "OMODA 5"
-      ]
-    },
-    {
-      "brandKey": "chery",
-      "seriesKey": "chery:tiggo",
-      "aliases": [
-        "TIGGO"
-      ]
-    },
-    {
       "brandKey": "chery",
       "seriesKey": "chery:tiggo-4",
       "aliases": [
         "TIGGO 4"
-      ]
-    },
-    {
-      "brandKey": "chery",
-      "seriesKey": "chery:tiggo-7",
-      "aliases": [
-        "TIGGO 7"
-      ]
-    },
-    {
-      "brandKey": "chery",
-      "seriesKey": "chery:tiggo-8",
-      "aliases": [
-        "TIGGO 8"
       ]
     },
     {
@@ -153,13 +90,6 @@
       "seriesKey": "chevrolet:camaro",
       "aliases": [
         "CAMARO"
-      ]
-    },
-    {
-      "brandKey": "chevrolet",
-      "seriesKey": "chevrolet:captiva",
-      "aliases": [
-        "CAPTIVA"
       ]
     },
     {
@@ -227,13 +157,6 @@
     },
     {
       "brandKey": "chevrolet",
-      "seriesKey": "chevrolet:trax",
-      "aliases": [
-        "TRAX"
-      ]
-    },
-    {
-      "brandKey": "chevrolet",
       "seriesKey": "chevrolet:volt",
       "aliases": [
         "VOLT"
@@ -269,23 +192,9 @@
     },
     {
       "brandKey": "citroen",
-      "seriesKey": "citroen:c3-aircross",
-      "aliases": [
-        "C3 AIRCROSS"
-      ]
-    },
-    {
-      "brandKey": "citroen",
       "seriesKey": "citroen:c4",
       "aliases": [
         "C4"
-      ]
-    },
-    {
-      "brandKey": "citroen",
-      "seriesKey": "citroen:c4-cactus",
-      "aliases": [
-        "C4 CACTUS"
       ]
     },
     {
@@ -307,13 +216,6 @@
       "seriesKey": "citroen:c5",
       "aliases": [
         "C5"
-      ]
-    },
-    {
-      "brandKey": "citroen",
-      "seriesKey": "citroen:c5-aircross",
-      "aliases": [
-        "C5 AIRCROSS"
       ]
     },
     {
@@ -381,23 +283,9 @@
     },
     {
       "brandKey": "cupra",
-      "seriesKey": "cupra:ateca",
-      "aliases": [
-        "ATECA"
-      ]
-    },
-    {
-      "brandKey": "cupra",
       "seriesKey": "cupra:born",
       "aliases": [
         "BORN"
-      ]
-    },
-    {
-      "brandKey": "cupra",
-      "seriesKey": "cupra:formentor",
-      "aliases": [
-        "FORMENTOR"
       ]
     },
     {
@@ -444,20 +332,6 @@
     },
     {
       "brandKey": "dacia",
-      "seriesKey": "dacia:duster",
-      "aliases": [
-        "DUSTER"
-      ]
-    },
-    {
-      "brandKey": "dacia",
-      "seriesKey": "dacia:jogger",
-      "aliases": [
-        "JOGGER"
-      ]
-    },
-    {
-      "brandKey": "dacia",
       "seriesKey": "dacia:lodgy",
       "aliases": [
         "LODGY"
@@ -475,34 +349,6 @@
       "seriesKey": "dacia:sandero",
       "aliases": [
         "SANDERO"
-      ]
-    },
-    {
-      "brandKey": "dacia",
-      "seriesKey": "dacia:spring",
-      "aliases": [
-        "SPRING"
-      ]
-    },
-    {
-      "brandKey": "fiat",
-      "seriesKey": "fiat:500",
-      "aliases": [
-        "500"
-      ]
-    },
-    {
-      "brandKey": "fiat",
-      "seriesKey": "fiat:500l",
-      "aliases": [
-        "500L"
-      ]
-    },
-    {
-      "brandKey": "fiat",
-      "seriesKey": "fiat:500x",
-      "aliases": [
-        "500X"
       ]
     },
     {
@@ -610,20 +456,6 @@
     },
     {
       "brandKey": "ford",
-      "seriesKey": "ford:ecosport",
-      "aliases": [
-        "ECOSPORT"
-      ]
-    },
-    {
-      "brandKey": "ford",
-      "seriesKey": "ford:edge",
-      "aliases": [
-        "EDGE"
-      ]
-    },
-    {
-      "brandKey": "ford",
       "seriesKey": "ford:fiesta",
       "aliases": [
         "FIESTA"
@@ -652,13 +484,6 @@
     },
     {
       "brandKey": "ford",
-      "seriesKey": "ford:kuga",
-      "aliases": [
-        "KUGA"
-      ]
-    },
-    {
-      "brandKey": "ford",
       "seriesKey": "ford:mondeo",
       "aliases": [
         "MONDEO"
@@ -672,24 +497,10 @@
       ]
     },
     {
-      "brandKey": "ford",
-      "seriesKey": "ford:puma",
-      "aliases": [
-        "PUMA"
-      ]
-    },
-    {
       "brandKey": "honda",
       "seriesKey": "honda:accord",
       "aliases": [
         "ACCORD"
-      ]
-    },
-    {
-      "brandKey": "honda",
-      "seriesKey": "honda:cr-v",
-      "aliases": [
-        "CR-V"
       ]
     },
     {
@@ -711,13 +522,6 @@
       "seriesKey": "honda:civic",
       "aliases": [
         "CIVIC"
-      ]
-    },
-    {
-      "brandKey": "honda",
-      "seriesKey": "honda:hr-v",
-      "aliases": [
-        "HR-V"
       ]
     },
     {
@@ -752,9 +556,7 @@
       "brandKey": "hyundai",
       "seriesKey": "hyundai:accent",
       "aliases": [
-        "ACCENT",
-        "ACCENT BLUE",
-        "ACCENT ERA"
+        "ACCENT"
       ]
     },
     {
@@ -762,13 +564,6 @@
       "seriesKey": "hyundai:atos",
       "aliases": [
         "ATOS"
-      ]
-    },
-    {
-      "brandKey": "hyundai",
-      "seriesKey": "hyundai:bayon",
-      "aliases": [
-        "BAYON"
       ]
     },
     {
@@ -815,13 +610,6 @@
     },
     {
       "brandKey": "hyundai",
-      "seriesKey": "hyundai:kona",
-      "aliases": [
-        "KONA"
-      ]
-    },
-    {
-      "brandKey": "hyundai",
       "seriesKey": "hyundai:matrix",
       "aliases": [
         "MATRIX"
@@ -829,23 +617,9 @@
     },
     {
       "brandKey": "hyundai",
-      "seriesKey": "hyundai:santa-fe",
-      "aliases": [
-        "SANTA FE"
-      ]
-    },
-    {
-      "brandKey": "hyundai",
       "seriesKey": "hyundai:sonata",
       "aliases": [
         "SONATA"
-      ]
-    },
-    {
-      "brandKey": "hyundai",
-      "seriesKey": "hyundai:tucson",
-      "aliases": [
-        "TUCSON"
       ]
     },
     {
@@ -885,13 +659,6 @@
     },
     {
       "brandKey": "hyundai",
-      "seriesKey": "hyundai:ix35",
-      "aliases": [
-        "IX35"
-      ]
-    },
-    {
-      "brandKey": "hyundai",
       "seriesKey": "hyundai:ix55",
       "aliases": [
         "IX55"
@@ -920,37 +687,9 @@
     },
     {
       "brandKey": "kia",
-      "seriesKey": "kia:ev3",
-      "aliases": [
-        "EV3"
-      ]
-    },
-    {
-      "brandKey": "kia",
-      "seriesKey": "kia:ev6",
-      "aliases": [
-        "EV6"
-      ]
-    },
-    {
-      "brandKey": "kia",
-      "seriesKey": "kia:ev9",
-      "aliases": [
-        "EV9"
-      ]
-    },
-    {
-      "brandKey": "kia",
       "seriesKey": "kia:magentis",
       "aliases": [
         "MAGENTIS"
-      ]
-    },
-    {
-      "brandKey": "kia",
-      "seriesKey": "kia:niro",
-      "aliases": [
-        "NIRO"
       ]
     },
     {
@@ -983,30 +722,9 @@
     },
     {
       "brandKey": "kia",
-      "seriesKey": "kia:sorento",
-      "aliases": [
-        "SORENTO"
-      ]
-    },
-    {
-      "brandKey": "kia",
       "seriesKey": "kia:soul",
       "aliases": [
         "SOUL"
-      ]
-    },
-    {
-      "brandKey": "kia",
-      "seriesKey": "kia:sportage",
-      "aliases": [
-        "SPORTAGE"
-      ]
-    },
-    {
-      "brandKey": "kia",
-      "seriesKey": "kia:stonic",
-      "aliases": [
-        "STONIC"
       ]
     },
     {
@@ -1123,13 +841,6 @@
     },
     {
       "brandKey": "mitsubishi",
-      "seriesKey": "mitsubishi:asx",
-      "aliases": [
-        "ASX"
-      ]
-    },
-    {
-      "brandKey": "mitsubishi",
       "seriesKey": "mitsubishi:colt",
       "aliases": [
         "COLT"
@@ -1137,30 +848,9 @@
     },
     {
       "brandKey": "mitsubishi",
-      "seriesKey": "mitsubishi:eclipse-cross",
-      "aliases": [
-        "ECLIPSE CROSS"
-      ]
-    },
-    {
-      "brandKey": "mitsubishi",
       "seriesKey": "mitsubishi:lancer",
       "aliases": [
         "LANCER"
-      ]
-    },
-    {
-      "brandKey": "mitsubishi",
-      "seriesKey": "mitsubishi:outlander",
-      "aliases": [
-        "OUTLANDER"
-      ]
-    },
-    {
-      "brandKey": "mitsubishi",
-      "seriesKey": "mitsubishi:pajero",
-      "aliases": [
-        "PAJERO"
       ]
     },
     {
@@ -1189,13 +879,6 @@
       "seriesKey": "nissan:almera",
       "aliases": [
         "ALMERA"
-      ]
-    },
-    {
-      "brandKey": "nissan",
-      "seriesKey": "nissan:juke",
-      "aliases": [
-        "JUKE"
       ]
     },
     {
@@ -1235,23 +918,9 @@
     },
     {
       "brandKey": "nissan",
-      "seriesKey": "nissan:qashqai",
-      "aliases": [
-        "QASHQAI"
-      ]
-    },
-    {
-      "brandKey": "nissan",
       "seriesKey": "nissan:tiida",
       "aliases": [
         "TIIDA"
-      ]
-    },
-    {
-      "brandKey": "nissan",
-      "seriesKey": "nissan:x-trail",
-      "aliases": [
-        "X-TRAIL"
       ]
     },
     {
@@ -1284,29 +953,6 @@
     },
     {
       "brandKey": "opel",
-      "seriesKey": "opel:crossland",
-      "aliases": [
-        "CROSSLAND",
-        "CROSSLAND X"
-      ]
-    },
-    {
-      "brandKey": "opel",
-      "seriesKey": "opel:frontera",
-      "aliases": [
-        "FRONTERA"
-      ]
-    },
-    {
-      "brandKey": "opel",
-      "seriesKey": "opel:grandland",
-      "aliases": [
-        "GRANDLAND",
-        "GRANDLAND X"
-      ]
-    },
-    {
-      "brandKey": "opel",
       "seriesKey": "opel:insignia",
       "aliases": [
         "INSIGNIA"
@@ -1317,13 +963,6 @@
       "seriesKey": "opel:meriva",
       "aliases": [
         "MERIVA"
-      ]
-    },
-    {
-      "brandKey": "opel",
-      "seriesKey": "opel:mokka",
-      "aliases": [
-        "MOKKA"
       ]
     },
     {
@@ -1377,13 +1016,6 @@
     },
     {
       "brandKey": "peugeot",
-      "seriesKey": "peugeot:2008",
-      "aliases": [
-        "2008"
-      ]
-    },
-    {
-      "brandKey": "peugeot",
       "seriesKey": "peugeot:205",
       "aliases": [
         "205"
@@ -1408,13 +1040,6 @@
       "seriesKey": "peugeot:208",
       "aliases": [
         "208"
-      ]
-    },
-    {
-      "brandKey": "peugeot",
-      "seriesKey": "peugeot:3008",
-      "aliases": [
-        "3008"
       ]
     },
     {
@@ -1468,20 +1093,6 @@
     },
     {
       "brandKey": "peugeot",
-      "seriesKey": "peugeot:408",
-      "aliases": [
-        "408"
-      ]
-    },
-    {
-      "brandKey": "peugeot",
-      "seriesKey": "peugeot:5008",
-      "aliases": [
-        "5008"
-      ]
-    },
-    {
-      "brandKey": "peugeot",
       "seriesKey": "peugeot:508",
       "aliases": [
         "508"
@@ -1492,27 +1103,6 @@
       "seriesKey": "peugeot:rcz",
       "aliases": [
         "RCZ"
-      ]
-    },
-    {
-      "brandKey": "renault",
-      "seriesKey": "renault:arkana",
-      "aliases": [
-        "ARKANA"
-      ]
-    },
-    {
-      "brandKey": "renault",
-      "seriesKey": "renault:austral",
-      "aliases": [
-        "AUSTRAL"
-      ]
-    },
-    {
-      "brandKey": "renault",
-      "seriesKey": "renault:captur",
-      "aliases": [
-        "CAPTUR"
       ]
     },
     {
@@ -1597,20 +1187,6 @@
     },
     {
       "brandKey": "seat",
-      "seriesKey": "seat:arona",
-      "aliases": [
-        "ARONA"
-      ]
-    },
-    {
-      "brandKey": "seat",
-      "seriesKey": "seat:ateca",
-      "aliases": [
-        "ATECA"
-      ]
-    },
-    {
-      "brandKey": "seat",
       "seriesKey": "seat:cordoba",
       "aliases": [
         "CORDOBA"
@@ -1646,13 +1222,6 @@
     },
     {
       "brandKey": "seat",
-      "seriesKey": "seat:tarraco",
-      "aliases": [
-        "TARRACO"
-      ]
-    },
-    {
-      "brandKey": "seat",
       "seriesKey": "seat:toledo",
       "aliases": [
         "TOLEDO"
@@ -1667,37 +1236,9 @@
     },
     {
       "brandKey": "skoda",
-      "seriesKey": "skoda:enyaq",
-      "aliases": [
-        "ENYAQ"
-      ]
-    },
-    {
-      "brandKey": "skoda",
       "seriesKey": "skoda:fabia",
       "aliases": [
         "FABIA"
-      ]
-    },
-    {
-      "brandKey": "skoda",
-      "seriesKey": "skoda:kamiq",
-      "aliases": [
-        "KAMIQ"
-      ]
-    },
-    {
-      "brandKey": "skoda",
-      "seriesKey": "skoda:karoq",
-      "aliases": [
-        "KAROQ"
-      ]
-    },
-    {
-      "brandKey": "skoda",
-      "seriesKey": "skoda:kodiaq",
-      "aliases": [
-        "KODIAQ"
       ]
     },
     {
@@ -1736,24 +1277,10 @@
       ]
     },
     {
-      "brandKey": "skoda",
-      "seriesKey": "skoda:yeti",
-      "aliases": [
-        "YETI"
-      ]
-    },
-    {
       "brandKey": "subaru",
       "seriesKey": "subaru:brz",
       "aliases": [
         "BRZ"
-      ]
-    },
-    {
-      "brandKey": "subaru",
-      "seriesKey": "subaru:forester",
-      "aliases": [
-        "FORESTER"
       ]
     },
     {
@@ -1778,20 +1305,6 @@
       ]
     },
     {
-      "brandKey": "subaru",
-      "seriesKey": "subaru:outback",
-      "aliases": [
-        "OUTBACK"
-      ]
-    },
-    {
-      "brandKey": "subaru",
-      "seriesKey": "subaru:xv",
-      "aliases": [
-        "XV"
-      ]
-    },
-    {
       "brandKey": "suzuki",
       "seriesKey": "suzuki:alto",
       "aliases": [
@@ -1807,30 +1320,9 @@
     },
     {
       "brandKey": "suzuki",
-      "seriesKey": "suzuki:ignis",
-      "aliases": [
-        "IGNIS"
-      ]
-    },
-    {
-      "brandKey": "suzuki",
-      "seriesKey": "suzuki:jimny",
-      "aliases": [
-        "JIMNY"
-      ]
-    },
-    {
-      "brandKey": "suzuki",
       "seriesKey": "suzuki:liana",
       "aliases": [
         "LIANA"
-      ]
-    },
-    {
-      "brandKey": "suzuki",
-      "seriesKey": "suzuki:s-cross",
-      "aliases": [
-        "S-CROSS"
       ]
     },
     {
@@ -1848,20 +1340,6 @@
       ]
     },
     {
-      "brandKey": "suzuki",
-      "seriesKey": "suzuki:sx4",
-      "aliases": [
-        "SX4"
-      ]
-    },
-    {
-      "brandKey": "suzuki",
-      "seriesKey": "suzuki:vitara",
-      "aliases": [
-        "VITARA"
-      ]
-    },
-    {
       "brandKey": "tesla",
       "seriesKey": "tesla:model-3",
       "aliases": [
@@ -1873,20 +1351,6 @@
       "seriesKey": "tesla:model-s",
       "aliases": [
         "MODEL S"
-      ]
-    },
-    {
-      "brandKey": "tesla",
-      "seriesKey": "tesla:model-x",
-      "aliases": [
-        "MODEL X"
-      ]
-    },
-    {
-      "brandKey": "tesla",
-      "seriesKey": "tesla:model-y",
-      "aliases": [
-        "MODEL Y"
       ]
     },
     {
@@ -1908,14 +1372,6 @@
       "seriesKey": "toyota:aygo",
       "aliases": [
         "AYGO"
-      ]
-    },
-    {
-      "brandKey": "toyota",
-      "seriesKey": "toyota:c-hr",
-      "aliases": [
-        "C-HR",
-        "CHR"
       ]
     },
     {
@@ -1949,24 +1405,9 @@
     },
     {
       "brandKey": "toyota",
-      "seriesKey": "toyota:rav4",
-      "aliases": [
-        "RAV4",
-        "RAV 4"
-      ]
-    },
-    {
-      "brandKey": "toyota",
       "seriesKey": "toyota:supra",
       "aliases": [
         "SUPRA"
-      ]
-    },
-    {
-      "brandKey": "toyota",
-      "seriesKey": "toyota:urban-cruiser",
-      "aliases": [
-        "URBAN CRUISER"
       ]
     },
     {
@@ -2094,41 +1535,6 @@
       "seriesKey": "volkswagen:scirocco",
       "aliases": [
         "SCIROCCO"
-      ]
-    },
-    {
-      "brandKey": "volkswagen",
-      "seriesKey": "volkswagen:t-cross",
-      "aliases": [
-        "T-CROSS"
-      ]
-    },
-    {
-      "brandKey": "volkswagen",
-      "seriesKey": "volkswagen:t-roc",
-      "aliases": [
-        "T-ROC"
-      ]
-    },
-    {
-      "brandKey": "volkswagen",
-      "seriesKey": "volkswagen:taigo",
-      "aliases": [
-        "TAIGO"
-      ]
-    },
-    {
-      "brandKey": "volkswagen",
-      "seriesKey": "volkswagen:tiguan",
-      "aliases": [
-        "TIGUAN"
-      ]
-    },
-    {
-      "brandKey": "volkswagen",
-      "seriesKey": "volkswagen:touareg",
-      "aliases": [
-        "TOUAREG"
       ]
     },
     {

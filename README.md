@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + TSB source/mapping + Türkiye katalog curation tamamlandı; sıradaki domain ilanlar + `car_details` |
+| Mevcut aşama | Identity + konum + canonical araç katalog + TSB source/mapping altyapısı; değişken seçim ağacı ve kısmi Türkiye katalog curation draft PR #11 içinde |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -135,7 +135,7 @@ B2 runtime'a yeni provider bağımlılığı eklemez. Repository-owned review ar
 - `data/reference/vehicles/tsb-mappings.json`
 - `data/reference/vehicles/source-manifest.json`
 
-TSB'nin **2026-08** snapshot'ındaki 27.906 kayıttan 2.720 kaynak kodu 24 marka, 158 seri ve 1.824 seçilebilir kayda bağlanır. Önceki 6.652 TSB-tip satırı model olarak yayımlanmaz. 6.027 seri eşleşmesi model incelemesi bekler; 21 belirsiz seri eşleşmesi dışarıda kalır. Bu, **kısmi curation** sonucudur; tam Türkiye/Sahibinden kataloğu değildir. BYD, Chery, Cupra, DS Automobiles, MINI ve Mazda için eski taslaktaki doğrulanmamış kapsam yeni picker'a taşınmadı. Ayrıntılar ve merge engelleri [güncel seçim ağacı tasarımında](docs/superpowers/specs/2026-09-09-vehicle-picker-parity.md) kayıtlıdır.
+TSB'nin **2026-08** snapshot'ındaki 27.906 kayıttan 790 kaynak kodu 18 marka, 50 seri ve 567 seçilebilir kayda bağlanır. Önceki 6.652 TSB-tip satırı model olarak yayımlanmaz. 6.089 seri eşleşmesi model incelemesi bekler; 21 belirsiz seri eşleşmesi dışarıda kalır. Bu, **kısmi curation** sonucudur; tam Türkiye/Sahibinden kataloğu değildir. Alfa Romeo, BYD, Chery, Chevrolet, Cupra, DS Automobiles, Kia, MINI, Mazda, Seat, Skoda ve Subaru için eski taslaktaki doğrulanmamış kapsam yeni picker'a taşınmadı. Ayrıntılar ve merge engelleri [güncel seçim ağacı tasarımında](docs/superpowers/specs/2026-09-09-vehicle-picker-parity.md) kayıtlıdır.
 
 Ham TSB workbook/CSV veya kasko fiyatı repoya girmez. Acquisition yalnız bakım anında yapılır; geçici acquisition workflow/script'i final branch'te tutulmaz. Normal CI ve runtime dış TSB endpointine bağlanmadan çalışır.
 

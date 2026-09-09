@@ -30,7 +30,7 @@ Bir düğümün adı ve ebeveyn yolu tutarlı olmalıdır. Aynı düğüm hem ya
 
 TSB Ağustos 2026 snapshot'ı veri/mapping kaynağıdır. Daha önce edinilmiş 27.906 satırlık normalize artifact yeniden kullanıldı; fiyat ve ham kaynak repoya girmez. Marka/seri alias'ları explicit kalır. Maintenance parser bilinen motor rozetleri, doğrulanmış gövde yolları ve marka kapsamında kabul edilen paket sözlüğünü kullanır. Bilinmeyen paket yazımı, belirsiz kasa veya drivetrain dalı otomatik tahmin edilmez. Candidate çıktısı her kaynak için `mapped`, `model-review` veya `excluded` durumunu gösterir.
 
-Bu sürüm **Sahibinden ağacının tamamı değildir**. 24 marka, 158 seri, 1.824 seçilebilir kayıt ve 2.720 kaynak mapping'i içerir. 6.027 seri eşleşmesi model incelemesi bekler. Önceki taslaktaki BYD, Chery, Cupra, DS Automobiles, MINI ve Mazda bu sıkı sözlükten henüz geçmediği için yayımlanabilir kapsamda değildir. Tesla'da yalnız Model 3'ün açık isimli dalları; Audi'de yalnız açık gövde bilgili A3/A4 kayıtları kabul edilir. Bu kapsam gerilemesi gizlenmez; PR tam katalog olarak merge edilmeye hazır değildir.
+Bu sürüm **Sahibinden ağacının tamamı değildir**. 18 marka, 50 seri, 567 seçilebilir kayıt ve 790 kaynak mapping'i içerir. 6.089 seri eşleşmesi model incelemesi bekler. Önceki taslaktaki Alfa Romeo, BYD, Chery, Chevrolet, Cupra, DS Automobiles, Kia, MINI, Mazda, Seat, Skoda ve Subaru bu sıkı sözlükten henüz geçmediği için yayımlanabilir kapsamda değildir. Tesla'da yalnız Model 3'ün açık isimli dalları; Audi'de yalnız açık gövde bilgili A3/A4 kayıtları kabul edilir. Bu kapsam gerilemesi gizlenmez; PR tam katalog olarak merge edilmeye hazır değildir.
 
 İlk, henüz merge edilmemiş 6.652 TSB-tip key'i bu curation'da sadeleştirilir; Phase A fixture hedefleri korunur. Sonraki üretimlerde reviewed `catalog.json` ve `tsb-mappings.json` baseline olarak verilir. Mevcut source mapping'leri yaprak kimliğini, mevcut yol ara düğüm anahtarlarını korur. Aynı kimliğin bölünmesi, iki kimliğin birleşmesi, seriye taşınması veya yol derinliğinin değişmesi explicit review ister. Bir display düzeltmesi yeni listing kimliği üretmez.
 
@@ -56,3 +56,15 @@ Offline testler curation, bilinmeyenlerin reddi, teknik tiplerin birleşmesi, yo
 - [Egea Cross'un ayrı SUV kategorisi](https://www.sahibinden.com/arazi-suv-pickup-fiat-egea-cross-1.4-fire-urban)
 
 Başarılı arama indeksi özetleri kategori yollarını ve bazı kardeş dalları gösterir. Bunlar seçili örneklerdir; eksiksiz veya lisanslanmış güncel kategori export'u elde edildiği anlamına gelmez. GİB arşiv dosyaları bu değişiklikte okunmadı; JATO entegrasyonu yapılmadı.
+
+## İnceleme sonrası korumalar
+
+Teknik ayıklama yalnız `source-manifest.json` içindeki on `reviewedTechnicalPolicySeries` için uygulanır. Diğer serilerde gövde/şanzıman/güç sözcükleri korunarak incelemeye bırakılır; sayı içeren paket adları güç gibi silinmez. Kaynakta zaten açık motor + bilinen paket bulunan temiz satırlar bu ayıklamaya ihtiyaç duymadan aday olabilir. Marka kapsamındaki paket sözlüğü, tek başına tüm serilerde teknik ayrım silme izni vermez.
+
+Import, mevcut aktif veya pasif modelin serisini ve mevcut serinin markasını değiştirmeyi transaction içinde reddeder. Conflict update parent ID'lerini yazmaz; dönen parent kontrolü eşzamanlı uyuşmazlıkta rollback sağlar. Her ara düğüm `<seriesKey>:` ad alanına ait olmalıdır.
+
+İlk MVP yalnız Otomobil olduğundan bilinen SUV/pickup/ticari nameplate alias'ları bu seed'den çıkarıldı. Fiat 500/500L de doğru `500 Ailesi` ara yapısı ayrıca incelenene kadar dışarıda. [Peugeot 408](https://www.sahibinden.com/arazi-suv-pickup-peugeot-408), [Citroën C4 Cactus](https://www.sahibinden.com/arazi-suv-pickup-citroen-c4-cactus) ve [Fiat 500L](https://www.sahibinden.com/fiat-500-ailesi-500l-1.3-mjet) referansları bu ayrımın neden önemli olduğunu gösterir. `coverageByKnownBrand` kabul/inceleme sayılarıyla kalan işi görünür tutar; kaynak toplamı otomobil kapsam yüzdesi değildir.
+
+Accent Blue/Era kaynakları ortak Hyundai Accent dalına katılmaz; ayrı nameplate kimlikleri incelenene kadar seçilebilir seed dışında tutulur. İnceleme referansları: [Accent Blue](https://www.sahibinden.com/hyundai-accent-blue), [Accent Era](https://www.sahibinden.com/hyundai-accent-era). Motor/rozet/hacim ile doğrudan ilişkili olmayan parantezli sayılar da otomatik güç değeri sayılmaz.
+
+Baseline üzerinden korunan bir grubun anahtarı, aynı güncel ancestor-path altına eklenen yeni kardeş yapraklar tarafından paylaşılır. Aynı yola birden fazla eski grup kimliği veya aynı kimliğe farklı yollar düşerse explicit review gerekir.

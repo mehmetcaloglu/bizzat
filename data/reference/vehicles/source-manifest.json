@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.1",
+  "version": "2026-09-09.2",
   "sources": [
     {
       "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
@@ -7,7 +7,8 @@
       "sourcePeriod": "2026-08",
       "accessedDate": "2026-09-08",
       "licenseOrTerms": "No open redistribution license observed; raw export and operational normalized snapshot are not committed; kasko price values are discarded.",
-      "role": "turkey-coverage"
+      "role": "turkey-coverage",
+      "normalizedSnapshotSha256": "768140c3952ced1eb614eb0dfb57c519e6b127109591b862d629adf84d34b550"
     },
     {
       "name": "global-car-models",
@@ -28,32 +29,40 @@
   ],
   "curation": {
     "sourceRecords": 27906,
-    "exactCandidates": 2720,
-    "mappedSourceCodes": 2720,
-    "canonicalBrands": 24,
-    "canonicalSeries": 158,
-    "canonicalModels": 1824,
+    "exactCandidates": 790,
+    "mappedSourceCodes": 790,
+    "canonicalBrands": 18,
+    "canonicalSeries": 50,
+    "canonicalModels": 567,
     "slugCollisionsExcluded": 0,
     "ambiguousSeriesExcluded": 21,
     "unknownBrandExcluded": 13955,
-    "noSeriesExcluded": 5183,
-    "modelReviewRequired": 6027,
+    "noSeriesExcluded": 7051,
+    "modelReviewRequired": 6089,
     "tsbSnapshotRecords": 27906,
     "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees.",
     "coverageStatus": "partial-review; not a complete Sahibinden catalog",
     "excludedPreviouslyPresentBrands": [
+      "Alfa Romeo",
       "BYD",
       "Chery",
+      "Chevrolet",
       "Cupra",
       "DS Automobiles",
+      "Kia",
       "MINI",
-      "Mazda"
+      "Mazda",
+      "Seat",
+      "Skoda",
+      "Subaru"
     ],
     "knownGaps": [
       "Historical model years outside the August 2026 snapshot",
       "Unreviewed EV, SUV and body branches",
       "Audi default-body rows without explicit body; most Audi series beyond A3/A4",
-      "Unknown source trim spellings; drivetrain branches such as xDrive"
+      "Unknown source trim spellings; drivetrain branches such as xDrive",
+      "Fiat500family hierarchy requires explicit series/path curation; SUV/pickup/commercial categories are outside the current Otomobil MVP.",
+      "Hyundai Accent Blue/Era need separate reviewed nameplate identities; they are excluded from the common Accent path."
     ],
     "reviewedReferenceExamples": [
       "Renault/Clio/1.0 TCe/Evolution",
@@ -64,6 +73,334 @@
       "Audi/A3/A3 Sedan/35 TFSI/Advanced",
       "Tesla/Model 3/Long Range"
     ],
-    "identityPolicy": "First pre-merge consolidation replaces unreviewed type keys. Later runs must use the reviewed catalog/mappings baseline; splits/merges/reparenting are rejected for explicit review."
+    "identityPolicy": "First pre-merge consolidation replaces unreviewed type keys. Later runs must use the reviewed catalog/mappings baseline; splits/merges/reparenting are rejected for explicit review.",
+    "coverageMeasurement": "Counts refer to the complete source snapshot, including out-of-MVP vehicle categories; they are not a completeness percentage for Turkish passenger cars or the Sahibinden taxonomy.",
+    "excludedNameplates": [
+      "alfa-romeo:stelvio",
+      "alfa-romeo:tonale",
+      "byd:atto-3",
+      "byd:seal-u",
+      "byd:tang",
+      "chery:omoda-5",
+      "chery:tiggo",
+      "chery:tiggo-7",
+      "chery:tiggo-8",
+      "chevrolet:captiva",
+      "chevrolet:trax",
+      "citroen:c3-aircross",
+      "citroen:c4-cactus",
+      "citroen:c5-aircross",
+      "cupra:ateca",
+      "cupra:formentor",
+      "dacia:duster",
+      "dacia:jogger",
+      "dacia:spring",
+      "fiat:500",
+      "fiat:500l",
+      "fiat:500x",
+      "ford:ecosport",
+      "ford:edge",
+      "ford:kuga",
+      "ford:puma",
+      "honda:cr-v",
+      "honda:hr-v",
+      "hyundai:bayon",
+      "hyundai:kona",
+      "hyundai:santa-fe",
+      "hyundai:tucson",
+      "hyundai:ix35",
+      "kia:ev3",
+      "kia:ev6",
+      "kia:ev9",
+      "kia:niro",
+      "kia:sorento",
+      "kia:sportage",
+      "kia:stonic",
+      "mitsubishi:asx",
+      "mitsubishi:eclipse-cross",
+      "mitsubishi:outlander",
+      "mitsubishi:pajero",
+      "nissan:juke",
+      "nissan:qashqai",
+      "nissan:x-trail",
+      "opel:crossland",
+      "opel:frontera",
+      "opel:grandland",
+      "opel:mokka",
+      "peugeot:2008",
+      "peugeot:3008",
+      "peugeot:408",
+      "peugeot:5008",
+      "renault:arkana",
+      "renault:austral",
+      "renault:captur",
+      "seat:arona",
+      "seat:ateca",
+      "seat:tarraco",
+      "skoda:enyaq",
+      "skoda:kamiq",
+      "skoda:karoq",
+      "skoda:kodiaq",
+      "skoda:yeti",
+      "subaru:forester",
+      "subaru:outback",
+      "subaru:xv",
+      "suzuki:ignis",
+      "suzuki:jimny",
+      "suzuki:s-cross",
+      "suzuki:sx4",
+      "suzuki:vitara",
+      "tesla:model-x",
+      "tesla:model-y",
+      "toyota:c-hr",
+      "toyota:rav4",
+      "toyota:urban-cruiser",
+      "volkswagen:t-cross",
+      "volkswagen:t-roc",
+      "volkswagen:taigo",
+      "volkswagen:tiguan",
+      "volkswagen:touareg"
+    ],
+    "reviewedTechnicalPolicySeries": [
+      "renault:clio",
+      "volkswagen:polo",
+      "volkswagen:golf",
+      "peugeot:308",
+      "fiat:egea",
+      "toyota:corolla",
+      "bmw:3-serisi",
+      "mercedes-benz:c-serisi",
+      "audi:a3",
+      "audi:a4"
+    ],
+    "coverageByKnownBrand": [
+      {
+        "brandKey": "alfa-romeo",
+        "sourceRows": 68,
+        "model-review": 41,
+        "excluded": 27,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "audi",
+        "sourceRows": 774,
+        "model-review": 552,
+        "excluded": 134,
+        "mapped": 88,
+        "selectableLeaves": 53
+      },
+      {
+        "brandKey": "bmw",
+        "sourceRows": 1178,
+        "model-review": 674,
+        "mapped": 125,
+        "excluded": 379,
+        "selectableLeaves": 116
+      },
+      {
+        "brandKey": "byd",
+        "sourceRows": 19,
+        "excluded": 11,
+        "model-review": 8,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "chery",
+        "sourceRows": 41,
+        "excluded": 41,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "chevrolet",
+        "sourceRows": 136,
+        "model-review": 102,
+        "excluded": 34,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "citroen",
+        "sourceRows": 456,
+        "excluded": 158,
+        "model-review": 294,
+        "mapped": 4,
+        "selectableLeaves": 4
+      },
+      {
+        "brandKey": "cupra",
+        "sourceRows": 26,
+        "excluded": 17,
+        "model-review": 9,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "dacia",
+        "sourceRows": 251,
+        "model-review": 122,
+        "excluded": 120,
+        "mapped": 9,
+        "selectableLeaves": 9
+      },
+      {
+        "brandKey": "ds",
+        "sourceRows": 56,
+        "model-review": 35,
+        "excluded": 21,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "fiat",
+        "sourceRows": 1147,
+        "excluded": 777,
+        "model-review": 286,
+        "mapped": 84,
+        "selectableLeaves": 37
+      },
+      {
+        "brandKey": "ford",
+        "sourceRows": 1562,
+        "model-review": 395,
+        "excluded": 1164,
+        "mapped": 3,
+        "selectableLeaves": 3
+      },
+      {
+        "brandKey": "honda",
+        "sourceRows": 176,
+        "excluded": 42,
+        "model-review": 125,
+        "mapped": 9,
+        "selectableLeaves": 9
+      },
+      {
+        "brandKey": "hyundai",
+        "sourceRows": 556,
+        "excluded": 183,
+        "model-review": 343,
+        "mapped": 30,
+        "selectableLeaves": 30
+      },
+      {
+        "brandKey": "kia",
+        "sourceRows": 367,
+        "model-review": 177,
+        "excluded": 190,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "mazda",
+        "sourceRows": 113,
+        "excluded": 70,
+        "model-review": 43,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "mercedes-benz",
+        "sourceRows": 1799,
+        "model-review": 545,
+        "excluded": 1198,
+        "mapped": 56,
+        "selectableLeaves": 45
+      },
+      {
+        "brandKey": "mini",
+        "sourceRows": 184,
+        "model-review": 171,
+        "excluded": 13,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "mitsubishi",
+        "sourceRows": 134,
+        "excluded": 118,
+        "mapped": 4,
+        "model-review": 12,
+        "selectableLeaves": 4
+      },
+      {
+        "brandKey": "nissan",
+        "sourceRows": 332,
+        "model-review": 49,
+        "excluded": 276,
+        "mapped": 7,
+        "selectableLeaves": 7
+      },
+      {
+        "brandKey": "opel",
+        "sourceRows": 831,
+        "model-review": 511,
+        "excluded": 317,
+        "mapped": 3,
+        "selectableLeaves": 3
+      },
+      {
+        "brandKey": "peugeot",
+        "sourceRows": 702,
+        "model-review": 219,
+        "excluded": 414,
+        "mapped": 69,
+        "selectableLeaves": 50
+      },
+      {
+        "brandKey": "renault",
+        "sourceRows": 958,
+        "model-review": 402,
+        "mapped": 81,
+        "excluded": 475,
+        "selectableLeaves": 42
+      },
+      {
+        "brandKey": "seat",
+        "sourceRows": 189,
+        "model-review": 146,
+        "excluded": 43,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "skoda",
+        "sourceRows": 403,
+        "model-review": 307,
+        "excluded": 96,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "subaru",
+        "sourceRows": 67,
+        "excluded": 52,
+        "model-review": 15,
+        "selectableLeaves": 0
+      },
+      {
+        "brandKey": "suzuki",
+        "sourceRows": 90,
+        "excluded": 66,
+        "model-review": 17,
+        "mapped": 7,
+        "selectableLeaves": 6
+      },
+      {
+        "brandKey": "tesla",
+        "sourceRows": 31,
+        "model-review": 12,
+        "excluded": 16,
+        "mapped": 3,
+        "selectableLeaves": 3
+      },
+      {
+        "brandKey": "toyota",
+        "sourceRows": 467,
+        "mapped": 138,
+        "model-review": 178,
+        "excluded": 151,
+        "selectableLeaves": 106
+      },
+      {
+        "brandKey": "volkswagen",
+        "sourceRows": 838,
+        "excluded": 469,
+        "model-review": 299,
+        "mapped": 70,
+        "selectableLeaves": 40
+      }
+    ]
   }
 }

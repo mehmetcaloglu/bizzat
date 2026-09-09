@@ -208,6 +208,67 @@ describe('vehicle catalog importer', () => {
     expect(joyReactivated).toEqual({ id: joyBefore.id, active: true })
   })
 
+  it('rejects model reparenting and rolls back earlier updates', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+    const before = await db.selectFrom('vehicle_models')
+      .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
+      .select(['vehicle_models.id', 'vehicle_series.catalog_key as series_key'])
+      .where('vehicle_models.catalog_key', '=', 'renault:clio:1-0-tce-joy')
+      .executeTakeFirstOrThrow()
+
+    const reparented = makeCatalog()
+    reparented.brands.find((brand) => brand.key === 'renault')!.name = 'Renault Changed'
+    const joy = reparented.models.find((model) => model.key === 'renault:clio:1-0-tce-joy')!
+    joy.seriesKey = 'fiat:egea'
+    joy.selectionPath = [
+      { key: 'fiat:egea:1-0-tce', name: '1.0 TCe' },
+      { key: joy.key, name: 'Joy' },
+    ]
+
+    await expect(importVehicleCatalog(db, reparented)).rejects.toThrow(
+      'Cannot reparent vehicle model renault:clio:1-0-tce-joy',
+    )
+
+    const after = await db.selectFrom('vehicle_models')
+      .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
+      .select(['vehicle_models.id', 'vehicle_series.catalog_key as series_key'])
+      .where('vehicle_models.catalog_key', '=', 'renault:clio:1-0-tce-joy')
+      .executeTakeFirstOrThrow()
+    expect(after).toEqual(before)
+    await expect(db.selectFrom('vehicle_brands')
+      .select('name')
+      .where('catalog_key', '=', 'renault')
+      .executeTakeFirstOrThrow()).resolves.toEqual({ name: 'Renault' })
+  })
+
+  it('rejects series reparenting and rolls back earlier updates', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+    const before = await db.selectFrom('vehicle_series')
+      .innerJoin('vehicle_brands', 'vehicle_brands.id', 'vehicle_series.brand_id')
+      .select(['vehicle_series.id', 'vehicle_brands.catalog_key as brand_key'])
+      .where('vehicle_series.catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+
+    const reparented = makeCatalog()
+    reparented.brands.find((brand) => brand.key === 'renault')!.name = 'Renault Changed'
+    reparented.series.find((series) => series.key === 'renault:clio')!.brandKey = 'fiat'
+
+    await expect(importVehicleCatalog(db, reparented)).rejects.toThrow(
+      'Cannot reparent vehicle series renault:clio',
+    )
+
+    const after = await db.selectFrom('vehicle_series')
+      .innerJoin('vehicle_brands', 'vehicle_brands.id', 'vehicle_series.brand_id')
+      .select(['vehicle_series.id', 'vehicle_brands.catalog_key as brand_key'])
+      .where('vehicle_series.catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+    expect(after).toEqual(before)
+    await expect(db.selectFrom('vehicle_brands')
+      .select('name')
+      .where('catalog_key', '=', 'renault')
+      .executeTakeFirstOrThrow()).resolves.toEqual({ name: 'Renault' })
+  })
+
   it('rejects invalid catalogs before changing working data', async () => {
     const catalog = makeCatalog()
     await importVehicleCatalog(db, catalog)

@@ -87,6 +87,13 @@ function fallbackBrandName(brandKey: string, aliases: VehicleBrandAliasesFile): 
   return alias ? titleFromAlias(alias.replace(/\s*\([^)]*\)\s*$/u, '')) : titleFromAlias(brandKey.replace(/-/g, ' '))
 }
 
+function branchIdentity(seriesKey: string, path: string[], nodeIndex: number): string {
+  return JSON.stringify([
+    seriesKey,
+    path.slice(0, nodeIndex + 1).map(normalizeVehicleSourceIdentity),
+  ])
+}
+
 export function generateCuratedVehicleCatalog(args: {
   snapshot: NormalizedVehicleSourceSnapshot
   brandAliases: VehicleBrandAliasesFile
@@ -172,6 +179,7 @@ export function generateCuratedVehicleCatalog(args: {
   const baselineModels = new Map(args.baseline?.catalog.models.map((model) => [model.key, model]) ?? [])
   const baselineMappings = new Map(args.baseline?.mappings.mappings.map((mapping) => [mapping.sourceKey, mapping.vehicleModelKey]) ?? [])
   const stableModelKeys = new Map<string, string>()
+  const mappedBaselineGeneratedKeys = new Set<string>()
   const claimedKeys = new Set<string>()
   for (const [generatedKey, model] of acceptedModelKeys) {
     const priorKeys = new Set(model.sourceKeys.map((key) => baselineMappings.get(key)).filter((key): key is string => !!key && baselineModels.has(key)))
@@ -186,6 +194,35 @@ export function generateCuratedVehicleCatalog(args: {
     if (claimedKeys.has(stableKey)) throw new Error(`Identity split requires review: ${stableKey}`)
     claimedKeys.add(stableKey)
     stableModelKeys.set(generatedKey, stableKey)
+    if (priorKeys.size === 1) mappedBaselineGeneratedKeys.add(generatedKey)
+  }
+
+  // Resolve stable intermediate identities once per current series/path, seeded
+  // only by accepted leaves that are anchored through reviewed source mappings.
+  // This lets a new sibling reuse its existing branch without weakening split,
+  // merge, reparent, or path-restructure guards.
+  const stableBranchKeys = new Map<string, string>()
+  const branchIdentityByStableKey = new Map<string, string>()
+  for (const [generatedKey, model] of acceptedModelKeys) {
+    if (!mappedBaselineGeneratedKeys.has(generatedKey)) continue
+    const stableModelKey = stableModelKeys.get(generatedKey)!
+    const old = baselineModels.get(stableModelKey)
+    if (!old?.selectionPath) continue
+
+    for (let index = 0; index < model.path.length - 1; index += 1) {
+      const stableBranchKey = old.selectionPath[index]!.key
+      const identity = branchIdentity(model.seriesKey, model.path, index)
+      const existingKey = stableBranchKeys.get(identity)
+      if (existingKey !== undefined && existingKey !== stableBranchKey) {
+        throw new Error(`Selection branch consolidation requires review: ${identity}`)
+      }
+      const existingIdentity = branchIdentityByStableKey.get(stableBranchKey)
+      if (existingIdentity !== undefined && existingIdentity !== identity) {
+        throw new Error(`Selection branch split or reparenting requires review: ${stableBranchKey}`)
+      }
+      stableBranchKeys.set(identity, stableBranchKey)
+      branchIdentityByStableKey.set(stableBranchKey, identity)
+    }
   }
 
   const usedSeriesKeys = new Set(
@@ -226,7 +263,10 @@ export function generateCuratedVehicleCatalog(args: {
       seriesKey: model.seriesKey,
       name: model.name,
       selectionPath: model.path.map((name, index) => ({
-        key: index === model.path.length - 1 ? stableModelKeys.get(key)! : baselineModels.get(stableModelKeys.get(key)!)?.selectionPath?.[index]?.key ?? `${model.seriesKey}:${model.path.slice(0, index + 1).map(slugify).join(':')}`,
+        key: index === model.path.length - 1
+          ? stableModelKeys.get(key)!
+          : stableBranchKeys.get(branchIdentity(model.seriesKey, model.path, index))
+            ?? `${model.seriesKey}:${model.path.slice(0, index + 1).map(slugify).join(':')}`,
         name,
       })),
     }))

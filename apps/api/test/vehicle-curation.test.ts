@@ -1,4 +1,6 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
+import { validateVehicleCatalog } from '../src/reference/vehicle/catalog-validator.js'
 import { canonicalModelSelection } from '../src/reference/vehicle/curation/model-label.js'
 import {
   VehicleAliasValidationError,
@@ -8,6 +10,11 @@ import {
 import { generateCuratedVehicleCatalog } from '../src/reference/vehicle/curation/catalog-generator.js'
 import { generateVehicleCurationCandidates } from '../src/reference/vehicle/curation/candidate-generator.js'
 import type { NormalizedVehicleSourceSnapshot } from '../src/reference/vehicle/source/source.types.js'
+
+const committedSeriesAliasesPath = new URL(
+  '../../../data/reference/vehicles/series-aliases.json',
+  import.meta.url,
+)
 
 function brandAliasesInput(): unknown {
   return {
@@ -446,6 +453,113 @@ describe('marketplace selection paths and review boundaries', () => {
     expect(canonicalModelSelection(series, proposed, raw)).toBeNull()
   })
 
+  it('accepts engine-adjacent parenthesized power but rejects prefix and infix edition numbers', () => {
+    expect(canonicalModelSelection(
+      'renault:clio',
+      'EVOLUTION 1.0 TCE (90)',
+      'CLIO EVOLUTION 1.0 TCE (90)',
+    )?.path).toEqual(['1.0 TCe', 'Evolution'])
+
+    for (const label of [
+      '(100) EVOLUTION 1.0 TCE 90',
+      'EVOLUTION (100) 1.0 TCE 90',
+    ]) {
+      expect(canonicalModelSelection('renault:clio', label, `CLIO ${label}`)).toBeNull()
+    }
+  })
+
+  it('keeps real Accent Blue and Accent Era rows out through the generic Accent fallback', () => {
+    const committedAliases: unknown = JSON.parse(readFileSync(committedSeriesAliasesPath, 'utf8'))
+    const result = generateCuratedVehicleCatalog({
+      snapshot: {
+        provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '2026-08' },
+        records: [
+          {
+            sourceKey: '177-1014',
+            brandRaw: 'HYUNDAI',
+            typeRaw: 'ACCENT BLUE 1.6 CRDI MODE PLUS',
+            availableModelYears: [2012, 2013, 2014, 2015, 2016, 2017, 2018],
+          },
+          {
+            sourceKey: '177-406',
+            brandRaw: 'HYUNDAI',
+            typeRaw: 'ACCENT ERA 1.5 CRDI MODE',
+            availableModelYears: [2012],
+          },
+        ],
+      },
+      brandAliases: { version: '1', aliases: [{ raw: 'HYUNDAI', brandKey: 'hyundai' }] },
+      seriesAliases: validateVehicleSeriesAliases(committedAliases),
+      bootstrapModels: {},
+      version: '1',
+    })
+
+    expect(result.catalog.models).toEqual([])
+    expect(result.mappings.mappings).toEqual([])
+    expect(result.candidates).toEqual([
+      expect.objectContaining({
+        sourceKey: '177-1014',
+        proposedModelLabel: 'BLUE 1.6 CRDI MODE PLUS',
+        modelStatus: 'model-review',
+        vehicleModelKey: null,
+      }),
+      expect.objectContaining({
+        sourceKey: '177-406',
+        proposedModelLabel: 'ERA 1.5 CRDI MODE',
+        modelStatus: 'model-review',
+        vehicleModelKey: null,
+      }),
+    ])
+  })
+
+  it('normalizes reviewed Clio tokens but leaves equivalent unreviewed Civic variants for review', () => {
+    expect(canonicalModelSelection(
+      'renault:clio',
+      'HB EVOLUTION 1.0 TCE X-TRONIC 90',
+      'CLIO HB EVOLUTION 1.0 TCE X-TRONIC 90',
+    )?.path).toEqual(['1.0 TCe', 'Evolution'])
+
+    expect(canonicalModelSelection(
+      'honda:civic',
+      '1.6 EXECUTIVE',
+      'CIVIC 1.6 EXECUTIVE',
+    )?.path).toEqual(['1.6', 'Executive'])
+
+    for (const label of [
+      'HB 1.6 EXECUTIVE',
+      '1.6 OTOMATIK EXECUTIVE',
+      '1.6 125 EXECUTIVE',
+      '1.6 125 HP EXECUTIVE',
+      '1.6 (125) EXECUTIVE',
+    ]) {
+      expect(canonicalModelSelection('honda:civic', label, `CIVIC ${label}`)).toBeNull()
+    }
+  })
+
+  it('does not infer the BMW Standart trim outside the reviewed 3 Series policy', () => {
+    expect(canonicalModelSelection('bmw:5-serisi', '', '520i')).toBeNull()
+  })
+
+  it.each([
+    ['volkswagen:polo', 'HB 1.0 TSI 95 DSG LIFE', 'POLO HB 1.0 TSI 95 DSG LIFE', ['1.0 TSI', 'Life']],
+    ['volkswagen:golf', 'HATCHBACK 1.0 TSI 110 DSG LIFE', 'GOLF HATCHBACK 1.0 TSI 110 DSG LIFE', ['1.0 TSI', 'Life']],
+    ['peugeot:308', '5KAPI ACTIVE 1.6 E-HDI 112 AUTO6R', '308 5KAPI ACTIVE 1.6 E-HDI 112 AUTO6R', ['1.6 e-HDi', 'Active']],
+    ['fiat:egea', 'SEDAN EASY 1.4 FIRE 95', 'EGEA SEDAN EASY 1.4 FIRE 95', ['1.4 Fire', 'Easy']],
+    ['toyota:corolla', 'SEDAN 1.5 FLAME MULTIDRIVE S', 'COROLLA SEDAN 1.5 FLAME MULTIDRIVE S', ['1.5', 'Flame']],
+    ['bmw:3-serisi', 'SEDAN 1.6 170 SPORT LINE', '320i SEDAN 1.6 170 SPORT LINE', ['320i', 'Sport Line']],
+    ['mercedes-benz:c-serisi', '180 LIMOUSINE 1.6 AMG 7G-TRONIC', 'C 180 LIMOUSINE 1.6 AMG 7G-TRONIC', ['C 180', 'AMG']],
+  ])('applies reviewed body and technical policy for %s', (series, proposed, raw, path) => {
+    expect(canonicalModelSelection(series, proposed, raw)?.path).toEqual(path)
+  })
+
+  it.each([
+    ['volkswagen:polo', 'SEDAN 1.0 TSI 95 DSG LIFE', 'POLO SEDAN 1.0 TSI 95 DSG LIFE'],
+    ['toyota:corolla', 'HB 1.5 FLAME MULTIDRIVE S', 'COROLLA HB 1.5 FLAME MULTIDRIVE S'],
+    ['bmw:3-serisi', 'HATCHBACK 1.6 170 SPORT LINE', '320i HATCHBACK 1.6 170 SPORT LINE'],
+  ])('does not strip an unreviewed body for %s', (series, proposed, raw) => {
+    expect(canonicalModelSelection(series, proposed, raw)).toBeNull()
+  })
+
   it('excludes distinct reviewed trim labels with colliding slugs', () => {
     const result = generateCuratedVehicleCatalog({
       snapshot: { provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '1' }, records: ['EXECUTIVE', 'EXECUTIVE+'].map((trim, i) => ({
@@ -477,5 +591,90 @@ describe('marketplace selection paths and review boundaries', () => {
     args.snapshot.records.push({ ...args.snapshot.records[0]!, sourceKey: 'r2', typeRaw: 'CLIO JOY 1.0 TCE 90' })
     original.mappings.mappings.push({ sourceKey: 'r2', vehicleModelKey: model.key, method: 'exact-rule' })
     expect(() => generateCuratedVehicleCatalog({ ...args, baseline: original })).toThrow('Identity split requires review')
+  })
+
+  it('shares a baseline stable branch key with new siblings independent of source order', () => {
+    const originalArgs: Parameters<typeof generateCuratedVehicleCatalog>[0] = {
+      snapshot: {
+        provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '1' },
+        records: [{
+          sourceKey: 'evolution',
+          brandRaw: 'RENAULT (OYAK)',
+          typeRaw: 'CLIO EVOLUTION 1.0 TCE 90',
+          availableModelYears: [2025],
+        }],
+      },
+      brandAliases: validateVehicleBrandAliases(brandAliasesInput()),
+      seriesAliases: validateVehicleSeriesAliases(seriesAliasesInput()),
+      bootstrapModels: {},
+      version: '1',
+    }
+    const baseline = generateCuratedVehicleCatalog(originalArgs)
+    baseline.catalog.models[0]!.selectionPath![0]!.key = 'renault:clio:stable-engine-group'
+
+    const records = [
+      ...originalArgs.snapshot.records,
+      {
+        sourceKey: 'joy',
+        brandRaw: 'RENAULT (OYAK)',
+        typeRaw: 'CLIO JOY 1.0 TCE 90',
+        availableModelYears: [2025],
+      },
+    ]
+    const generate = (orderedRecords: typeof records) => generateCuratedVehicleCatalog({
+      ...originalArgs,
+      snapshot: { ...originalArgs.snapshot, records: orderedRecords },
+      baseline,
+    })
+
+    const forward = generate(records)
+    const reverse = generate([...records].reverse())
+    expect(forward.catalog.models.map((model) => model.selectionPath![0]!.key)).toEqual([
+      'renault:clio:stable-engine-group',
+      'renault:clio:stable-engine-group',
+    ])
+    expect(() => validateVehicleCatalog(forward.catalog)).not.toThrow()
+    expect(reverse.catalog).toEqual(forward.catalog)
+    expect(reverse.mappings).toEqual(forward.mappings)
+  })
+
+  it('rejects conflicting stable branch consolidations and splits', () => {
+    const argsFor = (records: Array<{ sourceKey: string; typeRaw: string }>): Parameters<typeof generateCuratedVehicleCatalog>[0] => ({
+      snapshot: {
+        provider: { code: 'tsb-kasko', sourceName: 'TSB', version: '1' },
+        records: records.map((record) => ({
+          ...record,
+          brandRaw: 'RENAULT (OYAK)',
+          availableModelYears: [2025],
+        })),
+      },
+      brandAliases: validateVehicleBrandAliases(brandAliasesInput()),
+      seriesAliases: validateVehicleSeriesAliases(seriesAliasesInput()),
+      bootstrapModels: {},
+      version: '1',
+    })
+
+    const consolidationArgs = argsFor([
+      { sourceKey: 'evolution', typeRaw: 'CLIO EVOLUTION 1.0 TCE 90' },
+      { sourceKey: 'joy', typeRaw: 'CLIO JOY 1.0 TCE 90' },
+    ])
+    const consolidationBaseline = generateCuratedVehicleCatalog(consolidationArgs)
+    consolidationBaseline.catalog.models[0]!.selectionPath![0]!.key = 'renault:clio:first-stable-group'
+    consolidationBaseline.catalog.models[1]!.selectionPath![0]!.key = 'renault:clio:second-stable-group'
+    expect(() => generateCuratedVehicleCatalog({
+      ...consolidationArgs,
+      baseline: consolidationBaseline,
+    })).toThrow('Selection branch consolidation requires review')
+
+    const splitArgs = argsFor([
+      { sourceKey: 'evolution', typeRaw: 'CLIO EVOLUTION 1.0 TCE 90' },
+      { sourceKey: 'joy', typeRaw: 'CLIO JOY 0.9 TCE 90' },
+    ])
+    const splitBaseline = generateCuratedVehicleCatalog(splitArgs)
+    for (const model of splitBaseline.catalog.models) {
+      model.selectionPath![0]!.key = 'renault:clio:shared-stable-group'
+    }
+    expect(() => generateCuratedVehicleCatalog({ ...splitArgs, baseline: splitBaseline }))
+      .toThrow('Selection branch split or reparenting requires review')
   })
 })
