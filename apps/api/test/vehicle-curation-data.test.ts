@@ -23,4 +23,42 @@ describe('committed vehicle curation data', () => {
     expect(() => validateVehicleCatalog(catalog)).not.toThrow()
     expect(() => validateVehicleSourceMappingFile(mappings)).not.toThrow()
   })
+
+  it('keeps the source manifest counts aligned with committed catalog and mappings', async () => {
+    const catalog = validateVehicleCatalog(await json('catalog.json'))
+    const mappings = validateVehicleSourceMappingFile(await json('tsb-mappings.json'))
+    const manifest = await json('source-manifest.json') as {
+      sources: Array<{ name: string; sourcePeriod?: string }>
+      curation: {
+        tsbSnapshotRecords: number
+        mappedSourceCodes: number
+        canonicalBrands: number
+        canonicalSeries: number
+        canonicalModels: number
+        slugCollisionsExcluded: number
+        ambiguousSeriesExcluded: number
+      }
+    }
+
+    expect(manifest.curation).toMatchObject({
+      mappedSourceCodes: mappings.mappings.length,
+      canonicalBrands: catalog.brands.length,
+      canonicalSeries: catalog.series.length,
+      canonicalModels: catalog.models.length,
+    })
+    expect(manifest.curation.tsbSnapshotRecords).toBeGreaterThanOrEqual(mappings.mappings.length)
+    expect(manifest.curation.slugCollisionsExcluded).toBeGreaterThanOrEqual(0)
+    expect(manifest.curation.ambiguousSeriesExcluded).toBeGreaterThanOrEqual(0)
+
+    const tsb = manifest.sources.find((source) => source.name.includes('Türkiye Sigorta Birliği'))
+    expect(tsb?.sourcePeriod).toMatch(/^20\d{2}-(0[1-9]|1[0-2])$/)
+  })
+
+  it('keeps canonical and mapping artifacts free of provider-only payload fields', async () => {
+    const catalog = JSON.stringify(await json('catalog.json'))
+    const mappings = JSON.stringify(await json('tsb-mappings.json'))
+
+    expect(catalog).not.toMatch(/sourceKey|brandRaw|typeRaw|availableModelYears|kasko|price/i)
+    expect(mappings).not.toMatch(/brandRaw|typeRaw|availableModelYears|kasko|price/i)
+  })
 })
