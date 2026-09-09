@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned Marka → Seri → Model UUID kimliği; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + TSB source/mapping B1 tamamlandı; gerçek Türkiye katalog curation B2 sırada |
+| Mevcut aşama | Identity + konum + canonical araç katalog + TSB source/mapping + Türkiye katalog curation tamamlandı; sıradaki domain ilanlar + `car_details` |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -95,13 +95,13 @@ Public read-only API:
 - `GET /api/v1/reference/vehicle/brands/:brandId/series`
 - `GET /api/v1/reference/vehicle/series/:seriesId/models`
 
-Runtime hiçbir araç katalog servisine veya TSB'ye HTTP isteği yapmaz; yalnız PostgreSQL canonical tablolarını okur. Canonical katalog explicit bakım komutuyla import edilir:
+Runtime hiçbir araç katalog servisine veya TSB'ye HTTP isteği yapmaz; yalnız PostgreSQL canonical tablolarını okur. Operasyonel canonical katalog explicit bakım komutuyla import edilir:
 
 ```bash
-pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json
+pnpm reference:import:vehicle-catalog -- data/reference/vehicles/catalog.json
 ```
 
-`data/reference/vehicles/fixture.catalog.json` yalnız development/CI fixture'ıdır ve **Türkiye araç kataloğunun tamamı değildir**.
+`data/reference/vehicles/fixture.catalog.json` yalnız development/CI'da küçük davranış fixture'ı olarak kullanılabilir ve **Türkiye araç kataloğunun tamamı değildir**.
 
 ### TSB source ingestion ve mapping — Phase B1
 
@@ -128,7 +128,35 @@ Mapping dosyaları DB UUID değil `TSB Araç Kodu → Bizzat vehicle_models.cata
 
 Repo'daki `fixture.tsb-source.json` ve `fixture.tsb-mappings.json` yalnız **uydurulmuş deterministic test/CI verisidir**; gerçek TSB datasetinin yeniden dağıtımı değildir.
 
-B2'de brand/series alias'ları, deterministic candidate generation, reviewed gerçek Türkiye `catalog.json` ve daha geniş source mapping curation yapılacaktır.
+### Türkiye katalog curation — Phase B2
+
+B2 runtime'a yeni provider bağımlılığı eklemez. Repository-owned review artifact'ları şunlardır:
+
+- `data/reference/vehicles/brand-aliases.json`
+- `data/reference/vehicles/series-aliases.json`
+- `data/reference/vehicles/catalog.json`
+- `data/reference/vehicles/tsb-mappings.json`
+- `data/reference/vehicles/source-manifest.json`
+
+İlk curation snapshot'ı TSB'nin yayımlanmış **2026-08** dönemini kullanır. Manifestte kayıtlı review sonucu 27.906 TSB araç kodundan 6.685 kodun deterministic `exact-rule` mapping aldığı; canonical katalogda 27 marka, 245 seri ve 6.652 model bulunduğu; 11 slug collision kaydının ve 1 ambiguous-series adayının otomatik mapping dışında bırakıldığıdır.
+
+Ham TSB workbook/CSV veya kasko fiyatı repoya girmez. Acquisition yalnız bakım anında yapılır; geçici acquisition workflow/script'i final branch'te tutulmaz. Normal CI ve runtime dış TSB endpointine bağlanmadan çalışır.
+
+Brand çözümü yalnız reviewed explicit alias ile, seri çözümü yalnız aynı marka içindeki reviewed token-boundary alias ile yapılır. En uzun alias kazanır; aynı specificity'de farklı seri adayları oluşursa fail-closed davranılır. Fuzzy veya LLM mapping yoktur.
+
+Tekrar curation gerektiğinde normalized TSB snapshot ve pinned `global-car-models` `models.json` dosyası dışarıdan bakım girdisi olarak verilir; generator yalnız review artifact üretir:
+
+```bash
+pnpm reference:generate:vehicle-catalog -- \
+  <normalized-tsb.json> \
+  data/reference/vehicles/brand-aliases.json \
+  data/reference/vehicles/series-aliases.json \
+  <global-car-models/models.json> \
+  /tmp/bizzat-vehicle-curation \
+  <version>
+```
+
+Çıktılar doğrudan production DB'ye yazılmaz; `catalog.generated.json`, `tsb-mappings.generated.json`, `candidates.json` ve `summary.json` önce review edilir. `source-manifest.json` kullanılan TSB dönemini ve pinned açık kaynak bootstrap commitini/provenance'ını kaydeder.
 
 Model yılı canonical katalog hiyerarşisinin parçası değildir. İlan tarafında bağımsız `car_details.model_year` alanı olarak kalır; böylece TSB'nin sınırlı yıl coverage'ı eski araç ilanlarını engellemez.
 
@@ -195,6 +223,7 @@ pnpm build
 | [docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md](docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md) | Konum reference-data implementasyon planı |
 | [docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-a-implementation.md](docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-a-implementation.md) | Canonical araç katalog Phase A implementasyon planı |
 | [docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b1-implementation.md](docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b1-implementation.md) | TSB source ingestion/mapping B1 implementasyon planı |
+| [docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b2-implementation.md](docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b2-implementation.md) | Türkiye otomobil katalog curation B2 implementasyon planı |
 | [docs/reference/SAHIBINDEN_REFERENCE.md](docs/reference/SAHIBINDEN_REFERENCE.md) | Sahibinden ekran/kategori/filtre/ilan verme referansı ve EİDS notları |
 | [DESIGN.md](DESIGN.md) | Onaylanan görsel yön |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Kesinleşmiş kararlar |
