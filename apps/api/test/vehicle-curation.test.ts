@@ -4,6 +4,7 @@ import {
   validateVehicleBrandAliases,
   validateVehicleSeriesAliases,
 } from '../src/reference/vehicle/curation/alias-validator.js'
+import { generateCuratedVehicleCatalog } from '../src/reference/vehicle/curation/catalog-generator.js'
 import { generateVehicleCurationCandidates } from '../src/reference/vehicle/curation/candidate-generator.js'
 import type { NormalizedVehicleSourceSnapshot } from '../src/reference/vehicle/source/source.types.js'
 
@@ -237,5 +238,117 @@ describe('vehicle curation candidate generation', () => {
       seriesKeyCandidate: null,
       proposedModelLabel: null,
     })
+  })
+})
+
+describe('vehicle curation catalog generation', () => {
+  const snapshot: NormalizedVehicleSourceSnapshot = {
+    provider: {
+      code: 'tsb-kasko',
+      sourceName: 'TSB',
+      version: '2026-08',
+    },
+    records: [
+      {
+        sourceKey: '100-1',
+        brandRaw: 'FIAT',
+        typeRaw: 'EGEA CROSS 1.5 T4 HYBRID',
+        availableModelYears: [2025],
+      },
+      {
+        sourceKey: '122-1',
+        brandRaw: 'RENAULT (OYAK)',
+        typeRaw: 'CLIO EVOLUTION 1.0 TCE 90',
+        availableModelYears: [2025],
+      },
+      {
+        sourceKey: '999-1',
+        brandRaw: 'UNKNOWN',
+        typeRaw: 'MODEL X',
+        availableModelYears: [2025],
+      },
+    ],
+  }
+
+  it('emits deterministic canonical catalog and exact-rule mappings', () => {
+    const result = generateCuratedVehicleCatalog({
+      snapshot,
+      brandAliases: validateVehicleBrandAliases(brandAliasesInput()),
+      seriesAliases: validateVehicleSeriesAliases(seriesAliasesInput()),
+      bootstrapModels: {
+        Fiat: ['Egea'],
+        Renault: ['Clio'],
+      },
+      version: '2026-09-08.1',
+    })
+
+    expect(result.catalog).toEqual({
+      version: '2026-09-08.1',
+      brands: [
+        { key: 'fiat', name: 'Fiat' },
+        { key: 'renault', name: 'Renault' },
+      ],
+      series: [
+        { key: 'fiat:egea', brandKey: 'fiat', name: 'Egea' },
+        { key: 'renault:clio', brandKey: 'renault', name: 'Clio' },
+      ],
+      models: [
+        { key: 'fiat:egea:1-5-t4-hybrid', seriesKey: 'fiat:egea', name: '1.5 T4 HYBRID' },
+        {
+          key: 'renault:clio:evolution-1-0-tce-90',
+          seriesKey: 'renault:clio',
+          name: 'EVOLUTION 1.0 TCE 90',
+        },
+      ],
+    })
+    expect(result.mappings).toEqual({
+      version: '2026-09-08.1',
+      mappings: [
+        { sourceKey: '100-1', vehicleModelKey: 'fiat:egea:1-5-t4-hybrid', method: 'exact-rule' },
+        {
+          sourceKey: '122-1',
+          vehicleModelKey: 'renault:clio:evolution-1-0-tce-90',
+          method: 'exact-rule',
+        },
+      ],
+    })
+    expect(result.summary).toMatchObject({
+      sourceRecords: 3,
+      mappedSourceCodes: 2,
+      canonicalBrands: 2,
+      canonicalSeries: 2,
+      canonicalModels: 2,
+      slugCollisionsExcluded: 0,
+    })
+  })
+
+  it('excludes materially different labels that collide on one generated key', () => {
+    const result = generateCuratedVehicleCatalog({
+      snapshot: {
+        ...snapshot,
+        records: [
+          {
+            sourceKey: '100-2',
+            brandRaw: 'FIAT',
+            typeRaw: 'EGEA A+B',
+            availableModelYears: [2025],
+          },
+          {
+            sourceKey: '100-3',
+            brandRaw: 'FIAT',
+            typeRaw: 'EGEA A B',
+            availableModelYears: [2025],
+          },
+        ],
+      },
+      brandAliases: validateVehicleBrandAliases(brandAliasesInput()),
+      seriesAliases: validateVehicleSeriesAliases(seriesAliasesInput()),
+      bootstrapModels: { Fiat: ['Egea'] },
+      version: '1',
+    })
+
+    expect(result.catalog.models).toEqual([])
+    expect(result.mappings.mappings).toEqual([])
+    expect(result.summary.slugCollisionsExcluded).toBe(2)
   })
 })
