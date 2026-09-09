@@ -16,6 +16,7 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - `docs/superpowers/plans/2026-09-08-location-reference-data-implementation.md`: Konum reference-data implementasyon sırası.
 - `docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-a-implementation.md`: Canonical araç katalog Phase A implementasyon sırası.
 - `docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b1-implementation.md`: TSB source ingestion/mapping B1 implementasyon sırası.
+- `docs/superpowers/plans/2026-09-08-vehicle-catalog-phase-b2-implementation.md`: Türkiye otomobil katalog curation B2 implementasyon sırası.
 - `docs/reference/SAHIBINDEN_REFERENCE.md`: Sahibinden kategori/filtre/akış envanteri ve EİDS araştırması.
 - `DESIGN.md`: Onaylanan tasarım yönü.
 - `docs/DECISIONS.md`: Alınmış kararlar.
@@ -82,7 +83,8 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - Runtime araç reference endpointleri yalnız canonical PostgreSQL tablolarından okur; TSB/OtoAPI/başka araç API'sine normal request sırasında çağrı yapma.
 - Canonical catalog import explicit bakım işlemidir; API startup/deploy içine implicit import ekleme.
 - Canonical kaynaktan kaybolan marka/seri/model kayıtlarını hard-delete etme; `active = false` yap.
-- `data/reference/vehicles/fixture.catalog.json` yalnız test/development fixture'ıdır; gerçek Türkiye araç kataloğu gibi sunma.
+- `data/reference/vehicles/fixture.catalog.json` yalnız küçük test/development fixture'ıdır; gerçek Türkiye araç kataloğu gibi sunma.
+- Operasyonel canonical katalog `data/reference/vehicles/catalog.json` dosyasıdır; değişiklikleri review etmeden DB'ye import etme.
 
 ### TSB source/mapping Phase B1 guardrail'leri
 
@@ -100,7 +102,22 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - Canonical hedef sonradan inactive olursa source identity review flag'ini değiştirme; report bunu `invalid-mapping` olarak türetsin.
 - Public araç dropdown/API response'larını oluşturmak için source tablolarını join etme; public runtime canonical tabloları kullanır.
 - B1 fixture source/mapping dosyaları uydurulmuş deterministic test verisidir; gerçek TSB dataset'i gibi sunma.
-- B2 brand/series alias, candidate generator ve gerçek Türkiye `catalog.json` curation işini B1'e geri taşımama.
+
+### Türkiye katalog curation Phase B2 guardrail'leri
+
+- `brand-aliases.json`, `series-aliases.json`, `catalog.json`, `tsb-mappings.json` ve `source-manifest.json` repository-owned review artifact'larıdır.
+- Brand mapping yalnız explicit reviewed alias ile yapılır. TSB raw brand textinden otomatik/fuzzy tahmin üretme.
+- Seri mapping yalnız aynı marka içindeki reviewed token-boundary alias'larla yapılır; en uzun eşleşme kazanır. Aynı specificity'de farklı seri adayları varsa fail-closed bırak.
+- Fuzzy matching veya runtime/maintenance LLM ile sessiz taxonomy değişikliği yapma.
+- Candidate/generator çıktıları doğrudan canonical DB'yi değiştiremez; önce `/tmp` gibi review alanına üret, sonra review edilen artifact'ı repo/DB akışına al.
+- Generator maintenance-only'dir. API startup, runtime request, deploy veya migration sırasında TSB/global bootstrap fetch etme.
+- Raw TSB workbook/CSV, kasko fiyatları ve operasyonel normalize TSB snapshot'ını repoya commit etme. Repo yalnız curation sonuçlarını ve provenance manifestini tutar.
+- `source-manifest.json` gerçek kullanılan TSB dönemini ve bootstrap source/commit/license bilgisini güncel tutar. İlk reviewed curation TSB `2026-08` dönemidir.
+- `tsb-mappings.json` yalnız source code → canonical `catalog_key` mapping'idir; source raw text, model-year metadata veya fiyat taşımaz.
+- Aynı generated model key'e materially farklı label'lar çakışırsa otomatik seçim yapma; collision grubunu mapping dışında bırak.
+- `catalog_key` curation yeniden çalıştığında listing kimliği olarak stabil kalmalıdır; sırf display label değişti diye yeni key üretme.
+- Permanent CI dış TSB endpointlerine bağlanmaz; committed alias/catalog/mapping/manifest verisini offline doğrular ve gerçek `catalog.json`ı PostgreSQL'e import ederek API/integration testlerini çalıştırır.
+- Katalog altyapısını daha fazla büyütmek yerine B2 sonrası MVP listing domainine (`listings` + `car_details`) geç; ölçülmüş gerçek katalog açığı olmadıkça generation/engine/trim/spec katmanı ekleme.
 
 ## Teknik çalışma komutları
 
@@ -109,10 +126,12 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 - Local PostgreSQL: `pnpm db:up`; kapatmak için `pnpm db:down`.
 - DB + auth migrations: `pnpm db:migrate`.
 - Test/development konum fixture importu: `pnpm reference:import:locations -- data/reference/locations/fixture.locations.json`.
-- Test/development araç katalog fixture importu: `pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json`.
+- Operasyonel araç katalog importu: `pnpm reference:import:vehicle-catalog -- data/reference/vehicles/catalog.json`.
+- Küçük test/development araç katalog fixture importu: `pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json`.
 - Test/development TSB source fixture importu: `pnpm reference:import:vehicle-source -- tsb data/reference/vehicles/fixture.tsb-source.json`.
 - Test/development TSB mapping apply: `pnpm reference:apply:vehicle-mappings -- tsb data/reference/vehicles/fixture.tsb-mappings.json`.
 - TSB source coverage report: `pnpm reference:report:vehicle-source -- tsb`.
+- Offline/review curation generator: `pnpm reference:generate:vehicle-catalog -- <normalized-tsb.json> data/reference/vehicles/brand-aliases.json data/reference/vehicles/series-aliases.json <bootstrap-models.json> <output-dir> [version]`.
 - Local web + API + contracts watcher: `pnpm dev`.
 - Kod değişikliklerini `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` ile doğrula.
 - DB/auth/reference-data davranışı gerçek PostgreSQL integration testleri gerektirir; mock ile ikame etme.
@@ -127,6 +146,6 @@ Bu depo Bizzat'ın ürün, marka, referans, MVP kapsamı, teknik mimari ve uygul
 
 ## Mevcut doğrulama
 
-CI PostgreSQL 18 üzerinde frozen lockfile, explicit migrations, Better Auth auth integration testleri, location migration/import/API testleri, canonical vehicle catalog migration/import/API testleri, TSB normalized source import/mapping/report testleri, web smoke testleri, lint, typecheck ve build çalıştırır.
+CI PostgreSQL 18 üzerinde frozen lockfile, explicit migrations, Better Auth auth integration testleri, location migration/import/API testleri, gerçek curated `data/reference/vehicles/catalog.json` import/API testleri, deterministic vehicle curation generator fixture'ı, committed curation data/provenance testleri, TSB normalized source import/mapping/report fixture testleri, web smoke testleri, lint, typecheck ve build çalıştırır. Permanent CI dış TSB endpointlerine bağlanmaz.
 
 DB/auth/reference-data kullanan değişikliklerde gerçek integration testi olmadan başarı iddiasında bulunma. Production deploy/Caddy/backup hâlâ sonraki fazdadır.
