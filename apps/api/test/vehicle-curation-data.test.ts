@@ -24,6 +24,22 @@ describe('committed vehicle curation data', () => {
     expect(() => validateVehicleSourceMappingFile(mappings)).not.toThrow()
   })
 
+  it('keeps every committed TSB mapping pointed at an existing canonical model', async () => {
+    const catalog = await json('catalog.json')
+    validateVehicleCatalog(catalog)
+    const mappings = validateVehicleSourceMappingFile(await json('tsb-mappings.json'))
+    const modelKeys = new Set(catalog.models.map((model) => model.key))
+
+    const missingTargets = mappings.mappings
+      .filter((mapping) => !modelKeys.has(mapping.vehicleModelKey))
+      .map((mapping) => ({
+        sourceKey: mapping.sourceKey,
+        vehicleModelKey: mapping.vehicleModelKey,
+      }))
+
+    expect(missingTargets).toEqual([])
+  })
+
   it('keeps the source manifest counts aligned with committed catalog and mappings', async () => {
     const catalog = await json('catalog.json')
     validateVehicleCatalog(catalog)
