@@ -13,12 +13,14 @@ async function json(name: string): Promise<unknown> {
 
 describe('committed vehicle curation data', () => {
   it('passes runtime validators offline', async () => {
-    expect(() => validateVehicleBrandAliases(await json('brand-aliases.json'))).not.toThrow()
-    expect(() => validateVehicleSeriesAliases(await json('series-aliases.json'))).not.toThrow()
-
+    const brandAliases = await json('brand-aliases.json')
+    const seriesAliases = await json('series-aliases.json')
     const catalog = await json('catalog.json')
-    expect(() => validateVehicleCatalog(catalog)).not.toThrow()
+    const mappings = await json('tsb-mappings.json')
 
-    expect(() => validateVehicleSourceMappingFile(await json('tsb-mappings.json'))).not.toThrow()
+    expect(() => validateVehicleBrandAliases(brandAliases)).not.toThrow()
+    expect(() => validateVehicleSeriesAliases(seriesAliases)).not.toThrow()
+    expect(() => validateVehicleCatalog(catalog)).not.toThrow()
+    expect(() => validateVehicleSourceMappingFile(mappings)).not.toThrow()
   })
 })
