@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.1",
+  "version": "2026-09-10.2",
   "mappings": [
     {
       "sourceKey": "100-1138",
@@ -3364,6 +3364,36 @@
     {
       "sourceKey": "53-2078",
       "vehicleModelKey": "ford:fiesta:1-5-tdci-trend-x",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2120",
+      "vehicleModelKey": "ford:focus:1-5-tdci-trend-x",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2123",
+      "vehicleModelKey": "ford:focus:1-5-tdci-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2126",
+      "vehicleModelKey": "ford:focus:1-5-tdci-titanium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2196",
+      "vehicleModelKey": "ford:focus:1-5-tdci-st-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2251",
+      "vehicleModelKey": "ford:focus:1-5-tdci-trend-x",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2254",
+      "vehicleModelKey": "ford:focus:1-5-tdci-trend-x",
       "method": "exact-rule"
     },
     {

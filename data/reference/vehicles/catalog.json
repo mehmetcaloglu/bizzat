@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.1",
+  "version": "2026-09-10.2",
   "brands": [
     {
       "key": "audi",
@@ -138,6 +138,11 @@
       "key": "ford:fiesta",
       "brandKey": "ford",
       "name": "Fiesta"
+    },
+    {
+      "key": "ford:focus",
+      "brandKey": "ford",
+      "name": "Focus"
     },
     {
       "key": "ford:fusion",
@@ -3859,6 +3864,66 @@
         },
         {
           "key": "ford:fiesta:1-5-tdci-trend-x",
+          "name": "Trend X"
+        }
+      ]
+    },
+    {
+      "key": "ford:focus:1-5-tdci-st-line",
+      "seriesKey": "ford:focus",
+      "name": "1.5 TDCi ST Line",
+      "selectionPath": [
+        {
+          "key": "ford:focus:1-5-tdci",
+          "name": "1.5 TDCi"
+        },
+        {
+          "key": "ford:focus:1-5-tdci-st-line",
+          "name": "ST Line"
+        }
+      ]
+    },
+    {
+      "key": "ford:focus:1-5-tdci-style",
+      "seriesKey": "ford:focus",
+      "name": "1.5 TDCi Style",
+      "selectionPath": [
+        {
+          "key": "ford:focus:1-5-tdci",
+          "name": "1.5 TDCi"
+        },
+        {
+          "key": "ford:focus:1-5-tdci-style",
+          "name": "Style"
+        }
+      ]
+    },
+    {
+      "key": "ford:focus:1-5-tdci-titanium",
+      "seriesKey": "ford:focus",
+      "name": "1.5 TDCi Titanium",
+      "selectionPath": [
+        {
+          "key": "ford:focus:1-5-tdci",
+          "name": "1.5 TDCi"
+        },
+        {
+          "key": "ford:focus:1-5-tdci-titanium",
+          "name": "Titanium"
+        }
+      ]
+    },
+    {
+      "key": "ford:focus:1-5-tdci-trend-x",
+      "seriesKey": "ford:focus",
+      "name": "1.5 TDCi Trend X",
+      "selectionPath": [
+        {
+          "key": "ford:focus:1-5-tdci",
+          "name": "1.5 TDCi"
+        },
+        {
+          "key": "ford:focus:1-5-tdci-trend-x",
           "name": "Trend X"
         }
       ]

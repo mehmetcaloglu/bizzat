@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.1",
+  "version": "2026-09-10.2",
   "sourcePeriod": "2026-08",
   "measurement": "Unresolved source-row counts, including unreviewed or out-of-MVP aliases; not missing-model counts or Turkish passenger-car completeness percentages.",
   "sourceRecords": 27906,
@@ -12,10 +12,10 @@
     {
       "seriesKey": "ford:focus",
       "sourceRecords": 218,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 218,
+      "mappedSourceCodes": 6,
+      "modelReviewRequired": 212,
       "excludedSourceCodes": 0,
-      "selectableModels": 0
+      "selectableModels": 4
     },
     {
       "seriesKey": "opel:astra",
