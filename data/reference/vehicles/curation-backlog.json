@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.3",
+  "version": "2026-09-10.1",
   "sourcePeriod": "2026-08",
   "measurement": "Unresolved source-row counts, including unreviewed or out-of-MVP aliases; not missing-model counts or Turkish passenger-car completeness percentages.",
   "sourceRecords": 27906,
@@ -28,10 +28,10 @@
     {
       "seriesKey": "renault:megane",
       "sourceRecords": 187,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 187,
+      "mappedSourceCodes": 8,
+      "modelReviewRequired": 179,
       "excludedSourceCodes": 0,
-      "selectableModels": 0
+      "selectableModels": 4
     },
     {
       "seriesKey": "bmw:4-serisi",

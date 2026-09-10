@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.3",
+  "version": "2026-09-10.1",
   "brands": [
     {
       "key": "audi",
@@ -278,6 +278,11 @@
       "key": "renault:clio",
       "brandKey": "renault",
       "name": "Clio"
+    },
+    {
+      "key": "renault:megane",
+      "brandKey": "renault",
+      "name": "Megane"
     },
     {
       "key": "seat:ibiza",
@@ -6960,6 +6965,66 @@
         {
           "key": "renault:clio:1-6-grandtour-extreme-edition",
           "name": "Extreme Edition"
+        }
+      ]
+    },
+    {
+      "key": "renault:megane:1-5-dci-gt-line",
+      "seriesKey": "renault:megane",
+      "name": "1.5 dCi GT Line",
+      "selectionPath": [
+        {
+          "key": "renault:megane:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:megane:1-5-dci-gt-line",
+          "name": "GT Line"
+        }
+      ]
+    },
+    {
+      "key": "renault:megane:1-5-dci-icon",
+      "seriesKey": "renault:megane",
+      "name": "1.5 dCi Icon",
+      "selectionPath": [
+        {
+          "key": "renault:megane:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:megane:1-5-dci-icon",
+          "name": "Icon"
+        }
+      ]
+    },
+    {
+      "key": "renault:megane:1-5-dci-joy",
+      "seriesKey": "renault:megane",
+      "name": "1.5 dCi Joy",
+      "selectionPath": [
+        {
+          "key": "renault:megane:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:megane:1-5-dci-joy",
+          "name": "Joy"
+        }
+      ]
+    },
+    {
+      "key": "renault:megane:1-6-joy",
+      "seriesKey": "renault:megane",
+      "name": "1.6 Joy",
+      "selectionPath": [
+        {
+          "key": "renault:megane:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:megane:1-6-joy",
+          "name": "Joy"
         }
       ]
     },

@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.3",
+  "version": "2026-09-10.1",
   "mappings": [
     {
       "sourceKey": "100-1138",
@@ -902,6 +902,36 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-1088",
+      "vehicleModelKey": "renault:megane:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1089",
+      "vehicleModelKey": "renault:megane:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1105",
+      "vehicleModelKey": "renault:megane:1-6-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1106",
+      "vehicleModelKey": "renault:megane:1-6-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1107",
+      "vehicleModelKey": "renault:megane:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1108",
+      "vehicleModelKey": "renault:megane:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-1119",
       "vehicleModelKey": "renault:clio:1-2-sport-tourer-joy",
       "method": "exact-rule"
@@ -964,6 +994,16 @@
     {
       "sourceKey": "122-1152",
       "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1160",
+      "vehicleModelKey": "renault:megane:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1161",
+      "vehicleModelKey": "renault:megane:1-5-dci-icon",
       "method": "exact-rule"
     },
     {

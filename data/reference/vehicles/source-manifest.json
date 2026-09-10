@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09.3",
+  "version": "2026-09-10.1",
   "sources": [
     {
       "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
@@ -29,18 +29,18 @@
   ],
   "curation": {
     "sourceRecords": 27906,
-    "exactCandidates": 823,
-    "mappedSourceCodes": 823,
+    "exactCandidates": 831,
+    "mappedSourceCodes": 831,
     "canonicalBrands": 19,
-    "canonicalSeries": 53,
-    "canonicalModels": 589,
+    "canonicalSeries": 54,
+    "canonicalModels": 593,
     "slugCollisionsExcluded": 0,
     "ambiguousSeriesExcluded": 21,
     "unknownBrandExcluded": 13955,
     "noSeriesExcluded": 7051,
-    "modelReviewRequired": 6056,
+    "modelReviewRequired": 6048,
     "tsbSnapshotRecords": 27906,
-    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza uses seven exact normalized label aliases for three reviewed paths; its acceptance does not enable general technical stripping.",
+    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza and Renault Megane use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths; this does not enable general technical stripping.",
     "coverageStatus": "partial-review; not a complete Sahibinden catalog",
     "excludedPreviouslyPresentBrands": [
       "Alfa Romeo",
@@ -70,7 +70,11 @@
       "BMW/3 Serisi/320i ED/Sport Line",
       "Mercedes-Benz/C Serisi/C 180/AMG",
       "Audi/A3/A3 Sedan/35 TFSI/Advanced",
-      "Tesla/Model 3/Long Range"
+      "Tesla/Model 3/Long Range",
+      "Renault/Megane/1.5 dCi/Icon",
+      "Renault/Megane/1.5 dCi/Joy",
+      "Renault/Megane/1.5 dCi/GT Line",
+      "Renault/Megane/1.6/Joy"
     ],
     "identityPolicy": "First pre-merge consolidation replaces unreviewed type keys. Later runs must use the reviewed catalog/mappings baseline; splits/merges/reparenting are rejected for explicit review.",
     "coverageMeasurement": "Counts refer to the complete source snapshot, including out-of-MVP vehicle categories; they are not a completeness percentage for Turkish passenger cars or the Sahibinden taxonomy.",
@@ -342,10 +346,10 @@
       {
         "brandKey": "renault",
         "sourceRows": 958,
-        "model-review": 388,
-        "mapped": 95,
+        "model-review": 380,
+        "mapped": 103,
         "excluded": 475,
-        "selectableLeaves": 51
+        "selectableLeaves": 55
       },
       {
         "brandKey": "seat",
@@ -404,11 +408,12 @@
     ],
     "backlogFile": "curation-backlog.json",
     "lastIncrement": {
-      "baselineVersion": "2026-09-09.2",
-      "purpose": "Restore contextual bare-engine power parsing, separate Accent Blue/Era nameplates, and three indexed Seat Ibiza selection paths.",
-      "newReferenceRetrieval": "Three exact Seat Ibiza category paths verified from the public index; page fetches returned403. Other Seat/Skoda/Kia paths lacked exact indexed leaf URLs and remain unaccepted."
+      "baselineVersion": "2026-09-09.3",
+      "purpose": "Add four reviewed Renault Megane marketplace selection paths from eight exact August 2026 TSB source-code labels without enabling generic Megane technical stripping.",
+      "newReferenceRetrieval": "Sahibinden public index verified Megane 1.5 dCi Icon/Joy/GT-Line and 1.6 Joy paths. The eight TSB code labels were re-checked against August 2026 mirrors; the original operational normalized snapshot was unavailable in this session, so this increment is an explicit reviewed delta rather than a claimed full-snapshot regeneration."
     },
     "reviewedExactSelectionSeries": [
+      "renault:megane",
       "seat:ibiza"
     ]
   }
