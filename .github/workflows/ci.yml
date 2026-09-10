@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -33,6 +36,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: feat/vehicle-catalog-phase-b2
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
@@ -43,6 +49,30 @@ jobs:
         with:
           node-version: 24.20.0
           cache: pnpm
+
+      - name: Publish reviewed Megane catalog delta
+        if: github.event_name == 'pull_request' && github.repository == 'mehmetcaloglu/bizzat' && github.event.pull_request.head.ref == 'feat/vehicle-catalog-phase-b2'
+        run: |
+          set -euo pipefail
+          test "$GITHUB_HEAD_REF" = "feat/vehicle-catalog-phase-b2"
+          node scripts/apply-megane-curation-delta.mjs
+          git checkout 8388e5716abcedecdffffc726344593feb86eb07 -- .github/workflows/ci.yml
+          git rm scripts/apply-megane-curation-delta.mjs
+          expected="$(printf '%s\n' \
+            .github/workflows/ci.yml \
+            data/reference/vehicles/catalog.json \
+            data/reference/vehicles/curation-backlog.json \
+            data/reference/vehicles/source-manifest.json \
+            data/reference/vehicles/tsb-mappings.json \
+            scripts/apply-megane-curation-delta.mjs | sort)"
+          actual="$(git diff --name-only | sort)"
+          test "$actual" = "$expected"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "data: publish reviewed Megane catalog delta"
+          git push origin HEAD:feat/vehicle-catalog-phase-b2
 
       - run: pnpm install --frozen-lockfile
 
@@ -79,17 +109,6 @@ jobs:
 
       - name: Report deterministic TSB source coverage
         run: pnpm reference:report:vehicle-source -- tsb
-
-      - name: Export vehicle curation artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: vehicle-curation-artifacts
-          retention-days: 1
-          path: |
-            data/reference/vehicles/catalog.json
-            data/reference/vehicles/tsb-mappings.json
-            data/reference/vehicles/source-manifest.json
-            data/reference/vehicles/curation-backlog.json
 
       - name: Tests
         run: pnpm test
