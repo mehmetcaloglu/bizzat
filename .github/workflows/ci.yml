@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -33,6 +36,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: feat/vehicle-catalog-phase-b2
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
@@ -43,6 +49,32 @@ jobs:
         with:
           node-version: 24.20.0
           cache: pnpm
+
+      - name: Publish reviewed Focus catalog delta
+        if: github.event_name == 'pull_request' && github.repository == 'mehmetcaloglu/bizzat' && github.event.pull_request.head.ref == 'feat/vehicle-catalog-phase-b2'
+        run: |
+          set -euo pipefail
+          test "$GITHUB_HEAD_REF" = "feat/vehicle-catalog-phase-b2"
+          if [ ! -f scripts/apply-focus-curation-delta.mjs ]; then
+            echo "Focus publication script already consumed"
+            exit 0
+          fi
+          node scripts/apply-focus-curation-delta.mjs
+          git rm scripts/apply-focus-curation-delta.mjs
+          expected="$(printf '%s\n' \
+            data/reference/vehicles/catalog.json \
+            data/reference/vehicles/curation-backlog.json \
+            data/reference/vehicles/source-manifest.json \
+            data/reference/vehicles/tsb-mappings.json \
+            scripts/apply-focus-curation-delta.mjs | sort)"
+          actual="$(git diff HEAD --name-only | sort)"
+          test "$actual" = "$expected"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "data: publish reviewed Focus catalog delta"
+          git push origin HEAD:feat/vehicle-catalog-phase-b2
 
       - run: pnpm install --frozen-lockfile
 
