@@ -95,6 +95,13 @@ const FOCUS_REVIEWED_SELECTIONS: Record<string, string[]> = {
   'TREND X 1.5 TDCI 120 5 KAPI 8S AT E6.2': ['1.5 TDCi', 'Trend X'],
 }
 
+const ASTRA_REVIEWED_SELECTIONS: Record<string, string[]> = {
+  'HB 1.3 CDTI (95) COSMO': ['1.3 CDTI', 'Cosmo'],
+  'HB 1.3 CDTI (95) SPORT': ['1.3 CDTI', 'Sport'],
+  'HB 1.3 CDTI (95) ENJOY PLUS': ['1.3 CDTI', 'Enjoy Plus'],
+  'HB 1.3 CDTI (90) ENJOY PLUS': ['1.3 CDTI', 'Enjoy Plus'],
+}
+
 export interface ModelSelection { path: string[]; name: string }
 function selection(path: string[]): ModelSelection { return { path, name: path.join(' ') } }
 
@@ -138,6 +145,10 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   }
   if (seriesKey === 'ford:focus') {
     const path = FOCUS_REVIEWED_SELECTIONS[label]
+    return path ? selection(path) : null
+  }
+  if (seriesKey === 'opel:astra') {
+    const path = ASTRA_REVIEWED_SELECTIONS[label]
     return path ? selection(path) : null
   }
   if (seriesKey === 'renault:clio' && hasUnreviewedClio12Power(label)) return null
