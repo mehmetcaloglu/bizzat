@@ -65,7 +65,7 @@ jobs:
             data/reference/vehicles/source-manifest.json \
             data/reference/vehicles/tsb-mappings.json \
             scripts/apply-megane-curation-delta.mjs | sort)"
-          actual="$(git diff --name-only | sort)"
+          actual="$(git diff HEAD --name-only | sort)"
           test "$actual" = "$expected"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
