@@ -86,6 +86,15 @@ const MEGANE_REVIEWED_SELECTIONS: Record<string, string[]> = {
   'HB JOY 1.6 16V 115 CVT': ['1.6', 'Joy'],
 }
 
+const FOCUS_REVIEWED_SELECTIONS: Record<string, string[]> = {
+  'III MCA STYLE 1.5 TDCI 120 4K PWS': ['1.5 TDCi', 'Style'],
+  'III MCA TITANIUM 1.5 TDCI 120 4K PWS': ['1.5 TDCi', 'Titanium'],
+  'III MCA TREND X 1.5 TDCI 120 4K PWS': ['1.5 TDCi', 'Trend X'],
+  'ST LINE 1.5 TDCI 120 5K POWERSHIFT': ['1.5 TDCi', 'ST Line'],
+  'TREND X 1.5 TDCI 120 4 KAPI E6.2': ['1.5 TDCi', 'Trend X'],
+  'TREND X 1.5 TDCI 120 5 KAPI 8S AT E6.2': ['1.5 TDCi', 'Trend X'],
+}
+
 export interface ModelSelection { path: string[]; name: string }
 function selection(path: string[]): ModelSelection { return { path, name: path.join(' ') } }
 
@@ -125,6 +134,10 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   }
   if (seriesKey === 'renault:megane') {
     const path = MEGANE_REVIEWED_SELECTIONS[label]
+    return path ? selection(path) : null
+  }
+  if (seriesKey === 'ford:focus') {
+    const path = FOCUS_REVIEWED_SELECTIONS[label]
     return path ? selection(path) : null
   }
   if (seriesKey === 'renault:clio' && hasUnreviewedClio12Power(label)) return null
