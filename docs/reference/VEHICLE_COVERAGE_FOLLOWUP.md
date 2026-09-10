@@ -2,6 +2,20 @@
 
 Bu çalışma mevcut kısmi kataloğu genişletir. Kaynak satırı sayısı, benzersiz araç veya eksik model sayısı değildir. TSB Ağustos 2026 normalize snapshot'ı repo dışında tutulur; dönem ve checksum `data/reference/vehicles/source-manifest.json` içindedir.
 
+## Yeni doğrulanabilen Opel Astra yolları
+
+2026-09-10 devamında Sahibinden'in kamuya açık birinci taraf indeksinde `Opel → Astra → 1.3 CDTI` dalı altında `Cosmo`, `Sport` ve `Enjoy Plus` yaprakları doğrulandı. Bu kanıt Astra serisinin tamamı değildir; yalnız aşağıdaki dört exact kaynak kodu bu üç yaprağa bağlanır.
+
+| Seçim yolu | TSB kaynak kodları | Birincil referans |
+| --- | --- | --- |
+| Opel → Astra → 1.3 CDTI → Cosmo | `111-717` | [Astra 1.3 CDTI Cosmo](https://www.sahibinden.com/opel-astra-1.3-cdti-cosmo) |
+| Opel → Astra → 1.3 CDTI → Sport | `111-716` | [Astra 1.3 CDTI Sport](https://www.sahibinden.com/opel-astra-1.3-cdti-sport) |
+| Opel → Astra → 1.3 CDTI → Enjoy Plus | `111-715`, `111-1011` | [Astra 1.3 CDTI Enjoy Plus](https://www.sahibinden.com/opel-astra-1.3-cdti-enjoy-plus) |
+
+Astra genel technical-normalization politikasına eklenmez. `SEDAN SPORT 1.3 CDTI 95` gövde ayrımı nedeniyle; `DIZEL ENJOY ACTIVE 1.3 95` ve `DIZEL S&S SPORT 1.3 95` ise kaynakta doğrudan `CDTI` yazmadığı için bu increment'te eşleştirilmez. `1.3 CDTI 95 ENJOY` da ayrı marketplace yaprağı bu çalışma kapsamında doğrulanmadığından review'da kalır. Güç, şanzıman veya kasa bilgisinden yeni kullanıcı seçimi türetilmez.
+
+Önceki 27.906 satırlık operasyonel normalize snapshot dosyasına bu oturumda yeniden erişilemediği için mevcut manifest checksum'u değiştirilmedi ve Astra artışı full snapshot regeneration olarak sunulmuyor. Reviewed `2026-09-10.2` baseline'a yalnız bir seri, üç yaprak ve dört mapping ekleyen explicit deterministic delta uygulandı. Exact snapshot yeniden erişilebilir olduğunda full regeneration ve byte-level karşılaştırma merge öncesi tekrar yapılmalıdır.
+
 ## Yeni doğrulanabilen Ford Focus yolları
 
 2026-09-10 devamında Sahibinden'in kamuya açık birinci taraf indeksinde `Ford → Focus → 1.5 TDCi` dalı altında `ST Line`, `Style`, `Titanium` ve `Trend X` yaprakları birlikte doğrulandı. Bu kanıt Focus serisinin tamamı değildir; yalnız aşağıdaki altı exact kaynak etiketi bu dört yaprağa bağlanır.
@@ -60,9 +74,9 @@ SC, ST, Sport Tourer, Sedan, HB ve doğrulanmamış motor/paket çiftleri bu ekl
 
 | Kapsam | Elde edilen kanıtın sınırı |
 | --- | --- |
+| Astra'nın bu üç 1.3 CDTI yaprağı dışındaki motor/paket/gövde yolları | Bu increment yalnız dört exact source code'u kapsar. Sedan, generic `DIZEL`, S&S, yalnız `Enjoy` ve diğer Astra motorları otomatik kabul edilmedi. |
 | Focus'un bu dört 1.5 TDCi yaprağı dışındaki motor/paket/gövde yolları | Bu increment yalnız altı exact kaynak kodunu kapsar. `SW Trend X`, yakın 5K varyantları ve diğer motorlar otomatik kabul edilmedi. |
 | Megane'ın bu dört yaprak dışındaki motor/paket/gövde yolları | Bu increment yalnız sekiz exact kaynak kodunu kapsar; yakın teknik varyantlar veya başka Megane dalları otomatik kabul edilmedi. |
-| Opel Astra | Backlog'daki sonraki büyük eksik seri; yeni exact yaprak kanıtı ve kaynak eşlemesi ayrıca incelenmeli. |
 | Ibiza 1.4 TDI Style ve Sport Tourer | Eşleşen başlık özetleri vardı; sonuç URL'si ana sayfaya düşüyordu veya yalnız motor seviyesindeydi. Tam yaprak/gövde yolu doğrulanmadı. |
 | Seat Leon ve SC/ST dalları | Bazı başlıklar ve motor düzeyi izleri vardı; doğrudan motor/paket kategori URL'si elde edilmedi. |
 | Skoda Fabia / Octavia / Superb / Combi | Doğrudan birincil kategori yolları bulunamadı; üçüncü taraf sonuçları taxonomy kanıtı sayılmadı. |
@@ -73,4 +87,4 @@ Arama sonucunun olmaması, aracın veya kategorinin olmadığı anlamına gelmez
 
 ## Sonraki veri incelemesi
 
-`data/reference/vehicles/curation-backlog.json`, seri bazında inceleme bekleyen satır sayılarını ve mevcut seçilebilir kayıt sayılarını toplar. Marka/seri çözülemeyen kaynaklar ayrıca sayılır. Liste ham kaynak adı, fiyat veya model yılı taşımaz. 2026-09-10 Focus increment'inden sonra katalog **19 marka / 55 seri / 597 seçilebilir kayıt / 837 source mapping** içerir; **6.042 source satırı model incelemesi** bekler. Focus kendi backlog'unda 218 kaydın 6'sını map eder, 212'sini incelemede bırakır ve 4 seçilebilir yaprak yayımlar. Bu rakamlar Türkiye otomobil kapsam yüzdesi veya eksik benzersiz model sayısı değildir.
+`data/reference/vehicles/curation-backlog.json`, seri bazında inceleme bekleyen satır sayılarını ve mevcut seçilebilir kayıt sayılarını toplar. Marka/seri çözülemeyen kaynaklar ayrıca sayılır. Liste ham kaynak adı, fiyat veya model yılı taşımaz. 2026-09-10 Astra increment'inden sonra katalog **19 marka / 56 seri / 600 seçilebilir kayıt / 841 source mapping** içerir; **6.038 source satırı model incelemesi** bekler. Astra kendi backlog'unda 195 kaydın 4'ünü map eder, 191'ini incelemede bırakır ve 3 seçilebilir yaprak yayımlar. Focus 218 kaydın 6'sını map eder, 212'sini incelemede bırakır ve 4 yaprak yayımlar. Bu rakamlar Türkiye otomobil kapsam yüzdesi veya eksik benzersiz model sayısı değildir.
