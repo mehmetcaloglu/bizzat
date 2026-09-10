@@ -32,10 +32,7 @@ describe('committed vehicle curation data', () => {
 
     const missingTargets = mappings.mappings
       .filter((mapping) => !modelKeys.has(mapping.vehicleModelKey))
-      .map((mapping) => ({
-        sourceKey: mapping.sourceKey,
-        vehicleModelKey: mapping.vehicleModelKey,
-      }))
+      .map((mapping) => ({ sourceKey: mapping.sourceKey, vehicleModelKey: mapping.vehicleModelKey }))
 
     expect(missingTargets).toEqual([])
   })
@@ -74,7 +71,6 @@ describe('committed vehicle curation data', () => {
   it('keeps canonical and mapping artifacts free of provider-only payload fields', async () => {
     const catalog = JSON.stringify(await json('catalog.json'))
     const mappings = JSON.stringify(await json('tsb-mappings.json'))
-
     expect(catalog).not.toMatch(/sourceKey|brandRaw|typeRaw|availableModelYears|kasko|price/i)
     expect(mappings).not.toMatch(/brandRaw|typeRaw|availableModelYears|kasko|price/i)
   })
@@ -104,24 +100,14 @@ describe('committed vehicle curation data', () => {
     const mappings = validateVehicleSourceMappingFile(await json('tsb-mappings.json'))
     const targets = new Map(mappings.mappings.map((mapping) => [mapping.sourceKey, mapping.vehicleModelKey]))
     const backlog = await json('curation-backlog.json') as {
-      series: Array<{
-        seriesKey: string
-        sourceRecords: number
-        mappedSourceCodes: number
-        modelReviewRequired: number
-        excludedSourceCodes: number
-        selectableModels: number
-      }>
+      series: Array<{ seriesKey: string; sourceRecords: number; mappedSourceCodes: number; modelReviewRequired: number; excludedSourceCodes: number; selectableModels: number }>
     }
 
-    expect(catalog.series).toEqual(expect.arrayContaining([
-      { key: 'renault:megane', brandKey: 'renault', name: 'Megane' },
-    ]))
+    expect(catalog.series).toEqual(expect.arrayContaining([{ key: 'renault:megane', brandKey: 'renault', name: 'Megane' }]))
     expect(models.get('renault:megane:1-5-dci-icon')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 dCi', 'Icon'])
     expect(models.get('renault:megane:1-5-dci-joy')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 dCi', 'Joy'])
     expect(models.get('renault:megane:1-5-dci-gt-line')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 dCi', 'GT Line'])
     expect(models.get('renault:megane:1-6-joy')?.selectionPath?.map((node) => node.name)).toEqual(['1.6', 'Joy'])
-
     expect(targets.get('122-1161')).toBe('renault:megane:1-5-dci-icon')
     expect(targets.get('122-1160')).toBe('renault:megane:1-5-dci-icon')
     expect(targets.get('122-1107')).toBe('renault:megane:1-5-dci-joy')
@@ -130,14 +116,36 @@ describe('committed vehicle curation data', () => {
     expect(targets.get('122-1089')).toBe('renault:megane:1-5-dci-gt-line')
     expect(targets.get('122-1105')).toBe('renault:megane:1-6-joy')
     expect(targets.get('122-1106')).toBe('renault:megane:1-6-joy')
-
     expect(backlog.series.find((entry) => entry.seriesKey === 'renault:megane')).toEqual({
-      seriesKey: 'renault:megane',
-      sourceRecords: 187,
-      mappedSourceCodes: 8,
-      modelReviewRequired: 179,
-      excludedSourceCodes: 0,
-      selectableModels: 4,
+      seriesKey: 'renault:megane', sourceRecords: 187, mappedSourceCodes: 8, modelReviewRequired: 179, excludedSourceCodes: 0, selectableModels: 4,
+    })
+  })
+
+  it('publishes only the reviewed Focus coverage increment', async () => {
+    const catalog = await json('catalog.json')
+    validateVehicleCatalog(catalog)
+    const models = new Map(catalog.models.map((model) => [model.key, model]))
+    const mappings = validateVehicleSourceMappingFile(await json('tsb-mappings.json'))
+    const targets = new Map(mappings.mappings.map((mapping) => [mapping.sourceKey, mapping.vehicleModelKey]))
+    const backlog = await json('curation-backlog.json') as {
+      series: Array<{ seriesKey: string; sourceRecords: number; mappedSourceCodes: number; modelReviewRequired: number; excludedSourceCodes: number; selectableModels: number }>
+    }
+
+    expect(catalog.series).toEqual(expect.arrayContaining([{ key: 'ford:focus', brandKey: 'ford', name: 'Focus' }]))
+    expect(models.get('ford:focus:1-5-tdci-style')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 TDCi', 'Style'])
+    expect(models.get('ford:focus:1-5-tdci-titanium')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 TDCi', 'Titanium'])
+    expect(models.get('ford:focus:1-5-tdci-trend-x')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 TDCi', 'Trend X'])
+    expect(models.get('ford:focus:1-5-tdci-st-line')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 TDCi', 'ST Line'])
+
+    expect(targets.get('53-2123')).toBe('ford:focus:1-5-tdci-style')
+    expect(targets.get('53-2126')).toBe('ford:focus:1-5-tdci-titanium')
+    expect(targets.get('53-2120')).toBe('ford:focus:1-5-tdci-trend-x')
+    expect(targets.get('53-2196')).toBe('ford:focus:1-5-tdci-st-line')
+    expect(targets.get('53-2251')).toBe('ford:focus:1-5-tdci-trend-x')
+    expect(targets.get('53-2254')).toBe('ford:focus:1-5-tdci-trend-x')
+
+    expect(backlog.series.find((entry) => entry.seriesKey === 'ford:focus')).toEqual({
+      seriesKey: 'ford:focus', sourceRecords: 218, mappedSourceCodes: 6, modelReviewRequired: 212, excludedSourceCodes: 0, selectableModels: 4,
     })
   })
 
@@ -150,5 +158,4 @@ describe('committed vehicle curation data', () => {
       expect(model.name).not.toMatch(/\b(?:X-TRONIC|DSG|EDC|EAT8|7G-TRONIC|EURO6|FAZ1|\d+ HP)\b/i)
     }
   })
-
 })
