@@ -71,4 +71,29 @@ TDD again used two layers. The code-level red run (`34464495566`) failed the six
 
 The reviewed artifact delta was applied against `2026-09-10.1` with explicit invariants preserving every prior series/model/mapping object. It added exactly one series, four selectable leaves and six mappings. The original operational normalized snapshot remained unavailable, so its August checksum was retained and no full-snapshot regeneration was claimed.
 
-Post-delta artifact state is **19 brands / 55 series / 597 selectable models / 837 mappings**, with **6,042 model-review rows**. Focus's backlog becomes 6 mapped / 212 model-review / 4 selectable leaves. Ford coverage becomes 9 mapped / 389 model-review / 1,164 excluded / 7 selectable leaves across 1,562 source rows. Final clean PostgreSQL 18 CI must remain the technical publication gate; overall catalog completeness remains a separate product gate, so PR #11 stays draft and unmerged.
+Post-delta artifact state is **19 brands / 55 series / 597 selectable models / 837 mappings**, with **6,042 model-review rows**. Focus's backlog becomes 6 mapped / 212 model-review / 4 selectable leaves. Ford coverage becomes 9 mapped / 389 model-review / 1,164 excluded / 7 selectable leaves across 1,562 source rows. Final clean PostgreSQL 18 CI passed on run `34465460998`: the real 19/55/597 catalog imported successfully, with 154 API unit tests, 31 PostgreSQL integration tests and 3 web tests.
+
+## Continuation — 2026-09-10 Opel Astra increment
+
+The next reviewed uncovered group was `opel:astra` (195 source rows, initially 0 mapped / 195 model-review / 0 selectable leaves). To avoid converting generic TSB `DIZEL` notation into a marketplace engine badge, the increment deliberately targeted only source rows whose own labels explicitly contain `1.3 CDTI` and whose marketplace paths were independently verified:
+
+- `1.3 CDTI → Cosmo`
+- `1.3 CDTI → Sport`
+- `1.3 CDTI → Enjoy Plus`
+
+Four exact source codes were accepted:
+
+- `111-717` / `1.3 CDTI 95 COSMO` → `1.3 CDTI → Cosmo`
+- `111-716` / `1.3 CDTI 95 SPORT` → `1.3 CDTI → Sport`
+- `111-715` / `1.3 CDTI 95 ENJOY PLUS` → `1.3 CDTI → Enjoy Plus`
+- `111-1011` / `1.3 CDTI 95 ENJOY PLUS` → `1.3 CDTI → Enjoy Plus`
+
+Astra was deliberately **not** added to `reviewedTechnicalPolicySeries`. `SEDAN SPORT 1.3 CDTI 95` remains review-only because the body path is not resolved in this increment; `DIZEL ENJOY ACTIVE 1.3 95` and `DIZEL S&S SPORT 1.3 95` remain review-only because generic `DIZEL` is not silently interpreted as `CDTI`; `1.3 CDTI 95 ENJOY` remains review-only because that marketplace leaf was not independently accepted here.
+
+TDD again used code and committed-data gates. The initial Astra red run (`34465902425`) failed the four positive exact mappings plus the generator expectation while all explicit negative cases stayed null. After adding the narrow exact map, run `34466131009` passed the code-level suite. A committed-data regression was then added; run `34466303908` failed only because the reviewed Astra records had not yet been published. The deterministic artifact delta then added exactly one series, three selectable leaves and four mappings while preserving every prior series/model/mapping object.
+
+The original 27,906-row operational normalized snapshot remained unavailable. The manifest therefore retains the exact August checksum and the Astra publication is explicitly a bounded reviewed delta, not a full regeneration. Post-delta artifact state is **19 brands / 56 series / 600 selectable models / 841 mappings**, with **6,038 model-review rows**. Astra's backlog is 4 mapped / 191 model-review / 3 selectable leaves. The publication workflow verified PostgreSQL import of the real 19/56/600 catalog plus **164 API unit + 31 PostgreSQL integration + 3 web = 198 tests**, lint, typecheck, build and Next standalone output. The temporary write-enabled publication workflow is removed before final normal-CI verification.
+
+## Next validation milestone — exact source reproducibility
+
+Do not add further catalog coverage before resolving the source reproducibility gap. Recover or regenerate the exact August 2026 normalized TSB source represented by manifest checksum `768140c3952ced1eb614eb0dfb57c519e6b127109591b862d629adf84d34b550`. Verify the normalized record count is 27,906 and the byte-level checksum matches the manifest. Then run the curation generator from that exact source against the latest reviewed baseline and compare regenerated catalog/mappings/backlog/manifest candidates with committed artifacts. Any mismatch must be explained before PR #11 can become merge-ready. PR #11 remains draft and unmerged during this validation.
