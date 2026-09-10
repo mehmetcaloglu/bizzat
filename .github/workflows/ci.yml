@@ -80,6 +80,17 @@ jobs:
       - name: Report deterministic TSB source coverage
         run: pnpm reference:report:vehicle-source -- tsb
 
+      - name: Export vehicle curation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vehicle-curation-artifacts
+          retention-days: 1
+          path: |
+            data/reference/vehicles/catalog.json
+            data/reference/vehicles/tsb-mappings.json
+            data/reference/vehicles/source-manifest.json
+            data/reference/vehicles/curation-backlog.json
+
       - name: Tests
         run: pnpm test
 
