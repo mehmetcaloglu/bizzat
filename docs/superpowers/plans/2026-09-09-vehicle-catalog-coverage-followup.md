@@ -18,6 +18,8 @@ Allowed implementation scope remains the existing curation flow and reviewed dat
 
 Generate from the existing 27,906-row August 2026 source with the previous reviewed catalog/mapping baseline. Inspect every added/reassigned mapping and all newly generated paths. Preserve all previous leaf IDs/paths; keep ambiguous rows in review. Publish catalog/mappings/manifest together with accurate counts and source provenance. Add an aggregate per-series backlog so missing coverage is actionable; never claim backlog rows equal missing models. Record current web retrieval limits honestly. Repeat generation with the new baseline and verify exact results.
 
+When the exact operational snapshot is unavailable, do not substitute a different current/mirror snapshot and claim equivalence. A bounded reviewed delta may be applied only when the exact source codes/labels and marketplace paths are independently evidenced, every previous canonical/mapping identity is asserted unchanged, and the manifest/docs explicitly record that full-snapshot regeneration is still outstanding.
+
 ## Task 3: Verify and publish the draft increment
 
 Run task review, required checks and full PostgreSQL 18 CI on the updated PR head. Update PR #11; it remains draft/unmerged while data coverage is partial.
@@ -43,4 +45,30 @@ TDD was run in two layers. First, the eight positive exact-selection cases faile
 
 The original 27,906-row operational normalized snapshot file was not available in this continuation workspace or Library. Its existing manifest checksum was therefore kept unchanged and no full-snapshot regeneration was claimed. The eight-code Megane increment was applied as an explicit deterministic delta against the reviewed `2026-09-09.3` baseline with invariants that every previous 53 series, 589 models and 823 mappings remained byte-equivalent as JSON objects. Full regeneration remains a follow-up validation when the exact operational snapshot becomes available again.
 
-Post-delta expected state is 19 brands / 54 series / 593 selectable models / 831 mappings, with 6,048 model-review rows. Megane's backlog becomes 8 mapped / 179 model-review / 4 selectable leaves. The PR remains draft and unmerged because overall catalog coverage is still partial.
+Post-delta state: 19 brands / 54 series / 593 selectable models / 831 mappings, with 6,048 model-review rows. Megane's backlog became 8 mapped / 179 model-review / 4 selectable leaves. Final clean CI for this increment passed on run `34463680019` with PostgreSQL 18 importing the real 19/54/593 catalog, 142 API unit tests, 31 PostgreSQL integration tests and 3 web tests.
+
+## Continuation — 2026-09-10 Ford Focus increment
+
+The next large uncovered group was `ford:focus` (218 source rows, initially 0 mapped / 218 model-review / 0 selectable leaves). Sahibinden's first-party index for `Ford → Focus → 1.5 TDCi` explicitly exposed four children:
+
+- `ST Line`
+- `Style`
+- `Titanium`
+- `Trend X`
+
+Six exact August 2026 TSB source-code labels were accepted:
+
+- `53-2123` → `1.5 TDCi → Style`
+- `53-2126` → `1.5 TDCi → Titanium`
+- `53-2120` → `1.5 TDCi → Trend X`
+- `53-2196` → `1.5 TDCi → ST Line`
+- `53-2251` → `1.5 TDCi → Trend X`
+- `53-2254` → `1.5 TDCi → Trend X`
+
+Focus was deliberately **not** added to `reviewedTechnicalPolicySeries`. `III MCA`, 4K/5K, PWS/PowerShift, E6.2 and 8S AT source notation are not picker branches. `FOCUS 1.5 TDCI 120 SW TREND X E6`, near 5K Style/Titanium labels and unknown trims remain review-only instead of being inferred into the accepted paths.
+
+TDD again used two layers. The code-level red run (`34464495566`) failed the six positive mappings and generator expectation while all four negative review-only cases stayed null. After adding only the six-label exact map, the Focus suite passed 11/11 and the full code-level CI (`34464691574`) completed successfully. The committed-data test was then added and the next run (`34464853588`) failed only because `ford:focus` was not yet present in committed artifacts; every Focus code/generator test and prior Megane/data test remained green.
+
+The reviewed artifact delta was applied against `2026-09-10.1` with explicit invariants preserving every prior series/model/mapping object. It added exactly one series, four selectable leaves and six mappings. The original operational normalized snapshot remained unavailable, so its August checksum was retained and no full-snapshot regeneration was claimed.
+
+Post-delta artifact state is **19 brands / 55 series / 597 selectable models / 837 mappings**, with **6,042 model-review rows**. Focus's backlog becomes 6 mapped / 212 model-review / 4 selectable leaves. Ford coverage becomes 9 mapped / 389 model-review / 1,164 excluded / 7 selectable leaves across 1,562 source rows. Final clean PostgreSQL 18 CI must remain the technical publication gate; overall catalog completeness remains a separate product gate, so PR #11 stays draft and unmerged.

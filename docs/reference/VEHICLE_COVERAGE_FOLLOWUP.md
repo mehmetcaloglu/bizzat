@@ -2,6 +2,23 @@
 
 Bu çalışma mevcut kısmi kataloğu genişletir. Kaynak satırı sayısı, benzersiz araç veya eksik model sayısı değildir. TSB Ağustos 2026 normalize snapshot'ı repo dışında tutulur; dönem ve checksum `data/reference/vehicles/source-manifest.json` içindedir.
 
+## Yeni doğrulanabilen Ford Focus yolları
+
+2026-09-10 devamında Sahibinden'in kamuya açık birinci taraf indeksinde `Ford → Focus → 1.5 TDCi` dalı altında `ST Line`, `Style`, `Titanium` ve `Trend X` yaprakları birlikte doğrulandı. Bu kanıt Focus serisinin tamamı değildir; yalnız aşağıdaki altı exact kaynak etiketi bu dört yaprağa bağlanır.
+
+| Seçim yolu | TSB kaynak kodları | Birincil referans |
+| --- | --- | --- |
+| Ford → Focus → 1.5 TDCi → Style | `53-2123` | [Focus 1.5 TDCi Style](https://www.sahibinden.com/ford-focus-1.5-tdci-style) |
+| Ford → Focus → 1.5 TDCi → Titanium | `53-2126` | [Focus 1.5 TDCi Titanium](https://www.sahibinden.com/ford-focus-1.5-tdci-titanium) |
+| Ford → Focus → 1.5 TDCi → Trend X | `53-2120`, `53-2251`, `53-2254` | [Focus 1.5 TDCi Trend X](https://www.sahibinden.com/ford-focus-1.5-tdci-trend-x) |
+| Ford → Focus → 1.5 TDCi → ST Line | `53-2196` | [Focus 1.5 TDCi ST Line](https://www.sahibinden.com/ford-focus-1.5-tdci-st-line) |
+
+İncelenen source etiketleri sırasıyla eski/yeni kasa teknik notlarında `III MCA`, `4K/5K`, `PWS/POWERSHIFT`, `E6.2`, `8S AT` gibi ayrıntılar taşıyabiliyor. Bunlar bu increment'te kullanıcıya yeni seçim düğümü üretmez. Focus genel `reviewedTechnicalPolicySeries` listesine eklenmez; kabul yalnız altı exact normalize source label için geçerlidir.
+
+`FOCUS 1.5 TDCI 120 SW TREND X E6` gibi gövde ayrımı taşıyan satırlar ve kanıtlanan etikete çok benzeyen ama birebir incelenmemiş `5K` Style/Titanium varyantları bu increment'in dışındadır. Yakın görünmeleri onları otomatik olarak aynı canonical yaprağa bağlamak için yeterli kanıt sayılmaz.
+
+TSB kaynak kodu/etiketleri Ağustos 2026 verisini yayınlayan kamuya açık mirror sonuçlarıyla çapraz kontrol edildi. Önceki 27.906 satırlık operasyonel normalize snapshot dosyasına bu oturumda yeniden erişilemediği için mevcut manifest checksum'u değiştirilmedi ve Focus artışı tam snapshot regeneration'ı olarak sunulmuyor; reviewed `2026-09-10.1` baseline'a açık deterministic delta olarak uygulandı.
+
 ## Yeni doğrulanabilen Renault Megane yolları
 
 2026-09-10 takibinde Sahibinden'in kamuya açık birinci taraf indeks sonuçlarında aşağıdaki dört seçim yolu doğrulandı. Bunlar Megane serisinin tamamı değildir; yalnız kanıtlanan motor/paket çiftleri kabul edilir.
@@ -43,10 +60,11 @@ SC, ST, Sport Tourer, Sedan, HB ve doğrulanmamış motor/paket çiftleri bu ekl
 
 | Kapsam | Elde edilen kanıtın sınırı |
 | --- | --- |
+| Focus'un bu dört 1.5 TDCi yaprağı dışındaki motor/paket/gövde yolları | Bu increment yalnız altı exact kaynak kodunu kapsar. `SW Trend X`, yakın 5K varyantları ve diğer motorlar otomatik kabul edilmedi. |
 | Megane'ın bu dört yaprak dışındaki motor/paket/gövde yolları | Bu increment yalnız sekiz exact kaynak kodunu kapsar; yakın teknik varyantlar veya başka Megane dalları otomatik kabul edilmedi. |
+| Opel Astra | Backlog'daki sonraki büyük eksik seri; yeni exact yaprak kanıtı ve kaynak eşlemesi ayrıca incelenmeli. |
 | Ibiza 1.4 TDI Style ve Sport Tourer | Eşleşen başlık özetleri vardı; sonuç URL'si ana sayfaya düşüyordu veya yalnız motor seviyesindeydi. Tam yaprak/gövde yolu doğrulanmadı. |
 | Seat Leon ve SC/ST dalları | Bazı başlıklar ve motor düzeyi izleri vardı; doğrudan motor/paket kategori URL'si elde edilmedi. |
-| Ford Focus / Opel Astra | Backlog'daki büyük eksik gruplar; yeni exact yaprak kanıtı ve kaynak eşlemesi ayrıca incelenmeli. |
 | Skoda Fabia / Octavia / Superb / Combi | Doğrudan birincil kategori yolları bulunamadı; üçüncü taraf sonuçları taxonomy kanıtı sayılmadı. |
 | Kia Ceed / Rio / Picanto / SW / Pro | Bazı başlık özetleri dışında tam birincil kategori yolları doğrulanamadı. |
 | BYD Dolphin, Opel Corsa, Peugeot 208 yeni yolları | Boş/ilgisiz sonuçlar, 403 veya ana sayfaya düşen URL'ler yeni yol kabulü için yeterli olmadı. |
@@ -55,4 +73,4 @@ Arama sonucunun olmaması, aracın veya kategorinin olmadığı anlamına gelmez
 
 ## Sonraki veri incelemesi
 
-`data/reference/vehicles/curation-backlog.json`, seri bazında inceleme bekleyen satır sayılarını ve mevcut seçilebilir kayıt sayılarını toplar. Marka/seri çözülemeyen kaynaklar ayrıca sayılır. Liste ham kaynak adı, fiyat veya model yılı taşımaz. 2026-09-10 Megane increment'inden sonra katalog 19 marka / 54 seri / 593 seçilebilir kayıt / 831 source mapping içerir; 6.048 source satırı model incelemesi bekler. Bu rakamlar Türkiye otomobil kapsam yüzdesi veya eksik benzersiz model sayısı değildir.
+`data/reference/vehicles/curation-backlog.json`, seri bazında inceleme bekleyen satır sayılarını ve mevcut seçilebilir kayıt sayılarını toplar. Marka/seri çözülemeyen kaynaklar ayrıca sayılır. Liste ham kaynak adı, fiyat veya model yılı taşımaz. 2026-09-10 Focus increment'inden sonra katalog **19 marka / 55 seri / 597 seçilebilir kayıt / 837 source mapping** içerir; **6.042 source satırı model incelemesi** bekler. Focus kendi backlog'unda 218 kaydın 6'sını map eder, 212'sini incelemede bırakır ve 4 seçilebilir yaprak yayımlar. Bu rakamlar Türkiye otomobil kapsam yüzdesi veya eksik benzersiz model sayısı değildir.
