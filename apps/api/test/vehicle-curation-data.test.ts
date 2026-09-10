@@ -97,6 +97,50 @@ describe('committed vehicle curation data', () => {
     expect(mappings.mappings.find((mapping) => mapping.sourceKey === '122-1266')?.vehicleModelKey).toBe('renault:clio:1-0-tce-evolution')
   })
 
+  it('publishes only the reviewed Megane coverage increment', async () => {
+    const catalog = await json('catalog.json')
+    validateVehicleCatalog(catalog)
+    const models = new Map(catalog.models.map((model) => [model.key, model]))
+    const mappings = validateVehicleSourceMappingFile(await json('tsb-mappings.json'))
+    const targets = new Map(mappings.mappings.map((mapping) => [mapping.sourceKey, mapping.vehicleModelKey]))
+    const backlog = await json('curation-backlog.json') as {
+      series: Array<{
+        seriesKey: string
+        sourceRecords: number
+        mappedSourceCodes: number
+        modelReviewRequired: number
+        excludedSourceCodes: number
+        selectableModels: number
+      }>
+    }
+
+    expect(catalog.series).toEqual(expect.arrayContaining([
+      { key: 'renault:megane', brandKey: 'renault', name: 'Megane' },
+    ]))
+    expect(models.get('renault:megane:1-5-dci-icon')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 dCi', 'Icon'])
+    expect(models.get('renault:megane:1-5-dci-joy')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 dCi', 'Joy'])
+    expect(models.get('renault:megane:1-5-dci-gt-line')?.selectionPath?.map((node) => node.name)).toEqual(['1.5 dCi', 'GT Line'])
+    expect(models.get('renault:megane:1-6-joy')?.selectionPath?.map((node) => node.name)).toEqual(['1.6', 'Joy'])
+
+    expect(targets.get('122-1161')).toBe('renault:megane:1-5-dci-icon')
+    expect(targets.get('122-1160')).toBe('renault:megane:1-5-dci-icon')
+    expect(targets.get('122-1107')).toBe('renault:megane:1-5-dci-joy')
+    expect(targets.get('122-1108')).toBe('renault:megane:1-5-dci-joy')
+    expect(targets.get('122-1088')).toBe('renault:megane:1-5-dci-gt-line')
+    expect(targets.get('122-1089')).toBe('renault:megane:1-5-dci-gt-line')
+    expect(targets.get('122-1105')).toBe('renault:megane:1-6-joy')
+    expect(targets.get('122-1106')).toBe('renault:megane:1-6-joy')
+
+    expect(backlog.series.find((entry) => entry.seriesKey === 'renault:megane')).toEqual({
+      seriesKey: 'renault:megane',
+      sourceRecords: 187,
+      mappedSourceCodes: 8,
+      modelReviewRequired: 179,
+      excludedSourceCodes: 0,
+      selectableModels: 4,
+    })
+  })
+
   it('keeps operational leaves explicit and technical source notation out of picker labels', async () => {
     const catalog = await json('catalog.json')
     validateVehicleCatalog(catalog)
