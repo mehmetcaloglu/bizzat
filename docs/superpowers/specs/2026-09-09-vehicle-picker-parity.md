@@ -9,6 +9,7 @@ Ağaç her araçta aynı derinlikte değildir. Zorunlu dört seviye veya her mot
 | Marka | Seri | Seri altındaki seçim yolu |
 | --- | --- | --- |
 | Renault | Clio | 1.0 TCe → Evolution |
+| Renault | Megane | 1.5 dCi → Icon |
 | Volkswagen | Polo | 1.0 TSI → Comfortline |
 | Peugeot | 308 | 1.2 PureTech → GT |
 | BMW | 3 Serisi | 320i ED → Sport Line |
@@ -16,7 +17,7 @@ Ağaç her araçta aynı derinlikte değildir. Zorunlu dört seviye veya her mot
 | Audi | A3 | A3 Sedan → 35 TFSI → Advanced |
 | Tesla | Model 3 | Long Range |
 
-`320i`/`320i ED`, Clio Sport Tourer ve Audi Sedan/Sportback ayrımları korunur. Şanzıman, güç veya kasa sözcükleri için bütün markalara uygulanan kör silme kuralı yoktur: referansta dalı değiştiren ayrım korunur, yeri doğrulanmamış ayrım incelemeye bırakılır. TSB model yılı metadata'sı ilan yılı doğrulaması üretmez.
+`320i`/`320i ED`, Clio Sport Tourer ve Audi Sedan/Sportback ayrımları korunur. Şanzıman, güç veya kasa sözcükleri için bütün markalara uygulanan kör silme kuralı yoktur: referansta dalı değiştiren ayrım korunur, yeri doğrulanmamış ayrım incelemeye bırakılır. TSB model yılı metadata'sı ilan yılı doğrulaması üretmez. Megane'ın 2026-09-10 artışında EDC/CVT, güç ve HB/Sedan kaynak ayrıntıları yeni kullanıcı seçeneklerine çevrilmez; yalnız açıkça incelenmiş tam kaynak etiketleri doğrulanmış motor/paket yapraklarına bağlanır.
 
 ## Backend
 
@@ -28,9 +29,11 @@ Bir düğümün adı ve ebeveyn yolu tutarlı olmalıdır. Aynı düğüm hem ya
 
 ## Curation ve kapsam
 
-TSB Ağustos 2026 snapshot'ı veri/mapping kaynağıdır. Daha önce edinilmiş 27.906 satırlık normalize artifact yeniden kullanıldı; fiyat ve ham kaynak repoya girmez. Marka/seri alias'ları explicit kalır. Maintenance parser bilinen motor rozetleri, doğrulanmış gövde yolları ve marka kapsamında kabul edilen paket sözlüğünü kullanır. Bilinmeyen paket yazımı, belirsiz kasa veya drivetrain dalı otomatik tahmin edilmez. Candidate çıktısı her kaynak için `mapped`, `model-review` veya `excluded` durumunu gösterir.
+TSB Ağustos 2026 snapshot'ı veri/mapping kaynağıdır. 27.906 satırlık operasyonel normalize artifact repo dışında tutulur; fiyat ve ham kaynak repoya girmez. Marka/seri alias'ları explicit kalır. Maintenance parser bilinen motor rozetleri, doğrulanmış gövde yolları ve marka kapsamında kabul edilen paket sözlüğünü kullanır. Bilinmeyen paket yazımı, belirsiz kasa veya drivetrain dalı otomatik tahmin edilmez. Candidate çıktısı her kaynak için `mapped`, `model-review` veya `excluded` durumunu gösterir.
 
-Bu sürüm **Sahibinden ağacının tamamı değildir**. 19 marka, 53 seri, 589 seçilebilir kayıt ve 823 kaynak mapping'i içerir. 6.056 seri eşleşmesi model incelemesi bekler. Önceki taslaktaki Alfa Romeo, BYD, Chery, Chevrolet, Cupra, DS Automobiles, Kia, MINI, Mazda, Skoda ve Subaru bu sıkı sözlükten henüz geçmediği için yayımlanabilir kapsamda değildir. Tesla'da yalnız Model 3'ün açık isimli dalları; Audi'de yalnız açık gövde bilgili A3/A4 kayıtları kabul edilir. Bu kapsam gerilemesi gizlenmez; PR tam katalog olarak merge edilmeye hazır değildir.
+2026-09-10 devamında önceki operasyonel normalize snapshot dosyasına bu çalışma oturumunda yeniden erişilemedi. Bu nedenle mevcut `2026-09-09.3` reviewed baseline'ın TSB checksum'u korunarak yalnız sekiz açık Megane kaynak kodu için deterministic reviewed delta uygulandı; bu işlem tam 27.906 satırın yeniden üretildiği şeklinde sunulmaz. Snapshot yeniden erişilebilir olduğunda aynı baseline üzerinden full regeneration ve byte-level karşılaştırma tekrar yapılmalıdır.
+
+Bu sürüm **Sahibinden ağacının tamamı değildir**. 19 marka, 54 seri, 593 seçilebilir kayıt ve 831 kaynak mapping'i içerir. 6.048 source satırı model incelemesi bekler. Önceki taslaktaki Alfa Romeo, BYD, Chery, Chevrolet, Cupra, DS Automobiles, Kia, MINI, Mazda, Skoda ve Subaru bu sıkı sözlükten henüz geçmediği için yayımlanabilir kapsamda değildir. Tesla'da yalnız Model 3'ün açık isimli dalları; Audi'de yalnız açık gövde bilgili A3/A4 kayıtları kabul edilir. Megane'da yalnız `1.5 dCi → Icon`, `1.5 dCi → Joy`, `1.5 dCi → GT Line` ve `1.6 → Joy` için incelenmiş exact kaynak etiketleri kabul edilir. Bu kapsam gerilemesi/eksikliği gizlenmez; PR tam katalog olarak merge edilmeye hazır değildir.
 
 İlk, henüz merge edilmemiş 6.652 TSB-tip key'i bu curation'da sadeleştirilir; Phase A fixture hedefleri korunur. Sonraki üretimlerde reviewed `catalog.json` ve `tsb-mappings.json` baseline olarak verilir. Mevcut source mapping'leri yaprak kimliğini, mevcut yol ara düğüm anahtarlarını korur. Aynı kimliğin bölünmesi, iki kimliğin birleşmesi, seriye taşınması veya yol derinliğinin değişmesi explicit review ister. Bir display düzeltmesi yeni listing kimliği üretmez.
 
@@ -38,10 +41,13 @@ Bu sürüm **Sahibinden ağacının tamamı değildir**. 19 marka, 53 seri, 589 
 
 Offline testler curation, bilinmeyenlerin reddi, teknik tiplerin birleşmesi, yol ayrımları, identity baseline ve mapping hedeflerini doğrular. PostgreSQL testleri explicit migration/import, değişmeyen UUID, değişken derinlikte traversal, pasif kayıtlar, seri sınırı ve 404 davranışını doğrular. CI gerçek committed katalog ile B1 fixture mapping'lerini birlikte import eder. Tam CI ve bağımsız kod incelemesi teknik kapıdır; eksik marka/seri yollarının curation incelemesi ayrı ürün kapısıdır. İkisi tamamlanmadan PR #11 draft kalır.
 
-## İncelenen referanslar — 2026-09-09
+## İncelenen referanslar — 2026-09-09 / 2026-09-10
 
 - [Clio 1.0 TCe Techno Esprit Alpine](https://www.sahibinden.com/renault-clio-1.0-tce-techno-esprit-alpine)
 - [Clio 1.0 TCe Touch](https://www.sahibinden.com/renault-clio-1.0-tce-touch)
+- [Megane 1.5 dCi Icon](https://www.sahibinden.com/renault-megane-1.5-dci-icon)
+- [Megane 1.5 dCi — Joy/GT-Line kardeşleri](https://www.sahibinden.com/renault-megane-1.5-dci)
+- [Megane 1.6 — Joy kardeşi](https://www.sahibinden.com/renault-megane-1.6)
 - [Polo 1.0 TSI Comfortline](https://www.sahibinden.com/volkswagen-polo-1.0-tsi-comfortline)
 - [308 1.2 PureTech GT](https://www.sahibinden.com/peugeot-308-1.2-puretech-gt)
 - [BMW 320i ED](https://www.sahibinden.com/bmw-3-serisi-320i-ed)
@@ -59,7 +65,7 @@ Başarılı arama indeksi özetleri kategori yollarını ve bazı kardeş dallar
 
 ## İnceleme sonrası korumalar
 
-Teknik ayıklama yalnız `source-manifest.json` içindeki `reviewedTechnicalPolicySeries` için uygulanır. Diğer serilerde gövde/şanzıman/güç sözcükleri korunarak incelemeye bırakılır; sayı içeren paket adları güç gibi silinmez. Kaynakta zaten açık motor + bilinen paket bulunan temiz satırlar bu ayıklamaya ihtiyaç duymadan aday olabilir. Marka kapsamındaki paket sözlüğü, tek başına tüm serilerde teknik ayrım silme izni vermez.
+Teknik ayıklama yalnız `source-manifest.json` içindeki `reviewedTechnicalPolicySeries` için uygulanır. Megane bu listeye eklenmez. Diğer serilerde gövde/şanzıman/güç sözcükleri korunarak incelemeye bırakılır; sayı içeren paket adları güç gibi silinmez. Kaynakta zaten açık motor + bilinen paket bulunan temiz satırlar bu ayıklamaya ihtiyaç duymadan aday olabilir. Marka kapsamındaki paket sözlüğü, tek başına tüm serilerde teknik ayrım silme izni vermez.
 
 Import, mevcut aktif veya pasif modelin serisini ve mevcut serinin markasını değiştirmeyi transaction içinde reddeder. Conflict update parent ID'lerini yazmaz; dönen parent kontrolü eşzamanlı uyuşmazlıkta rollback sağlar. Her ara düğüm `<seriesKey>:` ad alanına ait olmalıdır.
 
@@ -69,4 +75,4 @@ Accent Blue/Era kaynakları ayrı `hyundai:accent-blue` ve `hyundai:accent-era` 
 
 Baseline üzerinden korunan bir grubun anahtarı, aynı güncel ancestor-path altına eklenen yeni kardeş yapraklar tarafından paylaşılır. Aynı yola birden fazla eski grup kimliği veya aynı kimliğe farklı yollar düşerse explicit review gerekir.
 
-2026-09-09 takip çalışmasında motor teknolojisi olmayan satırlardaki boşluk tüketimi düzeltildi; aynı konumsal güç kuralları artık bu satırlara da uygulanır. Güçten motor teknolojisi türetilmez. `curation-backlog.json` seri bazındaki eşleşme/inceleme sayılarını gösterir; tam katalog veya eksik model sayısı değildir. Seat Ibiza için üç tam motor/paket yolu indeks üzerinden doğrulandı; yalnız bu çiftler kabul edilir. Diğer yeni yollar 403/boş veya yetersiz indeks sonuçları nedeniyle doğrulanamadı. Kanıt ve kapsam sınırları `docs/reference/VEHICLE_COVERAGE_FOLLOWUP.md` dosyasındadır.
+2026-09-09 takip çalışmasında motor teknolojisi olmayan satırlardaki boşluk tüketimi düzeltildi; aynı konumsal güç kuralları artık bu satırlara da uygulanır. Güçten motor teknolojisi türetilmez. `curation-backlog.json` seri bazındaki eşleşme/inceleme sayılarını gösterir; tam katalog veya eksik model sayısı değildir. Seat Ibiza için üç tam motor/paket yolu indeks üzerinden doğrulandı; yalnız bu çiftler kabul edilir. 2026-09-10 Megane takibinde dört motor/paket yolu sekiz exact kaynak koduyla eklendi; yakın varyantlar otomatik açılmadı. Kanıt ve kapsam sınırları `docs/reference/VEHICLE_COVERAGE_FOLLOWUP.md` dosyasındadır.

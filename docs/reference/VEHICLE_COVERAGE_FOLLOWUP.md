@@ -1,6 +1,21 @@
-# Araç kataloğu kapsam takibi — 2026-09-09
+# Araç kataloğu kapsam takibi — 2026-09-10
 
 Bu çalışma mevcut kısmi kataloğu genişletir. Kaynak satırı sayısı, benzersiz araç veya eksik model sayısı değildir. TSB Ağustos 2026 normalize snapshot'ı repo dışında tutulur; dönem ve checksum `data/reference/vehicles/source-manifest.json` içindedir.
+
+## Yeni doğrulanabilen Renault Megane yolları
+
+2026-09-10 takibinde Sahibinden'in kamuya açık birinci taraf indeks sonuçlarında aşağıdaki dört seçim yolu doğrulandı. Bunlar Megane serisinin tamamı değildir; yalnız kanıtlanan motor/paket çiftleri kabul edilir.
+
+| Seçim yolu | TSB kaynak kodları | Birincil referans |
+| --- | --- | --- |
+| Renault → Megane → 1.5 dCi → Icon | `122-1160`, `122-1161` | [Megane 1.5 dCi Icon](https://www.sahibinden.com/renault-megane-1.5-dci-icon) |
+| Renault → Megane → 1.5 dCi → Joy | `122-1107`, `122-1108` | [Megane 1.5 dCi](https://www.sahibinden.com/renault-megane-1.5-dci) |
+| Renault → Megane → 1.5 dCi → GT-Line | `122-1088`, `122-1089` | [Megane 1.5 dCi](https://www.sahibinden.com/renault-megane-1.5-dci) |
+| Renault → Megane → 1.6 → Joy | `122-1105`, `122-1106` | [Megane 1.6](https://www.sahibinden.com/renault-megane-1.6) |
+
+Sekiz kaynak kodu yalnız kendi incelenmiş tam kaynak etiketleriyle bu dört yaprağa bağlanır. EDC/CVT, güç ve HB/Sedan gibi TSB ayrıntıları bu increment'te kullanıcıya yeni seçim düğümü üretmez. Yakın ama birebir incelenmemiş yazımlar, farklı güç/teknik ekler veya bilinmeyen paketler `model-review` durumunda kalır; Megane genel `reviewedTechnicalPolicySeries` listesine eklenmez.
+
+Bu oturumda önceki 27.906 satırlık operasyonel normalize snapshot dosyasına yeniden erişilemedi. Bu nedenle mevcut reviewed baseline'ın checksum'u değiştirilmedi ve Megane artışı tam snapshot'ın yeniden üretildiği iddiasıyla değil, sekiz kaynak kodu + dört Sahibinden yolu için açıkça incelenmiş deterministic delta olarak yayımlandı. Tam snapshot erişilebilir olduğunda aynı baseline ile yeniden üretim hâlâ yapılmalıdır.
 
 ## Yeni doğrulanabilen Seat yolları
 
@@ -28,8 +43,10 @@ SC, ST, Sport Tourer, Sedan, HB ve doğrulanmamış motor/paket çiftleri bu ekl
 
 | Kapsam | Elde edilen kanıtın sınırı |
 | --- | --- |
+| Megane'ın bu dört yaprak dışındaki motor/paket/gövde yolları | Bu increment yalnız sekiz exact kaynak kodunu kapsar; yakın teknik varyantlar veya başka Megane dalları otomatik kabul edilmedi. |
 | Ibiza 1.4 TDI Style ve Sport Tourer | Eşleşen başlık özetleri vardı; sonuç URL'si ana sayfaya düşüyordu veya yalnız motor seviyesindeydi. Tam yaprak/gövde yolu doğrulanmadı. |
 | Seat Leon ve SC/ST dalları | Bazı başlıklar ve motor düzeyi izleri vardı; doğrudan motor/paket kategori URL'si elde edilmedi. |
+| Ford Focus / Opel Astra | Backlog'daki büyük eksik gruplar; yeni exact yaprak kanıtı ve kaynak eşlemesi ayrıca incelenmeli. |
 | Skoda Fabia / Octavia / Superb / Combi | Doğrudan birincil kategori yolları bulunamadı; üçüncü taraf sonuçları taxonomy kanıtı sayılmadı. |
 | Kia Ceed / Rio / Picanto / SW / Pro | Bazı başlık özetleri dışında tam birincil kategori yolları doğrulanamadı. |
 | BYD Dolphin, Opel Corsa, Peugeot 208 yeni yolları | Boş/ilgisiz sonuçlar, 403 veya ana sayfaya düşen URL'ler yeni yol kabulü için yeterli olmadı. |
@@ -38,4 +55,4 @@ Arama sonucunun olmaması, aracın veya kategorinin olmadığı anlamına gelmez
 
 ## Sonraki veri incelemesi
 
-`data/reference/vehicles/curation-backlog.json`, seri bazında eşleşen kaynak kodlarını, inceleme bekleyen satır sayılarını ve mevcut seçilebilir kayıt sayılarını toplar. Marka/seri çözülemeyen kaynaklar ayrıca sayılır. Liste, güncel generator `candidates.json` çıktısından oluşturulur; ham kaynak adı, fiyat ve model yılı içermez. Bazı incelenmemiş alias'lar MVP dışı araçları da kapsayabildiği için bu rakamlar Türkiye otomobil kapsam yüzdesi olarak kullanılamaz.
+`data/reference/vehicles/curation-backlog.json`, seri bazında inceleme bekleyen satır sayılarını ve mevcut seçilebilir kayıt sayılarını toplar. Marka/seri çözülemeyen kaynaklar ayrıca sayılır. Liste ham kaynak adı, fiyat veya model yılı taşımaz. 2026-09-10 Megane increment'inden sonra katalog 19 marka / 54 seri / 593 seçilebilir kayıt / 831 source mapping içerir; 6.048 source satırı model incelemesi bekler. Bu rakamlar Türkiye otomobil kapsam yüzdesi veya eksik benzersiz model sayısı değildir.
