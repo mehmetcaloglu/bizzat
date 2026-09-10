@@ -55,11 +55,13 @@ jobs:
         run: |
           set -euo pipefail
           test "$GITHUB_HEAD_REF" = "feat/vehicle-catalog-phase-b2"
+          if [ ! -f scripts/apply-megane-curation-delta.mjs ]; then
+            echo "Megane publication script already consumed"
+            exit 0
+          fi
           node scripts/apply-megane-curation-delta.mjs
-          git checkout 8388e5716abcedecdffffc726344593feb86eb07 -- .github/workflows/ci.yml
           git rm scripts/apply-megane-curation-delta.mjs
           expected="$(printf '%s\n' \
-            .github/workflows/ci.yml \
             data/reference/vehicles/catalog.json \
             data/reference/vehicles/curation-backlog.json \
             data/reference/vehicles/source-manifest.json \
