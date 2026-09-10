@@ -75,6 +75,17 @@ const IBIZA_REVIEWED_SELECTIONS: Record<string, string[]> = {
   'FL 1.0 ECOTSI 115 DSG FR': ['1.0 EcoTSI', 'FR'],
 }
 
+const MEGANE_REVIEWED_SELECTIONS: Record<string, string[]> = {
+  'ICON 1.5 DCI EDC 110': ['1.5 dCi', 'Icon'],
+  'ICON 1.5 DCI 110': ['1.5 dCi', 'Icon'],
+  'HB JOY 1.5 DCI 90': ['1.5 dCi', 'Joy'],
+  'HB JOY 1.5 DCI EDC 110': ['1.5 dCi', 'Joy'],
+  'HB GT-LINE 1.5 DCI 110 E5': ['1.5 dCi', 'GT Line'],
+  'HB GT-LINE 1.5 DCI 110 EDC E5': ['1.5 dCi', 'GT Line'],
+  'HB JOY 1.6 16V 110': ['1.6', 'Joy'],
+  'HB JOY 1.6 16V 115 CVT': ['1.6', 'Joy'],
+}
+
 export interface ModelSelection { path: string[]; name: string }
 function selection(path: string[]): ModelSelection { return { path, name: path.join(' ') } }
 
@@ -110,6 +121,10 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   const policy = SERIES_NORMALIZATION_POLICIES[seriesKey]
   if (seriesKey === 'seat:ibiza') {
     const path = IBIZA_REVIEWED_SELECTIONS[label]
+    return path ? selection(path) : null
+  }
+  if (seriesKey === 'renault:megane') {
+    const path = MEGANE_REVIEWED_SELECTIONS[label]
     return path ? selection(path) : null
   }
   if (seriesKey === 'renault:clio' && hasUnreviewedClio12Power(label)) return null
