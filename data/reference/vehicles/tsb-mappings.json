@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.2",
+  "version": "2026-09-10.3",
   "mappings": [
     {
       "sourceKey": "100-1138",
@@ -452,6 +452,11 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "111-1011",
+      "vehicleModelKey": "opel:astra:1-3-cdti-enjoy-plus",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "111-1076",
       "vehicleModelKey": "opel:adam:1-2-jam",
       "method": "exact-rule"
@@ -464,6 +469,21 @@
     {
       "sourceKey": "111-1078",
       "vehicleModelKey": "opel:adam:1-2-slam",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-715",
+      "vehicleModelKey": "opel:astra:1-3-cdti-enjoy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-716",
+      "vehicleModelKey": "opel:astra:1-3-cdti-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-717",
+      "vehicleModelKey": "opel:astra:1-3-cdti-cosmo",
       "method": "exact-rule"
     },
     {

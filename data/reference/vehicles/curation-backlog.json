@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.2",
+  "version": "2026-09-10.3",
   "sourcePeriod": "2026-08",
   "measurement": "Unresolved source-row counts, including unreviewed or out-of-MVP aliases; not missing-model counts or Turkish passenger-car completeness percentages.",
   "sourceRecords": 27906,
@@ -20,10 +20,10 @@
     {
       "seriesKey": "opel:astra",
       "sourceRecords": 195,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 195,
+      "mappedSourceCodes": 4,
+      "modelReviewRequired": 191,
       "excludedSourceCodes": 0,
-      "selectableModels": 0
+      "selectableModels": 3
     },
     {
       "seriesKey": "renault:megane",

@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.2",
+  "version": "2026-09-10.3",
   "sources": [
     {
       "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
@@ -29,18 +29,18 @@
   ],
   "curation": {
     "sourceRecords": 27906,
-    "exactCandidates": 837,
-    "mappedSourceCodes": 837,
+    "exactCandidates": 841,
+    "mappedSourceCodes": 841,
     "canonicalBrands": 19,
-    "canonicalSeries": 55,
-    "canonicalModels": 597,
+    "canonicalSeries": 56,
+    "canonicalModels": 600,
     "slugCollisionsExcluded": 0,
     "ambiguousSeriesExcluded": 21,
     "unknownBrandExcluded": 13955,
     "noSeriesExcluded": 7051,
-    "modelReviewRequired": 6042,
+    "modelReviewRequired": 6038,
     "tsbSnapshotRecords": 27906,
-    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza, Renault Megane and Ford Focus use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths; this does not enable general technical stripping.",
+    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza, Renault Megane, Ford Focus and Opel Astra use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths; this does not enable general technical stripping.",
     "coverageStatus": "partial-review; not a complete Sahibinden catalog",
     "excludedPreviouslyPresentBrands": [
       "Alfa Romeo",
@@ -78,7 +78,10 @@
       "Ford/Focus/1.5 TDCi/Style",
       "Ford/Focus/1.5 TDCi/Titanium",
       "Ford/Focus/1.5 TDCi/Trend X",
-      "Ford/Focus/1.5 TDCi/ST Line"
+      "Ford/Focus/1.5 TDCi/ST Line",
+      "Opel/Astra/1.3 CDTI/Cosmo",
+      "Opel/Astra/1.3 CDTI/Enjoy Plus",
+      "Opel/Astra/1.3 CDTI/Sport"
     ],
     "identityPolicy": "First pre-merge consolidation replaces unreviewed type keys. Later runs must use the reviewed catalog/mappings baseline; splits/merges/reparenting are rejected for explicit review.",
     "coverageMeasurement": "Counts refer to the complete source snapshot, including out-of-MVP vehicle categories; they are not a completeness percentage for Turkish passenger cars or the Sahibinden taxonomy.",
@@ -334,10 +337,10 @@
       {
         "brandKey": "opel",
         "sourceRows": 831,
-        "model-review": 511,
+        "model-review": 507,
         "excluded": 317,
-        "mapped": 3,
-        "selectableLeaves": 3
+        "mapped": 7,
+        "selectableLeaves": 6
       },
       {
         "brandKey": "peugeot",
@@ -412,12 +415,13 @@
     ],
     "backlogFile": "curation-backlog.json",
     "lastIncrement": {
-      "baselineVersion": "2026-09-10.1",
-      "purpose": "Add four reviewed Ford Focus 1.5 TDCi marketplace selection paths from six exact August 2026 TSB source-code labels without enabling generic Focus technical stripping.",
-      "newReferenceRetrieval": "Sahibinden public first-party index verified Focus 1.5 TDCi ST Line/Style/Titanium/Trend X paths. Six August 2026 TSB code labels were cross-checked against public mirrors; SW Trend X and near body/technical variants remain review-only. The original operational normalized snapshot was unavailable in this session, so this increment is an explicit reviewed delta rather than a claimed full-snapshot regeneration."
+      "baselineVersion": "2026-09-10.2",
+      "purpose": "Add three reviewed Opel Astra 1.3 CDTI marketplace selection paths from four exact August 2026 TSB source-code labels without enabling generic Astra technical stripping.",
+      "newReferenceRetrieval": "Sahibinden public first-party index verified Astra 1.3 CDTI Cosmo/Sport/Enjoy Plus paths. Four TSB code labels already name CDTi explicitly, avoiding a DIZEL-to-CDTI inference. Sedan, DIZEL, S&S and unreviewed Enjoy variants remain review-only. The original operational normalized snapshot was unavailable in this session, so this increment is an explicit reviewed delta rather than a claimed full-snapshot regeneration."
     },
     "reviewedExactSelectionSeries": [
       "ford:focus",
+      "opel:astra",
       "renault:megane",
       "seat:ibiza"
     ]
