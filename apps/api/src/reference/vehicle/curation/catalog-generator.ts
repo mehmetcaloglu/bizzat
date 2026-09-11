@@ -178,6 +178,7 @@ export function generateCuratedVehicleCatalog(args: {
   // of already published identities requires an explicit reviewed migration.
   const baselineModels = new Map(args.baseline?.catalog.models.map((model) => [model.key, model]) ?? [])
   const baselineMappings = new Map(args.baseline?.mappings.mappings.map((mapping) => [mapping.sourceKey, mapping.vehicleModelKey]) ?? [])
+  const baselineSeries = new Map(args.baseline?.catalog.series.map((series) => [series.key, series]) ?? [])
   const stableModelKeys = new Map<string, string>()
   const mappedBaselineGeneratedKeys = new Set<string>()
   const claimedKeys = new Set<string>()
@@ -252,7 +253,7 @@ export function generateCuratedVehicleCatalog(args: {
       return {
         key: seriesKey,
         brandKey: entry.brandKey,
-        name: bootstrapSeriesNames.get(seriesKey) ?? titleFromAlias(entry.aliases[0]!),
+        name: baselineSeries.get(seriesKey)?.name ?? bootstrapSeriesNames.get(seriesKey) ?? titleFromAlias(entry.aliases[0]!),
       }
     })
     .sort((left, right) => left.key.localeCompare(right.key))
