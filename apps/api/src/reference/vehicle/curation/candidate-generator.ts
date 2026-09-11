@@ -8,6 +8,7 @@ import type {
   VehicleCurationCandidate,
   VehicleSeriesAliasesFile,
 } from './alias.types.js'
+import { isSourceCodeReviewedForSelection } from './reviewed-source-scope.js'
 
 interface SeriesMatch {
   seriesKey: string
@@ -133,6 +134,18 @@ export function generateVehicleCurationCandidates(args: {
         seriesKeyCandidate: null,
         proposedModelLabel: null,
         status: 'no-series',
+      }
+    }
+
+    if (!isSourceCodeReviewedForSelection(winner.seriesKey, record.sourceKey)) {
+      return {
+        sourceKey: record.sourceKey,
+        brandRaw: record.brandRaw,
+        typeRaw: record.typeRaw,
+        brandKeyCandidate: brandKey,
+        seriesKeyCandidate: winner.seriesKey,
+        proposedModelLabel: null,
+        status: 'exact-series',
       }
     }
 
