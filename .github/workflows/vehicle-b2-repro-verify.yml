@@ -49,3 +49,48 @@ jobs:
           assert count == 27906, count
           assert digest == '768140c3952ced1eb614eb0dfb57c519e6b127109591b862d629adf84d34b550', digest
           PY
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+
+      - name: Install repository dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Fetch pinned bootstrap dataset
+        run: curl --fail --silent --show-error --location https://raw.githubusercontent.com/serhatkildaci/global-car-models/44da5c9e5e0f3162d65579033f7a641473308b11/data/models.json --output /tmp/global-car-models.json
+
+      - name: Full regenerate from exact snapshot and reviewed baseline
+        run: >-
+          pnpm reference:generate:vehicle-catalog --
+          /tmp/tsb.normalized.json
+          data/reference/vehicles/brand-aliases.json
+          data/reference/vehicles/series-aliases.json
+          /tmp/global-car-models.json
+          /tmp/bizzat-full-regeneration
+          2026-09-10.3
+          data/reference/vehicles
+
+      - name: Verify regenerated committed artifacts byte-for-byte
+        run: |
+          set -euo pipefail
+          cmp data/reference/vehicles/catalog.json /tmp/bizzat-full-regeneration/catalog.generated.json
+          cmp data/reference/vehicles/tsb-mappings.json /tmp/bizzat-full-regeneration/tsb-mappings.generated.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          summary = json.loads(Path('/tmp/bizzat-full-regeneration/summary.json').read_text())
+          print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+          assert summary['sourceRecords'] == 27906
+          assert summary['mappedSourceCodes'] == 841
+          assert summary['canonicalBrands'] == 19
+          assert summary['canonicalSeries'] == 56
+          assert summary['canonicalModels'] == 600
+          assert summary['modelReviewRequired'] == 6038
+          PY
