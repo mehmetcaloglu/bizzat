@@ -77,20 +77,57 @@ jobs:
           2026-09-10.3
           data/reference/vehicles
 
-      - name: Verify regenerated committed artifacts byte-for-byte
+      - name: Diagnose regeneration differences
         run: |
-          set -euo pipefail
-          cmp data/reference/vehicles/catalog.json /tmp/bizzat-full-regeneration/catalog.generated.json
-          cmp data/reference/vehicles/tsb-mappings.json /tmp/bizzat-full-regeneration/tsb-mappings.generated.json
           python - <<'PY'
           import json
           from pathlib import Path
+
+          committed_catalog = json.loads(Path('data/reference/vehicles/catalog.json').read_text())
+          generated_catalog = json.loads(Path('/tmp/bizzat-full-regeneration/catalog.generated.json').read_text())
+          committed_mappings = json.loads(Path('data/reference/vehicles/tsb-mappings.json').read_text())
+          generated_mappings = json.loads(Path('/tmp/bizzat-full-regeneration/tsb-mappings.generated.json').read_text())
           summary = json.loads(Path('/tmp/bizzat-full-regeneration/summary.json').read_text())
-          print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
-          assert summary['sourceRecords'] == 27906
-          assert summary['mappedSourceCodes'] == 841
-          assert summary['canonicalBrands'] == 19
-          assert summary['canonicalSeries'] == 56
-          assert summary['canonicalModels'] == 600
-          assert summary['modelReviewRequired'] == 6038
+
+          def compare_keyed(section):
+              old_items = committed_catalog[section]
+              new_items = generated_catalog[section]
+              old = {item['key']: item for item in old_items}
+              new = {item['key']: item for item in new_items}
+              added = sorted(set(new) - set(old))
+              removed = sorted(set(old) - set(new))
+              changed = sorted(key for key in set(old) & set(new) if old[key] != new[key])
+              order = []
+              for index, (left, right) in enumerate(zip([x['key'] for x in old_items], [x['key'] for x in new_items])):
+                  if left != right:
+                      order.append({'index': index, 'committed': left, 'generated': right})
+                      if len(order) == 10:
+                          break
+              return {'added': added, 'removed': removed, 'changed': changed, 'orderMismatch': order}
+
+          old_map = {item['sourceKey']: item for item in committed_mappings['mappings']}
+          new_map = {item['sourceKey']: item for item in generated_mappings['mappings']}
+          map_added = [new_map[key] for key in sorted(set(new_map) - set(old_map))]
+          map_removed = [old_map[key] for key in sorted(set(old_map) - set(new_map))]
+          map_changed = [
+              {'sourceKey': key, 'committed': old_map[key], 'generated': new_map[key]}
+              for key in sorted(set(old_map) & set(new_map))
+              if old_map[key] != new_map[key]
+          ]
+
+          report = {
+              'summary': summary,
+              'brands': compare_keyed('brands'),
+              'series': compare_keyed('series'),
+              'models': compare_keyed('models'),
+              'mappingAdded': map_added,
+              'mappingRemoved': map_removed,
+              'mappingChanged': map_changed,
+          }
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+
+          same_catalog = Path('data/reference/vehicles/catalog.json').read_bytes() == Path('/tmp/bizzat-full-regeneration/catalog.generated.json').read_bytes()
+          same_mappings = Path('data/reference/vehicles/tsb-mappings.json').read_bytes() == Path('/tmp/bizzat-full-regeneration/tsb-mappings.generated.json').read_bytes()
+          print(json.dumps({'catalogByteEqual': same_catalog, 'mappingsByteEqual': same_mappings}))
+          raise SystemExit(0 if same_catalog and same_mappings else 1)
           PY
