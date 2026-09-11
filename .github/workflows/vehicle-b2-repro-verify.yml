@@ -1,0 +1,51 @@
+name: Vehicle B2 Repro Verify
+
+on:
+  push:
+    branches: [feat/vehicle-catalog-phase-b2]
+    paths:
+      - .github/workflows/vehicle-b2-repro-verify.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Restore exact historical acquisition script
+        run: git show b9ae77a6afa57dd3c64b36de6324af13561d7df5:scripts/maintenance/acquire-tsb-source.py > /tmp/acquire-tsb-source.py
+
+      - name: Install acquisition dependencies
+        run: python -m pip install --disable-pip-version-check requests openpyxl
+
+      - name: Reacquire August 2026 normalized TSB snapshot
+        run: python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json
+
+      - name: Verify record count and exact normalized checksum
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          path = Path('/tmp/tsb.normalized.json')
+          payload = path.read_bytes()
+          data = json.loads(payload)
+          digest = hashlib.sha256(payload).hexdigest()
+          count = len(data['records'])
+          version = data['provider']['version']
+          print(json.dumps({'version': version, 'records': count, 'sha256': digest}, ensure_ascii=False))
+          assert version == '2026-08', version
+          assert count == 27906, count
+          assert digest == '768140c3952ced1eb614eb0dfb57c519e6b127109591b862d629adf84d34b550', digest
+          PY
