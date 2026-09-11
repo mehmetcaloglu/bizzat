@@ -1,5 +1,6 @@
 name: Vehicle B2 Repro Verify
 
+# Temporary merge-gate workflow; remove after exact regeneration is proven.
 on:
   push:
     branches: [feat/vehicle-catalog-phase-b2]
