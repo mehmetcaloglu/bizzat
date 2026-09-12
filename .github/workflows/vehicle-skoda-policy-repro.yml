@@ -1,0 +1,162 @@
+name: Vehicle Skoda Policy Repro
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-1
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Acquire current August 2026 TSB snapshot
+        run: |
+          python -m pip install --disable-pip-version-check requests openpyxl
+          curl -fsSL \
+            https://raw.githubusercontent.com/mehmetcaloglu/bizzat/b9ae77a6afa57dd3c64b36de6324af13561d7df5/scripts/maintenance/acquire-tsb-source.py \
+            -o /tmp/acquire-tsb-source.py
+          python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json
+          python - <<'PY'
+          import hashlib, json
+          raw = open('/tmp/tsb.normalized.json', 'rb').read()
+          data = json.loads(raw)
+          print(json.dumps({
+            'version': data['provider']['version'],
+            'records': len(data['records']),
+            'sha256': hashlib.sha256(raw).hexdigest(),
+          }))
+          assert data['provider']['version'] == '2026-08'
+          assert len(data['records']) == 27906
+          PY
+
+      - name: Fetch pinned bootstrap
+        run: |
+          curl -fsSL \
+            https://raw.githubusercontent.com/serhatkildaci/global-car-models/44da5c9e5e0f3162d65579033f7a641473308b11/data/models.json \
+            -o /tmp/bootstrap-models.json
+
+      - name: Full regenerate with reviewed baseline
+        run: |
+          pnpm reference:generate:vehicle-catalog -- \
+            /tmp/tsb.normalized.json \
+            data/reference/vehicles/brand-aliases.json \
+            data/reference/vehicles/series-aliases.json \
+            /tmp/bootstrap-models.json \
+            /tmp/skoda-policy-repro \
+            2026-09-10.3 \
+            data/reference/vehicles
+
+      - name: Verify conservative delta
+        run: |
+          python - <<'PY'
+          import json, re
+          from collections import Counter, defaultdict
+
+          baseline_catalog = json.load(open('data/reference/vehicles/catalog.json', encoding='utf-8'))
+          baseline_mappings = json.load(open('data/reference/vehicles/tsb-mappings.json', encoding='utf-8'))
+          generated_catalog = json.load(open('/tmp/skoda-policy-repro/catalog.generated.json', encoding='utf-8'))
+          generated_mappings = json.load(open('/tmp/skoda-policy-repro/tsb-mappings.generated.json', encoding='utf-8'))
+          candidates = json.load(open('/tmp/skoda-policy-repro/candidates.json', encoding='utf-8'))
+          summary = json.load(open('/tmp/skoda-policy-repro/summary.json', encoding='utf-8'))
+
+          allowed_series = {'skoda:octavia', 'skoda:superb', 'skoda:fabia', 'skoda:rapid'}
+          forbidden = re.compile(r'\b(?:COMBI|SPACEBACK|4X4|4X2|CR|GREEN\s*TEC|GREENTEC|ACT|MHEV|E-?TEC)\b', re.I)
+
+          old_map = {m['sourceKey']: m['vehicleModelKey'] for m in baseline_mappings['mappings']}
+          new_map = {m['sourceKey']: m['vehicleModelKey'] for m in generated_mappings['mappings']}
+          candidate_by_source = {c['sourceKey']: c for c in candidates}
+
+          changed_existing = {
+            key: {'old': target, 'new': new_map.get(key)}
+            for key, target in old_map.items()
+            if new_map.get(key) != target
+          }
+          assert not changed_existing, changed_existing
+
+          new_source_keys = sorted(set(new_map) - set(old_map))
+          newly_mapped = []
+          forbidden_hits = []
+          wrong_series = []
+          for key in new_source_keys:
+            c = candidate_by_source[key]
+            row = {
+              'sourceKey': key,
+              'seriesKey': c.get('seriesKeyCandidate'),
+              'typeRaw': c['typeRaw'],
+              'vehicleModelKey': new_map[key],
+            }
+            newly_mapped.append(row)
+            if c.get('seriesKeyCandidate') not in allowed_series:
+              wrong_series.append(row)
+            if forbidden.search(c['typeRaw']):
+              forbidden_hits.append(row)
+
+          assert not wrong_series, wrong_series
+          assert not forbidden_hits, forbidden_hits
+
+          old_models = {m['key']: m for m in baseline_catalog['models']}
+          new_models = {m['key']: m for m in generated_catalog['models']}
+          changed_models = {
+            key: {'old': model, 'new': new_models.get(key)}
+            for key, model in old_models.items()
+            if new_models.get(key) != model
+          }
+          assert not changed_models, list(changed_models)[:20]
+
+          stats = {}
+          for series in sorted(allowed_series):
+            rows = [c for c in candidates if c.get('seriesKeyCandidate') == series]
+            old_mapped = sum(c['sourceKey'] in old_map for c in rows)
+            new_mapped = sum(c['sourceKey'] in new_map for c in rows)
+            remaining_review = sum(c.get('modelStatus') == 'model-review' for c in rows)
+            new_leaves = sorted({new_map[c['sourceKey']] for c in rows if c['sourceKey'] in new_map} - set(old_models))
+            stats[series] = {
+              'sourceRows': len(rows),
+              'oldMapped': old_mapped,
+              'newMapped': new_mapped,
+              'newMappings': new_mapped - old_mapped,
+              'remainingReview': remaining_review,
+              'newSelectableLeaves': len(new_leaves),
+            }
+
+          report = {
+            'baselineMappings': len(old_map),
+            'generatedMappings': len(new_map),
+            'newMappings': len(new_source_keys),
+            'baselineModels': len(old_models),
+            'generatedModels': len(new_models),
+            'newModels': len(set(new_models) - set(old_models)),
+            'summary': summary,
+            'targetSeries': stats,
+            'newlyMapped': newly_mapped,
+          }
+          json.dump(report, open('/tmp/skoda-policy-repro/delta-report.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+          print(json.dumps({k: v for k, v in report.items() if k != 'newlyMapped'}, ensure_ascii=False, indent=2))
+          print('newlyMapped:')
+          for row in newly_mapped:
+            print(json.dumps(row, ensure_ascii=False))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skoda-policy-repro
+          path: /tmp/skoda-policy-repro
+          retention-days: 1
