@@ -1,0 +1,137 @@
+{
+  "version": "2026-09-09.2",
+  "aliases": [
+    {
+      "raw": "ALFA ROMEO",
+      "brandKey": "alfa-romeo"
+    },
+    {
+      "raw": "BYD",
+      "brandKey": "byd"
+    },
+    {
+      "raw": "CHERY",
+      "brandKey": "chery"
+    },
+    {
+      "raw": "CHEVROLET",
+      "brandKey": "chevrolet"
+    },
+    {
+      "raw": "CITROEN",
+      "brandKey": "citroen"
+    },
+    {
+      "raw": "CUPRA",
+      "brandKey": "cupra"
+    },
+    {
+      "raw": "DS",
+      "brandKey": "ds"
+    },
+    {
+      "raw": "DACIA",
+      "brandKey": "dacia"
+    },
+    {
+      "raw": "TOFAS-FIAT",
+      "brandKey": "fiat"
+    },
+    {
+      "raw": "FIAT",
+      "brandKey": "fiat"
+    },
+    {
+      "raw": "FORD",
+      "brandKey": "ford"
+    },
+    {
+      "raw": "FORD /USA",
+      "brandKey": "ford"
+    },
+    {
+      "raw": "HONDA",
+      "brandKey": "honda"
+    },
+    {
+      "raw": "HYUNDAI",
+      "brandKey": "hyundai"
+    },
+    {
+      "raw": "KIA",
+      "brandKey": "kia"
+    },
+    {
+      "raw": "MINI",
+      "brandKey": "mini"
+    },
+    {
+      "raw": "MAZDA",
+      "brandKey": "mazda"
+    },
+    {
+      "raw": "MITSUBISHI",
+      "brandKey": "mitsubishi"
+    },
+    {
+      "raw": "NISSAN",
+      "brandKey": "nissan"
+    },
+    {
+      "raw": "OPEL",
+      "brandKey": "opel"
+    },
+    {
+      "raw": "PEUGEOT",
+      "brandKey": "peugeot"
+    },
+    {
+      "raw": "RENAULT",
+      "brandKey": "renault"
+    },
+    {
+      "raw": "RENAULT (OYAK)",
+      "brandKey": "renault"
+    },
+    {
+      "raw": "SEAT",
+      "brandKey": "seat"
+    },
+    {
+      "raw": "SKODA",
+      "brandKey": "skoda"
+    },
+    {
+      "raw": "SUBARU",
+      "brandKey": "subaru"
+    },
+    {
+      "raw": "SUZUKI",
+      "brandKey": "suzuki"
+    },
+    {
+      "raw": "TESLA",
+      "brandKey": "tesla"
+    },
+    {
+      "raw": "TOYOTA",
+      "brandKey": "toyota"
+    },
+    {
+      "raw": "VOLKSWAGEN",
+      "brandKey": "volkswagen"
+    },
+    {
+      "raw": "BMW",
+      "brandKey": "bmw"
+    },
+    {
+      "raw": "MERCEDES",
+      "brandKey": "mercedes-benz"
+    },
+    {
+      "raw": "AUDI",
+      "brandKey": "audi"
+    }
+  ]
+}

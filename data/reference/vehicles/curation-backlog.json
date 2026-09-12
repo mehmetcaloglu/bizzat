@@ -1,0 +1,1637 @@
+{
+  "version": "2026-09-10.3",
+  "sourcePeriod": "2026-08",
+  "measurement": "Unresolved source-row counts, including unreviewed or out-of-MVP aliases; not missing-model counts or Turkish passenger-car completeness percentages.",
+  "sourceRecords": 27906,
+  "unassignedByReason": {
+    "ambiguous-series": 21,
+    "no-series": 7051,
+    "unknown-brand": 13955
+  },
+  "series": [
+    {
+      "seriesKey": "ford:focus",
+      "sourceRecords": 218,
+      "mappedSourceCodes": 6,
+      "modelReviewRequired": 212,
+      "excludedSourceCodes": 0,
+      "selectableModels": 4
+    },
+    {
+      "seriesKey": "opel:astra",
+      "sourceRecords": 195,
+      "mappedSourceCodes": 4,
+      "modelReviewRequired": 191,
+      "excludedSourceCodes": 0,
+      "selectableModels": 3
+    },
+    {
+      "seriesKey": "renault:megane",
+      "sourceRecords": 187,
+      "mappedSourceCodes": 8,
+      "modelReviewRequired": 179,
+      "excludedSourceCodes": 0,
+      "selectableModels": 4
+    },
+    {
+      "seriesKey": "bmw:4-serisi",
+      "sourceRecords": 168,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 168,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mercedes-benz:e-serisi",
+      "sourceRecords": 162,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 161,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "bmw:5-serisi",
+      "sourceRecords": 159,
+      "mappedSourceCodes": 7,
+      "modelReviewRequired": 152,
+      "excludedSourceCodes": 0,
+      "selectableModels": 7
+    },
+    {
+      "seriesKey": "opel:corsa",
+      "sourceRecords": 135,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 135,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:i20",
+      "sourceRecords": 139,
+      "mappedSourceCodes": 12,
+      "modelReviewRequired": 127,
+      "excludedSourceCodes": 0,
+      "selectableModels": 12
+    },
+    {
+      "seriesKey": "opel:insignia",
+      "sourceRecords": 126,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 126,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:passat",
+      "sourceRecords": 126,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 126,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "fiat:egea",
+      "sourceRecords": 196,
+      "mappedSourceCodes": 83,
+      "modelReviewRequired": 113,
+      "excludedSourceCodes": 0,
+      "selectableModels": 36
+    },
+    {
+      "seriesKey": "skoda:octavia",
+      "sourceRecords": 113,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 113,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:a4",
+      "sourceRecords": 120,
+      "mappedSourceCodes": 9,
+      "modelReviewRequired": 111,
+      "excludedSourceCodes": 0,
+      "selectableModels": 7
+    },
+    {
+      "seriesKey": "audi:a5",
+      "sourceRecords": 106,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 106,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "bmw:7-serisi",
+      "sourceRecords": 100,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 99,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "honda:civic",
+      "sourceRecords": 101,
+      "mappedSourceCodes": 2,
+      "modelReviewRequired": 99,
+      "excludedSourceCodes": 0,
+      "selectableModels": 2
+    },
+    {
+      "seriesKey": "mercedes-benz:c-serisi",
+      "sourceRecords": 136,
+      "mappedSourceCodes": 42,
+      "modelReviewRequired": 94,
+      "excludedSourceCodes": 0,
+      "selectableModels": 31
+    },
+    {
+      "seriesKey": "mercedes-benz:s-serisi",
+      "sourceRecords": 91,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 90,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "citroen:c3",
+      "sourceRecords": 90,
+      "mappedSourceCodes": 4,
+      "modelReviewRequired": 86,
+      "excludedSourceCodes": 0,
+      "selectableModels": 4
+    },
+    {
+      "seriesKey": "audi:a6",
+      "sourceRecords": 84,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 84,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "kia:ceed",
+      "sourceRecords": 84,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 84,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mini:cooper",
+      "sourceRecords": 83,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 83,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "peugeot:208",
+      "sourceRecords": 82,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 82,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:a3",
+      "sourceRecords": 157,
+      "mappedSourceCodes": 79,
+      "modelReviewRequired": 78,
+      "excludedSourceCodes": 0,
+      "selectableModels": 46
+    },
+    {
+      "seriesKey": "skoda:superb",
+      "sourceRecords": 77,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 77,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "bmw:1-serisi",
+      "sourceRecords": 76,
+      "mappedSourceCodes": 6,
+      "modelReviewRequired": 70,
+      "excludedSourceCodes": 0,
+      "selectableModels": 6
+    },
+    {
+      "seriesKey": "citroen:c4",
+      "sourceRecords": 69,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 69,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "bmw:2-serisi",
+      "sourceRecords": 66,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 66,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "toyota:yaris",
+      "sourceRecords": 91,
+      "mappedSourceCodes": 26,
+      "modelReviewRequired": 65,
+      "excludedSourceCodes": 0,
+      "selectableModels": 26
+    },
+    {
+      "seriesKey": "ford:fiesta",
+      "sourceRecords": 64,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 63,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "seat:leon",
+      "sourceRecords": 62,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 62,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "bmw:3-serisi",
+      "sourceRecords": 172,
+      "mappedSourceCodes": 111,
+      "modelReviewRequired": 61,
+      "excludedSourceCodes": 0,
+      "selectableModels": 102
+    },
+    {
+      "seriesKey": "renault:fluence",
+      "sourceRecords": 61,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 61,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:i30",
+      "sourceRecords": 66,
+      "mappedSourceCodes": 6,
+      "modelReviewRequired": 60,
+      "excludedSourceCodes": 0,
+      "selectableModels": 6
+    },
+    {
+      "seriesKey": "peugeot:508",
+      "sourceRecords": 60,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 60,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "seat:ibiza",
+      "sourceRecords": 67,
+      "mappedSourceCodes": 7,
+      "modelReviewRequired": 60,
+      "excludedSourceCodes": 0,
+      "selectableModels": 3
+    },
+    {
+      "seriesKey": "mercedes-benz:a-serisi",
+      "sourceRecords": 64,
+      "mappedSourceCodes": 7,
+      "modelReviewRequired": 57,
+      "excludedSourceCodes": 0,
+      "selectableModels": 7
+    },
+    {
+      "seriesKey": "mini:countryman",
+      "sourceRecords": 57,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 57,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:golf",
+      "sourceRecords": 104,
+      "mappedSourceCodes": 47,
+      "modelReviewRequired": 57,
+      "excludedSourceCodes": 0,
+      "selectableModels": 24
+    },
+    {
+      "seriesKey": "citroen:c5",
+      "sourceRecords": 54,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 54,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "kia:rio",
+      "sourceRecords": 54,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 54,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "dacia:sandero",
+      "sourceRecords": 57,
+      "mappedSourceCodes": 5,
+      "modelReviewRequired": 52,
+      "excludedSourceCodes": 0,
+      "selectableModels": 5
+    },
+    {
+      "seriesKey": "bmw:6-serisi",
+      "sourceRecords": 50,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 50,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "renault:clio",
+      "sourceRecords": 145,
+      "mappedSourceCodes": 95,
+      "modelReviewRequired": 50,
+      "excludedSourceCodes": 0,
+      "selectableModels": 51
+    },
+    {
+      "seriesKey": "skoda:fabia",
+      "sourceRecords": 50,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 50,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "chevrolet:cruze",
+      "sourceRecords": 48,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 48,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "dacia:logan",
+      "sourceRecords": 51,
+      "mappedSourceCodes": 4,
+      "modelReviewRequired": 47,
+      "excludedSourceCodes": 0,
+      "selectableModels": 4
+    },
+    {
+      "seriesKey": "fiat:bravo",
+      "sourceRecords": 47,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 47,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mercedes-benz:cla-serisi",
+      "sourceRecords": 47,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 47,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "skoda:rapid",
+      "sourceRecords": 47,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 47,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:jetta",
+      "sourceRecords": 46,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 46,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mercedes-benz:b-serisi",
+      "sourceRecords": 45,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 44,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "fiat:linea",
+      "sourceRecords": 41,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 41,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "fiat:punto",
+      "sourceRecords": 41,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 41,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ford:mondeo",
+      "sourceRecords": 41,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 41,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "toyota:auris",
+      "sourceRecords": 53,
+      "mappedSourceCodes": 16,
+      "modelReviewRequired": 37,
+      "excludedSourceCodes": 0,
+      "selectableModels": 16
+    },
+    {
+      "seriesKey": "renault:symbol",
+      "sourceRecords": 34,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 34,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:a8",
+      "sourceRecords": 33,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 33,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:elantra",
+      "sourceRecords": 38,
+      "mappedSourceCodes": 5,
+      "modelReviewRequired": 33,
+      "excludedSourceCodes": 0,
+      "selectableModels": 5
+    },
+    {
+      "seriesKey": "fiat:panda",
+      "sourceRecords": 33,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 32,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "chevrolet:aveo",
+      "sourceRecords": 31,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 31,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "nissan:micra",
+      "sourceRecords": 33,
+      "mappedSourceCodes": 2,
+      "modelReviewRequired": 31,
+      "excludedSourceCodes": 0,
+      "selectableModels": 2
+    },
+    {
+      "seriesKey": "toyota:corolla",
+      "sourceRecords": 99,
+      "mappedSourceCodes": 70,
+      "modelReviewRequired": 29,
+      "excludedSourceCodes": 0,
+      "selectableModels": 38
+    },
+    {
+      "seriesKey": "hyundai:i10",
+      "sourceRecords": 34,
+      "mappedSourceCodes": 6,
+      "modelReviewRequired": 28,
+      "excludedSourceCodes": 0,
+      "selectableModels": 6
+    },
+    {
+      "seriesKey": "peugeot:207",
+      "sourceRecords": 28,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 28,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ford:b-max",
+      "sourceRecords": 27,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 27,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mazda:mx-5",
+      "sourceRecords": 26,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 26,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mercedes-benz:cls-serisi",
+      "sourceRecords": 28,
+      "mappedSourceCodes": 2,
+      "modelReviewRequired": 26,
+      "excludedSourceCodes": 0,
+      "selectableModels": 2
+    },
+    {
+      "seriesKey": "mini:clubman",
+      "sourceRecords": 25,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 25,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ford:mustang",
+      "sourceRecords": 25,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 24,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "hyundai:accent-blue",
+      "sourceRecords": 28,
+      "mappedSourceCodes": 4,
+      "modelReviewRequired": 24,
+      "excludedSourceCodes": 0,
+      "selectableModels": 4
+    },
+    {
+      "seriesKey": "citroen:c-elysee",
+      "sourceRecords": 23,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 23,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "dacia:lodgy",
+      "sourceRecords": 23,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 23,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ds:ds-7",
+      "sourceRecords": 22,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 22,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "opel:zafira",
+      "sourceRecords": 22,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 22,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "renault:scenic",
+      "sourceRecords": 22,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 22,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "toyota:avensis",
+      "sourceRecords": 32,
+      "mappedSourceCodes": 11,
+      "modelReviewRequired": 21,
+      "excludedSourceCodes": 0,
+      "selectableModels": 11
+    },
+    {
+      "seriesKey": "audi:a1",
+      "sourceRecords": 20,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 20,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "alfa-romeo:giulietta",
+      "sourceRecords": 19,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 19,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:s3",
+      "sourceRecords": 19,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 19,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:tt",
+      "sourceRecords": 19,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 19,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "opel:meriva",
+      "sourceRecords": 19,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 19,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "peugeot:301",
+      "sourceRecords": 19,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 19,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ford:c-max",
+      "sourceRecords": 18,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 18,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:accent-era",
+      "sourceRecords": 20,
+      "mappedSourceCodes": 2,
+      "modelReviewRequired": 18,
+      "excludedSourceCodes": 0,
+      "selectableModels": 2
+    },
+    {
+      "seriesKey": "kia:cerato",
+      "sourceRecords": 18,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 18,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "honda:jazz",
+      "sourceRecords": 21,
+      "mappedSourceCodes": 5,
+      "modelReviewRequired": 16,
+      "excludedSourceCodes": 0,
+      "selectableModels": 5
+    },
+    {
+      "seriesKey": "audi:a7",
+      "sourceRecords": 15,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 15,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:s5",
+      "sourceRecords": 15,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 15,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "citroen:c4-picasso",
+      "sourceRecords": 15,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 15,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:r8",
+      "sourceRecords": 14,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 14,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "citroen:c4-x",
+      "sourceRecords": 14,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 14,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:scirocco",
+      "sourceRecords": 14,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 14,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:cc",
+      "sourceRecords": 13,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 13,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "kia:picanto",
+      "sourceRecords": 12,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 12,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "opel:adam",
+      "sourceRecords": 15,
+      "mappedSourceCodes": 3,
+      "modelReviewRequired": 12,
+      "excludedSourceCodes": 0,
+      "selectableModels": 3
+    },
+    {
+      "seriesKey": "renault:latitude",
+      "sourceRecords": 12,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 12,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "seat:toledo",
+      "sourceRecords": 12,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 12,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "suzuki:swift",
+      "sourceRecords": 16,
+      "mappedSourceCodes": 4,
+      "modelReviewRequired": 12,
+      "excludedSourceCodes": 0,
+      "selectableModels": 3
+    },
+    {
+      "seriesKey": "tesla:model-s",
+      "sourceRecords": 12,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 12,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "skoda:scala",
+      "sourceRecords": 11,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 11,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:beetle",
+      "sourceRecords": 11,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 11,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "chevrolet:camaro",
+      "sourceRecords": 10,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 10,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "citroen:ds3",
+      "sourceRecords": 10,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 10,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "nissan:note",
+      "sourceRecords": 15,
+      "mappedSourceCodes": 5,
+      "modelReviewRequired": 10,
+      "excludedSourceCodes": 0,
+      "selectableModels": 5
+    },
+    {
+      "seriesKey": "toyota:verso",
+      "sourceRecords": 25,
+      "mappedSourceCodes": 15,
+      "modelReviewRequired": 10,
+      "excludedSourceCodes": 0,
+      "selectableModels": 15
+    },
+    {
+      "seriesKey": "volkswagen:polo",
+      "sourceRecords": 39,
+      "mappedSourceCodes": 29,
+      "modelReviewRequired": 10,
+      "excludedSourceCodes": 0,
+      "selectableModels": 20
+    },
+    {
+      "seriesKey": "alfa-romeo:giulia",
+      "sourceRecords": 9,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "alfa-romeo:mito",
+      "sourceRecords": 9,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "citroen:ds5",
+      "sourceRecords": 9,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ds:ds-4",
+      "sourceRecords": 9,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mazda:cx-5",
+      "sourceRecords": 9,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mercedes-benz:sl-serisi",
+      "sourceRecords": 10,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "peugeot:308",
+      "sourceRecords": 76,
+      "mappedSourceCodes": 67,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 48
+    },
+    {
+      "seriesKey": "renault:talisman",
+      "sourceRecords": 9,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "bmw:8-serisi",
+      "sourceRecords": 8,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 8,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "citroen:ds4",
+      "sourceRecords": 8,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 8,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "cupra:leon",
+      "sourceRecords": 8,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 8,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:ioniq5",
+      "sourceRecords": 8,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 8,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:matrix",
+      "sourceRecords": 8,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 8,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mercedes-benz:slk-serisi",
+      "sourceRecords": 9,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 8,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "peugeot:206",
+      "sourceRecords": 8,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 8,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "renault:laguna",
+      "sourceRecords": 8,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 8,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:rs3",
+      "sourceRecords": 7,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 7,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:s4",
+      "sourceRecords": 7,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 7,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mazda:cx-3",
+      "sourceRecords": 7,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 7,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mitsubishi:lancer",
+      "sourceRecords": 10,
+      "mappedSourceCodes": 3,
+      "modelReviewRequired": 7,
+      "excludedSourceCodes": 0,
+      "selectableModels": 3
+    },
+    {
+      "seriesKey": "nissan:pulsar",
+      "sourceRecords": 7,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 7,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "peugeot:rcz",
+      "sourceRecords": 7,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 7,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "skoda:roomster",
+      "sourceRecords": 7,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 7,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "toyota:prius",
+      "sourceRecords": 7,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 7,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "chevrolet:corvette",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 6,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "fiat:albea",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 6,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "fiat:palio",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 6,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:getz",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 6,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "kia:soul",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 6,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "toyota:camry",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 6,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:arteon",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 6,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:s8",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "byd:seal",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "chevrolet:spark",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "citroen:c1",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:coupe",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:ioniq6",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mitsubishi:colt",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "renault:zoe",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "seat:altea",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "subaru:impreza",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "subaru:legacy",
+      "sourceRecords": 5,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 5,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:rs6",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:rs7",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:s6",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "honda:city",
+      "sourceRecords": 6,
+      "mappedSourceCodes": 2,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 2
+    },
+    {
+      "seriesKey": "hyundai:ioniq",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:ix20",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mercedes-benz:cle-serisi",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mini:one",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "peugeot:107",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 4,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "alfa-romeo:156",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:rs5",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ds:ds-3",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "honda:accord",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:i40",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:sonata",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "mercedes-benz:slc-serisi",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "subaru:levorg",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "suzuki:baleno",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "volkswagen:id4",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:up",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 3,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:rs4",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "audi:s7",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "byd:dolphin",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ford:fusion",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "ford:ka",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "honda:cr-z",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "kia:optima",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mercedes-benz:cl-serisi",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mini:paceman",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "opel:cascada",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "peugeot:407",
+      "sourceRecords": 4,
+      "mappedSourceCodes": 2,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 2
+    },
+    {
+      "seriesKey": "skoda:citigo",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "subaru:brz",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "toyota:supra",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 2,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "alfa-romeo:159",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "byd:han",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "chevrolet:epica",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "chevrolet:lacetti",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "citroen:c5-x",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "cupra:born",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "ds:ds-9",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "honda:prelude",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "hyundai:ix55",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "kia:magentis",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "mazda:cx-60",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "nissan:leaf",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "suzuki:alto",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "suzuki:splash",
+      "sourceRecords": 2,
+      "mappedSourceCodes": 1,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 1
+    },
+    {
+      "seriesKey": "toyota:gt86",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:eos",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:id3",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:id7",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "volkswagen:phaeton",
+      "sourceRecords": 1,
+      "mappedSourceCodes": 0,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 0
+    },
+    {
+      "seriesKey": "tesla:model-3",
+      "sourceRecords": 3,
+      "mappedSourceCodes": 3,
+      "modelReviewRequired": 0,
+      "excludedSourceCodes": 0,
+      "selectableModels": 3
+    }
+  ]
+}
