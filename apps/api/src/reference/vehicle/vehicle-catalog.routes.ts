@@ -2,6 +2,7 @@ import {
   ApiErrorResponseSchema,
   ReferenceVehicleBrandListResponseSchema,
   ReferenceVehicleModelListResponseSchema,
+  ReferenceVehicleSelectionListResponseSchema,
   ReferenceVehicleSeriesListResponseSchema,
 } from '@bizzat/contracts'
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
@@ -21,6 +22,10 @@ const BrandParamsSchema = Type.Object({
 
 const SeriesParamsSchema = Type.Object({
   seriesId: Type.String({ format: 'uuid' }),
+})
+
+const SelectionQuerySchema = Type.Object({
+  parentKey: Type.Optional(Type.String({ minLength: 1 })),
 })
 
 export const vehicleCatalogRoutes: FastifyPluginAsyncTypebox<VehicleCatalogRoutesOptions> = async (
@@ -57,5 +62,18 @@ export const vehicleCatalogRoutes: FastifyPluginAsyncTypebox<VehicleCatalogRoute
     },
   }, async (request) => ({
     items: await service.listModels(request.params.seriesId),
+  }))
+
+  app.get('/reference/vehicle/series/:seriesId/selection', {
+    schema: {
+      params: SeriesParamsSchema,
+      querystring: SelectionQuerySchema,
+      response: {
+        200: ReferenceVehicleSelectionListResponseSchema,
+        404: ApiErrorResponseSchema,
+      },
+    },
+  }, async (request) => ({
+    items: await service.listSelection(request.params.seriesId, request.query.parentKey),
   }))
 }

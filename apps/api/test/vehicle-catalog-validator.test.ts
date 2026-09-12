@@ -13,7 +13,15 @@ function validCatalog(): unknown {
       { key: 'fiat:egea', brandKey: 'fiat', name: 'Egea' },
     ],
     models: [
-      { key: 'renault:clio:1-0-tce-joy', seriesKey: 'renault:clio', name: '1.0 TCe Joy' },
+      {
+        key: 'renault:clio:1-0-tce-joy',
+        seriesKey: 'renault:clio',
+        name: '1.0 TCe Joy',
+        selectionPath: [
+          { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+          { key: 'renault:clio:1-0-tce-joy', name: 'Joy' },
+        ],
+      },
       { key: 'fiat:egea:1-4-fire-easy', seriesKey: 'fiat:egea', name: '1.4 Fire Easy' },
     ],
   }
@@ -24,7 +32,7 @@ function expectInvalid(value: unknown): void {
 }
 
 describe('vehicle catalog validator', () => {
-  it('accepts a valid catalog and narrows unknown input', () => {
+  it('accepts selection paths and legacy models without a path', () => {
     const value = validCatalog()
     expect(() => validateVehicleCatalog(value)).not.toThrow()
   })
@@ -74,6 +82,137 @@ describe('vehicle catalog validator', () => {
   it('rejects a model whose seriesKey does not exist', () => {
     const value = validCatalog() as { models: Array<{ key: string; seriesKey: string; name: string }> }
     value.models[0]!.seriesKey = 'missing-series'
+    expectInvalid(value)
+  })
+
+  it.each([
+    null,
+    {},
+    [],
+    ['invalid-node'],
+    [{ key: 'node-only' }],
+    [{ name: 'Name only' }],
+    [{ key: '   ', name: 'Blank key' }],
+    [{ key: 'blank-name', name: '   ' }],
+  ])('rejects a malformed selection path: %o', (selectionPath) => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models[0]!.selectionPath = selectionPath
+    expectInvalid(value)
+  })
+
+  it('requires the terminal selection key to equal the model key', () => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models[0]!.selectionPath = [
+      { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+      { key: 'renault:clio:different-leaf', name: 'Joy' },
+    ]
+    expectInvalid(value)
+  })
+
+  it('rejects duplicate keys within one selection path', () => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models[0]!.selectionPath = [
+      { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+      { key: 'renault:clio:1-0-tce', name: 'Cycle' },
+      { key: 'renault:clio:1-0-tce-joy', name: 'Joy' },
+    ]
+    expectInvalid(value)
+  })
+
+  it('rejects a shared node key with conflicting names', () => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models.push({
+      key: 'renault:clio:1-0-tce-evolution',
+      seriesKey: 'renault:clio',
+      name: '1.0 TCe Evolution',
+      selectionPath: [
+        { key: 'renault:clio:1-0-tce', name: '1.0 TCe Updated' },
+        { key: 'renault:clio:1-0-tce-evolution', name: 'Evolution' },
+      ],
+    })
+    expectInvalid(value)
+  })
+
+  it('rejects a shared node key used by different series', () => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models.push({
+      key: 'fiat:egea:1-0-tce-easy',
+      seriesKey: 'fiat:egea',
+      name: '1.0 TCe Easy',
+      selectionPath: [
+        { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+        { key: 'fiat:egea:1-0-tce-easy', name: 'Easy' },
+      ],
+    })
+    expectInvalid(value)
+  })
+
+  it('rejects a single intermediate node outside its series namespace', () => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models[1] = {
+      key: 'stable-legacy-leaf-key',
+      seriesKey: 'fiat:egea',
+      name: '1.4 Fire Easy',
+      selectionPath: [
+        { key: 'renault:clio:foreign-group', name: '1.4 Fire' },
+        { key: 'stable-legacy-leaf-key', name: 'Easy' },
+      ],
+    }
+    expectInvalid(value)
+  })
+
+  it('rejects a shared node key reached through a different path', () => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models.push({
+      key: 'renault:clio:sport-tourer:1-0-tce-evolution',
+      seriesKey: 'renault:clio',
+      name: 'Sport Tourer 1.0 TCe Evolution',
+      selectionPath: [
+        { key: 'renault:clio:sport-tourer', name: 'Sport Tourer' },
+        { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+        { key: 'renault:clio:sport-tourer:1-0-tce-evolution', name: 'Evolution' },
+      ],
+    })
+    expectInvalid(value)
+  })
+
+  it('rejects a node used as both a terminal model and a branch', () => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models.push({
+      key: 'renault:clio:1-0-tce-joy-plus',
+      seriesKey: 'renault:clio',
+      name: '1.0 TCe Joy Plus',
+      selectionPath: [
+        { key: 'renault:clio:1-0-tce-joy', name: 'Joy' },
+        { key: 'renault:clio:1-0-tce-joy-plus', name: 'Plus' },
+      ],
+    })
+    expectInvalid(value)
+  })
+
+  it.each([
+    {
+      key: 'renault:clio:alternate-engine:joy',
+      selectionPath: [
+        { key: 'renault:clio:alternate-engine', name: ' 1.0 TCe ' },
+        { key: 'renault:clio:alternate-engine:joy', name: 'Joy' },
+      ],
+    },
+    {
+      key: 'renault:clio:1-0-tce:alternate-joy',
+      selectionPath: [
+        { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+        { key: 'renault:clio:1-0-tce:alternate-joy', name: ' Joy ' },
+      ],
+    },
+  ])('rejects duplicate sibling labels with different keys: %o', ({ key, selectionPath }) => {
+    const value = validCatalog() as { models: Array<Record<string, unknown>> }
+    value.models.push({
+      key,
+      seriesKey: 'renault:clio',
+      name: 'Alternate model',
+      selectionPath,
+    })
     expectInvalid(value)
   })
 })

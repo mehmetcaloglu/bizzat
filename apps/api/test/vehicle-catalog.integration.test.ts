@@ -33,8 +33,34 @@ function makeCatalog(): CanonicalVehicleCatalog {
     ],
     models: [
       { key: 'fiat:egea:1-4-fire-easy', seriesKey: 'fiat:egea', name: '1.4 Fire Easy' },
-      { key: 'renault:clio:1-0-tce-evolution', seriesKey: 'renault:clio', name: '1.0 TCe Evolution' },
-      { key: 'renault:clio:1-0-tce-joy', seriesKey: 'renault:clio', name: '1.0 TCe Joy' },
+      {
+        key: 'renault:clio:1-0-tce-evolution',
+        seriesKey: 'renault:clio',
+        name: '1.0 TCe Evolution',
+        selectionPath: [
+          { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+          { key: 'renault:clio:1-0-tce-evolution', name: 'Evolution' },
+        ],
+      },
+      {
+        key: 'renault:clio:1-0-tce-joy',
+        seriesKey: 'renault:clio',
+        name: '1.0 TCe Joy',
+        selectionPath: [
+          { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+          { key: 'renault:clio:1-0-tce-joy', name: 'Joy' },
+        ],
+      },
+      {
+        key: 'renault:clio:sport-tourer:0-9-tce-touch',
+        seriesKey: 'renault:clio',
+        name: '0.9 TCe Sport Tourer Touch',
+        selectionPath: [
+          { key: 'renault:clio:sport-tourer', name: 'Sport Tourer' },
+          { key: 'renault:clio:sport-tourer:0-9-tce', name: '0.9 TCe' },
+          { key: 'renault:clio:sport-tourer:0-9-tce-touch', name: 'Touch' },
+        ],
+      },
     ],
   }
 }
@@ -85,20 +111,40 @@ describe('vehicle catalog schema', () => {
       name: 'Orphan',
     }).execute()).rejects.toThrow()
   })
+
+  it('rejects empty and non-array selection paths at the database boundary', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+    const clio = await db.selectFrom('vehicle_series')
+      .select('id')
+      .where('catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+
+    await expect(db.insertInto('vehicle_models').values({
+      series_id: clio.id,
+      catalog_key: 'renault:clio:invalid-empty',
+      name: 'Invalid empty',
+      selection_path: '[]',
+    }).execute()).rejects.toThrow()
+
+    await expect(sql`
+      insert into vehicle_models (series_id, catalog_key, name, selection_path)
+      values (${clio.id}, 'renault:clio:invalid-object', 'Invalid object', '{}'::jsonb)
+    `.execute(db)).rejects.toThrow()
+  })
 })
 
 describe('vehicle catalog importer', () => {
   it('is idempotent and preserves ids across rename, deactivate and reactivate', async () => {
     const catalog = makeCatalog()
     const first = await importVehicleCatalog(db, catalog)
-    expect(first.counts).toEqual({ brands: 2, series: 2, models: 3 })
+    expect(first.counts).toEqual({ brands: 2, series: 2, models: 4 })
 
     const joyBefore = await db.selectFrom('vehicle_models')
       .select(['id', 'name', 'active'])
       .where('catalog_key', '=', 'renault:clio:1-0-tce-joy')
       .executeTakeFirstOrThrow()
     const evolutionBefore = await db.selectFrom('vehicle_models')
-      .select(['id', 'name'])
+      .select(['id', 'name', 'selection_path'])
       .where('catalog_key', '=', 'renault:clio:1-0-tce-evolution')
       .executeTakeFirstOrThrow()
 
@@ -108,20 +154,33 @@ describe('vehicle catalog importer', () => {
       db.selectFrom('vehicle_series').select(({ fn }) => fn.countAll<number>().as('count')).executeTakeFirstOrThrow(),
       db.selectFrom('vehicle_models').select(({ fn }) => fn.countAll<number>().as('count')).executeTakeFirstOrThrow(),
     ])
-    expect(counts.map((row) => Number(row.count))).toEqual([2, 2, 3])
+    expect(counts.map((row) => Number(row.count))).toEqual([2, 2, 4])
 
     catalog.version = 'fixture-2'
     catalog.models.find((item) => item.key === 'renault:clio:1-0-tce-evolution')!.name = '1.0 TCe Evolution Updated'
+    Object.assign(
+      catalog.models.find((item) => item.key === 'renault:clio:1-0-tce-evolution')!,
+      {
+        selectionPath: [
+          { key: 'renault:clio:updated-engine', name: 'Updated engine' },
+          { key: 'renault:clio:1-0-tce-evolution', name: 'Evolution Updated' },
+        ],
+      },
+    )
     catalog.models = catalog.models.filter((item) => item.key !== 'renault:clio:1-0-tce-joy')
     await importVehicleCatalog(db, catalog)
 
     const evolutionAfter = await db.selectFrom('vehicle_models')
-      .select(['id', 'name'])
+      .select(['id', 'name', 'selection_path'])
       .where('catalog_key', '=', 'renault:clio:1-0-tce-evolution')
       .executeTakeFirstOrThrow()
     expect(evolutionAfter).toEqual({
       id: evolutionBefore.id,
       name: '1.0 TCe Evolution Updated',
+      selection_path: [
+        { key: 'renault:clio:updated-engine', name: 'Updated engine' },
+        { key: 'renault:clio:1-0-tce-evolution', name: 'Evolution Updated' },
+      ],
     })
 
     const joyInactive = await db.selectFrom('vehicle_models')
@@ -135,6 +194,10 @@ describe('vehicle catalog importer', () => {
       key: 'renault:clio:1-0-tce-joy',
       seriesKey: 'renault:clio',
       name: '1.0 TCe Joy',
+      selectionPath: [
+        { key: 'renault:clio:1-0-tce', name: '1.0 TCe' },
+        { key: 'renault:clio:1-0-tce-joy', name: 'Joy' },
+      ],
     })
     await importVehicleCatalog(db, catalog)
 
@@ -143,6 +206,67 @@ describe('vehicle catalog importer', () => {
       .where('catalog_key', '=', 'renault:clio:1-0-tce-joy')
       .executeTakeFirstOrThrow()
     expect(joyReactivated).toEqual({ id: joyBefore.id, active: true })
+  })
+
+  it('rejects model reparenting and rolls back earlier updates', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+    const before = await db.selectFrom('vehicle_models')
+      .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
+      .select(['vehicle_models.id', 'vehicle_series.catalog_key as series_key'])
+      .where('vehicle_models.catalog_key', '=', 'renault:clio:1-0-tce-joy')
+      .executeTakeFirstOrThrow()
+
+    const reparented = makeCatalog()
+    reparented.brands.find((brand) => brand.key === 'renault')!.name = 'Renault Changed'
+    const joy = reparented.models.find((model) => model.key === 'renault:clio:1-0-tce-joy')!
+    joy.seriesKey = 'fiat:egea'
+    joy.selectionPath = [
+      { key: 'fiat:egea:1-0-tce', name: '1.0 TCe' },
+      { key: joy.key, name: 'Joy' },
+    ]
+
+    await expect(importVehicleCatalog(db, reparented)).rejects.toThrow(
+      'Cannot reparent vehicle model renault:clio:1-0-tce-joy',
+    )
+
+    const after = await db.selectFrom('vehicle_models')
+      .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
+      .select(['vehicle_models.id', 'vehicle_series.catalog_key as series_key'])
+      .where('vehicle_models.catalog_key', '=', 'renault:clio:1-0-tce-joy')
+      .executeTakeFirstOrThrow()
+    expect(after).toEqual(before)
+    await expect(db.selectFrom('vehicle_brands')
+      .select('name')
+      .where('catalog_key', '=', 'renault')
+      .executeTakeFirstOrThrow()).resolves.toEqual({ name: 'Renault' })
+  })
+
+  it('rejects series reparenting and rolls back earlier updates', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+    const before = await db.selectFrom('vehicle_series')
+      .innerJoin('vehicle_brands', 'vehicle_brands.id', 'vehicle_series.brand_id')
+      .select(['vehicle_series.id', 'vehicle_brands.catalog_key as brand_key'])
+      .where('vehicle_series.catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+
+    const reparented = makeCatalog()
+    reparented.brands.find((brand) => brand.key === 'renault')!.name = 'Renault Changed'
+    reparented.series.find((series) => series.key === 'renault:clio')!.brandKey = 'fiat'
+
+    await expect(importVehicleCatalog(db, reparented)).rejects.toThrow(
+      'Cannot reparent vehicle series renault:clio',
+    )
+
+    const after = await db.selectFrom('vehicle_series')
+      .innerJoin('vehicle_brands', 'vehicle_brands.id', 'vehicle_series.brand_id')
+      .select(['vehicle_series.id', 'vehicle_brands.catalog_key as brand_key'])
+      .where('vehicle_series.catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+    expect(after).toEqual(before)
+    await expect(db.selectFrom('vehicle_brands')
+      .select('name')
+      .where('catalog_key', '=', 'renault')
+      .executeTakeFirstOrThrow()).resolves.toEqual({ name: 'Renault' })
   })
 
   it('rejects invalid catalogs before changing working data', async () => {
@@ -164,6 +288,22 @@ describe('vehicle catalog importer', () => {
       .orderBy('catalog_key')
       .execute()
     expect(after).toEqual(before)
+
+    const malformedPathCatalog: unknown = {
+      ...makeCatalog(),
+      models: makeCatalog().models.map((model, index) => index === 0
+        ? { ...model, selectionPath: [] }
+        : model),
+    }
+    await expect(importVehicleCatalog(db, malformedPathCatalog)).rejects.toMatchObject({
+      code: 'VEHICLE_CATALOG_INVALID',
+    })
+
+    const afterMalformedPath = await db.selectFrom('vehicle_models')
+      .select(['catalog_key', 'name', 'active'])
+      .orderBy('catalog_key')
+      .execute()
+    expect(afterMalformedPath).toEqual(before)
   })
 })
 
@@ -199,10 +339,145 @@ describe('vehicle catalog reference API', () => {
     })
     expect(models.statusCode).toBe(200)
     expect(models.json().items.map((item: { name: string }) => item.name)).toEqual([
+      '0.9 TCe Sport Tourer Touch',
       '1.0 TCe Evolution',
       '1.0 TCe Joy',
     ])
     expect(models.json().items[0]).not.toHaveProperty('catalog_key')
+  })
+
+  it('walks variable-depth selection paths and falls back to a legacy model leaf', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+    const clio = await db.selectFrom('vehicle_series')
+      .select('id')
+      .where('catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+    const egea = await db.selectFrom('vehicle_series')
+      .select('id')
+      .where('catalog_key', '=', 'fiat:egea')
+      .executeTakeFirstOrThrow()
+    const models = await db.selectFrom('vehicle_models')
+      .select(['id', 'catalog_key'])
+      .execute()
+    const modelIds = new Map(models.map((model) => [model.catalog_key, model.id]))
+
+    const roots = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${clio.id}/selection`,
+    })
+    expect(roots.statusCode).toBe(200)
+    expect(roots.json()).toEqual({
+      items: [
+        { key: 'renault:clio:1-0-tce', name: '1.0 TCe', kind: 'group' },
+        { key: 'renault:clio:sport-tourer', name: 'Sport Tourer', kind: 'group' },
+      ],
+    })
+
+    const engineChildren = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${clio.id}/selection?parentKey=renault%3Aclio%3A1-0-tce`,
+    })
+    expect(engineChildren.statusCode).toBe(200)
+    expect(engineChildren.json()).toEqual({
+      items: [
+        {
+          key: 'renault:clio:1-0-tce-evolution',
+          name: 'Evolution',
+          kind: 'model',
+          id: modelIds.get('renault:clio:1-0-tce-evolution'),
+        },
+        {
+          key: 'renault:clio:1-0-tce-joy',
+          name: 'Joy',
+          kind: 'model',
+          id: modelIds.get('renault:clio:1-0-tce-joy'),
+        },
+      ],
+    })
+
+    const bodyChildren = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${clio.id}/selection?parentKey=renault%3Aclio%3Asport-tourer`,
+    })
+    expect(bodyChildren.statusCode).toBe(200)
+    expect(bodyChildren.json()).toEqual({
+      items: [{
+        key: 'renault:clio:sport-tourer:0-9-tce',
+        name: '0.9 TCe',
+        kind: 'group',
+      }],
+    })
+
+    const nestedLeaf = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${clio.id}/selection?parentKey=renault%3Aclio%3Asport-tourer%3A0-9-tce`,
+    })
+    expect(nestedLeaf.statusCode).toBe(200)
+    expect(nestedLeaf.json()).toEqual({
+      items: [{
+        key: 'renault:clio:sport-tourer:0-9-tce-touch',
+        name: 'Touch',
+        kind: 'model',
+        id: modelIds.get('renault:clio:sport-tourer:0-9-tce-touch'),
+      }],
+    })
+
+    const legacyLeaf = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${egea.id}/selection`,
+    })
+    expect(legacyLeaf.statusCode).toBe(200)
+    expect(legacyLeaf.json()).toEqual({
+      items: [{
+        key: 'fiat:egea:1-4-fire-easy',
+        name: '1.4 Fire Easy',
+        kind: 'model',
+        id: modelIds.get('fiat:egea:1-4-fire-easy'),
+      }],
+    })
+  })
+
+  it('filters inactive leaves and rejects unknown, scoped and terminal parents', async () => {
+    await importVehicleCatalog(db, makeCatalog())
+    const clio = await db.selectFrom('vehicle_series')
+      .select('id')
+      .where('catalog_key', '=', 'renault:clio')
+      .executeTakeFirstOrThrow()
+    const egea = await db.selectFrom('vehicle_series')
+      .select('id')
+      .where('catalog_key', '=', 'fiat:egea')
+      .executeTakeFirstOrThrow()
+
+    await db.updateTable('vehicle_models')
+      .set({ active: false })
+      .where('catalog_key', 'in', [
+        'renault:clio:1-0-tce-evolution',
+        'renault:clio:1-0-tce-joy',
+      ])
+      .execute()
+
+    const activeRoots = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${clio.id}/selection`,
+    })
+    expect(activeRoots.statusCode).toBe(200)
+    expect(activeRoots.json()).toEqual({
+      items: [{ key: 'renault:clio:sport-tourer', name: 'Sport Tourer', kind: 'group' }],
+    })
+
+    for (const [seriesId, parentKey] of [
+      [clio.id, 'missing-group'],
+      [egea.id, 'renault:clio:1-0-tce'],
+      [clio.id, 'renault:clio:1-0-tce'],
+      [clio.id, 'renault:clio:sport-tourer:0-9-tce-touch'],
+    ]) {
+      const response = await app.inject({
+        method: 'GET',
+        url: `/api/v1/reference/vehicle/series/${seriesId}/selection?parentKey=${encodeURIComponent(parentKey)}`,
+      })
+      expect(response.statusCode).toBe(404)
+      expect(response.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
+    }
   })
 
   it('returns the common 404 for unknown or inactive parents', async () => {
@@ -246,5 +521,12 @@ describe('vehicle catalog reference API', () => {
     })
     expect(inactiveSeries.statusCode).toBe(404)
     expect(inactiveSeries.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
+
+    const inactiveSeriesSelection = await app.inject({
+      method: 'GET',
+      url: `/api/v1/reference/vehicle/series/${clio.id}/selection`,
+    })
+    expect(inactiveSeriesSelection.statusCode).toBe(404)
+    expect(inactiveSeriesSelection.json().error.code).toBe('REFERENCE_PARENT_NOT_FOUND')
   })
 })

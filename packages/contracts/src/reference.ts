@@ -44,6 +44,24 @@ export const ReferenceVehicleModelSchema = Type.Object({
   name: Type.String(),
 })
 
+export const ReferenceVehicleSelectionGroupSchema = Type.Object({
+  key: Type.String(),
+  name: Type.String(),
+  kind: Type.Literal('group'),
+})
+
+export const ReferenceVehicleSelectionModelSchema = Type.Object({
+  key: Type.String(),
+  name: Type.String(),
+  kind: Type.Literal('model'),
+  id: Type.String({ format: 'uuid' }),
+})
+
+export const ReferenceVehicleSelectionItemSchema = Type.Union([
+  ReferenceVehicleSelectionGroupSchema,
+  ReferenceVehicleSelectionModelSchema,
+])
+
 export const ReferenceVehicleBrandListResponseSchema = Type.Object({
   items: Type.Array(ReferenceVehicleBrandSchema),
 })
@@ -54,4 +72,8 @@ export const ReferenceVehicleSeriesListResponseSchema = Type.Object({
 
 export const ReferenceVehicleModelListResponseSchema = Type.Object({
   items: Type.Array(ReferenceVehicleModelSchema),
+})
+
+export const ReferenceVehicleSelectionListResponseSchema = Type.Object({
+  items: Type.Array(ReferenceVehicleSelectionItemSchema),
 })

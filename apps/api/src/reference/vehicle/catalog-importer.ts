@@ -47,6 +47,15 @@ export async function importVehicleCatalog(
         throw new Error(`Missing validated vehicle brand: ${series.brandKey}`)
       }
 
+      const existing = await trx
+        .selectFrom('vehicle_series')
+        .select('brand_id')
+        .where('catalog_key', '=', key)
+        .executeTakeFirst()
+      if (existing && existing.brand_id !== brandId) {
+        throw new Error(`Cannot reparent vehicle series ${key}`)
+      }
+
       const row = await trx
         .insertInto('vehicle_series')
         .values({
@@ -57,13 +66,15 @@ export async function importVehicleCatalog(
           updated_at: now,
         })
         .onConflict((oc) => oc.column('catalog_key').doUpdateSet({
-          brand_id: brandId,
           name: series.name.trim(),
           active: true,
           updated_at: now,
         }))
-        .returning(['id', 'catalog_key'])
+        .returning(['id', 'catalog_key', 'brand_id'])
         .executeTakeFirstOrThrow()
+      if (row.brand_id !== brandId) {
+        throw new Error(`Cannot reparent vehicle series ${key}`)
+      }
       seriesIds.set(row.catalog_key, row.id)
     }
 
@@ -73,22 +84,47 @@ export async function importVehicleCatalog(
         throw new Error(`Missing validated vehicle series: ${model.seriesKey}`)
       }
 
-      await trx
+      const modelKey = model.key.trim()
+      const existing = await trx
+        .selectFrom('vehicle_models')
+        .select('series_id')
+        .where('catalog_key', '=', modelKey)
+        .executeTakeFirst()
+      if (existing && existing.series_id !== seriesId) {
+        throw new Error(`Cannot reparent vehicle model ${modelKey}`)
+      }
+
+      const row = await trx
         .insertInto('vehicle_models')
         .values({
           series_id: seriesId,
-          catalog_key: model.key.trim(),
+          catalog_key: modelKey,
           name: model.name.trim(),
+          selection_path: model.selectionPath
+            ? JSON.stringify(model.selectionPath.map((node) => ({
+                key: node.key.trim(),
+                name: node.name.trim(),
+              })))
+            : null,
           active: true,
           updated_at: now,
         })
         .onConflict((oc) => oc.column('catalog_key').doUpdateSet({
-          series_id: seriesId,
           name: model.name.trim(),
+          selection_path: model.selectionPath
+            ? JSON.stringify(model.selectionPath.map((node) => ({
+                key: node.key.trim(),
+                name: node.name.trim(),
+              })))
+            : null,
           active: true,
           updated_at: now,
         }))
-        .execute()
+        .returning('series_id')
+        .executeTakeFirstOrThrow()
+      if (row.series_id !== seriesId) {
+        throw new Error(`Cannot reparent vehicle model ${modelKey}`)
+      }
     }
 
     const modelKeys = value.models.map((item) => item.key.trim())
