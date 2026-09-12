@@ -21,6 +21,7 @@ const seriesAliases: VehicleSeriesAliasesFile = {
     { brandKey: 'seat', seriesKey: 'seat:ibiza', aliases: ['IBIZA'] },
     { brandKey: 'skoda', seriesKey: 'skoda:octavia', aliases: ['OCTAVIA'] },
     { brandKey: 'volkswagen', seriesKey: 'volkswagen:polo', aliases: ['POLO'] },
+    { brandKey: 'volkswagen', seriesKey: 'volkswagen:passat', aliases: ['PASSAT'] },
     { brandKey: 'audi', seriesKey: 'audi:a3', aliases: ['A3'] },
     { brandKey: 'bmw', seriesKey: 'bmw:3-serisi', aliases: ['3 SERISI'] },
     { brandKey: 'fiat', seriesKey: 'fiat:egea', aliases: ['EGEA'] },
@@ -63,7 +64,7 @@ describe('vehicle curation review diagnostics', () => {
 
   it('identifies high-volume series that still lack a reviewed normalization policy', () => {
     const result = generate([
-      ['101-1', 'SKODA', 'OCTAVIA 1.6 TDI 105 DSG ELEGANCE'],
+      ['117-10', 'VOLKSWAGEN', 'PASSAT 1.6 TDI 105 DSG COMFORTLINE'],
     ])
 
     expect(result.candidates[0]!.modelStatus).toBe('model-review')
@@ -98,7 +99,7 @@ describe('vehicle curation review diagnostics', () => {
 
   it('aggregates review reasons without changing mapped output', () => {
     const result = generate([
-      ['101-1', 'SKODA', 'OCTAVIA 1.6 TDI 105 DSG ELEGANCE'],
+      ['117-10', 'VOLKSWAGEN', 'PASSAT 1.6 TDI 105 DSG COMFORTLINE'],
       ['117-1', 'VOLKSWAGEN', 'POLO 1.0 TSI 95 DSG MYSTERY'],
       ['117-2', 'VOLKSWAGEN', 'POLO 1.0 TSI 95 DSG LIFE'],
     ])
