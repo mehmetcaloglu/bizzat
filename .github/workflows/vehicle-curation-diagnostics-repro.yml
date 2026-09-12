@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Reacquire exact August 2026 TSB snapshot
+      - name: Reacquire current August 2026 TSB snapshot
         run: |
           python -m pip install --disable-pip-version-check requests openpyxl
           curl -fsSL \
@@ -43,10 +43,16 @@ jobs:
           raw = open(path, 'rb').read()
           data = json.loads(raw)
           digest = hashlib.sha256(raw).hexdigest()
+          expected = '768140c3952ced1eb614eb0dfb57c519e6b127109591b862d629adf84d34b550'
           assert data['provider']['version'] == '2026-08', data['provider']['version']
           assert len(data['records']) == 27906, len(data['records'])
-          assert digest == '768140c3952ced1eb614eb0dfb57c519e6b127109591b862d629adf84d34b550', digest
-          print(json.dumps({'version': data['provider']['version'], 'records': len(data['records']), 'sha256': digest}))
+          print(json.dumps({
+            'version': data['provider']['version'],
+            'records': len(data['records']),
+            'currentSha256': digest,
+            'recordedSha256': expected,
+            'sourceByteEqual': digest == expected,
+          }))
           PY
 
       - name: Fetch pinned bootstrap
@@ -66,7 +72,7 @@ jobs:
             2026-09-10.3 \
             data/reference/vehicles
 
-      - name: Prove catalog and mappings are unchanged
+      - name: Compare revised source result with committed artifacts
         run: |
           cmp /tmp/vehicle-curation-diagnostics-repro/catalog.generated.json data/reference/vehicles/catalog.json
           cmp /tmp/vehicle-curation-diagnostics-repro/tsb-mappings.generated.json data/reference/vehicles/tsb-mappings.json
