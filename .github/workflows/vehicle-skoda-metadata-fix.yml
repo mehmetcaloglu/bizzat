@@ -1,0 +1,57 @@
+name: Vehicle Skoda Metadata Fix
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-1
+    paths:
+      - .github/workflows/vehicle-skoda-metadata-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix-metadata:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/vehicle-curation-policy-batch-1
+          fetch-depth: 0
+
+      - name: Update increment metadata
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('data/reference/vehicles/source-manifest.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          c = data['curation']
+          c['lastIncrement'] = {
+            'baselineVersion': '2026-09-10.3',
+            'purpose': 'Add conservative reviewed Skoda Octavia, Superb, Fabia and Rapid marketplace selection paths using technical normalization only behind exact source-code scope.',
+            'newReferenceRetrieval': 'Fresh 2026-09-13 reacquisition of the official August 2026 TSB archive produced 27,906 rows with normalized SHA-256 d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11. Sahibinden public category/index evidence was used to accept only 30 source codes yielding 21 selection leaves. Combi, Spaceback, 4x4, CR/GreenTec, ACT/MHEV/e-TEC and cleaned paths without marketplace evidence remain review-only.',
+          }
+          reviewed = c.setdefault('reviewedExactSelectionSeries', [])
+          for key in ['skoda:octavia','skoda:superb','skoda:fabia','skoda:rapid']:
+            if key not in reviewed:
+              reviewed.append(key)
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          assert data['version'] == '2026-09-13.1'
+          assert c['mappedSourceCodes'] == 871
+          assert c['canonicalModels'] == 621
+          assert c['modelReviewRequired'] == 6008
+          assert all(key in c['reviewedExactSelectionSeries'] for key in ['skoda:octavia','skoda:superb','skoda:fabia','skoda:rapid'])
+          PY
+          git diff --check
+
+      - name: Commit metadata fix
+        run: |
+          git config user.name 'Mehmet Çaloğlu'
+          git config user.email '103005768+mehmetcaloglu@users.noreply.github.com'
+          git add data/reference/vehicles/source-manifest.json
+          git diff --cached --stat
+          git commit -m 'docs: record reviewed Skoda curation increment'
+          git push origin HEAD:feat/vehicle-curation-policy-batch-1
