@@ -1,5 +1,6 @@
-import { type Generated, Kysely, PostgresDialect } from 'kysely'
+import { type Generated, type JSONColumnType, Kysely, PostgresDialect } from 'kysely'
 import { Pool } from 'pg'
+import type { VehicleSelectionNode } from '../reference/vehicle/catalog.types.js'
 
 export type UserRole = 'user' | 'moderator' | 'admin'
 export type VehicleMappingMethod = 'manual' | 'exact-rule' | 'curated-import'
@@ -86,6 +87,11 @@ export interface VehicleModelsTable {
   series_id: string
   catalog_key: string
   name: string
+  selection_path: JSONColumnType<
+    VehicleSelectionNode[] | null,
+    string | null,
+    string | null
+  >
   active: Generated<boolean>
   created_at: Generated<Date>
   updated_at: Generated<Date>
