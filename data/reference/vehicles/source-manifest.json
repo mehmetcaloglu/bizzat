@@ -424,15 +424,19 @@
     ],
     "backlogFile": "curation-backlog.json",
     "lastIncrement": {
-      "baselineVersion": "2026-09-10.2",
-      "purpose": "Add three reviewed Opel Astra 1.3 CDTI marketplace selection paths from four exact August 2026 TSB source-code labels without enabling generic Astra technical stripping.",
-      "newReferenceRetrieval": "Sahibinden public first-party index verified Astra 1.3 CDTI Cosmo/Sport/Enjoy Plus paths. Four TSB code labels already name CDTi explicitly, avoiding a DIZEL-to-CDTI inference. Sedan, DIZEL, S&S and unreviewed Enjoy variants remain review-only. The original operational normalized snapshot was unavailable in this session, so this increment is an explicit reviewed delta rather than a claimed full-snapshot regeneration."
+      "baselineVersion": "2026-09-10.3",
+      "purpose": "Add conservative reviewed Skoda Octavia, Superb, Fabia and Rapid marketplace selection paths using technical normalization only behind exact source-code scope.",
+      "newReferenceRetrieval": "Fresh 2026-09-13 reacquisition of the official August 2026 TSB archive produced 27,906 rows with normalized SHA-256 d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11. Sahibinden public category/index evidence was used to accept only 30 source codes yielding 21 selection leaves. Combi, Spaceback, 4x4, CR/GreenTec, ACT/MHEV/e-TEC and cleaned paths without marketplace evidence remain review-only."
     },
     "reviewedExactSelectionSeries": [
       "ford:focus",
       "opel:astra",
       "renault:megane",
-      "seat:ibiza"
+      "seat:ibiza",
+      "skoda:octavia",
+      "skoda:superb",
+      "skoda:fabia",
+      "skoda:rapid"
     ]
   }
 }
