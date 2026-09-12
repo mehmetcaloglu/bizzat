@@ -29,6 +29,8 @@ Bu kayıt, Bizzat için kesinleşen ürün kararlarını özetler. Henüz sonuç
 | 23 | MVP dışı özellikler | Favori, site içi mesaj, ödeme/abonelik, doping, ekspertiz, rezervasyon, native mobil ve profesyonel mağazalar sonraya bırakıldı | İlk milestone ana ilan döngüsünü ayağa kaldırmaya odaklanır; kapsam şişmesi engellenir. |
 | 24 | Minimum moderasyon | İlan raporlama + moderatörün inceleyip yayından kaldırabilmesi | Bireysel ilan vaadi için ilk günden temel operasyon yolu gerekir; karmaşık ML/fraud sistemi ilk MVP şartı değildir. |
 
+| 25 | Araç seçim ağacı (2026-09-09) | Sahibinden referansındaki değişken derinlik; marka/seri sonrası gerekirse gövde, motor ve paket dalları | Kullanıcının açık devam talimatı önceki üç görünür seviyeyi değiştirir. Yaprak UUID korunur, kaynak tipleri doğrudan seçenek yapılmaz. Güncel kapsam kısmi; curation ve CI tamamlanmadan PR #11 merge edilmez. |
+
 ## Önceki önerilerin durumu
 
 - “Siz” hitabı, kullanıcının tercihiyle “sen” olarak değiştirildi.

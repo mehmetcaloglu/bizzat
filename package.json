@@ -16,6 +16,7 @@
     "reference:import:vehicle-source": "node scripts/run-pnpm.mjs --filter @bizzat/api reference:import:vehicle-source",
     "reference:apply:vehicle-mappings": "node scripts/run-pnpm.mjs --filter @bizzat/api reference:apply:vehicle-mappings",
     "reference:report:vehicle-source": "node scripts/run-pnpm.mjs --filter @bizzat/api reference:report:vehicle-source",
+    "reference:generate:vehicle-catalog": "node scripts/run-pnpm.mjs --filter @bizzat/api reference:generate:vehicle-catalog",
     "lint": "pnpm -r --if-present lint",
     "typecheck": "pnpm contracts:build && pnpm -r --if-present typecheck",
     "test": "pnpm contracts:build && node scripts/run-pnpm.mjs --filter @bizzat/api test && node scripts/run-pnpm.mjs --filter @bizzat/api test:integration && node scripts/run-pnpm.mjs --filter @bizzat/web test",

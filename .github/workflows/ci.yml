@@ -58,8 +58,18 @@ jobs:
       - name: Import deterministic location fixture
         run: pnpm reference:import:locations -- data/reference/locations/fixture.locations.json
 
-      - name: Import deterministic vehicle catalog fixture
-        run: pnpm reference:import:vehicle-catalog -- data/reference/vehicles/fixture.catalog.json
+      - name: Generate deterministic vehicle curation fixture
+        run: >-
+          pnpm reference:generate:vehicle-catalog --
+          data/reference/vehicles/fixture.tsb-source.json
+          data/reference/vehicles/brand-aliases.json
+          data/reference/vehicles/series-aliases.json
+          data/reference/vehicles/fixture.bootstrap-models.json
+          /tmp/bizzat-vehicle-curation-ci
+          ci-fixture
+
+      - name: Import curated Turkish vehicle catalog
+        run: pnpm reference:import:vehicle-catalog -- data/reference/vehicles/catalog.json
 
       - name: Import deterministic TSB source fixture
         run: pnpm reference:import:vehicle-source -- tsb data/reference/vehicles/fixture.tsb-source.json
