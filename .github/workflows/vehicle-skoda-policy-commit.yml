@@ -1,0 +1,260 @@
+name: Vehicle Skoda Policy Commit
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-1
+    paths:
+      - .github/workflows/vehicle-skoda-policy-commit.yml
+
+permissions:
+  contents: write
+
+jobs:
+  commit-reviewed-data:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/vehicle-curation-policy-batch-1
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Reacquire pinned August source
+        run: |
+          python -m pip install --disable-pip-version-check requests openpyxl
+          curl -fsSL \
+            https://raw.githubusercontent.com/mehmetcaloglu/bizzat/b9ae77a6afa57dd3c64b36de6324af13561d7df5/scripts/maintenance/acquire-tsb-source.py \
+            -o /tmp/acquire-tsb-source.py
+          python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json
+          python - <<'PY'
+          import hashlib, json
+          raw = open('/tmp/tsb.normalized.json', 'rb').read()
+          data = json.loads(raw)
+          digest = hashlib.sha256(raw).hexdigest()
+          print({'version': data['provider']['version'], 'records': len(data['records']), 'sha256': digest})
+          assert data['provider']['version'] == '2026-08'
+          assert len(data['records']) == 27906
+          assert digest == 'd810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+          PY
+
+      - name: Fetch pinned bootstrap
+        run: |
+          curl -fsSL \
+            https://raw.githubusercontent.com/serhatkildaci/global-car-models/44da5c9e5e0f3162d65579033f7a641473308b11/data/models.json \
+            -o /tmp/bootstrap-models.json
+
+      - name: Generate reviewed Skoda batch
+        run: |
+          rm -rf /tmp/skoda-policy-final
+          pnpm reference:generate:vehicle-catalog -- \
+            /tmp/tsb.normalized.json \
+            data/reference/vehicles/brand-aliases.json \
+            data/reference/vehicles/series-aliases.json \
+            /tmp/bootstrap-models.json \
+            /tmp/skoda-policy-final \
+            2026-09-13.1 \
+            data/reference/vehicles
+
+      - name: Verify exact reviewed delta
+        run: |
+          python - <<'PY'
+          import json, re
+
+          old_catalog = json.load(open('data/reference/vehicles/catalog.json', encoding='utf-8'))
+          old_mappings_file = json.load(open('data/reference/vehicles/tsb-mappings.json', encoding='utf-8'))
+          new_catalog = json.load(open('/tmp/skoda-policy-final/catalog.generated.json', encoding='utf-8'))
+          new_mappings_file = json.load(open('/tmp/skoda-policy-final/tsb-mappings.generated.json', encoding='utf-8'))
+          candidates = json.load(open('/tmp/skoda-policy-final/candidates.json', encoding='utf-8'))
+          summary = json.load(open('/tmp/skoda-policy-final/summary.json', encoding='utf-8'))
+
+          expected_new = {
+            '133-1017','133-1021','133-1026','133-1040','133-1043','133-1045','133-1047','133-1051',
+            '133-1147','133-1168','133-1169','133-1170','133-1171','133-1249','133-1253','133-1285',
+            '133-1286','133-1287','133-1312','133-1329','133-283','133-341','133-345','133-346',
+            '133-365','133-371','133-376','133-378','133-380','133-433',
+          }
+          allowed_series = {'skoda:octavia','skoda:superb','skoda:fabia','skoda:rapid'}
+          forbidden = re.compile(r'\b(?:COMBI|SPACEBACK|4X4|4X2|CR|GREEN\s*TEC|GREENTEC|ACT|MHEV|E-?TEC)\b', re.I)
+
+          old_map = {m['sourceKey']: m['vehicleModelKey'] for m in old_mappings_file['mappings']}
+          new_map = {m['sourceKey']: m['vehicleModelKey'] for m in new_mappings_file['mappings']}
+          assert len(old_map) == 841
+          assert len(new_map) == 871
+          assert set(new_map) - set(old_map) == expected_new
+          assert all(new_map.get(k) == v for k, v in old_map.items())
+
+          old_models = {m['key']: m for m in old_catalog['models']}
+          new_models = {m['key']: m for m in new_catalog['models']}
+          assert len(old_models) == 600
+          assert len(new_models) == 621
+          assert all(new_models.get(k) == v for k, v in old_models.items())
+
+          by_source = {c['sourceKey']: c for c in candidates}
+          assert all(by_source[k].get('seriesKeyCandidate') in allowed_series for k in expected_new)
+          assert not [k for k in expected_new if forbidden.search(by_source[k]['typeRaw'])]
+
+          expected_summary = {
+            'sourceRecords': 27906,
+            'exactCandidates': 871,
+            'mappedSourceCodes': 871,
+            'canonicalBrands': 20,
+            'canonicalSeries': 60,
+            'canonicalModels': 621,
+            'slugCollisionsExcluded': 0,
+            'ambiguousSeriesExcluded': 21,
+            'unknownBrandExcluded': 13955,
+            'noSeriesExcluded': 7051,
+            'modelReviewRequired': 6008,
+          }
+          for key, value in expected_summary.items():
+            assert summary[key] == value, (key, summary[key], value)
+          print(json.dumps(expected_summary, indent=2))
+          PY
+
+      - name: Install generated artifacts and metadata
+        run: |
+          cp /tmp/skoda-policy-final/catalog.generated.json data/reference/vehicles/catalog.json
+          cp /tmp/skoda-policy-final/tsb-mappings.generated.json data/reference/vehicles/tsb-mappings.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          VERSION = '2026-09-13.1'
+          SOURCE_SHA = 'd810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+
+          manifest_path = Path('data/reference/vehicles/source-manifest.json')
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          manifest['version'] = VERSION
+          tsb = next(s for s in manifest['sources'] if s.get('role') == 'turkey-coverage')
+          tsb['accessedDate'] = '2026-09-13'
+          tsb['normalizedSnapshotSha256'] = SOURCE_SHA
+
+          c = manifest['curation']
+          c.update({
+            'sourceRecords': 27906,
+            'exactCandidates': 871,
+            'mappedSourceCodes': 871,
+            'canonicalBrands': 20,
+            'canonicalSeries': 60,
+            'canonicalModels': 621,
+            'slugCollisionsExcluded': 0,
+            'ambiguousSeriesExcluded': 21,
+            'unknownBrandExcluded': 13955,
+            'noSeriesExcluded': 7051,
+            'modelReviewRequired': 6008,
+            'tsbSnapshotRecords': 27906,
+          })
+          c['method'] = (
+            'Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; '
+            'unknown engine/body/trim and collisions require review. Technical variants consolidate only when '
+            'their full reviewed selection path agrees. Seat Ibiza, Renault Megane, Ford Focus and Opel Astra '
+            'use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths. '
+            'Skoda Octavia, Superb, Fabia and Rapid additionally use marketplace-evidenced source-code allowlists '
+            'with reviewed technical normalization; branch/technology-bearing and non-evidenced paths remain review-only.'
+          )
+          c['excludedPreviouslyPresentBrands'] = [x for x in c.get('excludedPreviouslyPresentBrands', []) if x != 'Skoda']
+
+          refs = c.setdefault('reviewedReferenceExamples', [])
+          for ref in [
+            'Skoda/Octavia/1.4 TSI/Elegance',
+            'Skoda/Superb/1.4 TSI/Elegance',
+            'Skoda/Fabia/1.0 TSI/Premium',
+            'Skoda/Rapid/1.2 TSI/Ambition',
+          ]:
+            if ref not in refs:
+              refs.append(ref)
+
+          policies = c.setdefault('reviewedTechnicalPolicySeries', [])
+          for key in ['skoda:octavia','skoda:superb','skoda:fabia','skoda:rapid']:
+            if key not in policies:
+              policies.append(key)
+
+          gaps = c.setdefault('knownGaps', [])
+          gap = 'Skoda Combi/Spaceback, 4x4, CR/GreenTec and newer ACT/MHEV/e-TEC branches remain review-only unless their marketplace path is separately evidenced.'
+          if gap not in gaps:
+            gaps.append(gap)
+
+          skoda = next(row for row in c['coverageByKnownBrand'] if row['brandKey'] == 'skoda')
+          skoda.clear()
+          skoda.update({
+            'brandKey': 'skoda',
+            'sourceRows': 403,
+            'model-review': 277,
+            'excluded': 96,
+            'mapped': 30,
+            'selectableLeaves': 21,
+          })
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          backlog_path = Path('data/reference/vehicles/curation-backlog.json')
+          backlog = json.loads(backlog_path.read_text(encoding='utf-8'))
+          backlog['version'] = VERSION
+          updates = {
+            'skoda:octavia': (113, 16, 97, 0, 11),
+            'skoda:superb': (77, 4, 73, 0, 3),
+            'skoda:fabia': (50, 8, 42, 0, 5),
+            'skoda:rapid': (47, 2, 45, 0, 2),
+          }
+          for row in backlog['series']:
+            if row['seriesKey'] in updates:
+              source, mapped, review, excluded, selectable = updates[row['seriesKey']]
+              row.update({
+                'sourceRecords': source,
+                'mappedSourceCodes': mapped,
+                'modelReviewRequired': review,
+                'excludedSourceCodes': excluded,
+                'selectableModels': selectable,
+              })
+          backlog['series'].sort(key=lambda row: -row['modelReviewRequired'])
+          backlog_path.write_text(json.dumps(backlog, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          doc_path = Path('docs/reference/VEHICLE_REPRODUCIBILITY.md')
+          doc = doc_path.read_text(encoding='utf-8')
+          marker = '## 2026-09-13 archive drift and Skoda batch'
+          if marker not in doc:
+            doc += f'''\n\n{marker}\n\nA fresh reacquisition of the official August 2026 TSB archive on 2026-09-13 still produced `27,906` normalized records, but the normalized SHA-256 changed from the 2026-09-11 value to `{SOURCE_SHA}`. The earlier checksum remains a historical reproducibility result; the upstream archive is therefore treated as having drifted in place.\n\nBefore accepting any new curation from the drifted snapshot, the full generator was run against the reviewed baseline and required to preserve every existing mapping target and every existing canonical model object. That invariant held.\n\nThe reviewed Skoda batch then added only marketplace-evidenced, source-code-scoped rows for Octavia, Superb, Fabia and Rapid:\n\n- mappings: `841` → `871` (`+30`)\n- selectable models: `600` → `621` (`+21`)\n- canonical brands: `19` → `20`\n- canonical series: `56` → `60`\n- model-review rows: `6,038` → `6,008`\n\nRows carrying unresolved `Combi`, `Spaceback`, `4x4`, `CR`, `GreenTec`, `ACT`, `MHEV` or `e-TEC` semantics, plus cleaned paths lacking marketplace evidence, remain review-only. The permanent CI remains offline; network access was used only in one-shot verification/commit workflows and removed afterward.\n'''
+            doc_path.write_text(doc, encoding='utf-8')
+          PY
+
+      - name: Validate committed artifacts
+        run: |
+          python - <<'PY'
+          import json
+          catalog = json.load(open('data/reference/vehicles/catalog.json', encoding='utf-8'))
+          mappings = json.load(open('data/reference/vehicles/tsb-mappings.json', encoding='utf-8'))
+          manifest = json.load(open('data/reference/vehicles/source-manifest.json', encoding='utf-8'))
+          backlog = json.load(open('data/reference/vehicles/curation-backlog.json', encoding='utf-8'))
+          assert catalog['version'] == mappings['version'] == manifest['version'] == backlog['version'] == '2026-09-13.1'
+          assert len(catalog['brands']) == 20
+          assert len(catalog['series']) == 60
+          assert len(catalog['models']) == 621
+          assert len(mappings['mappings']) == 871
+          assert manifest['curation']['modelReviewRequired'] == 6008
+          assert sum(1 for m in catalog['models'] if m['seriesKey'].startswith('skoda:')) == 21
+          PY
+          git diff --check
+
+      - name: Commit reviewed artifacts
+        run: |
+          git config user.name 'Mehmet Çaloğlu'
+          git config user.email '103005768+mehmetcaloglu@users.noreply.github.com'
+          git add data/reference/vehicles/catalog.json \
+                  data/reference/vehicles/tsb-mappings.json \
+                  data/reference/vehicles/source-manifest.json \
+                  data/reference/vehicles/curation-backlog.json \
+                  docs/reference/VEHICLE_REPRODUCIBILITY.md
+          git diff --cached --stat
+          git commit -m 'data: apply reviewed Skoda curation batch'
+          git push origin HEAD:feat/vehicle-curation-policy-batch-1
