@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.3",
+  "version": "2026-09-13.1",
   "brands": [
     {
       "key": "audi",
@@ -60,6 +60,10 @@
     {
       "key": "seat",
       "name": "Seat"
+    },
+    {
+      "key": "skoda",
+      "name": "Skoda"
     },
     {
       "key": "suzuki",
@@ -298,6 +302,26 @@
       "key": "seat:ibiza",
       "brandKey": "seat",
       "name": "Ibiza"
+    },
+    {
+      "key": "skoda:fabia",
+      "brandKey": "skoda",
+      "name": "Fabia"
+    },
+    {
+      "key": "skoda:octavia",
+      "brandKey": "skoda",
+      "name": "Octavia"
+    },
+    {
+      "key": "skoda:rapid",
+      "brandKey": "skoda",
+      "name": "Rapid"
+    },
+    {
+      "key": "skoda:superb",
+      "brandKey": "skoda",
+      "name": "Superb"
     },
     {
       "key": "suzuki:alto",
@@ -7185,6 +7209,321 @@
         {
           "key": "seat:ibiza:1-4-reference",
           "name": "Reference"
+        }
+      ]
+    },
+    {
+      "key": "skoda:fabia:1-0-tsi-elite",
+      "seriesKey": "skoda:fabia",
+      "name": "1.0 TSI Elite",
+      "selectionPath": [
+        {
+          "key": "skoda:fabia:1-0-tsi",
+          "name": "1.0 TSI"
+        },
+        {
+          "key": "skoda:fabia:1-0-tsi-elite",
+          "name": "Elite"
+        }
+      ]
+    },
+    {
+      "key": "skoda:fabia:1-0-tsi-premium",
+      "seriesKey": "skoda:fabia",
+      "name": "1.0 TSI Premium",
+      "selectionPath": [
+        {
+          "key": "skoda:fabia:1-0-tsi",
+          "name": "1.0 TSI"
+        },
+        {
+          "key": "skoda:fabia:1-0-tsi-premium",
+          "name": "Premium"
+        }
+      ]
+    },
+    {
+      "key": "skoda:fabia:1-2-ambiente",
+      "seriesKey": "skoda:fabia",
+      "name": "1.2 Ambiente",
+      "selectionPath": [
+        {
+          "key": "skoda:fabia:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "skoda:fabia:1-2-ambiente",
+          "name": "Ambiente"
+        }
+      ]
+    },
+    {
+      "key": "skoda:fabia:1-4-ambiente",
+      "seriesKey": "skoda:fabia",
+      "name": "1.4 Ambiente",
+      "selectionPath": [
+        {
+          "key": "skoda:fabia:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "skoda:fabia:1-4-ambiente",
+          "name": "Ambiente"
+        }
+      ]
+    },
+    {
+      "key": "skoda:fabia:1-6-classic",
+      "seriesKey": "skoda:fabia",
+      "name": "1.6 Classic",
+      "selectionPath": [
+        {
+          "key": "skoda:fabia:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "skoda:fabia:1-6-classic",
+          "name": "Classic"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-0-tsi-ambition",
+      "seriesKey": "skoda:octavia",
+      "name": "1.0 TSI Ambition",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-0-tsi",
+          "name": "1.0 TSI"
+        },
+        {
+          "key": "skoda:octavia:1-0-tsi-ambition",
+          "name": "Ambition"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-0-tsi-optimal",
+      "seriesKey": "skoda:octavia",
+      "name": "1.0 TSI Optimal",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-0-tsi",
+          "name": "1.0 TSI"
+        },
+        {
+          "key": "skoda:octavia:1-0-tsi-optimal",
+          "name": "Optimal"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-0-tsi-style",
+      "seriesKey": "skoda:octavia",
+      "name": "1.0 TSI Style",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-0-tsi",
+          "name": "1.0 TSI"
+        },
+        {
+          "key": "skoda:octavia:1-0-tsi-style",
+          "name": "Style"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-2-tsi-ambition",
+      "seriesKey": "skoda:octavia",
+      "name": "1.2 TSI Ambition",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-2-tsi",
+          "name": "1.2 TSI"
+        },
+        {
+          "key": "skoda:octavia:1-2-tsi-ambition",
+          "name": "Ambition"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-4-tsi-ambiente",
+      "seriesKey": "skoda:octavia",
+      "name": "1.4 TSI Ambiente",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "skoda:octavia:1-4-tsi-ambiente",
+          "name": "Ambiente"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-4-tsi-elegance",
+      "seriesKey": "skoda:octavia",
+      "name": "1.4 TSI Elegance",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "skoda:octavia:1-4-tsi-elegance",
+          "name": "Elegance"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-6-active",
+      "seriesKey": "skoda:octavia",
+      "name": "1.6 Active",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "skoda:octavia:1-6-active",
+          "name": "Active"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-6-ambiente-optimal",
+      "seriesKey": "skoda:octavia",
+      "name": "1.6 Ambiente Optimal",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "skoda:octavia:1-6-ambiente-optimal",
+          "name": "Ambiente Optimal"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-6-ambition-optimal",
+      "seriesKey": "skoda:octavia",
+      "name": "1.6 Ambition Optimal",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "skoda:octavia:1-6-ambition-optimal",
+          "name": "Ambition Optimal"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:1-6-classic",
+      "seriesKey": "skoda:octavia",
+      "name": "1.6 Classic",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "skoda:octavia:1-6-classic",
+          "name": "Classic"
+        }
+      ]
+    },
+    {
+      "key": "skoda:octavia:2-0-tsi-rs",
+      "seriesKey": "skoda:octavia",
+      "name": "2.0 TSI RS",
+      "selectionPath": [
+        {
+          "key": "skoda:octavia:2-0-tsi",
+          "name": "2.0 TSI"
+        },
+        {
+          "key": "skoda:octavia:2-0-tsi-rs",
+          "name": "RS"
+        }
+      ]
+    },
+    {
+      "key": "skoda:rapid:1-2-tsi-ambition",
+      "seriesKey": "skoda:rapid",
+      "name": "1.2 TSI Ambition",
+      "selectionPath": [
+        {
+          "key": "skoda:rapid:1-2-tsi",
+          "name": "1.2 TSI"
+        },
+        {
+          "key": "skoda:rapid:1-2-tsi-ambition",
+          "name": "Ambition"
+        }
+      ]
+    },
+    {
+      "key": "skoda:rapid:1-4-tsi-elegance",
+      "seriesKey": "skoda:rapid",
+      "name": "1.4 TSI Elegance",
+      "selectionPath": [
+        {
+          "key": "skoda:rapid:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "skoda:rapid:1-4-tsi-elegance",
+          "name": "Elegance"
+        }
+      ]
+    },
+    {
+      "key": "skoda:superb:1-4-tsi-active",
+      "seriesKey": "skoda:superb",
+      "name": "1.4 TSI Active",
+      "selectionPath": [
+        {
+          "key": "skoda:superb:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "skoda:superb:1-4-tsi-active",
+          "name": "Active"
+        }
+      ]
+    },
+    {
+      "key": "skoda:superb:1-4-tsi-comfort",
+      "seriesKey": "skoda:superb",
+      "name": "1.4 TSI Comfort",
+      "selectionPath": [
+        {
+          "key": "skoda:superb:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "skoda:superb:1-4-tsi-comfort",
+          "name": "Comfort"
+        }
+      ]
+    },
+    {
+      "key": "skoda:superb:1-4-tsi-elegance",
+      "seriesKey": "skoda:superb",
+      "name": "1.4 TSI Elegance",
+      "selectionPath": [
+        {
+          "key": "skoda:superb:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "skoda:superb:1-4-tsi-elegance",
+          "name": "Elegance"
         }
       ]
     },

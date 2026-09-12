@@ -1,14 +1,14 @@
 {
-  "version": "2026-09-10.3",
+  "version": "2026-09-13.1",
   "sources": [
     {
       "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
       "sourceUrl": "https://www.tsb.org.tr/tr/kasko-arsiv-listesi",
       "sourcePeriod": "2026-08",
-      "accessedDate": "2026-09-08",
+      "accessedDate": "2026-09-13",
       "licenseOrTerms": "No open redistribution license observed; raw export and operational normalized snapshot are not committed; kasko price values are discarded.",
       "role": "turkey-coverage",
-      "normalizedSnapshotSha256": "768140c3952ced1eb614eb0dfb57c519e6b127109591b862d629adf84d34b550"
+      "normalizedSnapshotSha256": "d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11"
     },
     {
       "name": "global-car-models",
@@ -29,18 +29,18 @@
   ],
   "curation": {
     "sourceRecords": 27906,
-    "exactCandidates": 841,
-    "mappedSourceCodes": 841,
-    "canonicalBrands": 19,
-    "canonicalSeries": 56,
-    "canonicalModels": 600,
+    "exactCandidates": 871,
+    "mappedSourceCodes": 871,
+    "canonicalBrands": 20,
+    "canonicalSeries": 60,
+    "canonicalModels": 621,
     "slugCollisionsExcluded": 0,
     "ambiguousSeriesExcluded": 21,
     "unknownBrandExcluded": 13955,
     "noSeriesExcluded": 7051,
-    "modelReviewRequired": 6038,
+    "modelReviewRequired": 6008,
     "tsbSnapshotRecords": 27906,
-    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza, Renault Megane, Ford Focus and Opel Astra use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths; this does not enable general technical stripping.",
+    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza, Renault Megane, Ford Focus and Opel Astra use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths. Skoda Octavia, Superb, Fabia and Rapid additionally use marketplace-evidenced source-code allowlists with reviewed technical normalization; branch/technology-bearing and non-evidenced paths remain review-only.",
     "coverageStatus": "partial-review; not a complete Sahibinden catalog",
     "excludedPreviouslyPresentBrands": [
       "Alfa Romeo",
@@ -52,7 +52,6 @@
       "Kia",
       "MINI",
       "Mazda",
-      "Skoda",
       "Subaru"
     ],
     "knownGaps": [
@@ -61,7 +60,8 @@
       "Audi default-body rows without explicit body; most Audi series beyond A3/A4",
       "Unknown source trim spellings; drivetrain branches such as xDrive",
       "Fiat500family hierarchy requires explicit series/path curation; SUV/pickup/commercial categories are outside the current Otomobil MVP.",
-      "Accent Blue/Era contain only explicit engine + known trim source rows; technical variants remain in review."
+      "Accent Blue/Era contain only explicit engine + known trim source rows; technical variants remain in review.",
+      "Skoda Combi/Spaceback, 4x4, CR/GreenTec and newer ACT/MHEV/e-TEC branches remain review-only unless their marketplace path is separately evidenced."
     ],
     "reviewedReferenceExamples": [
       "Renault/Clio/1.0 TCe/Evolution",
@@ -81,7 +81,11 @@
       "Ford/Focus/1.5 TDCi/ST Line",
       "Opel/Astra/1.3 CDTI/Cosmo",
       "Opel/Astra/1.3 CDTI/Enjoy Plus",
-      "Opel/Astra/1.3 CDTI/Sport"
+      "Opel/Astra/1.3 CDTI/Sport",
+      "Skoda/Octavia/1.4 TSI/Elegance",
+      "Skoda/Superb/1.4 TSI/Elegance",
+      "Skoda/Fabia/1.0 TSI/Premium",
+      "Skoda/Rapid/1.2 TSI/Ambition"
     ],
     "identityPolicy": "First pre-merge consolidation replaces unreviewed type keys. Later runs must use the reviewed catalog/mappings baseline; splits/merges/reparenting are rejected for explicit review.",
     "coverageMeasurement": "Counts refer to the complete source snapshot, including out-of-MVP vehicle categories; they are not a completeness percentage for Turkish passenger cars or the Sahibinden taxonomy.",
@@ -181,7 +185,11 @@
       "bmw:3-serisi",
       "mercedes-benz:c-serisi",
       "audi:a3",
-      "audi:a4"
+      "audi:a4",
+      "skoda:octavia",
+      "skoda:superb",
+      "skoda:fabia",
+      "skoda:rapid"
     ],
     "coverageByKnownBrand": [
       {
@@ -369,9 +377,10 @@
       {
         "brandKey": "skoda",
         "sourceRows": 403,
-        "model-review": 307,
+        "model-review": 277,
         "excluded": 96,
-        "selectableLeaves": 0
+        "mapped": 30,
+        "selectableLeaves": 21
       },
       {
         "brandKey": "subaru",

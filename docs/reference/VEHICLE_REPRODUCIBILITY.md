@@ -61,3 +61,20 @@ The temporary network-enabled verification workflow was removed immediately afte
 The August 2026 TSB provenance and the current reviewed `catalog.json` / `tsb-mappings.json` pipeline are reproducible from the recorded source and pinned inputs. Source reproducibility is therefore **PASS** for this reviewed baseline.
 
 Catalog completeness is a separate product/curation gate. PR #11 remains draft and unmerged while missing brands/series and remaining review rows are evaluated.
+
+
+## 2026-09-13 archive drift and Skoda batch
+
+A fresh reacquisition of the official August 2026 TSB archive on 2026-09-13 still produced `27,906` normalized records, but the normalized SHA-256 changed from the 2026-09-11 value to `d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11`. The earlier checksum remains a historical reproducibility result; the upstream archive is therefore treated as having drifted in place.
+
+Before accepting any new curation from the drifted snapshot, the full generator was run against the reviewed baseline and required to preserve every existing mapping target and every existing canonical model object. That invariant held.
+
+The reviewed Skoda batch then added only marketplace-evidenced, source-code-scoped rows for Octavia, Superb, Fabia and Rapid:
+
+- mappings: `841` → `871` (`+30`)
+- selectable models: `600` → `621` (`+21`)
+- canonical brands: `19` → `20`
+- canonical series: `56` → `60`
+- model-review rows: `6,038` → `6,008`
+
+Rows carrying unresolved `Combi`, `Spaceback`, `4x4`, `CR`, `GreenTec`, `ACT`, `MHEV` or `e-TEC` semantics, plus cleaned paths lacking marketplace evidence, remain review-only. The permanent CI remains offline; network access was used only in one-shot verification/commit workflows and removed afterward.

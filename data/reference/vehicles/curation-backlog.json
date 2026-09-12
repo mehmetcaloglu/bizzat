@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.3",
+  "version": "2026-09-13.1",
   "sourcePeriod": "2026-08",
   "measurement": "Unresolved source-row counts, including unreviewed or out-of-MVP aliases; not missing-model counts or Turkish passenger-car completeness percentages.",
   "sourceRecords": 27906,
@@ -98,14 +98,6 @@
       "selectableModels": 36
     },
     {
-      "seriesKey": "skoda:octavia",
-      "sourceRecords": 113,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 113,
-      "excludedSourceCodes": 0,
-      "selectableModels": 0
-    },
-    {
       "seriesKey": "audi:a4",
       "sourceRecords": 120,
       "mappedSourceCodes": 9,
@@ -136,6 +128,14 @@
       "modelReviewRequired": 99,
       "excludedSourceCodes": 0,
       "selectableModels": 2
+    },
+    {
+      "seriesKey": "skoda:octavia",
+      "sourceRecords": 113,
+      "mappedSourceCodes": 16,
+      "modelReviewRequired": 97,
+      "excludedSourceCodes": 0,
+      "selectableModels": 11
     },
     {
       "seriesKey": "mercedes-benz:c-serisi",
@@ -204,10 +204,10 @@
     {
       "seriesKey": "skoda:superb",
       "sourceRecords": 77,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 77,
+      "mappedSourceCodes": 4,
+      "modelReviewRequired": 73,
       "excludedSourceCodes": 0,
-      "selectableModels": 0
+      "selectableModels": 3
     },
     {
       "seriesKey": "bmw:1-serisi",
@@ -362,14 +362,6 @@
       "selectableModels": 51
     },
     {
-      "seriesKey": "skoda:fabia",
-      "sourceRecords": 50,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 50,
-      "excludedSourceCodes": 0,
-      "selectableModels": 0
-    },
-    {
       "seriesKey": "chevrolet:cruze",
       "sourceRecords": 48,
       "mappedSourceCodes": 0,
@@ -402,14 +394,6 @@
       "selectableModels": 0
     },
     {
-      "seriesKey": "skoda:rapid",
-      "sourceRecords": 47,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 47,
-      "excludedSourceCodes": 0,
-      "selectableModels": 0
-    },
-    {
       "seriesKey": "volkswagen:jetta",
       "sourceRecords": 46,
       "mappedSourceCodes": 0,
@@ -418,12 +402,28 @@
       "selectableModels": 0
     },
     {
+      "seriesKey": "skoda:rapid",
+      "sourceRecords": 47,
+      "mappedSourceCodes": 2,
+      "modelReviewRequired": 45,
+      "excludedSourceCodes": 0,
+      "selectableModels": 2
+    },
+    {
       "seriesKey": "mercedes-benz:b-serisi",
       "sourceRecords": 45,
       "mappedSourceCodes": 1,
       "modelReviewRequired": 44,
       "excludedSourceCodes": 0,
       "selectableModels": 1
+    },
+    {
+      "seriesKey": "skoda:fabia",
+      "sourceRecords": 50,
+      "mappedSourceCodes": 8,
+      "modelReviewRequired": 42,
+      "excludedSourceCodes": 0,
+      "selectableModels": 5
     },
     {
       "seriesKey": "fiat:linea",
