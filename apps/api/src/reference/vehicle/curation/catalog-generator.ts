@@ -12,6 +12,10 @@ import type {
 } from './alias.types.js'
 import { generateVehicleCurationCandidates } from './candidate-generator.js'
 import { canonicalModelSelection } from './model-label.js'
+import {
+  diagnoseVehicleModelReview,
+  type VehicleModelReviewReason,
+} from './review-diagnostics.js'
 
 export type VehicleBootstrapModels = Record<string, string[]>
 
@@ -27,12 +31,17 @@ export interface VehicleCatalogGenerationSummary {
   unknownBrandExcluded: number
   noSeriesExcluded: number
   modelReviewRequired: number
+  modelReviewByReason: Partial<Record<VehicleModelReviewReason, number>>
 }
 
 export interface GeneratedVehicleCatalogArtifacts {
   catalog: CanonicalVehicleCatalog
   mappings: VehicleSourceMappingFile
-  candidates: Array<VehicleCurationCandidate & { modelStatus: 'mapped' | 'model-review' | 'excluded'; vehicleModelKey: string | null }>
+  candidates: Array<VehicleCurationCandidate & {
+    modelStatus: 'mapped' | 'model-review' | 'excluded'
+    vehicleModelKey: string | null
+    reviewReason: VehicleModelReviewReason | null
+  }>
   summary: VehicleCatalogGenerationSummary
 }
 
@@ -114,6 +123,22 @@ export function generateCuratedVehicleCatalog(args: {
       ? canonicalModelSelection(candidate.seriesKeyCandidate, candidate.proposedModelLabel, candidate.typeRaw)
       : null,
   ]))
+  const reviewReasonBySourceKey = new Map<string, VehicleModelReviewReason | null>(
+    candidates.map((candidate) => {
+      const selected = selectionBySourceKey.get(candidate.sourceKey) ?? null
+      let reason: VehicleModelReviewReason | null = null
+      if (candidate.status === 'exact-series' && !selected) {
+        reason = candidate.proposedModelLabel === null
+          ? 'exact-source-review-only'
+          : diagnoseVehicleModelReview(
+              candidate.seriesKeyCandidate!,
+              candidate.proposedModelLabel,
+              candidate.typeRaw,
+            )
+      }
+      return [candidate.sourceKey, reason] as const
+    }),
+  )
   const exactCandidates = candidates.map((candidate) => ({
     ...candidate, proposedModelLabel: selectionBySourceKey.get(candidate.sourceKey)?.name ?? null,
   })).filter(
@@ -288,6 +313,14 @@ export function generateCuratedVehicleCatalog(args: {
   const statusCount = (status: VehicleCurationCandidate['status']): number =>
     candidates.filter((candidate) => candidate.status === status).length
 
+  const modelReviewByReason: Partial<Record<VehicleModelReviewReason, number>> = {}
+  for (const candidate of candidates) {
+    if (candidate.status !== 'exact-series' || selectionBySourceKey.get(candidate.sourceKey)) continue
+    const reason = reviewReasonBySourceKey.get(candidate.sourceKey)
+    if (!reason) continue
+    modelReviewByReason[reason] = (modelReviewByReason[reason] ?? 0) + 1
+  }
+
   return {
     catalog: {
       version: args.version,
@@ -301,7 +334,15 @@ export function generateCuratedVehicleCatalog(args: {
     },
     candidates: candidates.map((candidate) => {
       const target = mappedTargetBySource.get(candidate.sourceKey) ?? null
-      return { ...candidate, modelStatus: target ? 'mapped' : candidate.status === 'exact-series' ? 'model-review' : 'excluded', vehicleModelKey: target }
+      const modelStatus = target ? 'mapped' : candidate.status === 'exact-series' ? 'model-review' : 'excluded'
+      return {
+        ...candidate,
+        modelStatus,
+        vehicleModelKey: target,
+        reviewReason: modelStatus === 'model-review'
+          ? reviewReasonBySourceKey.get(candidate.sourceKey) ?? null
+          : null,
+      }
     }),
     summary: {
       sourceRecords: args.snapshot.records.length,
@@ -315,6 +356,7 @@ export function generateCuratedVehicleCatalog(args: {
       unknownBrandExcluded: statusCount('unknown-brand'),
       noSeriesExcluded: statusCount('no-series'),
       modelReviewRequired: candidates.filter((candidate) => candidate.status === 'exact-series' && !selectionBySourceKey.get(candidate.sourceKey)).length,
+      modelReviewByReason,
     },
   }
 }
