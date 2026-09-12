@@ -217,7 +217,7 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
     for (const pattern of TECHNICAL) label = label.replace(pattern, ' ')
   }
   const technologies = Object.keys(ENGINE_SPELLING).sort((a, b) => b.length - a.length).join('|')
-  const engine = label.match(new RegExp(`\b(\d\.\d{1,2})(?:\s*(${technologies}))?\b`))
+  const engine = label.match(new RegExp(`\\b(\\d\\.\\d{1,2})(?:\\s*(${technologies}))?\\b`))
   if (!group && engine) {
     group = `${engine[1]}${engine[2] ? ` ${ENGINE_SPELLING[engine[2]]}` : ''}`
     const engineEnd = engine.index! + engine[0].length
