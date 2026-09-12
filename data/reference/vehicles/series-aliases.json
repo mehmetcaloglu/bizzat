@@ -1,0 +1,1929 @@
+{
+  "version": "2026-09-09.3",
+  "entries": [
+    {
+      "brandKey": "alfa-romeo",
+      "seriesKey": "alfa-romeo:147",
+      "aliases": [
+        "147"
+      ]
+    },
+    {
+      "brandKey": "alfa-romeo",
+      "seriesKey": "alfa-romeo:156",
+      "aliases": [
+        "156"
+      ]
+    },
+    {
+      "brandKey": "alfa-romeo",
+      "seriesKey": "alfa-romeo:159",
+      "aliases": [
+        "159"
+      ]
+    },
+    {
+      "brandKey": "alfa-romeo",
+      "seriesKey": "alfa-romeo:brera",
+      "aliases": [
+        "BRERA"
+      ]
+    },
+    {
+      "brandKey": "alfa-romeo",
+      "seriesKey": "alfa-romeo:giulia",
+      "aliases": [
+        "GIULIA"
+      ]
+    },
+    {
+      "brandKey": "alfa-romeo",
+      "seriesKey": "alfa-romeo:giulietta",
+      "aliases": [
+        "GIULIETTA"
+      ]
+    },
+    {
+      "brandKey": "alfa-romeo",
+      "seriesKey": "alfa-romeo:mito",
+      "aliases": [
+        "MITO"
+      ]
+    },
+    {
+      "brandKey": "byd",
+      "seriesKey": "byd:dolphin",
+      "aliases": [
+        "DOLPHIN"
+      ]
+    },
+    {
+      "brandKey": "byd",
+      "seriesKey": "byd:han",
+      "aliases": [
+        "HAN"
+      ]
+    },
+    {
+      "brandKey": "byd",
+      "seriesKey": "byd:seal",
+      "aliases": [
+        "SEAL"
+      ]
+    },
+    {
+      "brandKey": "chery",
+      "seriesKey": "chery:tiggo-4",
+      "aliases": [
+        "TIGGO 4"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:aveo",
+      "aliases": [
+        "AVEO"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:camaro",
+      "aliases": [
+        "CAMARO"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:corvette",
+      "aliases": [
+        "CORVETTE"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:cruze",
+      "aliases": [
+        "CRUZE"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:epica",
+      "aliases": [
+        "EPICA"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:kalos",
+      "aliases": [
+        "KALOS"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:lacetti",
+      "aliases": [
+        "LACETTI"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:malibu",
+      "aliases": [
+        "MALIBU"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:rezzo",
+      "aliases": [
+        "REZZO"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:sonic",
+      "aliases": [
+        "SONIC"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:spark",
+      "aliases": [
+        "SPARK"
+      ]
+    },
+    {
+      "brandKey": "chevrolet",
+      "seriesKey": "chevrolet:volt",
+      "aliases": [
+        "VOLT"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c-elysee",
+      "aliases": [
+        "C-ELYSEE"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c1",
+      "aliases": [
+        "C1"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c2",
+      "aliases": [
+        "C2"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c3",
+      "aliases": [
+        "C3"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c4",
+      "aliases": [
+        "C4"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c4-picasso",
+      "aliases": [
+        "C4 PICASSO"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c4-x",
+      "aliases": [
+        "C4 X"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c5",
+      "aliases": [
+        "C5"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c5-x",
+      "aliases": [
+        "C5 X"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:c6",
+      "aliases": [
+        "C6"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:ds3",
+      "aliases": [
+        "DS3"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:ds4",
+      "aliases": [
+        "DS4"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:ds5",
+      "aliases": [
+        "DS5"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:saxo",
+      "aliases": [
+        "SAXO"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:xantia",
+      "aliases": [
+        "XANTIA"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:xsara",
+      "aliases": [
+        "XSARA"
+      ]
+    },
+    {
+      "brandKey": "citroen",
+      "seriesKey": "citroen:xsara-picasso",
+      "aliases": [
+        "XSARA PICASSO"
+      ]
+    },
+    {
+      "brandKey": "cupra",
+      "seriesKey": "cupra:born",
+      "aliases": [
+        "BORN"
+      ]
+    },
+    {
+      "brandKey": "cupra",
+      "seriesKey": "cupra:leon",
+      "aliases": [
+        "LEON"
+      ]
+    },
+    {
+      "brandKey": "cupra",
+      "seriesKey": "cupra:tavascan",
+      "aliases": [
+        "TAVASCAN"
+      ]
+    },
+    {
+      "brandKey": "ds",
+      "seriesKey": "ds:ds-3",
+      "aliases": [
+        "DS 3"
+      ]
+    },
+    {
+      "brandKey": "ds",
+      "seriesKey": "ds:ds-4",
+      "aliases": [
+        "DS 4"
+      ]
+    },
+    {
+      "brandKey": "ds",
+      "seriesKey": "ds:ds-7",
+      "aliases": [
+        "DS 7"
+      ]
+    },
+    {
+      "brandKey": "ds",
+      "seriesKey": "ds:ds-9",
+      "aliases": [
+        "DS 9"
+      ]
+    },
+    {
+      "brandKey": "dacia",
+      "seriesKey": "dacia:lodgy",
+      "aliases": [
+        "LODGY"
+      ]
+    },
+    {
+      "brandKey": "dacia",
+      "seriesKey": "dacia:logan",
+      "aliases": [
+        "LOGAN"
+      ]
+    },
+    {
+      "brandKey": "dacia",
+      "seriesKey": "dacia:sandero",
+      "aliases": [
+        "SANDERO"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:albea",
+      "aliases": [
+        "ALBEA"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:brava",
+      "aliases": [
+        "BRAVA"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:bravo",
+      "aliases": [
+        "BRAVO"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:egea",
+      "aliases": [
+        "EGEA",
+        "EGEA SEDAN",
+        "EGEA HATCHBACK",
+        "EGEA CROSS"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:linea",
+      "aliases": [
+        "LINEA"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:marea",
+      "aliases": [
+        "MAREA"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:palio",
+      "aliases": [
+        "PALIO"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:panda",
+      "aliases": [
+        "PANDA"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:punto",
+      "aliases": [
+        "PUNTO",
+        "GRANDE PUNTO",
+        "PUNTO EVO"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:siena",
+      "aliases": [
+        "SIENA"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:stilo",
+      "aliases": [
+        "STILO"
+      ]
+    },
+    {
+      "brandKey": "fiat",
+      "seriesKey": "fiat:tipo",
+      "aliases": [
+        "TIPO"
+      ]
+    },
+    {
+      "brandKey": "ford",
+      "seriesKey": "ford:b-max",
+      "aliases": [
+        "B-MAX"
+      ]
+    },
+    {
+      "brandKey": "ford",
+      "seriesKey": "ford:c-max",
+      "aliases": [
+        "C-MAX"
+      ]
+    },
+    {
+      "brandKey": "ford",
+      "seriesKey": "ford:fiesta",
+      "aliases": [
+        "FIESTA"
+      ]
+    },
+    {
+      "brandKey": "ford",
+      "seriesKey": "ford:focus",
+      "aliases": [
+        "FOCUS"
+      ]
+    },
+    {
+      "brandKey": "ford",
+      "seriesKey": "ford:fusion",
+      "aliases": [
+        "FUSION"
+      ]
+    },
+    {
+      "brandKey": "ford",
+      "seriesKey": "ford:ka",
+      "aliases": [
+        "KA"
+      ]
+    },
+    {
+      "brandKey": "ford",
+      "seriesKey": "ford:mondeo",
+      "aliases": [
+        "MONDEO"
+      ]
+    },
+    {
+      "brandKey": "ford",
+      "seriesKey": "ford:mustang",
+      "aliases": [
+        "MUSTANG"
+      ]
+    },
+    {
+      "brandKey": "honda",
+      "seriesKey": "honda:accord",
+      "aliases": [
+        "ACCORD"
+      ]
+    },
+    {
+      "brandKey": "honda",
+      "seriesKey": "honda:cr-z",
+      "aliases": [
+        "CR-Z"
+      ]
+    },
+    {
+      "brandKey": "honda",
+      "seriesKey": "honda:city",
+      "aliases": [
+        "CITY"
+      ]
+    },
+    {
+      "brandKey": "honda",
+      "seriesKey": "honda:civic",
+      "aliases": [
+        "CIVIC"
+      ]
+    },
+    {
+      "brandKey": "honda",
+      "seriesKey": "honda:insight",
+      "aliases": [
+        "INSIGHT"
+      ]
+    },
+    {
+      "brandKey": "honda",
+      "seriesKey": "honda:jazz",
+      "aliases": [
+        "JAZZ"
+      ]
+    },
+    {
+      "brandKey": "honda",
+      "seriesKey": "honda:prelude",
+      "aliases": [
+        "PRELUDE"
+      ]
+    },
+    {
+      "brandKey": "honda",
+      "seriesKey": "honda:s2000",
+      "aliases": [
+        "S2000"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:accent",
+      "aliases": [
+        "ACCENT"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:accent-blue",
+      "aliases": [
+        "ACCENT BLUE"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:accent-era",
+      "aliases": [
+        "ACCENT ERA"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:atos",
+      "aliases": [
+        "ATOS"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:coupe",
+      "aliases": [
+        "COUPE"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:elantra",
+      "aliases": [
+        "ELANTRA"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:getz",
+      "aliases": [
+        "GETZ"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:ioniq",
+      "aliases": [
+        "IONIQ"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:ioniq5",
+      "aliases": [
+        "IONIQ 5"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:ioniq6",
+      "aliases": [
+        "IONIQ 6"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:matrix",
+      "aliases": [
+        "MATRIX"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:sonata",
+      "aliases": [
+        "SONATA"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:i10",
+      "aliases": [
+        "I10"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:i20",
+      "aliases": [
+        "I20"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:i30",
+      "aliases": [
+        "I30"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:i40",
+      "aliases": [
+        "I40"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:ix20",
+      "aliases": [
+        "IX20"
+      ]
+    },
+    {
+      "brandKey": "hyundai",
+      "seriesKey": "hyundai:ix55",
+      "aliases": [
+        "IX55"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:carens",
+      "aliases": [
+        "CARENS"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:ceed",
+      "aliases": [
+        "CEED"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:cerato",
+      "aliases": [
+        "CERATO"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:magentis",
+      "aliases": [
+        "MAGENTIS"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:optima",
+      "aliases": [
+        "OPTIMA"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:picanto",
+      "aliases": [
+        "PICANTO"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:proceed",
+      "aliases": [
+        "PROCEED"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:rio",
+      "aliases": [
+        "RIO"
+      ]
+    },
+    {
+      "brandKey": "kia",
+      "seriesKey": "kia:soul",
+      "aliases": [
+        "SOUL"
+      ]
+    },
+    {
+      "brandKey": "mini",
+      "seriesKey": "mini:clubman",
+      "aliases": [
+        "CLUBMAN"
+      ]
+    },
+    {
+      "brandKey": "mini",
+      "seriesKey": "mini:cooper",
+      "aliases": [
+        "COOPER"
+      ]
+    },
+    {
+      "brandKey": "mini",
+      "seriesKey": "mini:countryman",
+      "aliases": [
+        "COUNTRYMAN"
+      ]
+    },
+    {
+      "brandKey": "mini",
+      "seriesKey": "mini:one",
+      "aliases": [
+        "ONE"
+      ]
+    },
+    {
+      "brandKey": "mini",
+      "seriesKey": "mini:paceman",
+      "aliases": [
+        "PACEMAN"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:cx-3",
+      "aliases": [
+        "CX-3"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:cx-30",
+      "aliases": [
+        "CX-30"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:cx-5",
+      "aliases": [
+        "CX-5"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:cx-60",
+      "aliases": [
+        "CX-60"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:cx-7",
+      "aliases": [
+        "CX-7"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:mazda2",
+      "aliases": [
+        "MAZDA2"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:mazda3",
+      "aliases": [
+        "MAZDA3"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:mazda5",
+      "aliases": [
+        "MAZDA5"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:mazda6",
+      "aliases": [
+        "MAZDA6"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:mx-5",
+      "aliases": [
+        "MX-5"
+      ]
+    },
+    {
+      "brandKey": "mazda",
+      "seriesKey": "mazda:rx-8",
+      "aliases": [
+        "RX-8"
+      ]
+    },
+    {
+      "brandKey": "mitsubishi",
+      "seriesKey": "mitsubishi:colt",
+      "aliases": [
+        "COLT"
+      ]
+    },
+    {
+      "brandKey": "mitsubishi",
+      "seriesKey": "mitsubishi:lancer",
+      "aliases": [
+        "LANCER"
+      ]
+    },
+    {
+      "brandKey": "mitsubishi",
+      "seriesKey": "mitsubishi:space-star",
+      "aliases": [
+        "SPACE STAR"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:350z",
+      "aliases": [
+        "350Z"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:370z",
+      "aliases": [
+        "370Z"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:almera",
+      "aliases": [
+        "ALMERA"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:leaf",
+      "aliases": [
+        "LEAF"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:micra",
+      "aliases": [
+        "MICRA"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:note",
+      "aliases": [
+        "NOTE"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:primera",
+      "aliases": [
+        "PRIMERA"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:pulsar",
+      "aliases": [
+        "PULSAR"
+      ]
+    },
+    {
+      "brandKey": "nissan",
+      "seriesKey": "nissan:tiida",
+      "aliases": [
+        "TIIDA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:adam",
+      "aliases": [
+        "ADAM"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:astra",
+      "aliases": [
+        "ASTRA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:cascada",
+      "aliases": [
+        "CASCADA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:corsa",
+      "aliases": [
+        "CORSA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:insignia",
+      "aliases": [
+        "INSIGNIA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:meriva",
+      "aliases": [
+        "MERIVA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:omega",
+      "aliases": [
+        "OMEGA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:tigra",
+      "aliases": [
+        "TIGRA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:vectra",
+      "aliases": [
+        "VECTRA"
+      ]
+    },
+    {
+      "brandKey": "opel",
+      "seriesKey": "opel:zafira",
+      "aliases": [
+        "ZAFIRA"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:106",
+      "aliases": [
+        "106"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:107",
+      "aliases": [
+        "107"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:108",
+      "aliases": [
+        "108"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:205",
+      "aliases": [
+        "205"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:206",
+      "aliases": [
+        "206"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:207",
+      "aliases": [
+        "207"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:208",
+      "aliases": [
+        "208"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:301",
+      "aliases": [
+        "301"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:306",
+      "aliases": [
+        "306"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:307",
+      "aliases": [
+        "307"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:308",
+      "aliases": [
+        "308"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:4008",
+      "aliases": [
+        "4008"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:406",
+      "aliases": [
+        "406"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:407",
+      "aliases": [
+        "407"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:508",
+      "aliases": [
+        "508"
+      ]
+    },
+    {
+      "brandKey": "peugeot",
+      "seriesKey": "peugeot:rcz",
+      "aliases": [
+        "RCZ"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:clio",
+      "aliases": [
+        "CLIO"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:fluence",
+      "aliases": [
+        "FLUENCE"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:laguna",
+      "aliases": [
+        "LAGUNA"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:latitude",
+      "aliases": [
+        "LATITUDE"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:megane",
+      "aliases": [
+        "MEGANE",
+        "MEGANE SEDAN",
+        "MEGANE HATCHBACK"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:modus",
+      "aliases": [
+        "MODUS"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:scenic",
+      "aliases": [
+        "SCENIC",
+        "GRAND SCENIC"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:symbol",
+      "aliases": [
+        "SYMBOL"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:talisman",
+      "aliases": [
+        "TALISMAN"
+      ]
+    },
+    {
+      "brandKey": "renault",
+      "seriesKey": "renault:zoe",
+      "aliases": [
+        "ZOE"
+      ]
+    },
+    {
+      "brandKey": "seat",
+      "seriesKey": "seat:altea",
+      "aliases": [
+        "ALTEA"
+      ]
+    },
+    {
+      "brandKey": "seat",
+      "seriesKey": "seat:cordoba",
+      "aliases": [
+        "CORDOBA"
+      ]
+    },
+    {
+      "brandKey": "seat",
+      "seriesKey": "seat:exeo",
+      "aliases": [
+        "EXEO"
+      ]
+    },
+    {
+      "brandKey": "seat",
+      "seriesKey": "seat:ibiza",
+      "aliases": [
+        "IBIZA"
+      ]
+    },
+    {
+      "brandKey": "seat",
+      "seriesKey": "seat:leon",
+      "aliases": [
+        "LEON"
+      ]
+    },
+    {
+      "brandKey": "seat",
+      "seriesKey": "seat:mii",
+      "aliases": [
+        "MII"
+      ]
+    },
+    {
+      "brandKey": "seat",
+      "seriesKey": "seat:toledo",
+      "aliases": [
+        "TOLEDO"
+      ]
+    },
+    {
+      "brandKey": "skoda",
+      "seriesKey": "skoda:citigo",
+      "aliases": [
+        "CITIGO"
+      ]
+    },
+    {
+      "brandKey": "skoda",
+      "seriesKey": "skoda:fabia",
+      "aliases": [
+        "FABIA"
+      ]
+    },
+    {
+      "brandKey": "skoda",
+      "seriesKey": "skoda:octavia",
+      "aliases": [
+        "OCTAVIA"
+      ]
+    },
+    {
+      "brandKey": "skoda",
+      "seriesKey": "skoda:rapid",
+      "aliases": [
+        "RAPID"
+      ]
+    },
+    {
+      "brandKey": "skoda",
+      "seriesKey": "skoda:roomster",
+      "aliases": [
+        "ROOMSTER"
+      ]
+    },
+    {
+      "brandKey": "skoda",
+      "seriesKey": "skoda:scala",
+      "aliases": [
+        "SCALA"
+      ]
+    },
+    {
+      "brandKey": "skoda",
+      "seriesKey": "skoda:superb",
+      "aliases": [
+        "SUPERB"
+      ]
+    },
+    {
+      "brandKey": "subaru",
+      "seriesKey": "subaru:brz",
+      "aliases": [
+        "BRZ"
+      ]
+    },
+    {
+      "brandKey": "subaru",
+      "seriesKey": "subaru:impreza",
+      "aliases": [
+        "IMPREZA"
+      ]
+    },
+    {
+      "brandKey": "subaru",
+      "seriesKey": "subaru:legacy",
+      "aliases": [
+        "LEGACY"
+      ]
+    },
+    {
+      "brandKey": "subaru",
+      "seriesKey": "subaru:levorg",
+      "aliases": [
+        "LEVORG"
+      ]
+    },
+    {
+      "brandKey": "suzuki",
+      "seriesKey": "suzuki:alto",
+      "aliases": [
+        "ALTO"
+      ]
+    },
+    {
+      "brandKey": "suzuki",
+      "seriesKey": "suzuki:baleno",
+      "aliases": [
+        "BALENO"
+      ]
+    },
+    {
+      "brandKey": "suzuki",
+      "seriesKey": "suzuki:liana",
+      "aliases": [
+        "LIANA"
+      ]
+    },
+    {
+      "brandKey": "suzuki",
+      "seriesKey": "suzuki:splash",
+      "aliases": [
+        "SPLASH"
+      ]
+    },
+    {
+      "brandKey": "suzuki",
+      "seriesKey": "suzuki:swift",
+      "aliases": [
+        "SWIFT"
+      ]
+    },
+    {
+      "brandKey": "tesla",
+      "seriesKey": "tesla:model-3",
+      "aliases": [
+        "MODEL 3"
+      ]
+    },
+    {
+      "brandKey": "tesla",
+      "seriesKey": "tesla:model-s",
+      "aliases": [
+        "MODEL S"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:auris",
+      "aliases": [
+        "AURIS"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:avensis",
+      "aliases": [
+        "AVENSIS"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:aygo",
+      "aliases": [
+        "AYGO"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:camry",
+      "aliases": [
+        "CAMRY"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:corolla",
+      "aliases": [
+        "COROLLA",
+        "COROLLA CROSS"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:gt86",
+      "aliases": [
+        "GT86"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:prius",
+      "aliases": [
+        "PRIUS"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:supra",
+      "aliases": [
+        "SUPRA"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:verso",
+      "aliases": [
+        "VERSO",
+        "COROLLA VERSO"
+      ]
+    },
+    {
+      "brandKey": "toyota",
+      "seriesKey": "toyota:yaris",
+      "aliases": [
+        "YARIS",
+        "YARIS CROSS"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:arteon",
+      "aliases": [
+        "ARTEON"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:beetle",
+      "aliases": [
+        "BEETLE",
+        "NEW BEETLE"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:bora",
+      "aliases": [
+        "BORA"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:cc",
+      "aliases": [
+        "CC"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:eos",
+      "aliases": [
+        "EOS"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:golf",
+      "aliases": [
+        "GOLF"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:id3",
+      "aliases": [
+        "ID.3",
+        "ID3"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:id4",
+      "aliases": [
+        "ID.4",
+        "ID4"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:id5",
+      "aliases": [
+        "ID.5",
+        "ID5"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:id7",
+      "aliases": [
+        "ID.7",
+        "ID7"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:jetta",
+      "aliases": [
+        "JETTA"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:passat",
+      "aliases": [
+        "PASSAT",
+        "PASSAT CC"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:phaeton",
+      "aliases": [
+        "PHAETON"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:polo",
+      "aliases": [
+        "POLO"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:scirocco",
+      "aliases": [
+        "SCIROCCO"
+      ]
+    },
+    {
+      "brandKey": "volkswagen",
+      "seriesKey": "volkswagen:up",
+      "aliases": [
+        "UP!",
+        "UP"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:1-serisi",
+      "aliases": [
+        "116D",
+        "116I",
+        "118D",
+        "118I",
+        "118IA",
+        "120",
+        "120D",
+        "120I",
+        "128TI"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:2-serisi",
+      "aliases": [
+        "216D",
+        "218D",
+        "218I",
+        "220",
+        "220D",
+        "220I",
+        "228I",
+        "230E",
+        "230I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:3-serisi",
+      "aliases": [
+        "316D",
+        "316I",
+        "318D",
+        "318I",
+        "320",
+        "320D",
+        "320I",
+        "328I",
+        "330D",
+        "330E",
+        "330I",
+        "340I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:4-serisi",
+      "aliases": [
+        "418D",
+        "418I",
+        "420D",
+        "420I",
+        "428I",
+        "430D",
+        "430I",
+        "435D",
+        "435I",
+        "440I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:5-serisi",
+      "aliases": [
+        "520D",
+        "520I",
+        "520LI",
+        "525D",
+        "528I",
+        "530",
+        "530D",
+        "530E",
+        "530I",
+        "535D",
+        "535I",
+        "540D",
+        "540I",
+        "550E",
+        "550I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:6-serisi",
+      "aliases": [
+        "620D",
+        "630I",
+        "640D",
+        "640I",
+        "650I"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:7-serisi",
+      "aliases": [
+        "725D",
+        "725LD",
+        "730",
+        "730D",
+        "730I",
+        "730LD",
+        "730LI",
+        "740",
+        "740D",
+        "740E",
+        "740IA",
+        "740LD",
+        "740LE",
+        "740LI",
+        "745LE",
+        "750",
+        "750D",
+        "750I",
+        "750IA",
+        "750LD",
+        "750LI",
+        "760",
+        "760IA"
+      ]
+    },
+    {
+      "brandKey": "bmw",
+      "seriesKey": "bmw:8-serisi",
+      "aliases": [
+        "840D",
+        "840I"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:a-serisi",
+      "aliases": [
+        "A",
+        "A180",
+        "A200"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:b-serisi",
+      "aliases": [
+        "B"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:c-serisi",
+      "aliases": [
+        "C",
+        "C180",
+        "C180K",
+        "C63"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:e-serisi",
+      "aliases": [
+        "E",
+        "E220"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:s-serisi",
+      "aliases": [
+        "S",
+        "S350",
+        "S400D",
+        "S65"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:cla-serisi",
+      "aliases": [
+        "CLA"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:cls-serisi",
+      "aliases": [
+        "CLS"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:cl-serisi",
+      "aliases": [
+        "CL"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:sl-serisi",
+      "aliases": [
+        "SL"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:slk-serisi",
+      "aliases": [
+        "SLK"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:slc-serisi",
+      "aliases": [
+        "SLC"
+      ]
+    },
+    {
+      "brandKey": "mercedes-benz",
+      "seriesKey": "mercedes-benz:cle-serisi",
+      "aliases": [
+        "CLE"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a1",
+      "aliases": [
+        "A1"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a3",
+      "aliases": [
+        "A3"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a4",
+      "aliases": [
+        "A4"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a5",
+      "aliases": [
+        "A5"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a6",
+      "aliases": [
+        "A6"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a7",
+      "aliases": [
+        "A7"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:a8",
+      "aliases": [
+        "A8"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:tt",
+      "aliases": [
+        "TT"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s3",
+      "aliases": [
+        "S3"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s4",
+      "aliases": [
+        "S4"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s5",
+      "aliases": [
+        "S5"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s6",
+      "aliases": [
+        "S6"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s7",
+      "aliases": [
+        "S7"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:s8",
+      "aliases": [
+        "S8"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs3",
+      "aliases": [
+        "RS3"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs4",
+      "aliases": [
+        "RS4"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs5",
+      "aliases": [
+        "RS5"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs6",
+      "aliases": [
+        "RS6"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:rs7",
+      "aliases": [
+        "RS7"
+      ]
+    },
+    {
+      "brandKey": "audi",
+      "seriesKey": "audi:r8",
+      "aliases": [
+        "R8"
+      ]
+    }
+  ]
+}

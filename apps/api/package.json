@@ -8,14 +8,15 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src test --max-warnings=0",
-    "test": "vitest run test/app.test.ts test/location-validator.test.ts test/vehicle-catalog-validator.test.ts test/vehicle-source-validator.test.ts",
+    "test": "vitest run test/app.test.ts test/location-validator.test.ts test/vehicle-catalog-validator.test.ts test/vehicle-source-validator.test.ts test/vehicle-curation.test.ts test/vehicle-curation-megane.test.ts test/vehicle-curation-focus.test.ts test/vehicle-curation-astra.test.ts test/vehicle-curation-regression.test.ts test/vehicle-curation-astra-data.test.ts test/vehicle-curation-data.test.ts",
     "test:integration": "vitest run test/*.integration.test.ts",
     "db:migrate:raw": "tsx src/db/migrate-cli.ts",
     "reference:import:locations": "tsx src/reference/import/import-cli.ts",
     "reference:import:vehicle-catalog": "tsx src/reference/vehicle/catalog-import-cli.ts",
     "reference:import:vehicle-source": "tsx src/reference/vehicle/source/source-import-cli.ts",
     "reference:apply:vehicle-mappings": "tsx src/reference/vehicle/source/mapping-apply-cli.ts",
-    "reference:report:vehicle-source": "tsx src/reference/vehicle/source/source-report-cli.ts"
+    "reference:report:vehicle-source": "tsx src/reference/vehicle/source/source-report-cli.ts",
+    "reference:generate:vehicle-catalog": "tsx src/reference/vehicle/curation/generate-catalog-cli.ts"
   },
   "dependencies": {
     "@bizzat/contracts": "workspace:*",

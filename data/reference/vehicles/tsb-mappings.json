@@ -1,0 +1,4210 @@
+{
+  "version": "2026-09-10.3",
+  "mappings": [
+    {
+      "sourceKey": "100-1138",
+      "vehicleModelKey": "fiat:egea:1-4-fire-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1140",
+      "vehicleModelKey": "fiat:egea:1-4-fire-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1142",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1143",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1146",
+      "vehicleModelKey": "fiat:egea:1-6-e-torq-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1147",
+      "vehicleModelKey": "fiat:egea:1-6-e-torq-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1157",
+      "vehicleModelKey": "fiat:egea:1-4-fire-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1158",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1159",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1163",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1173",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1182",
+      "vehicleModelKey": "fiat:egea:1-6-e-torq-lounge-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1183",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1184",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1189",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1242",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1243",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1250",
+      "vehicleModelKey": "fiat:egea:1-4-fire-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1251",
+      "vehicleModelKey": "fiat:egea:1-6-e-torq-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1252",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1253",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1254",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1255",
+      "vehicleModelKey": "fiat:egea:1-4-fire-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1262",
+      "vehicleModelKey": "fiat:egea:1-4-fire-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1263",
+      "vehicleModelKey": "fiat:egea:1-6-e-torq-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1264",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1265",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1266",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1278",
+      "vehicleModelKey": "fiat:egea:1-6-e-torq-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1293",
+      "vehicleModelKey": "fiat:egea:1-4-fire-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1294",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1295",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1296",
+      "vehicleModelKey": "fiat:egea:1-4-fire-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1297",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1298",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1299",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1300",
+      "vehicleModelKey": "fiat:egea:1-4-fire-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1301",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1302",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1303",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-mirror",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1304",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1305",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1363",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-easy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1364",
+      "vehicleModelKey": "fiat:egea:1-4-fire-easy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1365",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-easy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1374",
+      "vehicleModelKey": "fiat:egea:1-4-fire-lounge-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1380",
+      "vehicleModelKey": "fiat:egea:1-4-fire-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1381",
+      "vehicleModelKey": "fiat:egea:1-0-firefly-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1382",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1383",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1384",
+      "vehicleModelKey": "fiat:egea:1-4-fire-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1385",
+      "vehicleModelKey": "fiat:egea:1-0-firefly-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1386",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1387",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1412",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1445",
+      "vehicleModelKey": "fiat:egea:1-4-fire-easy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1446",
+      "vehicleModelKey": "fiat:egea:1-3-multijet-easy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1448",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1449",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1450",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1451",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1459",
+      "vehicleModelKey": "fiat:egea:1-5-t4-hybrid-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1460",
+      "vehicleModelKey": "fiat:egea:1-5-t4-hybrid-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1461",
+      "vehicleModelKey": "fiat:egea:1-5-t4-hybrid-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1473",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-easy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1477",
+      "vehicleModelKey": "fiat:egea:1-4-fire-urban-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1478",
+      "vehicleModelKey": "fiat:egea:1-4-fire-easy-stil",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1479",
+      "vehicleModelKey": "fiat:egea:1-4-fire-limited",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1480",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-limited",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1481",
+      "vehicleModelKey": "fiat:egea:1-5-t4-hybrid-limited",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1486",
+      "vehicleModelKey": "fiat:egea:1-4-fire-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1487",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1488",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1489",
+      "vehicleModelKey": "fiat:egea:1-4-fire-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1490",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1491",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1492",
+      "vehicleModelKey": "fiat:egea:1-4-fire-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1493",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1494",
+      "vehicleModelKey": "fiat:egea:1-4-fire-limited",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1495",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-limited",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1504",
+      "vehicleModelKey": "fiat:egea:1-4-fire-easy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1505",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1506",
+      "vehicleModelKey": "fiat:egea:1-6-multijet-limited",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "107-1017",
+      "vehicleModelKey": "nissan:micra:1-2-platinum",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "107-1038",
+      "vehicleModelKey": "nissan:micra:1-2-match",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "107-1041",
+      "vehicleModelKey": "nissan:note:1-2-visia",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "107-1042",
+      "vehicleModelKey": "nissan:note:1-2-tekna",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "107-1043",
+      "vehicleModelKey": "nissan:note:1-5-dci-visia",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "107-1044",
+      "vehicleModelKey": "nissan:note:1-5-dci-tekna",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "107-1045",
+      "vehicleModelKey": "nissan:note:1-5-dci-platinum",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1011",
+      "vehicleModelKey": "opel:astra:1-3-cdti-enjoy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1076",
+      "vehicleModelKey": "opel:adam:1-2-jam",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1077",
+      "vehicleModelKey": "opel:adam:1-2-glam",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1078",
+      "vehicleModelKey": "opel:adam:1-2-slam",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-715",
+      "vehicleModelKey": "opel:astra:1-3-cdti-enjoy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-716",
+      "vehicleModelKey": "opel:astra:1-3-cdti-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-717",
+      "vehicleModelKey": "opel:astra:1-3-cdti-cosmo",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1024",
+      "vehicleModelKey": "peugeot:308:1-6-hdi-business",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1033",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-sportium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1073",
+      "vehicleModelKey": "peugeot:308:1-2-vti-access",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1074",
+      "vehicleModelKey": "peugeot:308:1-2-vti-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1075",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1076",
+      "vehicleModelKey": "peugeot:308:1-6-thp-allure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1077",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-allure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1104",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-access",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1105",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1111",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1112",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1113",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-allure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1114",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-allure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1116",
+      "vehicleModelKey": "peugeot:308:1-6-bluehdi-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1117",
+      "vehicleModelKey": "peugeot:308:1-6-bluehdi-allure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1151",
+      "vehicleModelKey": "peugeot:308:1-6-bluehdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-1152",
+      "vehicleModelKey": "peugeot:308:1-6-thp-gti",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2039",
+      "vehicleModelKey": "peugeot:308:1-6-hdi-classic-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2040",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-classic-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2072",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-techno-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2073",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-techno-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2074",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-techno-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2075",
+      "vehicleModelKey": "peugeot:308:1-6-bluehdi-techno-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2087",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2088",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2089",
+      "vehicleModelKey": "peugeot:308:1-6-bluehdi-access",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2090",
+      "vehicleModelKey": "peugeot:308:1-6-bluehdi-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2091",
+      "vehicleModelKey": "peugeot:308:1-6-bluehdi-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2092",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2123",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2124",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2125",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2151",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2191",
+      "vehicleModelKey": "peugeot:308:1-6-puretech-gti",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2217",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-active-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2218",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-active-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2219",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-allure-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2241",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-style-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2245",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-style-tech",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2246",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-allure-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2247",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-style-tech",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2264",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-style-tech",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2290",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-gt",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2318",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-gt-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2348",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-gt",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2350",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-active-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2351",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-allure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2372",
+      "vehicleModelKey": "peugeot:308:1-2-puretech-active-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2420",
+      "vehicleModelKey": "peugeot:308:1-2-hybrid-allure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2451",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-allure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-2452",
+      "vehicleModelKey": "peugeot:308:1-5-bluehdi-gt",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-346",
+      "vehicleModelKey": "peugeot:308:1-6-vti-access",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-347",
+      "vehicleModelKey": "peugeot:308:1-6-vti-access",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-348",
+      "vehicleModelKey": "peugeot:308:1-6-hdi-access",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-349",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-access",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-350",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-access",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-351",
+      "vehicleModelKey": "peugeot:308:1-6-vti-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-352",
+      "vehicleModelKey": "peugeot:308:1-6-vti-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-353",
+      "vehicleModelKey": "peugeot:308:1-6-thp-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-354",
+      "vehicleModelKey": "peugeot:308:1-6-hdi-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-355",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-356",
+      "vehicleModelKey": "peugeot:308:1-6-e-hdi-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-738",
+      "vehicleModelKey": "peugeot:407:1-6-hdi-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-739",
+      "vehicleModelKey": "peugeot:407:1-6-hdi-executive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-786",
+      "vehicleModelKey": "peugeot:308:1-6-vti-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-788",
+      "vehicleModelKey": "peugeot:308:1-6-hdi-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-792",
+      "vehicleModelKey": "peugeot:308:1-6-vti-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-810",
+      "vehicleModelKey": "peugeot:308:1-6-hdi-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "114-970",
+      "vehicleModelKey": "peugeot:308:1-6-hdi-premium-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1007",
+      "vehicleModelKey": "renault:clio:1-5-dci-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1008",
+      "vehicleModelKey": "renault:clio:1-5-dci-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1011",
+      "vehicleModelKey": "renault:clio:1-5-dci-grandtour-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1012",
+      "vehicleModelKey": "renault:clio:1-5-dci-grandtour-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1032",
+      "vehicleModelKey": "renault:clio:1-2-authentique-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1033",
+      "vehicleModelKey": "renault:clio:1-5-dci-authentique-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1034",
+      "vehicleModelKey": "renault:clio:1-2-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1035",
+      "vehicleModelKey": "renault:clio:1-6-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1040",
+      "vehicleModelKey": "renault:clio:1-2-grandtour-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1074",
+      "vehicleModelKey": "renault:clio:1-6-grandtour-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1075",
+      "vehicleModelKey": "renault:clio:1-2-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1076",
+      "vehicleModelKey": "renault:clio:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1077",
+      "vehicleModelKey": "renault:clio:1-2-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1079",
+      "vehicleModelKey": "renault:clio:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1080",
+      "vehicleModelKey": "renault:clio:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1081",
+      "vehicleModelKey": "renault:clio:1-2-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1083",
+      "vehicleModelKey": "renault:clio:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1084",
+      "vehicleModelKey": "renault:clio:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1088",
+      "vehicleModelKey": "renault:megane:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1089",
+      "vehicleModelKey": "renault:megane:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1105",
+      "vehicleModelKey": "renault:megane:1-6-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1106",
+      "vehicleModelKey": "renault:megane:1-6-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1107",
+      "vehicleModelKey": "renault:megane:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1108",
+      "vehicleModelKey": "renault:megane:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1119",
+      "vehicleModelKey": "renault:clio:1-2-sport-tourer-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1120",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1122",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1130",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1131",
+      "vehicleModelKey": "renault:clio:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1132",
+      "vehicleModelKey": "renault:clio:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1141",
+      "vehicleModelKey": "renault:clio:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1142",
+      "vehicleModelKey": "renault:clio:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1148",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1149",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1150",
+      "vehicleModelKey": "renault:clio:1-5-dci-connect",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1151",
+      "vehicleModelKey": "renault:clio:1-5-dci-connect",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1152",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1160",
+      "vehicleModelKey": "renault:megane:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1161",
+      "vehicleModelKey": "renault:megane:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1165",
+      "vehicleModelKey": "renault:clio:1-2-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1167",
+      "vehicleModelKey": "renault:clio:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1168",
+      "vehicleModelKey": "renault:clio:1-2-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1171",
+      "vehicleModelKey": "renault:clio:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1172",
+      "vehicleModelKey": "renault:clio:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1173",
+      "vehicleModelKey": "renault:clio:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1174",
+      "vehicleModelKey": "renault:clio:1-2-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1177",
+      "vehicleModelKey": "renault:clio:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1178",
+      "vehicleModelKey": "renault:clio:1-5-dci-connect",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1179",
+      "vehicleModelKey": "renault:clio:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1180",
+      "vehicleModelKey": "renault:clio:1-5-dci-connect",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1182",
+      "vehicleModelKey": "renault:clio:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1183",
+      "vehicleModelKey": "renault:clio:1-5-dci-gt-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1184",
+      "vehicleModelKey": "renault:clio:1-2-sport-tourer-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1185",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1188",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1189",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1190",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1191",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1192",
+      "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1203",
+      "vehicleModelKey": "renault:clio:0-9-tce-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1207",
+      "vehicleModelKey": "renault:clio:0-9-tce-sport-tourer-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1208",
+      "vehicleModelKey": "renault:clio:0-9-tce-sport-tourer-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1217",
+      "vehicleModelKey": "renault:clio:0-9-tce-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1218",
+      "vehicleModelKey": "renault:clio:1-3-tce-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1221",
+      "vehicleModelKey": "renault:clio:1-0-sce-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1222",
+      "vehicleModelKey": "renault:clio:1-0-tce-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1223",
+      "vehicleModelKey": "renault:clio:1-5-bluedci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1224",
+      "vehicleModelKey": "renault:clio:1-0-tce-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1225",
+      "vehicleModelKey": "renault:clio:1-0-tce-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1226",
+      "vehicleModelKey": "renault:clio:1-5-bluedci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1227",
+      "vehicleModelKey": "renault:clio:1-0-tce-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1228",
+      "vehicleModelKey": "renault:clio:1-0-tce-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1229",
+      "vehicleModelKey": "renault:clio:1-3-tce-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1230",
+      "vehicleModelKey": "renault:clio:1-5-bluedci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1231",
+      "vehicleModelKey": "renault:clio:0-9-tce-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1232",
+      "vehicleModelKey": "renault:clio:1-3-tce-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1233",
+      "vehicleModelKey": "renault:clio:1-0-sce-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1234",
+      "vehicleModelKey": "renault:clio:1-0-tce-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1236",
+      "vehicleModelKey": "renault:clio:1-0-tce-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1237",
+      "vehicleModelKey": "renault:clio:1-0-tce-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1239",
+      "vehicleModelKey": "renault:clio:1-0-tce-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1240",
+      "vehicleModelKey": "renault:clio:1-0-tce-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1254",
+      "vehicleModelKey": "renault:clio:1-0-tce-rs-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1255",
+      "vehicleModelKey": "renault:clio:1-3-tce-rs-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1258",
+      "vehicleModelKey": "renault:clio:1-0-sce-equilibre",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1259",
+      "vehicleModelKey": "renault:clio:1-0-tce-equilibre",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1260",
+      "vehicleModelKey": "renault:clio:1-0-tce-evolution",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1261",
+      "vehicleModelKey": "renault:clio:1-0-tce-techno-esprit-alpine",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1263",
+      "vehicleModelKey": "renault:clio:1-0-tce-equilibre",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1266",
+      "vehicleModelKey": "renault:clio:1-0-tce-evolution",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1267",
+      "vehicleModelKey": "renault:clio:1-2-tce-evolution-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1268",
+      "vehicleModelKey": "renault:clio:1-2-tce-esprit-alpine",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-497",
+      "vehicleModelKey": "renault:clio:1-5-dci-grandtour-authentique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-499",
+      "vehicleModelKey": "renault:clio:1-2-grandtour-authentique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-536",
+      "vehicleModelKey": "renault:clio:1-2-grandtour-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-537",
+      "vehicleModelKey": "renault:clio:1-5-dci-grandtour-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-538",
+      "vehicleModelKey": "renault:clio:1-2-grandtour-executive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-539",
+      "vehicleModelKey": "renault:clio:1-5-dci-grandtour-executive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-565",
+      "vehicleModelKey": "renault:clio:1-6-grandtour-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-572",
+      "vehicleModelKey": "renault:clio:1-5-dci-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-581",
+      "vehicleModelKey": "renault:clio:1-6-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-590",
+      "vehicleModelKey": "renault:clio:1-6-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-591",
+      "vehicleModelKey": "renault:clio:1-5-dci-grandtour-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "130-1003",
+      "vehicleModelKey": "suzuki:swift:1-2-ga",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "130-1030",
+      "vehicleModelKey": "suzuki:swift:1-6-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "130-1038",
+      "vehicleModelKey": "suzuki:baleno:1-2-techno",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "130-368",
+      "vehicleModelKey": "suzuki:swift:1-6-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "130-377",
+      "vehicleModelKey": "suzuki:splash:1-2-gls",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "130-380",
+      "vehicleModelKey": "suzuki:alto:1-0-gl",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "130-386",
+      "vehicleModelKey": "suzuki:swift:1-2-gl",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1001",
+      "vehicleModelKey": "toyota:yaris:1-0-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1002",
+      "vehicleModelKey": "toyota:yaris:1-33-fun",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1004",
+      "vehicleModelKey": "toyota:yaris:1-33-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1012",
+      "vehicleModelKey": "toyota:yaris:1-33-cool",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1014",
+      "vehicleModelKey": "toyota:yaris:1-33-cool-konfor",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1016",
+      "vehicleModelKey": "toyota:yaris:1-33-cool-konfor-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1018",
+      "vehicleModelKey": "toyota:yaris:1-4-d-4d-fun",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1020",
+      "vehicleModelKey": "toyota:yaris:1-4-d-4d-cool",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1022",
+      "vehicleModelKey": "toyota:yaris:1-4-d-4d-cool-stil",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1024",
+      "vehicleModelKey": "toyota:yaris:1-4-d-4d-cool-stil-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1027",
+      "vehicleModelKey": "toyota:verso:1-6-premium-navi",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1033",
+      "vehicleModelKey": "toyota:yaris:1-5-hybrid-cool",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1034",
+      "vehicleModelKey": "toyota:yaris:1-5-hybrid-spirit",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1039",
+      "vehicleModelKey": "toyota:auris:1-33-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1040",
+      "vehicleModelKey": "toyota:auris:1-6-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1043",
+      "vehicleModelKey": "toyota:auris:1-6-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1047",
+      "vehicleModelKey": "toyota:auris:1-4-d-4d-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1048",
+      "vehicleModelKey": "toyota:auris:1-4-d-4d-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1052",
+      "vehicleModelKey": "toyota:auris:1-4-d-4d-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1056",
+      "vehicleModelKey": "toyota:auris:1-4-d-4d-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1064",
+      "vehicleModelKey": "toyota:corolla:1-33-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1065",
+      "vehicleModelKey": "toyota:corolla:1-6-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1066",
+      "vehicleModelKey": "toyota:corolla:1-6-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1067",
+      "vehicleModelKey": "toyota:corolla:1-6-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1068",
+      "vehicleModelKey": "toyota:corolla:1-6-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1069",
+      "vehicleModelKey": "toyota:corolla:1-6-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1070",
+      "vehicleModelKey": "toyota:corolla:1-6-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1071",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1072",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1073",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1074",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1075",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1076",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1077",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1078",
+      "vehicleModelKey": "toyota:corolla:1-6-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1079",
+      "vehicleModelKey": "toyota:corolla:1-6-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1080",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1081",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1083",
+      "vehicleModelKey": "toyota:avensis:2-0-d-4d-elegant-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1084",
+      "vehicleModelKey": "toyota:yaris:1-33-fun-special",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1086",
+      "vehicleModelKey": "toyota:yaris:1-4-d-4d-fun-special",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1087",
+      "vehicleModelKey": "toyota:verso:1-6-d-4d-comfort-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1088",
+      "vehicleModelKey": "toyota:verso:1-6-d-4d-elegant",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1089",
+      "vehicleModelKey": "toyota:verso:1-6-d-4d-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1090",
+      "vehicleModelKey": "toyota:verso:1-6-d-4d-premium-navi",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1102",
+      "vehicleModelKey": "toyota:auris:1-6-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1105",
+      "vehicleModelKey": "toyota:auris:1-4-d-4d-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1114",
+      "vehicleModelKey": "toyota:yaris:1-33-style-red",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1129",
+      "vehicleModelKey": "toyota:avensis:1-6-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1130",
+      "vehicleModelKey": "toyota:avensis:1-6-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1134",
+      "vehicleModelKey": "toyota:avensis:1-6-d-4d-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1135",
+      "vehicleModelKey": "toyota:avensis:1-6-d-4d-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1136",
+      "vehicleModelKey": "toyota:avensis:1-6-d-4d-premium-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1137",
+      "vehicleModelKey": "toyota:avensis:1-6-d-4d-premium-plus-navi",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1138",
+      "vehicleModelKey": "toyota:avensis:2-0-d-4d-premium-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1139",
+      "vehicleModelKey": "toyota:avensis:2-0-d-4d-premium-plus-navi",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1149",
+      "vehicleModelKey": "toyota:auris:1-4-d-4d-premium-navi",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1163",
+      "vehicleModelKey": "toyota:verso:1-6-elegant-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1164",
+      "vehicleModelKey": "toyota:verso:1-6-d-4d-elegant-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1165",
+      "vehicleModelKey": "toyota:verso:1-6-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1166",
+      "vehicleModelKey": "toyota:verso:1-6-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1168",
+      "vehicleModelKey": "toyota:verso:1-6-d-4d-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1169",
+      "vehicleModelKey": "toyota:verso:1-6-d-4d-advance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1171",
+      "vehicleModelKey": "toyota:yaris:1-33-style-x-trend",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1174",
+      "vehicleModelKey": "toyota:yaris:1-33-style-konfor",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1177",
+      "vehicleModelKey": "toyota:yaris:1-33-style-konfor-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1188",
+      "vehicleModelKey": "toyota:yaris:1-5-hybrid-spirit-x-trend",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1247",
+      "vehicleModelKey": "toyota:yaris:1-5-fun-special",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1256",
+      "vehicleModelKey": "toyota:yaris:1-5-hybrid-x-trend",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1265",
+      "vehicleModelKey": "toyota:corolla:1-6-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1269",
+      "vehicleModelKey": "toyota:corolla:1-6-vision",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1270",
+      "vehicleModelKey": "toyota:corolla:1-6-vision",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1271",
+      "vehicleModelKey": "toyota:corolla:1-6-dream",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1272",
+      "vehicleModelKey": "toyota:corolla:1-6-dream",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1273",
+      "vehicleModelKey": "toyota:corolla:1-6-flame",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1274",
+      "vehicleModelKey": "toyota:corolla:1-6-flame",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1275",
+      "vehicleModelKey": "toyota:corolla:1-6-flame-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1276",
+      "vehicleModelKey": "toyota:corolla:1-6-flame-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1277",
+      "vehicleModelKey": "toyota:corolla:1-6-passion",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1278",
+      "vehicleModelKey": "toyota:corolla:1-6-passion",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1279",
+      "vehicleModelKey": "toyota:corolla:1-6-passion-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1280",
+      "vehicleModelKey": "toyota:corolla:1-6-passion-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1281",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-vision",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1282",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-dream",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1283",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-flame",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1284",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-flame-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1285",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-passion",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1286",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-passion-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1328",
+      "vehicleModelKey": "toyota:corolla:1-5-vision",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1329",
+      "vehicleModelKey": "toyota:corolla:1-5-vision",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1330",
+      "vehicleModelKey": "toyota:corolla:1-5-dream",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1331",
+      "vehicleModelKey": "toyota:corolla:1-5-dream",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1332",
+      "vehicleModelKey": "toyota:corolla:1-5-flame",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1333",
+      "vehicleModelKey": "toyota:corolla:1-5-flame",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1334",
+      "vehicleModelKey": "toyota:corolla:1-5-flame-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1335",
+      "vehicleModelKey": "toyota:corolla:1-5-passion-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1343",
+      "vehicleModelKey": "toyota:yaris:1-0-vision",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1361",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-flame",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1362",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-flame-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1363",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-passion",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1364",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-passion-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1367",
+      "vehicleModelKey": "toyota:corolla:1-5-vision",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1368",
+      "vehicleModelKey": "toyota:corolla:1-5-vision",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1369",
+      "vehicleModelKey": "toyota:corolla:1-5-dream",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1370",
+      "vehicleModelKey": "toyota:corolla:1-5-dream-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1371",
+      "vehicleModelKey": "toyota:corolla:1-5-flame-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1372",
+      "vehicleModelKey": "toyota:corolla:1-5-passion-x-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1387",
+      "vehicleModelKey": "toyota:corolla:1-5-vision-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1398",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-vision-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1412",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-flame",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-1413",
+      "vehicleModelKey": "toyota:corolla:1-8-hybrid-passion",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-678",
+      "vehicleModelKey": "toyota:corolla:1-6-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-680",
+      "vehicleModelKey": "toyota:corolla:1-6-elegant",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-683",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-685",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-elegant",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-686",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-elegant",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-690",
+      "vehicleModelKey": "toyota:auris:1-6-elegant",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-714",
+      "vehicleModelKey": "toyota:avensis:2-0-d-4d-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-717",
+      "vehicleModelKey": "toyota:yaris:1-33-sol",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-722",
+      "vehicleModelKey": "toyota:verso:1-6-elegant",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-723",
+      "vehicleModelKey": "toyota:verso:1-6-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-724",
+      "vehicleModelKey": "toyota:auris:1-6-comfort-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-728",
+      "vehicleModelKey": "toyota:corolla:1-6-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-729",
+      "vehicleModelKey": "toyota:corolla:1-6-elegant",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-734",
+      "vehicleModelKey": "toyota:auris:1-4-d-4d-comfort-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-751",
+      "vehicleModelKey": "toyota:yaris:1-0-terra-sporty",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-752",
+      "vehicleModelKey": "toyota:yaris:1-33-terra-sporty",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-754",
+      "vehicleModelKey": "toyota:yaris:1-4-d-4d-terra-sporty",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-756",
+      "vehicleModelKey": "toyota:auris:1-33-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-757",
+      "vehicleModelKey": "toyota:corolla:1-33-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-758",
+      "vehicleModelKey": "toyota:corolla:1-6-comfort-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-759",
+      "vehicleModelKey": "toyota:corolla:1-6-comfort-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-760",
+      "vehicleModelKey": "toyota:corolla:1-4-d-4d-comfort-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-762",
+      "vehicleModelKey": "toyota:auris:1-4-d-4d-comfort-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-766",
+      "vehicleModelKey": "toyota:avensis:1-6-elegant-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-775",
+      "vehicleModelKey": "toyota:verso:2-0-d-4d-comfort-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-776",
+      "vehicleModelKey": "toyota:verso:1-6-comfort-extra",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "144-777",
+      "vehicleModelKey": "toyota:auris:1-6-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1023",
+      "vehicleModelKey": "volkswagen:polo:1-4-pulse",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1077",
+      "vehicleModelKey": "volkswagen:polo:1-4-chrome-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1078",
+      "vehicleModelKey": "volkswagen:polo:1-4-chrome-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1124",
+      "vehicleModelKey": "volkswagen:polo:1-0-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1125",
+      "vehicleModelKey": "volkswagen:polo:1-2-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1126",
+      "vehicleModelKey": "volkswagen:polo:1-2-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1127",
+      "vehicleModelKey": "volkswagen:polo:1-4-tdi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1128",
+      "vehicleModelKey": "volkswagen:polo:1-4-tdi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1129",
+      "vehicleModelKey": "volkswagen:polo:1-4-tdi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1130",
+      "vehicleModelKey": "volkswagen:polo:1-4-tdi-bluemotion",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1133",
+      "vehicleModelKey": "volkswagen:golf:2-0-tsi-r",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1186",
+      "vehicleModelKey": "volkswagen:polo:1-2-tsi-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1187",
+      "vehicleModelKey": "volkswagen:polo:1-2-tsi-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1192",
+      "vehicleModelKey": "volkswagen:golf:2-0-tsi-r",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1196",
+      "vehicleModelKey": "volkswagen:golf:1-2-tsi-midline-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1197",
+      "vehicleModelKey": "volkswagen:golf:1-2-tsi-midline-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1198",
+      "vehicleModelKey": "volkswagen:golf:1-2-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1199",
+      "vehicleModelKey": "volkswagen:golf:1-2-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1200",
+      "vehicleModelKey": "volkswagen:golf:1-4-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1201",
+      "vehicleModelKey": "volkswagen:golf:1-4-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1202",
+      "vehicleModelKey": "volkswagen:golf:1-4-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1203",
+      "vehicleModelKey": "volkswagen:golf:1-4-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1204",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1205",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1206",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1207",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1263",
+      "vehicleModelKey": "volkswagen:golf:2-0-tsi-gti-performance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1303",
+      "vehicleModelKey": "volkswagen:golf:1-2-tsi-allstar",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1304",
+      "vehicleModelKey": "volkswagen:golf:1-4-tsi-allstar",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1305",
+      "vehicleModelKey": "volkswagen:golf:1-4-tsi-allstar",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1306",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-allstar",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1307",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-allstar",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1310",
+      "vehicleModelKey": "volkswagen:polo:1-2-tsi-allstar",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1311",
+      "vehicleModelKey": "volkswagen:polo:1-2-tsi-allstar",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1344",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-midline-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1345",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1346",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1347",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1348",
+      "vehicleModelKey": "volkswagen:golf:1-6-tdi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1350",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-midline-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1351",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-midline-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1352",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1353",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1368",
+      "vehicleModelKey": "volkswagen:polo:1-0-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1369",
+      "vehicleModelKey": "volkswagen:polo:1-0-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1370",
+      "vehicleModelKey": "volkswagen:polo:1-0-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1411",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1442",
+      "vehicleModelKey": "volkswagen:polo:1-0-tsi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1443",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-midline-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1444",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1445",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1470",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-midline-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1526",
+      "vehicleModelKey": "volkswagen:golf:1-0-tsi-impression",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1527",
+      "vehicleModelKey": "volkswagen:golf:1-0-etsi-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1528",
+      "vehicleModelKey": "volkswagen:golf:1-0-etsi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1529",
+      "vehicleModelKey": "volkswagen:golf:1-0-etsi-r-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1530",
+      "vehicleModelKey": "volkswagen:golf:1-5-etsi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1531",
+      "vehicleModelKey": "volkswagen:golf:1-5-etsi-r-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1535",
+      "vehicleModelKey": "volkswagen:polo:1-0-impression",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1536",
+      "vehicleModelKey": "volkswagen:polo:1-0-tsi-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1537",
+      "vehicleModelKey": "volkswagen:polo:1-0-tsi-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1538",
+      "vehicleModelKey": "volkswagen:polo:1-0-tsi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1610",
+      "vehicleModelKey": "volkswagen:polo:1-0-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1626",
+      "vehicleModelKey": "volkswagen:golf:1-5-tsi-impression",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1627",
+      "vehicleModelKey": "volkswagen:golf:1-5-etsi-life",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1628",
+      "vehicleModelKey": "volkswagen:golf:1-5-etsi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1629",
+      "vehicleModelKey": "volkswagen:golf:1-5-etsi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1630",
+      "vehicleModelKey": "volkswagen:golf:1-5-etsi-r-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1688",
+      "vehicleModelKey": "volkswagen:golf:2-0-tdi-gtd",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-73",
+      "vehicleModelKey": "volkswagen:polo:1-4-fan-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-74",
+      "vehicleModelKey": "volkswagen:polo:1-4-fan-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-80",
+      "vehicleModelKey": "volkswagen:polo:1-2-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-945",
+      "vehicleModelKey": "volkswagen:golf:2-0-tsi-r",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-993",
+      "vehicleModelKey": "volkswagen:polo:1-2-tdi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-995",
+      "vehicleModelKey": "volkswagen:polo:1-4-tsi-gti",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-997",
+      "vehicleModelKey": "volkswagen:polo:1-2-tdi-bluemotion",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "175-1016",
+      "vehicleModelKey": "ford:mustang:5-0-gt",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1007",
+      "vehicleModelKey": "hyundai:i10:1-1-mode",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1014",
+      "vehicleModelKey": "hyundai:accent-blue:1-6-crdi-mode-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1016",
+      "vehicleModelKey": "hyundai:i30:1-6-gdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1018",
+      "vehicleModelKey": "hyundai:i30:1-6-gdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1020",
+      "vehicleModelKey": "hyundai:i30:1-6-crdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1022",
+      "vehicleModelKey": "hyundai:i30:1-6-crdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1034",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1035",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-sense",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1036",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-tune",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1037",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1040",
+      "vehicleModelKey": "hyundai:accent-blue:1-6-crdi-biz",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1081",
+      "vehicleModelKey": "hyundai:elantra:1-6-crdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1088",
+      "vehicleModelKey": "hyundai:i20:1-2-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1089",
+      "vehicleModelKey": "hyundai:i20:1-2-mpi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1091",
+      "vehicleModelKey": "hyundai:i20:1-2-mpi-elite-blue",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1124",
+      "vehicleModelKey": "hyundai:elantra:1-6-crdi-mode",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1125",
+      "vehicleModelKey": "hyundai:elantra:1-6-crdi-style-design-pack",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1163",
+      "vehicleModelKey": "hyundai:elantra:1-6-crdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1178",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-elite-smart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1179",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-elite-panorama",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1181",
+      "vehicleModelKey": "hyundai:i20:1-2-mpi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1184",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-star",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1187",
+      "vehicleModelKey": "hyundai:i30:1-4-mpi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1188",
+      "vehicleModelKey": "hyundai:i30:1-4-t-gdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1199",
+      "vehicleModelKey": "hyundai:elantra:1-6-crdi-style-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1266",
+      "vehicleModelKey": "hyundai:i10:1-0-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-243",
+      "vehicleModelKey": "hyundai:i10:1-1-team",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-245",
+      "vehicleModelKey": "hyundai:i10:1-1-select",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-247",
+      "vehicleModelKey": "hyundai:i10:1-1-crdi-team",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-248",
+      "vehicleModelKey": "hyundai:i10:1-1-crdi-select",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-255",
+      "vehicleModelKey": "hyundai:sonata:2-0-crdi-select",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-281",
+      "vehicleModelKey": "hyundai:i20:1-2-team",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-402",
+      "vehicleModelKey": "hyundai:accent-blue:1-6-crdi-mode",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-404",
+      "vehicleModelKey": "hyundai:accent-blue:1-6-crdi-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-406",
+      "vehicleModelKey": "hyundai:accent-era:1-5-crdi-mode",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-408",
+      "vehicleModelKey": "hyundai:accent-era:1-5-crdi-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1035",
+      "vehicleModelKey": "seat:ibiza:1-4-reference",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1097",
+      "vehicleModelKey": "seat:ibiza:1-0-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1103",
+      "vehicleModelKey": "seat:ibiza:1-0-ecotsi-fr",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1124",
+      "vehicleModelKey": "seat:ibiza:1-0-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1140",
+      "vehicleModelKey": "seat:ibiza:1-0-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-1153",
+      "vehicleModelKey": "seat:ibiza:1-0-ecotsi-fr",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "19-245",
+      "vehicleModelKey": "seat:ibiza:1-4-reference",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1002",
+      "vehicleModelKey": "bmw:5-serisi:530d-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1003",
+      "vehicleModelKey": "bmw:5-serisi:530d-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1004",
+      "vehicleModelKey": "bmw:5-serisi:530d-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1005",
+      "vehicleModelKey": "bmw:3-serisi:328i-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1006",
+      "vehicleModelKey": "bmw:3-serisi:320i-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1007",
+      "vehicleModelKey": "bmw:3-serisi:320d-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1032",
+      "vehicleModelKey": "bmw:3-serisi:316i-modern-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1042",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1043",
+      "vehicleModelKey": "bmw:3-serisi:320d-gran-turismo-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1060",
+      "vehicleModelKey": "bmw:3-serisi:316i-touring-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1095",
+      "vehicleModelKey": "bmw:3-serisi:316i-luxury",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1099",
+      "vehicleModelKey": "bmw:3-serisi:320d-modern-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1104",
+      "vehicleModelKey": "bmw:3-serisi:330i-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1105",
+      "vehicleModelKey": "bmw:3-serisi:320d-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1107",
+      "vehicleModelKey": "bmw:3-serisi:318i-touring-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1110",
+      "vehicleModelKey": "bmw:3-serisi:320d-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1112",
+      "vehicleModelKey": "bmw:3-serisi:318i-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1138",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1139",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1188",
+      "vehicleModelKey": "bmw:3-serisi:318i-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1189",
+      "vehicleModelKey": "bmw:3-serisi:318i-prestige",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1190",
+      "vehicleModelKey": "bmw:3-serisi:318i-m-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1191",
+      "vehicleModelKey": "bmw:3-serisi:318i-m-joy-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1192",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1193",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-sport-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1194",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-luxury-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1195",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-m-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1196",
+      "vehicleModelKey": "bmw:3-serisi:320d-techno-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1197",
+      "vehicleModelKey": "bmw:3-serisi:320d-prestige",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1198",
+      "vehicleModelKey": "bmw:3-serisi:320d-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1199",
+      "vehicleModelKey": "bmw:3-serisi:320d-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1205",
+      "vehicleModelKey": "bmw:3-serisi:318i-touring-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1206",
+      "vehicleModelKey": "bmw:3-serisi:318i-touring-techno-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1207",
+      "vehicleModelKey": "bmw:3-serisi:318i-touring-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1208",
+      "vehicleModelKey": "bmw:3-serisi:318i-touring-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1209",
+      "vehicleModelKey": "bmw:3-serisi:318i-touring-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1358",
+      "vehicleModelKey": "bmw:3-serisi:320d-gran-turismo-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1359",
+      "vehicleModelKey": "bmw:3-serisi:320d-gran-turismo-techno-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1360",
+      "vehicleModelKey": "bmw:3-serisi:320d-gran-turismo-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1361",
+      "vehicleModelKey": "bmw:3-serisi:320d-gran-turismo-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1362",
+      "vehicleModelKey": "bmw:3-serisi:320d-gran-turismo-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1390",
+      "vehicleModelKey": "bmw:3-serisi:318i-sport-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1391",
+      "vehicleModelKey": "bmw:3-serisi:318i-m-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1392",
+      "vehicleModelKey": "bmw:3-serisi:318i-luxury-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1393",
+      "vehicleModelKey": "bmw:3-serisi:318i-40th-year-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1394",
+      "vehicleModelKey": "bmw:3-serisi:318d-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1396",
+      "vehicleModelKey": "bmw:3-serisi:318d-sport-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1397",
+      "vehicleModelKey": "bmw:3-serisi:318d-m-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1398",
+      "vehicleModelKey": "bmw:3-serisi:318d-luxury-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1399",
+      "vehicleModelKey": "bmw:3-serisi:318d-40th-year-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1400",
+      "vehicleModelKey": "bmw:3-serisi:320d-sport-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1401",
+      "vehicleModelKey": "bmw:3-serisi:320d-m-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1402",
+      "vehicleModelKey": "bmw:3-serisi:320d-luxury-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1403",
+      "vehicleModelKey": "bmw:3-serisi:320d-40th-year-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1493",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-modern-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1495",
+      "vehicleModelKey": "bmw:3-serisi:320d-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1517",
+      "vehicleModelKey": "bmw:3-serisi:318d-prestige",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1527",
+      "vehicleModelKey": "bmw:3-serisi:318i-pure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1528",
+      "vehicleModelKey": "bmw:3-serisi:318d-pure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1529",
+      "vehicleModelKey": "bmw:3-serisi:320d-pure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1562",
+      "vehicleModelKey": "bmw:3-serisi:318i-edition-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1563",
+      "vehicleModelKey": "bmw:3-serisi:318i-edition-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1564",
+      "vehicleModelKey": "bmw:3-serisi:318i-edition-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1584",
+      "vehicleModelKey": "bmw:3-serisi:320d-edition-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1585",
+      "vehicleModelKey": "bmw:3-serisi:320d-edition-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1586",
+      "vehicleModelKey": "bmw:3-serisi:320d-edition-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1591",
+      "vehicleModelKey": "bmw:3-serisi:330i-pure",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1592",
+      "vehicleModelKey": "bmw:3-serisi:330i-prestige",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1593",
+      "vehicleModelKey": "bmw:3-serisi:330i-edition-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1594",
+      "vehicleModelKey": "bmw:3-serisi:330i-edition-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1595",
+      "vehicleModelKey": "bmw:3-serisi:330i-edition-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1662",
+      "vehicleModelKey": "bmw:3-serisi:318i-premium-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1663",
+      "vehicleModelKey": "bmw:3-serisi:330i-premium-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1666",
+      "vehicleModelKey": "bmw:3-serisi:320d-premium-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1698",
+      "vehicleModelKey": "bmw:3-serisi:320d-edition-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1699",
+      "vehicleModelKey": "bmw:3-serisi:320d-edition-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1700",
+      "vehicleModelKey": "bmw:3-serisi:320d-edition-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1740",
+      "vehicleModelKey": "bmw:3-serisi:320i-ed-modern-line-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1749",
+      "vehicleModelKey": "bmw:3-serisi:320i-first-edition-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1750",
+      "vehicleModelKey": "bmw:3-serisi:320i-first-edition-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1751",
+      "vehicleModelKey": "bmw:3-serisi:320i-first-edition-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1819",
+      "vehicleModelKey": "bmw:3-serisi:316i-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1828",
+      "vehicleModelKey": "bmw:3-serisi:316i-touring-luxury-line-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1832",
+      "vehicleModelKey": "bmw:3-serisi:320i-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1833",
+      "vehicleModelKey": "bmw:3-serisi:320i-luxury-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1834",
+      "vehicleModelKey": "bmw:3-serisi:320i-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1851",
+      "vehicleModelKey": "bmw:3-serisi:320i-executive-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1852",
+      "vehicleModelKey": "bmw:3-serisi:318d-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1867",
+      "vehicleModelKey": "bmw:3-serisi:320i-edition-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1875",
+      "vehicleModelKey": "bmw:1-serisi:116i-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1903",
+      "vehicleModelKey": "bmw:1-serisi:116i-sport-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1914",
+      "vehicleModelKey": "bmw:3-serisi:330d-touring-luxury",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1938",
+      "vehicleModelKey": "bmw:3-serisi:320i-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1941",
+      "vehicleModelKey": "bmw:3-serisi:316d-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1946",
+      "vehicleModelKey": "bmw:3-serisi:320d-touring-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-1967",
+      "vehicleModelKey": "bmw:3-serisi:318d-touring-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-2042",
+      "vehicleModelKey": "bmw:1-serisi:116d-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-2051",
+      "vehicleModelKey": "bmw:3-serisi:320i-50-jahre-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-505",
+      "vehicleModelKey": "bmw:3-serisi:320d-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-512",
+      "vehicleModelKey": "bmw:3-serisi:316i-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-553",
+      "vehicleModelKey": "bmw:3-serisi:320i-coupe-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-554",
+      "vehicleModelKey": "bmw:3-serisi:320d-coupe-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-564",
+      "vehicleModelKey": "bmw:1-serisi:116i-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-585",
+      "vehicleModelKey": "bmw:3-serisi:318d-standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-605",
+      "vehicleModelKey": "bmw:1-serisi:116i-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-607",
+      "vehicleModelKey": "bmw:3-serisi:316i-advantage",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-610",
+      "vehicleModelKey": "bmw:3-serisi:320d-advantage",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-611",
+      "vehicleModelKey": "bmw:3-serisi:320d-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-612",
+      "vehicleModelKey": "bmw:3-serisi:320d-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-622",
+      "vehicleModelKey": "bmw:5-serisi:520d-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-623",
+      "vehicleModelKey": "bmw:5-serisi:520d-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-629",
+      "vehicleModelKey": "bmw:1-serisi:116i-joy-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-642",
+      "vehicleModelKey": "bmw:5-serisi:520d-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-643",
+      "vehicleModelKey": "bmw:3-serisi:320d-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-644",
+      "vehicleModelKey": "bmw:3-serisi:320d-comfort-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-657",
+      "vehicleModelKey": "bmw:3-serisi:316i-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-658",
+      "vehicleModelKey": "bmw:3-serisi:316i-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-659",
+      "vehicleModelKey": "bmw:3-serisi:316i-comfort-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-660",
+      "vehicleModelKey": "bmw:3-serisi:316i-sport-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-661",
+      "vehicleModelKey": "bmw:3-serisi:320d-sport-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-667",
+      "vehicleModelKey": "bmw:3-serisi:320d-coupe-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-668",
+      "vehicleModelKey": "bmw:3-serisi:320d-coupe-luxury",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-669",
+      "vehicleModelKey": "bmw:3-serisi:320d-coupe-m-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-673",
+      "vehicleModelKey": "bmw:5-serisi:520i-business",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "21-701",
+      "vehicleModelKey": "bmw:7-serisi:730d-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "34-312",
+      "vehicleModelKey": "citroen:c3:1-4-hdi-confort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "34-313",
+      "vehicleModelKey": "citroen:c3:1-4-hdi-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "34-317",
+      "vehicleModelKey": "citroen:c3:1-4-hdi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "34-350",
+      "vehicleModelKey": "citroen:c3:1-4-hdi-collection",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-31",
+      "vehicleModelKey": "dacia:logan:1-4-ambiance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-34",
+      "vehicleModelKey": "dacia:logan:1-6-laureate",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-35",
+      "vehicleModelKey": "dacia:logan:1-5-dci-ambiance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-48",
+      "vehicleModelKey": "dacia:sandero:1-4-ambiance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-49",
+      "vehicleModelKey": "dacia:sandero:1-4-laureate",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-50",
+      "vehicleModelKey": "dacia:sandero:1-6-laureate",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-54",
+      "vehicleModelKey": "dacia:logan:1-4-laureate",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-55",
+      "vehicleModelKey": "dacia:sandero:1-5-dci-ambiance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "445-56",
+      "vehicleModelKey": "dacia:sandero:1-5-dci-laureate",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "454-1016",
+      "vehicleModelKey": "tesla:model-3:standart",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "454-1017",
+      "vehicleModelKey": "tesla:model-3:long-range",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "454-1018",
+      "vehicleModelKey": "tesla:model-3:performance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "52-344",
+      "vehicleModelKey": "fiat:panda:1-1-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2078",
+      "vehicleModelKey": "ford:fiesta:1-5-tdci-trend-x",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2120",
+      "vehicleModelKey": "ford:focus:1-5-tdci-trend-x",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2123",
+      "vehicleModelKey": "ford:focus:1-5-tdci-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2126",
+      "vehicleModelKey": "ford:focus:1-5-tdci-titanium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2196",
+      "vehicleModelKey": "ford:focus:1-5-tdci-st-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2251",
+      "vehicleModelKey": "ford:focus:1-5-tdci-trend-x",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-2254",
+      "vehicleModelKey": "ford:focus:1-5-tdci-trend-x",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "53-921",
+      "vehicleModelKey": "ford:fusion:1-4-tdci-collection",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-1050",
+      "vehicleModelKey": "honda:jazz:1-3-dream",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-1052",
+      "vehicleModelKey": "honda:jazz:1-3-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-1076",
+      "vehicleModelKey": "honda:civic:2-0-type-r-gt",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-157",
+      "vehicleModelKey": "honda:civic:2-0-type-r",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-158",
+      "vehicleModelKey": "honda:jazz:1-4-ls-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-160",
+      "vehicleModelKey": "honda:jazz:1-4-ex-fun",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-162",
+      "vehicleModelKey": "honda:city:1-4-ls",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-164",
+      "vehicleModelKey": "honda:city:1-4-es",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "61-168",
+      "vehicleModelKey": "honda:jazz:1-4-es-fun",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1064",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1065",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1066",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1079",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1080",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1087",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1088",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1089",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1090",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1091",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1092",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1101",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1102",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1115",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1117",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1118",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1121",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1122",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1123",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1124",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1125",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1126",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1127",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1128",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1135",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1136",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1138",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1139",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1144",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1145",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1149",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1182",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-2-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1183",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-2-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1196",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1209",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-2-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1219",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-2-tfsi-attraction",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1220",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-2-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1228",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1229",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-design-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1232",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-0-tfsi-design-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1234",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1235",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-design-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1237",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1238",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-design-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1242",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-0-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1243",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-4-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1244",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1245",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-0-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1246",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-4-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1247",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1253",
+      "vehicleModelKey": "audi:a4:a4-avant-1-4-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1255",
+      "vehicleModelKey": "audi:a4:a4-avant-2-0-tdi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1265",
+      "vehicleModelKey": "audi:a4:a4-avant-1-4-tfsi-design",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1267",
+      "vehicleModelKey": "audi:a4:a4-avant-2-0-tdi-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1268",
+      "vehicleModelKey": "audi:a4:a4-avant-2-0-tdi-design",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1288",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-0-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1317",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1318",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1320",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1321",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1322",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-6-tdi-design-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1340",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-5-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1341",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-5-tfsi-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1342",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-5-tfsi-design-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1343",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-5-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1344",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-5-tfsi-sport-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1345",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-5-tfsi-design-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1357",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-6-tdi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1358",
+      "vehicleModelKey": "audi:a3:a3-sportback-1-0-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1364",
+      "vehicleModelKey": "audi:a3:a3-sportback-30-tdi-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1418",
+      "vehicleModelKey": "audi:a3:a3-sedan-35-tfsi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1419",
+      "vehicleModelKey": "audi:a3:a3-sedan-30-tdi-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1461",
+      "vehicleModelKey": "audi:a4:a4-avant-40-tdi-advanced",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1463",
+      "vehicleModelKey": "audi:a4:a4-avant-40-tdi-s-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1523",
+      "vehicleModelKey": "audi:a3:a3-sedan-30-tfsi-advanced",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1524",
+      "vehicleModelKey": "audi:a3:a3-sedan-30-tfsi-s-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1525",
+      "vehicleModelKey": "audi:a3:a3-sedan-35-tfsi-advanced",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1526",
+      "vehicleModelKey": "audi:a3:a3-sedan-35-tfsi-s-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1527",
+      "vehicleModelKey": "audi:a3:a3-sportback-30-tfsi-advanced",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1528",
+      "vehicleModelKey": "audi:a3:a3-sportback-30-tfsi-s-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1529",
+      "vehicleModelKey": "audi:a3:a3-sportback-35-tfsi-advanced",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1530",
+      "vehicleModelKey": "audi:a3:a3-sportback-35-tfsi-s-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1558",
+      "vehicleModelKey": "audi:a3:a3-sedan-1-2-tfsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1564",
+      "vehicleModelKey": "audi:a4:a4-avant-40-tdi-advanced",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1571",
+      "vehicleModelKey": "audi:a4:a4-avant-40-tdi-s-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1616",
+      "vehicleModelKey": "audi:a3:a3-sportback-35-tfsi-s-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1618",
+      "vehicleModelKey": "audi:a3:a3-sedan-35-tfsi-advanced",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "9-1619",
+      "vehicleModelKey": "audi:a3:a3-sedan-35-tfsi-s-line",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-104",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-komp-blueefficiency-start",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-105",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-komp-blueefficiency-avantgarde",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-106",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-komp-blueefficiency-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-107",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-komp-blueefficiency-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-165",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-blueefficiency-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-166",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-250-blueefficiency-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2014",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-komp-blueefficiency-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2015",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-komp-blueefficiency-diamond-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2025",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2026",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2027",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-avantgarde",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2028",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-avantgarde-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2029",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2030",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2031",
+      "vehicleModelKey": "mercedes-benz:a-serisi:a-180-prime",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2033",
+      "vehicleModelKey": "mercedes-benz:a-serisi:a-180-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2035",
+      "vehicleModelKey": "mercedes-benz:a-serisi:a-180-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2036",
+      "vehicleModelKey": "mercedes-benz:a-serisi:a-180-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2037",
+      "vehicleModelKey": "mercedes-benz:a-serisi:a-200-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2038",
+      "vehicleModelKey": "mercedes-benz:a-serisi:a-200-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2039",
+      "vehicleModelKey": "mercedes-benz:a-serisi:a-200-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2119",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2120",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2129",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2130",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-250-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2163",
+      "vehicleModelKey": "mercedes-benz:s-serisi:s-65-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2230",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2231",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-avantgarde",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2232",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2233",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2234",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2235",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-220-d-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2236",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-250-d-fascination",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2255",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2256",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2321",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2322",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-avantgarde",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2323",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2324",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2355",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2370",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2373",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2374",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2375",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-d-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2381",
+      "vehicleModelKey": "mercedes-benz:cls-serisi:cls-300-d-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2514",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2544",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-220-d-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2562",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-200-avantgarde",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2567",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-180-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-2571",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-250-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-765",
+      "vehicleModelKey": "mercedes-benz:slk-serisi:slk-55-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-830",
+      "vehicleModelKey": "mercedes-benz:e-serisi:e-63-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-831",
+      "vehicleModelKey": "mercedes-benz:cls-serisi:cls-63-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-837",
+      "vehicleModelKey": "mercedes-benz:c-serisi:c-63-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-854",
+      "vehicleModelKey": "mercedes-benz:sl-serisi:sl-63-amg",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "90-875",
+      "vehicleModelKey": "mercedes-benz:b-serisi:b-160-sport",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "94-349",
+      "vehicleModelKey": "mitsubishi:colt:1-3-invite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "94-366",
+      "vehicleModelKey": "mitsubishi:lancer:1-5-inform",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "94-434",
+      "vehicleModelKey": "mitsubishi:lancer:1-6-inform",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "94-435",
+      "vehicleModelKey": "mitsubishi:lancer:1-6-invite",
+      "method": "exact-rule"
+    }
+  ]
+}
