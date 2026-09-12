@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10.3",
+  "version": "2026-09-13.1",
   "mappings": [
     {
       "sourceKey": "100-1138",
@@ -1379,6 +1379,156 @@
     {
       "sourceKey": "130-386",
       "vehicleModelKey": "suzuki:swift:1-2-gl",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1017",
+      "vehicleModelKey": "skoda:octavia:1-6-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1021",
+      "vehicleModelKey": "skoda:octavia:1-6-ambition-optimal",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1026",
+      "vehicleModelKey": "skoda:superb:1-4-tsi-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1040",
+      "vehicleModelKey": "skoda:rapid:1-2-tsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1043",
+      "vehicleModelKey": "skoda:rapid:1-4-tsi-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1045",
+      "vehicleModelKey": "skoda:octavia:1-2-tsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1047",
+      "vehicleModelKey": "skoda:octavia:1-4-tsi-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1051",
+      "vehicleModelKey": "skoda:octavia:1-4-tsi-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1147",
+      "vehicleModelKey": "skoda:superb:1-4-tsi-active",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1168",
+      "vehicleModelKey": "skoda:octavia:1-0-tsi-ambition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1169",
+      "vehicleModelKey": "skoda:octavia:1-0-tsi-optimal",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1170",
+      "vehicleModelKey": "skoda:octavia:1-0-tsi-optimal",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1171",
+      "vehicleModelKey": "skoda:octavia:1-0-tsi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1249",
+      "vehicleModelKey": "skoda:octavia:2-0-tsi-rs",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1253",
+      "vehicleModelKey": "skoda:fabia:1-0-tsi-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1285",
+      "vehicleModelKey": "skoda:fabia:1-0-tsi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1286",
+      "vehicleModelKey": "skoda:fabia:1-0-tsi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1287",
+      "vehicleModelKey": "skoda:fabia:1-0-tsi-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1312",
+      "vehicleModelKey": "skoda:fabia:1-0-tsi-premium",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-1329",
+      "vehicleModelKey": "skoda:octavia:2-0-tsi-rs",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-283",
+      "vehicleModelKey": "skoda:octavia:1-6-classic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-341",
+      "vehicleModelKey": "skoda:fabia:1-6-classic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-345",
+      "vehicleModelKey": "skoda:fabia:1-2-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-346",
+      "vehicleModelKey": "skoda:fabia:1-4-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-365",
+      "vehicleModelKey": "skoda:superb:1-4-tsi-comfort",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-371",
+      "vehicleModelKey": "skoda:superb:1-4-tsi-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-376",
+      "vehicleModelKey": "skoda:octavia:1-6-classic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-378",
+      "vehicleModelKey": "skoda:octavia:1-4-tsi-ambiente",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-380",
+      "vehicleModelKey": "skoda:octavia:1-4-tsi-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "133-433",
+      "vehicleModelKey": "skoda:octavia:1-6-ambiente-optimal",
       "method": "exact-rule"
     },
     {
