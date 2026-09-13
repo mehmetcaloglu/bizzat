@@ -23,9 +23,6 @@
     "@fastify/type-provider-typebox": "6.1.0",
     "better-auth": "1.7.3",
     "fastify": "5.12.3",
-    "@fastify/type-provider-typebox": "6.1.0",
-    "better-auth": "1.7.3",
-    "fastify": "5.12.3",
     "kysely": "0.29.4",
     "pg": "^8.22.0",
     "typebox": "^1.0.0"
