@@ -3,6 +3,7 @@ import { generateCuratedVehicleCatalog } from '../src/reference/vehicle/curation
 import { canonicalModelSelection } from '../src/reference/vehicle/curation/model-label.js'
 import type { NormalizedVehicleSourceSnapshot } from '../src/reference/vehicle/source/source.types.js'
 
+// These cases encode reviewed marketplace taxonomy boundaries, not generic source-label inference.
 const seriesAliases = {
   version: '1',
   entries: [
