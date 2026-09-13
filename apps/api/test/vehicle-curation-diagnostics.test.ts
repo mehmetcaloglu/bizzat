@@ -9,6 +9,7 @@ const brandAliases: VehicleBrandAliasesFile = {
     { raw: 'SEAT', brandKey: 'seat' },
     { raw: 'SKODA', brandKey: 'skoda' },
     { raw: 'VOLKSWAGEN', brandKey: 'volkswagen' },
+    { raw: 'OPEL', brandKey: 'opel' },
     { raw: 'AUDI', brandKey: 'audi' },
     { raw: 'BMW', brandKey: 'bmw' },
     { raw: 'FIAT', brandKey: 'fiat' },
@@ -22,6 +23,7 @@ const seriesAliases: VehicleSeriesAliasesFile = {
     { brandKey: 'skoda', seriesKey: 'skoda:octavia', aliases: ['OCTAVIA'] },
     { brandKey: 'volkswagen', seriesKey: 'volkswagen:polo', aliases: ['POLO'] },
     { brandKey: 'volkswagen', seriesKey: 'volkswagen:passat', aliases: ['PASSAT'] },
+    { brandKey: 'opel', seriesKey: 'opel:insignia', aliases: ['INSIGNIA'] },
     { brandKey: 'audi', seriesKey: 'audi:a3', aliases: ['A3'] },
     { brandKey: 'bmw', seriesKey: 'bmw:3-serisi', aliases: ['3 SERISI'] },
     { brandKey: 'fiat', seriesKey: 'fiat:egea', aliases: ['EGEA'] },
@@ -64,7 +66,7 @@ describe('vehicle curation review diagnostics', () => {
 
   it('identifies high-volume series that still lack a reviewed normalization policy', () => {
     const result = generate([
-      ['117-10', 'VOLKSWAGEN', 'PASSAT 1.6 TDI 105 DSG COMFORTLINE'],
+      ['111-9990', 'OPEL', 'INSIGNIA 1.6 CDTI 136 DESIGN'],
     ])
 
     expect(result.candidates[0]!.modelStatus).toBe('model-review')
@@ -99,7 +101,7 @@ describe('vehicle curation review diagnostics', () => {
 
   it('aggregates review reasons without changing mapped output', () => {
     const result = generate([
-      ['117-10', 'VOLKSWAGEN', 'PASSAT 1.6 TDI 105 DSG COMFORTLINE'],
+      ['111-9990', 'OPEL', 'INSIGNIA 1.6 CDTI 136 DESIGN'],
       ['117-1', 'VOLKSWAGEN', 'POLO 1.0 TSI 95 DSG MYSTERY'],
       ['117-2', 'VOLKSWAGEN', 'POLO 1.0 TSI 95 DSG LIFE'],
     ])
