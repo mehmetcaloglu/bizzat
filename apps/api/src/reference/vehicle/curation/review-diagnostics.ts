@@ -26,6 +26,8 @@ const REVIEWED_POLICY_SERIES = new Set([
   'skoda:superb',
   'skoda:fabia',
   'skoda:rapid',
+  'opel:corsa',
+  'volkswagen:passat',
 ])
 
 export function diagnoseVehicleModelReview(
