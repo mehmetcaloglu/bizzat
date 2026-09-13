@@ -19,7 +19,15 @@ jobs:
           curl -fsSL \
             https://raw.githubusercontent.com/mehmetcaloglu/bizzat/b9ae77a6afa57dd3c64b36de6324af13561d7df5/scripts/maintenance/acquire-tsb-source.py \
             -o /tmp/acquire-tsb-source.py
-          python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json
+          ok=0
+          for attempt in 1 2 3 4; do
+            if python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json; then
+              ok=1
+              break
+            fi
+            sleep $((attempt * 5))
+          done
+          test "$ok" = 1
       - name: Build targeted raw report
         run: |
           python - <<'PY'
