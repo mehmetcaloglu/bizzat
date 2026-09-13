@@ -82,7 +82,7 @@ describe('reviewed Passat normalization policy', () => {
     ['1.6 TDI BMT 120 COMFORTLINE DSG', 'PASSAT 1.6 TDI BMT 120 COMFORTLINE DSG', ['1.6 TDI BlueMotion', 'Comfortline']],
     ['2.0 TDI BMT 150 HIGHLINE DSG', 'PASSAT 2.0 TDI BMT 150 HIGHLINE DSG', ['2.0 TDI BlueMotion', 'Highline']],
     ['1.4 TSI BMT 125 TRENDLINE', 'PASSAT 1.4 TSI BMT 125 TRENDLINE', ['1.4 TSI BlueMotion', 'Trendline']],
-    ['1.6 TDI 120 DSG ELEGANCE', 'PASSAT 1.6 TDI 120 DSG ELEGANCE', ['1.6 TDI', 'Elegance']],
+    ['1.6 TDI 120 DSG ELEGANCE', 'PASSAT 1.6 TDI 120 DSG ELEGANCE', ['1.6 TDI BlueMotion', 'Elegance']],
   ])('normalizes %s to marketplace engine/trim path', (proposed, raw, path) => {
     expect(canonicalModelSelection('volkswagen:passat', proposed, raw)?.path).toEqual(path)
   })
@@ -102,10 +102,10 @@ describe('reviewed Passat normalization policy', () => {
     ])
   })
 
-  it('maps an explicitly reviewed plain Passat source code', () => {
+  it('maps reviewed Passat 1.6 TDI into the BlueMotion marketplace branch', () => {
     const result = generate('VOLKSWAGEN', [['153-1476', 'PASSAT 1.6 TDI 120 DSG ELEGANCE']])
     expect(result.mappings.mappings).toEqual([
-      { sourceKey: '153-1476', vehicleModelKey: 'volkswagen:passat:1-6-tdi-elegance', method: 'exact-rule' },
+      { sourceKey: '153-1476', vehicleModelKey: 'volkswagen:passat:1-6-tdi-bluemotion-elegance', method: 'exact-rule' },
     ])
   })
 
