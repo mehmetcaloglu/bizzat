@@ -13,6 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - name: Acquire August 2026 TSB snapshot
         run: |
           python -m pip install --disable-pip-version-check requests openpyxl
@@ -28,61 +36,78 @@ jobs:
             sleep $((attempt * 5))
           done
           test "$ok" = 1
+          curl -fsSL \
+            https://raw.githubusercontent.com/serhatkildaci/global-car-models/44da5c9e5e0f3162d65579033f7a641473308b11/data/models.json \
+            -o /tmp/bootstrap-models.json
       - name: Build targeted raw report
         run: |
           python - <<'PY'
           import json, re
           from collections import Counter
-
           src = json.load(open('/tmp/tsb.normalized.json', encoding='utf-8'))
           assert src['provider']['version'] == '2026-08'
           assert len(src['records']) == 27906
-
           targets = {
             'opel:corsa': ('OPEL', re.compile(r'^CORSA(?:\b|-)', re.I)),
             'opel:insignia': ('OPEL', re.compile(r'^INSIGNIA\b', re.I)),
             'volkswagen:passat': ('VOLKSWAGEN', re.compile(r'^PASSAT\b', re.I)),
           }
-          branch_terms = [
-            'SEDAN','HB','HATCHBACK','NB','SW','ST','SPORTS TOURER','COUNTRY TOURER',
-            'TOURER','VARIANT','CC','ALLTRACK','GTE','VAN','3 KAPI','5 KAPI','3D','5D',
-            '4X4','4X2','AWD','OPC','GSI','ELECTRIC','ELEKTRIK','CORSA-E'
-          ]
-          tech_terms = ['CDTI','ECOTEC','TURBO','TDI','TSI','DSG','TIPTRONIC','EDITION','ELEGANCE','COSMO','ENJOY','SPORT','STYLE','COMFORTLINE','HIGHLINE','TRENDLINE','EXCLUSIVE','DESIGN','ULTIMATE','BUSINESS','INNOVATION']
-
           out = {'provider': src['provider'], 'recordCount': len(src['records']), 'targets': {}}
           for key, (brand, rx) in targets.items():
             rows = []
             for r in src['records']:
-              b = (r.get('brandRaw') or '').upper()
-              t = (r.get('typeRaw') or '').strip()
+              b = (r.get('brandRaw') or '').upper(); t = (r.get('typeRaw') or '').strip()
               if brand in b and rx.search(t):
-                rows.append({
-                  'sourceKey': r['sourceKey'],
-                  'brandRaw': r.get('brandRaw'),
-                  'typeRaw': t,
-                  'availableModelYears': r.get('availableModelYears', []),
-                })
-            rows.sort(key=lambda x: x['sourceKey'])
-            branch_counts = {term: sum(term in row['typeRaw'].upper() for row in rows) for term in branch_terms}
-            branch_counts = {k:v for k,v in branch_counts.items() if v}
-            tech_counts = {term: sum(term in row['typeRaw'].upper() for row in rows) for term in tech_terms}
-            tech_counts = {k:v for k,v in tech_counts.items() if v}
-            token_counts = Counter()
-            for row in rows:
-              token_counts.update(re.findall(r'[A-ZÇĞİÖŞÜ0-9.+-]+', row['typeRaw'].upper()))
-            out['targets'][key] = {
-              'count': len(rows),
-              'branchTermCounts': branch_counts,
-              'commonTokens': token_counts.most_common(60),
-              'techTermCounts': tech_counts,
-              'rows': rows,
+                rows.append({'sourceKey':r['sourceKey'],'brandRaw':r.get('brandRaw'),'typeRaw':t,'availableModelYears':r.get('availableModelYears',[])})
+            rows.sort(key=lambda x:x['sourceKey'])
+            out['targets'][key]={'count':len(rows),'rows':rows}
+          json.dump(out, open('/tmp/vehicle-batch2-raw.json','w',encoding='utf-8'), ensure_ascii=False, indent=2)
+          PY
+      - name: Measure conservative generic policies in working tree only
+        run: |
+          python - <<'PY'
+          p='apps/api/src/reference/vehicle/curation/model-label.ts'
+          s=open(p,encoding='utf-8').read()
+          needle="  'skoda:rapid': {},\n"
+          insert=(
+            "  'skoda:rapid': {},\n"
+            "  'opel:corsa': { defaultBody: /\\b(?:3 ?KAPI|5 ?KAPI)\\b/g },\n"
+            "  'opel:insignia': { defaultBody: /\\b(?:NB|HB)\\b/g },\n"
+            "  'volkswagen:passat': {},\n"
+          )
+          assert needle in s
+          open(p,'w',encoding='utf-8').write(s.replace(needle,insert,1))
+          PY
+          pnpm reference:generate:vehicle-catalog -- \
+            /tmp/tsb.normalized.json \
+            data/reference/vehicles/brand-aliases.json \
+            data/reference/vehicles/series-aliases.json \
+            /tmp/bootstrap-models.json \
+            /tmp/batch2-generic \
+            batch2-generic \
+            data/reference/vehicles
+          python - <<'PY'
+          import json
+          targets={'opel:corsa','opel:insignia','volkswagen:passat'}
+          c=json.load(open('/tmp/batch2-generic/candidates.json',encoding='utf-8'))
+          rows=[r for r in c if r.get('seriesKeyCandidate') in targets]
+          by={k:[] for k in targets}
+          for r in rows: by[r['seriesKeyCandidate']].append(r)
+          report={}
+          for k, rr in by.items():
+            report[k]={
+              'count':len(rr),
+              'mapped':sum(r.get('modelStatus')=='exact' for r in rr),
+              'review':sum(r.get('modelStatus')=='model-review' for r in rr),
+              'rows':rr,
             }
-            print(key, len(rows), branch_counts)
-          json.dump(out, open('/tmp/vehicle-batch2-analysis.json','w',encoding='utf-8'), ensure_ascii=False, indent=2)
+            print(k, report[k]['count'], 'mapped', report[k]['mapped'], 'review', report[k]['review'])
+          json.dump(report,open('/tmp/vehicle-batch2-generic.json','w',encoding='utf-8'),ensure_ascii=False,indent=2)
           PY
       - uses: actions/upload-artifact@v4
         with:
           name: vehicle-batch2-analysis
-          path: /tmp/vehicle-batch2-analysis.json
+          path: |
+            /tmp/vehicle-batch2-raw.json
+            /tmp/vehicle-batch2-generic.json
           retention-days: 1
