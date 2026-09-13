@@ -1,0 +1,146 @@
+name: Vehicle Batch2 Green Once
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-2
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/vehicle-curation-policy-batch-2
+          fetch-depth: 0
+      - name: Apply minimal reviewed production changes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('apps/api/src/reference/vehicle/curation/model-label.ts')
+          s = p.read_text()
+          old = "  'skoda:rapid': {},\n}"
+          new = "  'skoda:rapid': {},\n  'opel:corsa': { defaultBody: /\\b(?:3|5)\\s*KAPI\\b/g },\n  'volkswagen:passat': {},\n}"
+          assert old in s
+          s = s.replace(old, new, 1)
+
+          old = "  if (seriesKey === 'fiat:egea' && /\\bCROSS\\b/.test(raw)) return null\n\n  let group = ''"
+          new = "  if (seriesKey === 'fiat:egea' && /\\bCROSS\\b/.test(raw)) return null\n  if (seriesKey === 'opel:corsa' && /\\b(?:CORSA[- ]?E|VAN)\\b/.test(raw)) return null\n  if (seriesKey === 'volkswagen:passat' && /\\b(?:VARIANT|ALLTRACK|GTE|CC)\\b/.test(raw)) return null\n  if (seriesKey === 'volkswagen:passat' && /\\bE-?TSI\\b/.test(label)) return null\n\n  const corsa12Turbo = seriesKey === 'opel:corsa' && /\\b1\\.2\\s+(?:100|130)\\b/.test(label)\n  const passatBlueMotion = seriesKey === 'volkswagen:passat' && (\n    /\\b1\\.6\\s*TDI\\b/.test(label) || /\\b(?:BMT|BLUEMOTION)\\b/.test(label)\n  )\n\n  let group = ''"
+          assert old in s
+          s = s.replace(old, new, 1)
+
+          old = "  if (policy) {\n    for (const pattern of TECHNICAL) label = label.replace(pattern, ' ')\n  }\n  const technologies"
+          new = "  if (seriesKey === 'volkswagen:passat') label = label.replace(/\\bBLUEMOTION\\b/g, ' ')\n  if (policy) {\n    for (const pattern of TECHNICAL) label = label.replace(pattern, ' ')\n  }\n  const technologies"
+          assert old in s
+          s = s.replace(old, new, 1)
+
+          old = "  if (!group) return null\n  label = label.replace(/\\s+/g, ' ').trim()"
+          new = "  if (!group) return null\n  if (seriesKey === 'opel:corsa' && group === '1.2' && corsa12Turbo) group = '1.2 T'\n  if (seriesKey === 'volkswagen:passat' && passatBlueMotion) group += ' BlueMotion'\n  label = label.replace(/\\s+/g, ' ').trim()"
+          assert old in s
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+
+          p = Path('apps/api/src/reference/vehicle/curation/review-diagnostics.ts')
+          s = p.read_text()
+          old = "  'skoda:rapid',\n])"
+          new = "  'skoda:rapid',\n  'opel:corsa',\n  'volkswagen:passat',\n])"
+          assert old in s
+          p.write_text(s.replace(old, new, 1))
+
+          p = Path('apps/api/src/reference/vehicle/curation/reviewed-source-scope.ts')
+          s = p.read_text()
+          old = "  'skoda:superb': new Set([\n    '133-1026',\n    '133-1147',\n    '133-365',\n    '133-371',\n  ]),\n}"
+          new = """  'skoda:superb': new Set([
+    '133-1026',
+    '133-1147',
+    '133-365',
+    '133-371',
+  ]),
+  'opel:corsa': new Set([
+    '111-1151',
+    '111-1152',
+    '111-1155',
+    '111-1156',
+    '111-1159',
+    '111-1160',
+    '111-1231',
+    '111-1233',
+    '111-1234',
+    '111-1238',
+    '111-1334',
+    '111-1384',
+    '111-1385',
+    '111-1387',
+    '111-1388',
+    '111-1469',
+    '111-1488',
+    '111-1489',
+    '111-1490',
+    '111-1491',
+    '111-1492',
+    '111-1493',
+    '111-1511',
+    '111-1652',
+    '111-1653',
+    '111-1654',
+    '111-1655',
+    '111-1693',
+  ]),
+  'volkswagen:passat': new Set([
+    '153-1008',
+    '153-1009',
+    '153-1012',
+    '153-1054',
+    '153-1097',
+    '153-1115',
+    '153-1144',
+    '153-1145',
+    '153-1146',
+    '153-1147',
+    '153-1148',
+    '153-1149',
+    '153-1155',
+    '153-1156',
+    '153-1157',
+    '153-1158',
+    '153-1159',
+    '153-1160',
+    '153-1161',
+    '153-1162',
+    '153-1163',
+    '153-1364',
+    '153-1474',
+    '153-1475',
+    '153-1476',
+    '153-1489',
+    '153-864',
+    '153-880',
+    '153-955',
+    '153-956',
+    '153-964',
+    '153-966',
+    '153-968',
+    '153-970',
+    '153-971',
+    '153-972',
+  ]),
+}"""
+          assert old in s
+          p.write_text(s.replace(old, new, 1))
+          PY
+          rm .github/workflows/vehicle-batch2-green-once.yml
+          git diff --check
+      - name: Commit production changes and remove one-shot workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/api/src/reference/vehicle/curation/model-label.ts \
+                  apps/api/src/reference/vehicle/curation/review-diagnostics.ts \
+                  apps/api/src/reference/vehicle/curation/reviewed-source-scope.ts \
+                  .github/workflows/vehicle-batch2-green-once.yml
+          git commit -m 'feat: add reviewed Corsa and Passat normalization policies'
+          git push origin HEAD:feat/vehicle-curation-policy-batch-2
