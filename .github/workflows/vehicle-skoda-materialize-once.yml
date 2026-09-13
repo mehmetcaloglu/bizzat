@@ -1,0 +1,142 @@
+name: Vehicle Skoda Materialize Once
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-1
+    paths:
+      - .github/workflows/vehicle-skoda-materialize-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Acquire pinned source inputs
+        run: |
+          python -m pip install --disable-pip-version-check requests openpyxl
+          curl -fsSL \
+            https://raw.githubusercontent.com/mehmetcaloglu/bizzat/b9ae77a6afa57dd3c64b36de6324af13561d7df5/scripts/maintenance/acquire-tsb-source.py \
+            -o /tmp/acquire-tsb-source.py
+          python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json
+          curl -fsSL \
+            https://raw.githubusercontent.com/serhatkildaci/global-car-models/44da5c9e5e0f3162d65579033f7a641473308b11/data/models.json \
+            -o /tmp/bootstrap-models.json
+          python - <<'PY'
+          import hashlib, json
+          p = '/tmp/tsb.normalized.json'
+          raw = open(p, 'rb').read()
+          data = json.loads(raw)
+          assert data['provider']['version'] == '2026-08'
+          assert len(data['records']) == 27906
+          assert hashlib.sha256(raw).hexdigest() == 'd810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+          PY
+
+      - name: Regenerate reviewed catalog
+        run: |
+          pnpm reference:generate:vehicle-catalog -- \
+            /tmp/tsb.normalized.json \
+            data/reference/vehicles/brand-aliases.json \
+            data/reference/vehicles/series-aliases.json \
+            /tmp/bootstrap-models.json \
+            /tmp/skoda-materialize \
+            2026-09-13.1 \
+            data/reference/vehicles
+
+      - name: Verify exact conservative delta
+        run: |
+          python - <<'PY'
+          import json, re
+
+          old_catalog = json.load(open('data/reference/vehicles/catalog.json', encoding='utf-8'))
+          old_mappings = json.load(open('data/reference/vehicles/tsb-mappings.json', encoding='utf-8'))
+          new_catalog = json.load(open('/tmp/skoda-materialize/catalog.generated.json', encoding='utf-8'))
+          new_mappings = json.load(open('/tmp/skoda-materialize/tsb-mappings.generated.json', encoding='utf-8'))
+          candidates = json.load(open('/tmp/skoda-materialize/candidates.json', encoding='utf-8'))
+          manifest = json.load(open('data/reference/vehicles/source-manifest.json', encoding='utf-8'))
+          backlog = json.load(open('data/reference/vehicles/curation-backlog.json', encoding='utf-8'))
+
+          assert len(old_mappings['mappings']) == 841
+          assert len(old_catalog['models']) == 600
+          assert new_catalog['version'] == '2026-09-13.1'
+          assert new_mappings['version'] == '2026-09-13.1'
+          assert len(new_mappings['mappings']) == 871
+          assert len(new_catalog['models']) == 621
+
+          old_map = {m['sourceKey']: m['vehicleModelKey'] for m in old_mappings['mappings']}
+          new_map = {m['sourceKey']: m['vehicleModelKey'] for m in new_mappings['mappings']}
+          assert all(new_map.get(k) == v for k, v in old_map.items())
+
+          old_models = {m['key']: m for m in old_catalog['models']}
+          new_models = {m['key']: m for m in new_catalog['models']}
+          assert all(new_models.get(k) == v for k, v in old_models.items())
+
+          new_source_keys = set(new_map) - set(old_map)
+          new_model_keys = set(new_models) - set(old_models)
+          assert len(new_source_keys) == 30
+          assert len(new_model_keys) == 21
+
+          allowed_series = {'skoda:octavia', 'skoda:superb', 'skoda:fabia', 'skoda:rapid'}
+          forbidden = re.compile(r'\b(?:COMBI|SPACEBACK|4X4|4X2|CR|GREEN\s*TEC|GREENTEC|ACT|MHEV|E-?TEC)\b', re.I)
+          by_source = {c['sourceKey']: c for c in candidates}
+          for key in new_source_keys:
+              row = by_source[key]
+              assert row.get('seriesKeyCandidate') in allowed_series, row
+              assert not forbidden.search(row['typeRaw']), row
+
+          assert manifest['version'] == '2026-09-13.1'
+          assert manifest['curation']['mappedSourceCodes'] == 871
+          assert manifest['curation']['canonicalModels'] == 621
+          assert manifest['curation']['modelReviewRequired'] == 6008
+          assert manifest['sources'][0]['normalizedSnapshotSha256'] == 'd810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+          assert backlog['version'] == '2026-09-13.1'
+
+          rows = {row['seriesKey']: row for row in backlog['series']}
+          expected = {
+              'skoda:octavia': (113, 16, 97, 11),
+              'skoda:fabia': (50, 8, 42, 5),
+              'skoda:superb': (77, 4, 73, 3),
+              'skoda:rapid': (47, 2, 45, 2),
+          }
+          for key, (source, mapped, review, leaves) in expected.items():
+              row = rows[key]
+              assert row['sourceRecords'] == source
+              assert row['mappedSourceCodes'] == mapped
+              assert row['modelReviewRequired'] == review
+              assert row['selectableModels'] == leaves
+          PY
+
+      - name: Materialize generated artifacts
+        run: |
+          cp /tmp/skoda-materialize/catalog.generated.json data/reference/vehicles/catalog.json
+          cp /tmp/skoda-materialize/tsb-mappings.generated.json data/reference/vehicles/tsb-mappings.json
+          git diff --check
+          git diff --stat
+
+      - name: Commit generated artifacts
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/reference/vehicles/catalog.json data/reference/vehicles/tsb-mappings.json
+          git diff --cached --quiet && { echo 'Expected generated artifact changes, found none'; exit 1; }
+          git commit -m 'data: materialize reviewed Skoda curation batch'
+          git push origin HEAD:feat/vehicle-curation-policy-batch-1
