@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-14.3",
+  "version": "2026-09-14.4",
   "mappings": [
     {
       "sourceKey": "100-1009",
@@ -1192,6 +1192,36 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-1019",
+      "vehicleModelKey": "renault:fluence:1-5-dci-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1020",
+      "vehicleModelKey": "renault:fluence:1-5-dci-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1021",
+      "vehicleModelKey": "renault:fluence:1-5-dci-dynamique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1022",
+      "vehicleModelKey": "renault:fluence:1-5-dci-dynamique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1023",
+      "vehicleModelKey": "renault:fluence:1-5-dci-privilege",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1024",
+      "vehicleModelKey": "renault:fluence:1-5-dci-business",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-1032",
       "vehicleModelKey": "renault:clio:1-2-authentique-edition",
       "method": "exact-rule"
@@ -1214,6 +1244,61 @@
     {
       "sourceKey": "122-1040",
       "vehicleModelKey": "renault:clio:1-2-grandtour-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1054",
+      "vehicleModelKey": "renault:fluence:1-6-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1055",
+      "vehicleModelKey": "renault:fluence:1-6-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1056",
+      "vehicleModelKey": "renault:fluence:1-5-dci-extreme-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1057",
+      "vehicleModelKey": "renault:fluence:1-6-dynamique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1058",
+      "vehicleModelKey": "renault:fluence:1-6-dynamique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1059",
+      "vehicleModelKey": "renault:fluence:1-5-dci-dynamique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1060",
+      "vehicleModelKey": "renault:fluence:1-6-privilege",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1061",
+      "vehicleModelKey": "renault:fluence:1-6-privilege",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1062",
+      "vehicleModelKey": "renault:fluence:1-5-dci-privilege",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1064",
+      "vehicleModelKey": "renault:fluence:1-6-business",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1065",
+      "vehicleModelKey": "renault:fluence:1-5-dci-business",
       "method": "exact-rule"
     },
     {
@@ -1272,6 +1357,76 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-1091",
+      "vehicleModelKey": "renault:fluence:1-6-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1092",
+      "vehicleModelKey": "renault:fluence:1-6-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1093",
+      "vehicleModelKey": "renault:fluence:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1094",
+      "vehicleModelKey": "renault:fluence:1-5-dci-joy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1095",
+      "vehicleModelKey": "renault:fluence:1-6-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1096",
+      "vehicleModelKey": "renault:fluence:1-6-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1097",
+      "vehicleModelKey": "renault:fluence:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1098",
+      "vehicleModelKey": "renault:fluence:1-5-dci-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1099",
+      "vehicleModelKey": "renault:fluence:1-6-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1100",
+      "vehicleModelKey": "renault:fluence:1-6-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1101",
+      "vehicleModelKey": "renault:fluence:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1102",
+      "vehicleModelKey": "renault:fluence:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1103",
+      "vehicleModelKey": "renault:fluence:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1104",
+      "vehicleModelKey": "renault:fluence:1-6-dci-icon",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-1105",
       "vehicleModelKey": "renault:megane:1-6-joy",
       "method": "exact-rule"
@@ -1307,6 +1462,11 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-1123",
+      "vehicleModelKey": "renault:fluence:1-5-dci-business",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-1130",
       "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-icon",
       "method": "exact-rule"
@@ -1319,6 +1479,11 @@
     {
       "sourceKey": "122-1132",
       "vehicleModelKey": "renault:clio:1-5-dci-icon",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1137",
+      "vehicleModelKey": "renault:fluence:1-5-dci-touch",
       "method": "exact-rule"
     },
     {
@@ -1464,6 +1629,16 @@
     {
       "sourceKey": "122-1192",
       "vehicleModelKey": "renault:clio:1-5-dci-sport-tourer-touch",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1197",
+      "vehicleModelKey": "renault:fluence:1-5-dci-touch-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-1198",
+      "vehicleModelKey": "renault:fluence:1-5-dci-touch-plus",
       "method": "exact-rule"
     },
     {
@@ -1642,6 +1817,76 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "122-513",
+      "vehicleModelKey": "renault:fluence:1-5-dci-authentique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-518",
+      "vehicleModelKey": "renault:fluence:1-6-privilege",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-519",
+      "vehicleModelKey": "renault:fluence:1-6-privilege",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-520",
+      "vehicleModelKey": "renault:fluence:1-5-dci-privilege",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-526",
+      "vehicleModelKey": "renault:fluence:1-6-business",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-527",
+      "vehicleModelKey": "renault:fluence:1-5-dci-business",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-528",
+      "vehicleModelKey": "renault:fluence:1-6-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-529",
+      "vehicleModelKey": "renault:fluence:1-6-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-530",
+      "vehicleModelKey": "renault:fluence:1-5-dci-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-531",
+      "vehicleModelKey": "renault:fluence:1-5-dci-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-532",
+      "vehicleModelKey": "renault:fluence:1-6-dynamique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-533",
+      "vehicleModelKey": "renault:fluence:1-6-dynamique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-534",
+      "vehicleModelKey": "renault:fluence:1-5-dci-dynamique",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-535",
+      "vehicleModelKey": "renault:fluence:1-5-dci-dynamique",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "122-536",
       "vehicleModelKey": "renault:clio:1-2-grandtour-extreme",
       "method": "exact-rule"
@@ -1669,6 +1914,21 @@
     {
       "sourceKey": "122-572",
       "vehicleModelKey": "renault:clio:1-5-dci-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-573",
+      "vehicleModelKey": "renault:fluence:1-5-dci-business",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-574",
+      "vehicleModelKey": "renault:fluence:1-5-dci-extreme",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "122-576",
+      "vehicleModelKey": "renault:fluence:1-5-dci-privilege",
       "method": "exact-rule"
     },
     {
@@ -3382,6 +3642,31 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "177-1093",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1094",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1096",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1098",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1099",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-style",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "177-1124",
       "vehicleModelKey": "hyundai:elantra:1-6-crdi-mode",
       "method": "exact-rule"
@@ -3417,6 +3702,11 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "177-1185",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-star",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "177-1187",
       "vehicleModelKey": "hyundai:i30:1-4-mpi-style",
       "method": "exact-rule"
@@ -3432,8 +3722,148 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "177-1211",
+      "vehicleModelKey": "hyundai:i20:1-2-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1212",
+      "vehicleModelKey": "hyundai:i20:1-2-mpi-style",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "177-1266",
       "vehicleModelKey": "hyundai:i10:1-0-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1274",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1275",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1276",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1277",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1279",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-style-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1280",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1281",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-elite-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1282",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1284",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-style-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1285",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1286",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-elite-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1345",
+      "vehicleModelKey": "hyundai:i20:1-2-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1346",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1347",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1348",
+      "vehicleModelKey": "hyundai:i20:1-4-mpi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1349",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1350",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1351",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1371",
+      "vehicleModelKey": "hyundai:i20:1-2-mpi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1372",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1373",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1374",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-elite",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1400",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1401",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-jump",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1402",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-1403",
+      "vehicleModelKey": "hyundai:i20:1-0-t-gdi-elite",
       "method": "exact-rule"
     },
     {
@@ -3464,6 +3894,21 @@
     {
       "sourceKey": "177-281",
       "vehicleModelKey": "hyundai:i20:1-2-team",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-286",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-team",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-287",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-select",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "177-288",
+      "vehicleModelKey": "hyundai:i20:1-4-crdi-style",
       "method": "exact-rule"
     },
     {
