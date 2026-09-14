@@ -1,0 +1,183 @@
+name: Vehicle Batch3 Materialize Once
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-3
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/vehicle-curation-policy-batch-3
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Acquire current August 2026 TSB snapshot
+        run: |
+          python -m pip install --disable-pip-version-check requests openpyxl
+          curl -fsSL \
+            https://raw.githubusercontent.com/mehmetcaloglu/bizzat/b9ae77a6afa57dd3c64b36de6324af13561d7df5/scripts/maintenance/acquire-tsb-source.py \
+            -o /tmp/acquire-tsb-source.py
+          python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json
+          python - <<'PY'
+          import hashlib,json
+          p='/tmp/tsb.normalized.json'; raw=open(p,'rb').read(); data=json.loads(raw)
+          assert data['provider']['version']=='2026-08'
+          assert len(data['records'])==27906
+          assert hashlib.sha256(raw).hexdigest()=='d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+          PY
+      - name: Regenerate reviewed catalog
+        run: |
+          python - <<'PY'
+          import json
+          cat=json.load(open('data/reference/vehicles/catalog.json'))
+          brands={b['key']:b['name'] for b in cat['brands']}
+          out={}
+          for s in cat['series']:
+            out.setdefault(brands[s['brandKey']],[]).append(s['name'])
+          for values in out.values(): values.sort()
+          json.dump(out,open('/tmp/bootstrap.json','w'),ensure_ascii=False,indent=2)
+          PY
+          pnpm reference:generate:vehicle-catalog -- \
+            /tmp/tsb.normalized.json \
+            data/reference/vehicles/brand-aliases.json \
+            data/reference/vehicles/series-aliases.json \
+            /tmp/bootstrap.json \
+            /tmp/batch3-generated \
+            2026-09-14.3 \
+            data/reference/vehicles
+      - name: Verify delta and update generated metadata
+        run: |
+          python - <<'PY'
+          import json, shutil
+          P='data/reference/vehicles'
+          old_cat=json.load(open(f'{P}/catalog.json'))
+          old_map=json.load(open(f'{P}/tsb-mappings.json'))
+          new_cat=json.load(open('/tmp/batch3-generated/catalog.generated.json'))
+          new_map=json.load(open('/tmp/batch3-generated/tsb-mappings.generated.json'))
+          candidates=json.load(open('/tmp/batch3-generated/candidates.json'))
+          summary=json.load(open('/tmp/batch3-generated/summary.json'))
+
+          assert summary['sourceRecords']==27906
+          assert summary['mappedSourceCodes']==1011
+          assert summary['canonicalBrands']==20
+          assert summary['canonicalSeries']==64
+          assert summary['canonicalModels']==702
+          assert summary['modelReviewRequired']==5868
+
+          old_maps={m['sourceKey']:m['vehicleModelKey'] for m in old_map['mappings']}
+          new_maps={m['sourceKey']:m['vehicleModelKey'] for m in new_map['mappings']}
+          old_models={m['key']:m for m in old_cat['models']}
+          new_models={m['key']:m for m in new_cat['models']}
+          assert len(old_maps)==935 and len(old_models)==656
+          assert all(new_maps.get(k)==v for k,v in old_maps.items())
+          assert all(new_models.get(k)==v for k,v in old_models.items())
+          added=set(new_maps)-set(old_maps)
+          assert len(added)==76
+          assert all(new_maps[k].startswith(('volkswagen:jetta:','fiat:linea:')) for k in added)
+          assert sum(new_maps[k].startswith('volkswagen:jetta:') for k in added)==36
+          assert sum(new_maps[k].startswith('fiat:linea:') for k in added)==40
+          assert len(set(new_models)-set(old_models))==46
+          assert not {'153-1540','153-1547','153-1602'} & set(new_maps)
+
+          by_key={c.get('sourceKey'):c for c in candidates if c.get('sourceKey')}
+          deferred={'153-620','153-625','153-626','153-756','153-906','153-907','153-992','100-452'}
+          assert all(by_key[k]['modelStatus']=='model-review' and by_key[k]['vehicleModelKey'] is None for k in deferred)
+
+          shutil.copyfile('/tmp/batch3-generated/catalog.generated.json',f'{P}/catalog.json')
+          shutil.copyfile('/tmp/batch3-generated/tsb-mappings.generated.json',f'{P}/tsb-mappings.json')
+
+          manifest=json.load(open(f'{P}/source-manifest.json'))
+          manifest['version']='2026-09-14.3'
+          tsb=next(s for s in manifest['sources'] if s.get('role')=='turkey-coverage')
+          tsb['accessedDate']='2026-09-14'
+          tsb['sourcePeriod']='2026-08'
+          tsb['normalizedSnapshotSha256']='d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+          cur=manifest['curation']
+          for key in ['sourceRecords','exactCandidates','mappedSourceCodes','canonicalBrands','canonicalSeries','canonicalModels','slugCollisionsExcluded','ambiguousSeriesExcluded','unknownBrandExcluded','noSeriesExcluded','modelReviewRequired']:
+            cur[key]=summary[key]
+          cur['tsbSnapshotRecords']=summary['sourceRecords']
+          addition=' Volkswagen Jetta and Fiat Linea additionally use marketplace-evidenced exact source-code scopes; Jetta BMT alone selects BlueMotion, while Linea T-Jet maps to Turbo and transmission noise/VIA handling remain series-local. Parser-resistant power/transmission rows stay review-only rather than adding a broad normalization rule.'
+          if 'Volkswagen Jetta and Fiat Linea additionally' not in cur['method']:
+            cur['method'] += addition
+          gaps=cur['knownGaps']
+          gap1='Jetta source codes 153-1540, 153-1547 and 153-1602 remain intentionally review-only because their import/taxonomy semantics are not sufficiently evidenced.'
+          gap2='Reviewed-but-parser-resistant Jetta/Linea rows (153-620, 153-625, 153-626, 153-756, 153-906, 153-907, 153-992, 100-452) remain review-only; no broad power/transmission stripping rule is added for them.'
+          for g in [gap1,gap2]:
+            if g not in gaps: gaps.append(g)
+          examples=cur['reviewedReferenceExamples']
+          for x in ['Volkswagen/Jetta/1.2 TSI BlueMotion/Comfortline','Fiat/Linea/1.4 Turbo/Dynamic Plus']:
+            if x not in examples: examples.append(x)
+          policies=cur['reviewedTechnicalPolicySeries']
+          for x in ['volkswagen:jetta','fiat:linea']:
+            if x not in policies: policies.append(x)
+
+          models_by_brand={}
+          series_brand={s['key']:s['brandKey'] for s in new_cat['series']}
+          for m in new_cat['models']:
+            b=series_brand[m['seriesKey']]
+            models_by_brand[b]=models_by_brand.get(b,0)+1
+          for row in cur.get('coverageByKnownBrand',[]):
+            bk=row['brandKey']
+            rows=[c for c in candidates if c.get('brandKeyCandidate')==bk]
+            if not rows: continue
+            mapped=sum(c.get('vehicleModelKey') is not None for c in rows)
+            review=sum(c.get('modelStatus')=='model-review' for c in rows)
+            row['sourceRows']=len(rows)
+            row['model-review']=review
+            row['excluded']=len(rows)-mapped-review
+            if mapped: row['mapped']=mapped
+            else: row.pop('mapped',None)
+            row['selectableLeaves']=models_by_brand.get(bk,0)
+
+          json.dump(manifest,open(f'{P}/source-manifest.json','w'),ensure_ascii=False,indent=2); open(f'{P}/source-manifest.json','a').write('\n')
+
+          backlog=json.load(open(f'{P}/curation-backlog.json'))
+          backlog['version']='2026-09-14.3'
+          backlog['sourcePeriod']='2026-08'
+          backlog['sourceRecords']=summary['sourceRecords']
+          backlog['unassignedByReason']={'ambiguous-series':summary['ambiguousSeriesExcluded'],'no-series':summary['noSeriesExcluded'],'unknown-brand':summary['unknownBrandExcluded']}
+          model_count={}
+          for m in new_cat['models']: model_count[m['seriesKey']]=model_count.get(m['seriesKey'],0)+1
+          for row in backlog['series']:
+            sk=row['seriesKey']
+            rows=[c for c in candidates if c.get('seriesKeyCandidate')==sk]
+            if not rows: continue
+            mapped=sum(c.get('vehicleModelKey') is not None for c in rows)
+            review=sum(c.get('modelStatus')=='model-review' for c in rows)
+            row['sourceRecords']=len(rows)
+            row['mappedSourceCodes']=mapped
+            row['modelReviewRequired']=review
+            row['excludedSourceCodes']=len(rows)-mapped-review
+            row['selectableModels']=model_count.get(sk,0)
+          backlog['series'].sort(key=lambda r:(-r['modelReviewRequired'],r['seriesKey']))
+          j=next(r for r in backlog['series'] if r['seriesKey']=='volkswagen:jetta')
+          l=next(r for r in backlog['series'] if r['seriesKey']=='fiat:linea')
+          assert j=={'seriesKey':'volkswagen:jetta','sourceRecords':46,'mappedSourceCodes':36,'modelReviewRequired':10,'excludedSourceCodes':0,'selectableModels':17},j
+          assert l=={'seriesKey':'fiat:linea','sourceRecords':41,'mappedSourceCodes':40,'modelReviewRequired':1,'excludedSourceCodes':0,'selectableModels':29},l
+          json.dump(backlog,open(f'{P}/curation-backlog.json','w'),ensure_ascii=False,indent=2); open(f'{P}/curation-backlog.json','a').write('\n')
+          PY
+      - name: Validate materialized files
+        run: |
+          git diff --check
+          pnpm --filter @bizzat/api test -- --runInBand
+      - name: Commit materialized batch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/reference/vehicles/catalog.json data/reference/vehicles/tsb-mappings.json data/reference/vehicles/source-manifest.json data/reference/vehicles/curation-backlog.json
+          git diff --cached --stat
+          git commit -m 'data: materialize reviewed Jetta and Linea batch'
+          git push origin HEAD:feat/vehicle-curation-policy-batch-3
