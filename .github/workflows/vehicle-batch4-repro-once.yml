@@ -1,0 +1,130 @@
+name: Vehicle Batch4 Repro Once
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-4
+
+permissions:
+  contents: read
+
+jobs:
+  repro:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Acquire pinned August 2026 TSB snapshot
+        run: |
+          python -m pip install --disable-pip-version-check requests openpyxl
+          curl -fsSL \
+            https://raw.githubusercontent.com/mehmetcaloglu/bizzat/b9ae77a6afa57dd3c64b36de6324af13561d7df5/scripts/maintenance/acquire-tsb-source.py \
+            -o /tmp/acquire-tsb-source.py
+          python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json
+          python - <<'PY'
+          import hashlib, json
+          raw=open('/tmp/tsb.normalized.json','rb').read(); data=json.loads(raw)
+          assert data['provider']['version']=='2026-08'
+          assert len(data['records'])==27906
+          assert hashlib.sha256(raw).hexdigest()=='d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+          PY
+      - name: Generate batch 4 from materialized batch 3 baseline
+        run: |
+          python - <<'PY'
+          import json
+          cat=json.load(open('data/reference/vehicles/catalog.json'))
+          brands={b['key']:b['name'] for b in cat['brands']}
+          bootstrap={}
+          for s in cat['series']:
+            bootstrap.setdefault(brands[s['brandKey']],[]).append(s['name'])
+          for values in bootstrap.values(): values.sort()
+          json.dump(bootstrap,open('/tmp/bootstrap.json','w'),ensure_ascii=False,indent=2)
+          PY
+          pnpm reference:generate:vehicle-catalog -- \
+            /tmp/tsb.normalized.json \
+            data/reference/vehicles/brand-aliases.json \
+            data/reference/vehicles/series-aliases.json \
+            /tmp/bootstrap.json \
+            /tmp/batch4-generated \
+            2026-09-14.4-audit \
+            data/reference/vehicles
+      - name: Audit identity preservation and scoped delta
+        run: |
+          python - <<'PY'
+          import json
+          P='data/reference/vehicles'
+          old_cat=json.load(open(f'{P}/catalog.json'))
+          old_map=json.load(open(f'{P}/tsb-mappings.json'))
+          new_cat=json.load(open('/tmp/batch4-generated/catalog.generated.json'))
+          new_map=json.load(open('/tmp/batch4-generated/tsb-mappings.generated.json'))
+          candidates=json.load(open('/tmp/batch4-generated/candidates.json'))
+          summary=json.load(open('/tmp/batch4-generated/summary.json'))
+
+          old_maps={m['sourceKey']:m['vehicleModelKey'] for m in old_map['mappings']}
+          new_maps={m['sourceKey']:m['vehicleModelKey'] for m in new_map['mappings']}
+          old_models={m['key']:m for m in old_cat['models']}
+          new_models={m['key']:m for m in new_cat['models']}
+          assert len(old_maps)==1011, len(old_maps)
+          assert len(old_models)==702, len(old_models)
+          assert all(new_maps.get(k)==v for k,v in old_maps.items())
+          assert all(new_models.get(k)==v for k,v in old_models.items())
+
+          added=set(new_maps)-set(old_maps)
+          added_models=set(new_models)-set(old_models)
+          assert added
+          assert all(new_maps[k].startswith(('hyundai:i20:','renault:fluence:')) for k in added)
+          assert all(k.startswith(('hyundai:i20:','renault:fluence:')) for k in added_models)
+
+          deferred={
+            '177-1165','177-1328','177-1003','177-1287',
+            '122-1066','122-1002','122-593','122-1067',
+          }
+          assert not deferred & set(new_maps)
+
+          by_series={}
+          for c in candidates:
+            sk=c.get('seriesKeyCandidate')
+            if sk not in {'hyundai:i20','renault:fluence'}: continue
+            row=by_series.setdefault(sk,{'source':0,'mapped':0,'review':0,'excluded':0})
+            row['source']+=1
+            if c.get('vehicleModelKey'): row['mapped']+=1
+            elif c.get('modelStatus')=='model-review': row['review']+=1
+            else: row['excluded']+=1
+
+          reviewed_i20={
+            '177-1184','177-1181','177-1091','177-1088','177-1089','177-281','177-1037','177-1179','177-1178','177-1034','177-1035','177-1036',
+            '177-1403','177-1401','177-1402','177-1285','177-1286','177-1282','177-1284','177-1351','177-1349','177-1350','177-1374','177-1372','177-1373','177-1400',
+            '177-1280','177-1281','177-1276','177-1274','177-1277','177-1275','177-1279','177-1348','177-1346','177-1347','177-1096','177-1093','177-1185','177-1094',
+            '177-1371','177-1345','177-1211','177-1212','177-1098','177-1099','177-286','177-287','177-288',
+          }
+          reviewed_fluence={
+            '122-513','122-573','122-527','122-1123','122-1065','122-1024','122-526','122-1064','122-535','122-1022','122-1059','122-534','122-1021','122-532','122-1058','122-1057','122-533',
+            '122-574','122-531','122-530','122-528','122-529','122-1020','122-1056','122-1019','122-1055','122-1054','122-1102','122-1103','122-1101','122-1099','122-1100','122-1104',
+            '122-1094','122-1093','122-1091','122-1092','122-520','122-576','122-1023','122-1062','122-518','122-1060','122-1061','122-519','122-1137','122-1098','122-1097','122-1095','122-1096','122-1198','122-1197',
+          }
+          by_key={c.get('sourceKey'):c for c in candidates if c.get('sourceKey')}
+          unused_i20=sorted(k for k in reviewed_i20 if not by_key.get(k,{}).get('vehicleModelKey'))
+          unused_fluence=sorted(k for k in reviewed_fluence if not by_key.get(k,{}).get('vehicleModelKey'))
+
+          print('SUMMARY', json.dumps(summary,sort_keys=True))
+          print('SERIES', json.dumps(by_series,sort_keys=True))
+          print('DELTA_MAPPINGS', len(added))
+          print('DELTA_MODELS', len(added_models))
+          print('I20_ADDED_MAPPINGS', sum(new_maps[k].startswith('hyundai:i20:') for k in added))
+          print('FLUENCE_ADDED_MAPPINGS', sum(new_maps[k].startswith('renault:fluence:') for k in added))
+          print('I20_UNUSED_REVIEWED', json.dumps(unused_i20))
+          print('FLUENCE_UNUSED_REVIEWED', json.dumps(unused_fluence))
+          print('NEW_LEAVES')
+          for k in sorted(added_models): print(k, json.dumps(new_models[k],ensure_ascii=False,sort_keys=True))
+          print('DEFERRED')
+          for k in sorted(deferred):
+            c=by_key.get(k)
+            print(k, json.dumps({'status':c.get('modelStatus') if c else None,'reason':c.get('reviewReason') if c else None,'proposed':c.get('proposedModelLabel') if c else None},ensure_ascii=False,sort_keys=True))
+          PY
