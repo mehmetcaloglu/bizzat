@@ -37,12 +37,15 @@ describe('reviewed Hyundai i20 normalization policy', () => {
     ['1.0 T 90 ELITE DCT', ['1.0 T-GDi', 'Elite']],
     ['1.0T 100 STYLE PLUS 7DCT', ['1.0 T-GDi', 'Style Plus']],
     ['FL 1.2 MPI 84 JUMP', ['1.2 MPI', 'Jump']],
-    ['1.2 D-CVVT JUMP', ['1.2 D-CVVT', 'Jump']],
-    ['1.4 CVVT SELECT OV', ['1.4 CVVT', 'Select']],
     ['1.4 CRDI (90) STYLE', ['1.4 CRDi', 'Style']],
     ['1.4 MPI 100 ELITE 6AT', ['1.4 MPI', 'Elite']],
   ])('normalizes %s to marketplace engine/trim path', (proposed, path) => {
     expect(canonicalModelSelection('hyundai:i20', proposed, `i20 ${proposed}`)?.path).toEqual(path)
+  })
+
+  it('does not broaden CVVT engine grammar as a side effect of this batch', () => {
+    expect(canonicalModelSelection('hyundai:i20', '1.2 D-CVVT JUMP', 'i20 1.2 D-CVVT JUMP')).toBeNull()
+    expect(canonicalModelSelection('hyundai:elantra', '1.6 D-CVVT STYLE', 'ELANTRA 1.6 D-CVVT STYLE')).toBeNull()
   })
 
   it('preserves an already mapped reviewed i20 source when source gating is enabled', () => {
