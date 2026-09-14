@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-13.2",
+  "version": "2026-09-14.3",
   "sourcePeriod": "2026-08",
   "measurement": "Unresolved source-row counts, including unreviewed or out-of-MVP aliases; not missing-model counts or Turkish passenger-car completeness percentages.",
   "sourceRecords": 27906,
@@ -58,14 +58,6 @@
       "selectableModels": 7
     },
     {
-      "seriesKey": "opel:corsa",
-      "sourceRecords": 135,
-      "mappedSourceCodes": 28,
-      "modelReviewRequired": 107,
-      "excludedSourceCodes": 0,
-      "selectableModels": 19
-    },
-    {
       "seriesKey": "hyundai:i20",
       "sourceRecords": 139,
       "mappedSourceCodes": 12,
@@ -82,14 +74,6 @@
       "selectableModels": 0
     },
     {
-      "seriesKey": "volkswagen:passat",
-      "sourceRecords": 126,
-      "mappedSourceCodes": 36,
-      "modelReviewRequired": 90,
-      "excludedSourceCodes": 0,
-      "selectableModels": 16
-    },
-    {
       "seriesKey": "fiat:egea",
       "sourceRecords": 196,
       "mappedSourceCodes": 83,
@@ -104,6 +88,14 @@
       "modelReviewRequired": 111,
       "excludedSourceCodes": 0,
       "selectableModels": 7
+    },
+    {
+      "seriesKey": "opel:corsa",
+      "sourceRecords": 135,
+      "mappedSourceCodes": 28,
+      "modelReviewRequired": 107,
+      "excludedSourceCodes": 0,
+      "selectableModels": 19
     },
     {
       "seriesKey": "audi:a5",
@@ -152,6 +144,14 @@
       "modelReviewRequired": 90,
       "excludedSourceCodes": 0,
       "selectableModels": 1
+    },
+    {
+      "seriesKey": "volkswagen:passat",
+      "sourceRecords": 126,
+      "mappedSourceCodes": 36,
+      "modelReviewRequired": 90,
+      "excludedSourceCodes": 0,
+      "selectableModels": 16
     },
     {
       "seriesKey": "citroen:c3",
@@ -394,14 +394,6 @@
       "selectableModels": 0
     },
     {
-      "seriesKey": "volkswagen:jetta",
-      "sourceRecords": 46,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 46,
-      "excludedSourceCodes": 0,
-      "selectableModels": 0
-    },
-    {
       "seriesKey": "skoda:rapid",
       "sourceRecords": 47,
       "mappedSourceCodes": 2,
@@ -424,14 +416,6 @@
       "modelReviewRequired": 42,
       "excludedSourceCodes": 0,
       "selectableModels": 5
-    },
-    {
-      "seriesKey": "fiat:linea",
-      "sourceRecords": 41,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 41,
-      "excludedSourceCodes": 0,
-      "selectableModels": 0
     },
     {
       "seriesKey": "fiat:punto",
@@ -856,6 +840,14 @@
       "modelReviewRequired": 10,
       "excludedSourceCodes": 0,
       "selectableModels": 15
+    },
+    {
+      "seriesKey": "volkswagen:jetta",
+      "sourceRecords": 46,
+      "mappedSourceCodes": 36,
+      "modelReviewRequired": 10,
+      "excludedSourceCodes": 0,
+      "selectableModels": 17
     },
     {
       "seriesKey": "volkswagen:polo",
@@ -1528,6 +1520,14 @@
       "modelReviewRequired": 1,
       "excludedSourceCodes": 0,
       "selectableModels": 0
+    },
+    {
+      "seriesKey": "fiat:linea",
+      "sourceRecords": 41,
+      "mappedSourceCodes": 40,
+      "modelReviewRequired": 1,
+      "excludedSourceCodes": 0,
+      "selectableModels": 29
     },
     {
       "seriesKey": "honda:prelude",

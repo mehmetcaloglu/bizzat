@@ -1,11 +1,11 @@
 {
-  "version": "2026-09-13.2",
+  "version": "2026-09-14.3",
   "sources": [
     {
       "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
       "sourceUrl": "https://www.tsb.org.tr/tr/kasko-arsiv-listesi",
       "sourcePeriod": "2026-08",
-      "accessedDate": "2026-09-13",
+      "accessedDate": "2026-09-14",
       "licenseOrTerms": "No open redistribution license observed; raw export and operational normalized snapshot are not committed; kasko price values are discarded.",
       "role": "turkey-coverage",
       "normalizedSnapshotSha256": "d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11"
@@ -29,18 +29,18 @@
   ],
   "curation": {
     "sourceRecords": 27906,
-    "exactCandidates": 935,
-    "mappedSourceCodes": 935,
+    "exactCandidates": 1011,
+    "mappedSourceCodes": 1011,
     "canonicalBrands": 20,
-    "canonicalSeries": 62,
-    "canonicalModels": 656,
+    "canonicalSeries": 64,
+    "canonicalModels": 702,
     "slugCollisionsExcluded": 0,
     "ambiguousSeriesExcluded": 21,
     "unknownBrandExcluded": 13955,
     "noSeriesExcluded": 7051,
-    "modelReviewRequired": 5944,
+    "modelReviewRequired": 5868,
     "tsbSnapshotRecords": 27906,
-    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza, Renault Megane, Ford Focus and Opel Astra use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths. Skoda Octavia, Superb, Fabia and Rapid additionally use marketplace-evidenced source-code allowlists with reviewed technical normalization; branch/technology-bearing and non-evidenced paths remain review-only. Opel Corsa and Volkswagen Passat use marketplace-evidenced source-code allowlists; Corsa 1.2 turbo power variants and Passat BlueMotion engine branches are normalized explicitly while distinct body/nameplate branches remain review-only.",
+    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza, Renault Megane, Ford Focus and Opel Astra use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths. Skoda Octavia, Superb, Fabia and Rapid additionally use marketplace-evidenced source-code allowlists with reviewed technical normalization; branch/technology-bearing and non-evidenced paths remain review-only. Opel Corsa and Volkswagen Passat use marketplace-evidenced source-code allowlists; Corsa 1.2 turbo power variants and Passat BlueMotion engine branches are normalized explicitly while distinct body/nameplate branches remain review-only. Volkswagen Jetta and Fiat Linea additionally use marketplace-evidenced exact source-code scopes; Jetta BMT alone selects BlueMotion, while Linea T-Jet maps to Turbo and transmission noise/VIA handling remain series-local. Parser-resistant power/transmission rows stay review-only rather than adding a broad normalization rule.",
     "coverageStatus": "partial-review; not a complete Sahibinden catalog",
     "excludedPreviouslyPresentBrands": [
       "Alfa Romeo",
@@ -62,7 +62,9 @@
       "Fiat500family hierarchy requires explicit series/path curation; SUV/pickup/commercial categories are outside the current Otomobil MVP.",
       "Accent Blue/Era contain only explicit engine + known trim source rows; technical variants remain in review.",
       "Skoda Combi/Spaceback, 4x4, CR/GreenTec and newer ACT/MHEV/e-TEC branches remain review-only unless their marketplace path is separately evidenced.",
-      "Corsa-e/Van and Passat Variant/Alltrack/GTE/CC/eTSI branches remain review-only or separate nameplate/body work until independently evidenced."
+      "Corsa-e/Van and Passat Variant/Alltrack/GTE/CC/eTSI branches remain review-only or separate nameplate/body work until independently evidenced.",
+      "Jetta source codes 153-1540, 153-1547 and 153-1602 remain intentionally review-only because their import/taxonomy semantics are not sufficiently evidenced.",
+      "Reviewed-but-parser-resistant Jetta/Linea rows (153-620, 153-625, 153-626, 153-756, 153-906, 153-907, 153-992, 100-452) remain review-only; no broad power/transmission stripping rule is added for them."
     ],
     "reviewedReferenceExamples": [
       "Renault/Clio/1.0 TCe/Evolution",
@@ -88,7 +90,9 @@
       "Skoda/Fabia/1.0 TSI/Premium",
       "Skoda/Rapid/1.2 TSI/Ambition",
       "Opel/Corsa/1.2 T/Edition",
-      "Volkswagen/Passat/1.6 TDI BlueMotion/Comfortline"
+      "Volkswagen/Passat/1.6 TDI BlueMotion/Comfortline",
+      "Volkswagen/Jetta/1.2 TSI BlueMotion/Comfortline",
+      "Fiat/Linea/1.4 Turbo/Dynamic Plus"
     ],
     "identityPolicy": "First pre-merge consolidation replaces unreviewed type keys. Later runs must use the reviewed catalog/mappings baseline; splits/merges/reparenting are rejected for explicit review.",
     "coverageMeasurement": "Counts refer to the complete source snapshot, including out-of-MVP vehicle categories; they are not a completeness percentage for Turkish passenger cars or the Sahibinden taxonomy.",
@@ -194,7 +198,9 @@
       "skoda:fabia",
       "skoda:rapid",
       "opel:corsa",
-      "volkswagen:passat"
+      "volkswagen:passat",
+      "volkswagen:jetta",
+      "fiat:linea"
     ],
     "coverageByKnownBrand": [
       {
@@ -231,7 +237,8 @@
         "brandKey": "chery",
         "sourceRows": 41,
         "excluded": 41,
-        "selectableLeaves": 0
+        "selectableLeaves": 0,
+        "model-review": 0
       },
       {
         "brandKey": "chevrolet",
@@ -273,10 +280,10 @@
       {
         "brandKey": "fiat",
         "sourceRows": 1147,
-        "model-review": 286,
+        "model-review": 246,
         "excluded": 777,
-        "mapped": 84,
-        "selectableLeaves": 37
+        "mapped": 124,
+        "selectableLeaves": 66
       },
       {
         "brandKey": "ford",
@@ -421,10 +428,10 @@
       {
         "brandKey": "volkswagen",
         "sourceRows": 838,
-        "model-review": 257,
+        "model-review": 221,
         "excluded": 469,
-        "mapped": 112,
-        "selectableLeaves": 60
+        "mapped": 148,
+        "selectableLeaves": 77
       }
     ],
     "backlogFile": "curation-backlog.json",

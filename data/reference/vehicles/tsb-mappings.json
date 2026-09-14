@@ -1,6 +1,131 @@
 {
-  "version": "2026-09-13.2",
+  "version": "2026-09-14.3",
   "mappings": [
+    {
+      "sourceKey": "100-1009",
+      "vehicleModelKey": "fiat:linea:1-4-fire-actual",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1010",
+      "vehicleModelKey": "fiat:linea:1-4-fire-active-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1011",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-active-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1012",
+      "vehicleModelKey": "fiat:linea:1-4-fire-via",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1013",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-via",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1014",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-via",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1015",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-dynamic-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1016",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-emotion-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1017",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-via",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1020",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-actual",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1021",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-active-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1022",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-via",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1040",
+      "vehicleModelKey": "fiat:linea:1-4-fire-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1041",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1042",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-easy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1043",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1044",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-urban",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1045",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1066",
+      "vehicleModelKey": "fiat:linea:1-4-fire-pop",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1067",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-pop",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1094",
+      "vehicleModelKey": "fiat:linea:1-4-fire-actual-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1095",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-actual-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1110",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1136",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-mood",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1137",
+      "vehicleModelKey": "fiat:linea:1-4-fire-mood",
+      "method": "exact-rule"
+    },
     {
       "sourceKey": "100-1138",
       "vehicleModelKey": "fiat:egea:1-4-fire-easy",
@@ -19,6 +144,16 @@
     {
       "sourceKey": "100-1143",
       "vehicleModelKey": "fiat:egea:1-6-multijet-lounge",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1144",
+      "vehicleModelKey": "fiat:linea:1-4-fire-mood",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-1145",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-mood",
       "method": "exact-rule"
     },
     {
@@ -414,6 +549,71 @@
     {
       "sourceKey": "100-1506",
       "vehicleModelKey": "fiat:egea:1-6-multijet-limited",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-488",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-490",
+      "vehicleModelKey": "fiat:linea:1-4-fire-actual",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-491",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-actual",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-492",
+      "vehicleModelKey": "fiat:linea:1-4-fire-active-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-493",
+      "vehicleModelKey": "fiat:linea:1-4-turbo-active-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-494",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-active-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-495",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-active-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-496",
+      "vehicleModelKey": "fiat:linea:1-4-turbo-dynamic-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-497",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-dynamic-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-498",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-dynamic-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-499",
+      "vehicleModelKey": "fiat:linea:1-4-turbo-emotion-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-500",
+      "vehicleModelKey": "fiat:linea:1-3-multijet-emotion-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "100-501",
+      "vehicleModelKey": "fiat:linea:1-6-multijet-emotion-plus",
       "method": "exact-rule"
     },
     {
@@ -2362,6 +2562,16 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-1006",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1007",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-1008",
       "vehicleModelKey": "volkswagen:passat:1-4-tsi-comfortline",
       "method": "exact-rule"
@@ -2379,6 +2589,16 @@
     {
       "sourceKey": "153-1023",
       "vehicleModelKey": "volkswagen:polo:1-4-pulse",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1033",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1034",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-comfortline",
       "method": "exact-rule"
     },
     {
@@ -2444,6 +2664,16 @@
     {
       "sourceKey": "153-1133",
       "vehicleModelKey": "volkswagen:golf:2-0-tsi-r",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1141",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1142",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-highline",
       "method": "exact-rule"
     },
     {
@@ -2594,6 +2824,71 @@
     {
       "sourceKey": "153-1207",
       "vehicleModelKey": "volkswagen:golf:1-6-tdi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1211",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1212",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1213",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1214",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1215",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1216",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1217",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1218",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1243",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1244",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1245",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1246",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1247",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-bluemotion-highline",
       "method": "exact-rule"
     },
     {
@@ -2782,6 +3077,11 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-1532",
+      "vehicleModelKey": "volkswagen:jetta:2-0-fsi-trendline",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-1535",
       "vehicleModelKey": "volkswagen:polo:1-0-impression",
       "method": "exact-rule"
@@ -2799,6 +3099,21 @@
     {
       "sourceKey": "153-1538",
       "vehicleModelKey": "volkswagen:polo:1-0-tsi-style",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-154",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-155",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1568",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-highline",
       "method": "exact-rule"
     },
     {
@@ -2837,6 +3152,16 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-621",
+      "vehicleModelKey": "volkswagen:jetta:1-6-primeline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-72",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-trendline",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-73",
       "vehicleModelKey": "volkswagen:polo:1-4-fan-edition",
       "method": "exact-rule"
@@ -2847,8 +3172,23 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-78",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-792",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-80",
       "vehicleModelKey": "volkswagen:polo:1-2-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-839",
+      "vehicleModelKey": "volkswagen:jetta:1-4-tsi-comfortline",
       "method": "exact-rule"
     },
     {
@@ -2904,6 +3244,46 @@
     {
       "sourceKey": "153-972",
       "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-984",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-985",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-986",
+      "vehicleModelKey": "volkswagen:jetta:1-2-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-987",
+      "vehicleModelKey": "volkswagen:jetta:1-6-tdi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-988",
+      "vehicleModelKey": "volkswagen:jetta:1-6-tdi-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-989",
+      "vehicleModelKey": "volkswagen:jetta:1-6-tdi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-990",
+      "vehicleModelKey": "volkswagen:jetta:1-6-tdi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-991",
+      "vehicleModelKey": "volkswagen:jetta:1-6-tdi-highline",
       "method": "exact-rule"
     },
     {
