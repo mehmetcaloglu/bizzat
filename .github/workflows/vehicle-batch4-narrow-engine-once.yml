@@ -1,0 +1,47 @@
+name: Vehicle Batch4 Narrow Engine Once
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-4
+
+permissions:
+  contents: write
+
+jobs:
+  narrow:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/vehicle-curation-policy-batch-4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Remove global CVVT grammar introduced by batch 4
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('apps/api/src/reference/vehicle/curation/model-label.ts')
+          text=p.read_text()
+          old="  'D-4D': 'D-4D', 'I-DTEC': 'i-DTEC', 'I-VTEC': 'i-VTEC', VTEC: 'VTEC', 'D-CVVT': 'D-CVVT', CVVT: 'CVVT', CRDI: 'CRDi', GDI: 'GDi', 'T-GDI': 'T-GDi',"
+          new="  'D-4D': 'D-4D', 'I-DTEC': 'i-DTEC', 'I-VTEC': 'i-VTEC', VTEC: 'VTEC', CRDI: 'CRDi', GDI: 'GDi', 'T-GDI': 'T-GDi',"
+          assert old in text
+          p.write_text(text.replace(old,new,1))
+          PY
+      - name: Verify focused policy tests
+        run: pnpm --filter @bizzat/api exec vitest run test/vehicle-curation-i20-fluence-policy.test.ts
+      - name: Commit narrowed policy
+        run: |
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/api/src/reference/vehicle/curation/model-label.ts
+          git commit -m 'fix: keep batch 4 engine grammar scoped'
+          git push origin HEAD:feat/vehicle-curation-policy-batch-4
