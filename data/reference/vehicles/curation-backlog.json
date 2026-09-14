@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-13.1",
+  "version": "2026-09-13.2",
   "sourcePeriod": "2026-08",
   "measurement": "Unresolved source-row counts, including unreviewed or out-of-MVP aliases; not missing-model counts or Turkish passenger-car completeness percentages.",
   "sourceRecords": 27906,
@@ -60,10 +60,10 @@
     {
       "seriesKey": "opel:corsa",
       "sourceRecords": 135,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 135,
+      "mappedSourceCodes": 28,
+      "modelReviewRequired": 107,
       "excludedSourceCodes": 0,
-      "selectableModels": 0
+      "selectableModels": 19
     },
     {
       "seriesKey": "hyundai:i20",
@@ -84,10 +84,10 @@
     {
       "seriesKey": "volkswagen:passat",
       "sourceRecords": 126,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 126,
+      "mappedSourceCodes": 36,
+      "modelReviewRequired": 90,
       "excludedSourceCodes": 0,
-      "selectableModels": 0
+      "selectableModels": 16
     },
     {
       "seriesKey": "fiat:egea",

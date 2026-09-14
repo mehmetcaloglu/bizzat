@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-13.1",
+  "version": "2026-09-13.2",
   "sources": [
     {
       "name": "Türkiye Sigorta Birliği Kasko Değer Listesi",
@@ -29,18 +29,18 @@
   ],
   "curation": {
     "sourceRecords": 27906,
-    "exactCandidates": 871,
-    "mappedSourceCodes": 871,
+    "exactCandidates": 935,
+    "mappedSourceCodes": 935,
     "canonicalBrands": 20,
-    "canonicalSeries": 60,
-    "canonicalModels": 621,
+    "canonicalSeries": 62,
+    "canonicalModels": 656,
     "slugCollisionsExcluded": 0,
     "ambiguousSeriesExcluded": 21,
     "unknownBrandExcluded": 13955,
     "noSeriesExcluded": 7051,
-    "modelReviewRequired": 6008,
+    "modelReviewRequired": 5944,
     "tsbSnapshotRecords": 27906,
-    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza, Renault Megane, Ford Focus and Opel Astra use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths. Skoda Octavia, Superb, Fabia and Rapid additionally use marketplace-evidenced source-code allowlists with reviewed technical normalization; branch/technology-bearing and non-evidenced paths remain review-only.",
+    "method": "Exact brand/series aliases, explicit model badges and body paths, known trim vocabulary; unknown engine/body/trim and collisions require review. Technical variants consolidate only when their full reviewed selection path agrees. Seat Ibiza, Renault Megane, Ford Focus and Opel Astra use narrowly reviewed exact normalized source-label mappings for explicitly evidenced paths. Skoda Octavia, Superb, Fabia and Rapid additionally use marketplace-evidenced source-code allowlists with reviewed technical normalization; branch/technology-bearing and non-evidenced paths remain review-only. Opel Corsa and Volkswagen Passat use marketplace-evidenced source-code allowlists; Corsa 1.2 turbo power variants and Passat BlueMotion engine branches are normalized explicitly while distinct body/nameplate branches remain review-only.",
     "coverageStatus": "partial-review; not a complete Sahibinden catalog",
     "excludedPreviouslyPresentBrands": [
       "Alfa Romeo",
@@ -61,7 +61,8 @@
       "Unknown source trim spellings; drivetrain branches such as xDrive",
       "Fiat500family hierarchy requires explicit series/path curation; SUV/pickup/commercial categories are outside the current Otomobil MVP.",
       "Accent Blue/Era contain only explicit engine + known trim source rows; technical variants remain in review.",
-      "Skoda Combi/Spaceback, 4x4, CR/GreenTec and newer ACT/MHEV/e-TEC branches remain review-only unless their marketplace path is separately evidenced."
+      "Skoda Combi/Spaceback, 4x4, CR/GreenTec and newer ACT/MHEV/e-TEC branches remain review-only unless their marketplace path is separately evidenced.",
+      "Corsa-e/Van and Passat Variant/Alltrack/GTE/CC/eTSI branches remain review-only or separate nameplate/body work until independently evidenced."
     ],
     "reviewedReferenceExamples": [
       "Renault/Clio/1.0 TCe/Evolution",
@@ -85,7 +86,9 @@
       "Skoda/Octavia/1.4 TSI/Elegance",
       "Skoda/Superb/1.4 TSI/Elegance",
       "Skoda/Fabia/1.0 TSI/Premium",
-      "Skoda/Rapid/1.2 TSI/Ambition"
+      "Skoda/Rapid/1.2 TSI/Ambition",
+      "Opel/Corsa/1.2 T/Edition",
+      "Volkswagen/Passat/1.6 TDI BlueMotion/Comfortline"
     ],
     "identityPolicy": "First pre-merge consolidation replaces unreviewed type keys. Later runs must use the reviewed catalog/mappings baseline; splits/merges/reparenting are rejected for explicit review.",
     "coverageMeasurement": "Counts refer to the complete source snapshot, including out-of-MVP vehicle categories; they are not a completeness percentage for Turkish passenger cars or the Sahibinden taxonomy.",
@@ -189,7 +192,9 @@
       "skoda:octavia",
       "skoda:superb",
       "skoda:fabia",
-      "skoda:rapid"
+      "skoda:rapid",
+      "opel:corsa",
+      "volkswagen:passat"
     ],
     "coverageByKnownBrand": [
       {
@@ -211,15 +216,15 @@
         "brandKey": "bmw",
         "sourceRows": 1178,
         "model-review": 674,
-        "mapped": 125,
         "excluded": 379,
+        "mapped": 125,
         "selectableLeaves": 116
       },
       {
         "brandKey": "byd",
         "sourceRows": 19,
-        "excluded": 11,
         "model-review": 8,
+        "excluded": 11,
         "selectableLeaves": 0
       },
       {
@@ -238,16 +243,16 @@
       {
         "brandKey": "citroen",
         "sourceRows": 456,
-        "excluded": 158,
         "model-review": 294,
+        "excluded": 158,
         "mapped": 4,
         "selectableLeaves": 4
       },
       {
         "brandKey": "cupra",
         "sourceRows": 26,
-        "excluded": 17,
         "model-review": 9,
+        "excluded": 17,
         "selectableLeaves": 0
       },
       {
@@ -268,8 +273,8 @@
       {
         "brandKey": "fiat",
         "sourceRows": 1147,
-        "excluded": 777,
         "model-review": 286,
+        "excluded": 777,
         "mapped": 84,
         "selectableLeaves": 37
       },
@@ -284,16 +289,16 @@
       {
         "brandKey": "honda",
         "sourceRows": 176,
-        "excluded": 42,
         "model-review": 125,
+        "excluded": 42,
         "mapped": 9,
         "selectableLeaves": 9
       },
       {
         "brandKey": "hyundai",
         "sourceRows": 556,
-        "excluded": 183,
         "model-review": 337,
+        "excluded": 183,
         "mapped": 36,
         "selectableLeaves": 36
       },
@@ -307,8 +312,8 @@
       {
         "brandKey": "mazda",
         "sourceRows": 113,
-        "excluded": 70,
         "model-review": 43,
+        "excluded": 70,
         "selectableLeaves": 0
       },
       {
@@ -329,9 +334,9 @@
       {
         "brandKey": "mitsubishi",
         "sourceRows": 134,
+        "model-review": 12,
         "excluded": 118,
         "mapped": 4,
-        "model-review": 12,
         "selectableLeaves": 4
       },
       {
@@ -345,10 +350,10 @@
       {
         "brandKey": "opel",
         "sourceRows": 831,
-        "model-review": 507,
+        "model-review": 479,
         "excluded": 317,
-        "mapped": 7,
-        "selectableLeaves": 6
+        "mapped": 35,
+        "selectableLeaves": 25
       },
       {
         "brandKey": "peugeot",
@@ -362,8 +367,8 @@
         "brandKey": "renault",
         "sourceRows": 958,
         "model-review": 380,
-        "mapped": 103,
         "excluded": 475,
+        "mapped": 103,
         "selectableLeaves": 55
       },
       {
@@ -385,15 +390,15 @@
       {
         "brandKey": "subaru",
         "sourceRows": 67,
-        "excluded": 52,
         "model-review": 15,
+        "excluded": 52,
         "selectableLeaves": 0
       },
       {
         "brandKey": "suzuki",
         "sourceRows": 90,
-        "excluded": 66,
         "model-review": 17,
+        "excluded": 66,
         "mapped": 7,
         "selectableLeaves": 6
       },
@@ -408,18 +413,18 @@
       {
         "brandKey": "toyota",
         "sourceRows": 467,
-        "mapped": 138,
         "model-review": 178,
         "excluded": 151,
+        "mapped": 138,
         "selectableLeaves": 106
       },
       {
         "brandKey": "volkswagen",
         "sourceRows": 838,
+        "model-review": 257,
         "excluded": 469,
-        "model-review": 293,
-        "mapped": 76,
-        "selectableLeaves": 44
+        "mapped": 112,
+        "selectableLeaves": 60
       }
     ],
     "backlogFile": "curation-backlog.json",

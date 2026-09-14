@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-13.1",
+  "version": "2026-09-13.2",
   "mappings": [
     {
       "sourceKey": "100-1138",
@@ -469,6 +469,146 @@
     {
       "sourceKey": "111-1078",
       "vehicleModelKey": "opel:adam:1-2-slam",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1151",
+      "vehicleModelKey": "opel:corsa:1-2-essentia",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1152",
+      "vehicleModelKey": "opel:corsa:1-4-essentia",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1155",
+      "vehicleModelKey": "opel:corsa:1-4-enjoy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1156",
+      "vehicleModelKey": "opel:corsa:1-4-enjoy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1159",
+      "vehicleModelKey": "opel:corsa:1-4-color-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1160",
+      "vehicleModelKey": "opel:corsa:1-4-color-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1231",
+      "vehicleModelKey": "opel:corsa:1-4-cosmo",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1233",
+      "vehicleModelKey": "opel:corsa:1-2-design",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1234",
+      "vehicleModelKey": "opel:corsa:1-4-design",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1238",
+      "vehicleModelKey": "opel:corsa:1-2-enjoy",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1334",
+      "vehicleModelKey": "opel:corsa:1-4-black-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1384",
+      "vehicleModelKey": "opel:corsa:1-2-essential",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1385",
+      "vehicleModelKey": "opel:corsa:1-2-t-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1387",
+      "vehicleModelKey": "opel:corsa:1-2-t-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1388",
+      "vehicleModelKey": "opel:corsa:1-2-t-ultimate",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1469",
+      "vehicleModelKey": "opel:corsa:1-2-t-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1488",
+      "vehicleModelKey": "opel:corsa:1-2-t-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1489",
+      "vehicleModelKey": "opel:corsa:1-2-t-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1490",
+      "vehicleModelKey": "opel:corsa:1-2-t-dynamic",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1491",
+      "vehicleModelKey": "opel:corsa:1-2-t-innovation",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1492",
+      "vehicleModelKey": "opel:corsa:1-2-t-innovation",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1493",
+      "vehicleModelKey": "opel:corsa:1-2-innovation",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1511",
+      "vehicleModelKey": "opel:corsa:1-2-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1652",
+      "vehicleModelKey": "opel:corsa:1-2-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1653",
+      "vehicleModelKey": "opel:corsa:1-2-t-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1654",
+      "vehicleModelKey": "opel:corsa:1-2-t-gs",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1655",
+      "vehicleModelKey": "opel:corsa:1-2-t-ultimate",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "111-1693",
+      "vehicleModelKey": "opel:corsa:1-2-t-edition",
       "method": "exact-rule"
     },
     {
@@ -2222,8 +2362,28 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-1008",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1009",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1012",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-1023",
       "vehicleModelKey": "volkswagen:polo:1-4-pulse",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1054",
+      "vehicleModelKey": "volkswagen:passat:2-0-tdi-bluemotion-highline",
       "method": "exact-rule"
     },
     {
@@ -2234,6 +2394,16 @@
     {
       "sourceKey": "153-1078",
       "vehicleModelKey": "volkswagen:polo:1-4-chrome-edition",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1097",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-exclusive",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1115",
+      "vehicleModelKey": "volkswagen:passat:2-0-tdi-bluemotion-highline",
       "method": "exact-rule"
     },
     {
@@ -2274,6 +2444,81 @@
     {
       "sourceKey": "153-1133",
       "vehicleModelKey": "volkswagen:golf:2-0-tsi-r",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1144",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1145",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1146",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1147",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1148",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1149",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1155",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1156",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1157",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1158",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1159",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1160",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1161",
+      "vehicleModelKey": "volkswagen:passat:2-0-tdi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1162",
+      "vehicleModelKey": "volkswagen:passat:2-0-tdi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1163",
+      "vehicleModelKey": "volkswagen:passat:2-0-tdi-bluemotion-highline",
       "method": "exact-rule"
     },
     {
@@ -2437,6 +2682,11 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-1364",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-impression",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-1368",
       "vehicleModelKey": "volkswagen:polo:1-0-tsi-comfortline",
       "method": "exact-rule"
@@ -2479,6 +2729,26 @@
     {
       "sourceKey": "153-1470",
       "vehicleModelKey": "volkswagen:golf:1-0-tsi-midline-plus",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1474",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-impression",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1475",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-business",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1476",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-elegance",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-1489",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-r-line",
       "method": "exact-rule"
     },
     {
@@ -2582,8 +2852,58 @@
       "method": "exact-rule"
     },
     {
+      "sourceKey": "153-864",
+      "vehicleModelKey": "volkswagen:passat:2-0-tfsi-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-880",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-highline",
+      "method": "exact-rule"
+    },
+    {
       "sourceKey": "153-945",
       "vehicleModelKey": "volkswagen:golf:2-0-tsi-r",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-955",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-956",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-964",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-966",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-968",
+      "vehicleModelKey": "volkswagen:passat:1-4-tsi-bluemotion-highline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-970",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-trendline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-971",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-comfortline",
+      "method": "exact-rule"
+    },
+    {
+      "sourceKey": "153-972",
+      "vehicleModelKey": "volkswagen:passat:1-6-tdi-bluemotion-highline",
       "method": "exact-rule"
     },
     {
