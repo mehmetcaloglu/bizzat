@@ -172,7 +172,8 @@ jobs:
       - name: Validate materialized files
         run: |
           git diff --check
-          pnpm --filter @bizzat/api test -- --runInBand
+          pnpm contracts:build
+          pnpm --filter @bizzat/api test
       - name: Commit materialized batch
         run: |
           git config user.name 'github-actions[bot]'
