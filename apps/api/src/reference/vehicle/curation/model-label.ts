@@ -35,7 +35,7 @@ const ENGINE_SPELLING: Record<string, string> = {
   TCE: 'TCe', SCE: 'SCe', DCI: 'dCi', BLUEDCI: 'BlueDCI', TSI: 'TSI', ETSI: 'eTSI', TDI: 'TDI', TFSI: 'TFSI', FSI: 'FSI',
   HDI: 'HDi', 'E-HDI': 'e-HDi', BLUEHDI: 'BlueHDi', PURETECH: 'PureTech', VTI: 'VTi', THP: 'THP', FIRE: 'Fire', FIREFLY: 'FireFly',
   MULTIJET: 'Multijet', 'T-JET': 'T-Jet', 'E-TORQ': 'E-Torq', 'T4 HYBRID': 'T4 Hybrid', MPI: 'MPI',
-  'D-4D': 'D-4D', 'I-DTEC': 'i-DTEC', 'I-VTEC': 'i-VTEC', VTEC: 'VTEC', 'D-CVVT': 'D-CVVT', CVVT: 'CVVT', CRDI: 'CRDi', GDI: 'GDi', 'T-GDI': 'T-GDi',
+  'D-4D': 'D-4D', 'I-DTEC': 'i-DTEC', 'I-VTEC': 'i-VTEC', VTEC: 'VTEC', CRDI: 'CRDi', GDI: 'GDi', 'T-GDI': 'T-GDi',
   TDCI: 'TDCi', ECOBOOST: 'EcoBoost', ECOTEC: 'Ecotec', CDI: 'CDI', CGI: 'CGI', HYBRID: 'Hybrid',
 }
 const TECHNICAL = [
