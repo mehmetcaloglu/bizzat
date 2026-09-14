@@ -1,0 +1,94 @@
+from pathlib import Path
+
+p=Path('apps/api/src/reference/vehicle/curation/model-label.ts')
+s=p.read_text()
+old="  'volkswagen:passat': {},\n}"
+new="  'volkswagen:passat': {},\n  'volkswagen:jetta': {},\n  'fiat:linea': {},\n}"
+assert old in s
+s=s.replace(old,new,1)
+
+old="  const passatBlueMotion = seriesKey === 'volkswagen:passat' && (\n    /\\b1\\.6\\s*TDI\\b/.test(label) || /\\b(?:BMT|BLUEMOTION)\\b/.test(label)\n  )\n\n  let group = ''"
+new="  const passatBlueMotion = seriesKey === 'volkswagen:passat' && (\n    /\\b1\\.6\\s*TDI\\b/.test(label) || /\\b(?:BMT|BLUEMOTION)\\b/.test(label)\n  )\n  const jettaBlueMotion = seriesKey === 'volkswagen:jetta' && /\\b(?:BMT|BLUEMOTION)\\b/.test(label)\n\n  if (seriesKey === 'volkswagen:jetta') {\n    label = label.replace(/\\b(?:TIPT(?:RONIC)?|TIPTR|T\\.TRONIC)\\.?\\s*DSG\\b/g, ' ')\n  }\n  if (seriesKey === 'fiat:linea') {\n    label = label.replace(/\\b(?:DUALOGIC|DUALO|DUAL)\\b/g, ' ')\n  }\n\n  let group = ''"
+assert old in s
+s=s.replace(old,new,1)
+
+old="  if (seriesKey === 'volkswagen:passat') label = label.replace(/\\bBLUEMOTION\\b/g, ' ')\n  if (policy) {"
+new="  if (seriesKey === 'volkswagen:passat' || seriesKey === 'volkswagen:jetta') label = label.replace(/\\bBLUEMOTION\\b/g, ' ')\n  if (policy) {"
+assert old in s
+s=s.replace(old,new,1)
+
+old="  if (seriesKey === 'volkswagen:passat' && passatBlueMotion) group += ' BlueMotion'\n  label = label.replace(/\\s+/g, ' ').trim()"
+new="  if (seriesKey === 'volkswagen:passat' && passatBlueMotion) group += ' BlueMotion'\n  if (seriesKey === 'volkswagen:jetta' && jettaBlueMotion) group += ' BlueMotion'\n  if (seriesKey === 'fiat:linea' && group === '1.4') group = '1.4 Fire'\n  if (seriesKey === 'fiat:linea' && group === '1.4 T-Jet') group = '1.4 Turbo'\n  label = label.replace(/\\s+/g, ' ').trim()"
+assert old in s
+s=s.replace(old,new,1)
+
+old="  const trim = trimNames.get(brand)!.get(label)\n  if (!trim) return null"
+new="  const trim = seriesKey === 'fiat:linea' && label === 'VIA' ? 'VIA' : trimNames.get(brand)!.get(label)\n  if (!trim) return null"
+assert old in s
+s=s.replace(old,new,1)
+p.write_text(s)
+
+p=Path('apps/api/src/reference/vehicle/curation/review-diagnostics.ts')
+s=p.read_text()
+old="  'volkswagen:passat',\n])"
+new="  'volkswagen:passat',\n  'volkswagen:jetta',\n  'fiat:linea',\n])"
+assert old in s
+p.write_text(s.replace(old,new,1))
+
+p=Path('apps/api/src/reference/vehicle/curation/reviewed-source-scope.ts')
+s=p.read_text()
+old="  'volkswagen:passat': new Set([\n    '153-1008',\n    '153-1009',\n    '153-1012',\n    '153-1054',\n    '153-1097',\n    '153-1115',\n    '153-1144',\n    '153-1145',\n    '153-1146',\n    '153-1147',\n    '153-1148',\n    '153-1149',\n    '153-1155',\n    '153-1156',\n    '153-1157',\n    '153-1158',\n    '153-1159',\n    '153-1160',\n    '153-1161',\n    '153-1162',\n    '153-1163',\n    '153-1364',\n    '153-1474',\n    '153-1475',\n    '153-1476',\n    '153-1489',\n    '153-864',\n    '153-880',\n    '153-955',\n    '153-956',\n    '153-964',\n    '153-966',\n    '153-968',\n    '153-970',\n    '153-971',\n    '153-972',\n  ]),\n}"
+new="""  'volkswagen:passat': new Set([
+    '153-1008',
+    '153-1009',
+    '153-1012',
+    '153-1054',
+    '153-1097',
+    '153-1115',
+    '153-1144',
+    '153-1145',
+    '153-1146',
+    '153-1147',
+    '153-1148',
+    '153-1149',
+    '153-1155',
+    '153-1156',
+    '153-1157',
+    '153-1158',
+    '153-1159',
+    '153-1160',
+    '153-1161',
+    '153-1162',
+    '153-1163',
+    '153-1364',
+    '153-1474',
+    '153-1475',
+    '153-1476',
+    '153-1489',
+    '153-864',
+    '153-880',
+    '153-955',
+    '153-956',
+    '153-964',
+    '153-966',
+    '153-968',
+    '153-970',
+    '153-971',
+    '153-972',
+  ]),
+  'volkswagen:jetta': new Set([
+    '153-1006','153-1007','153-1033','153-1034','153-1141','153-1142',
+    '153-1211','153-1212','153-1213','153-1214','153-1215','153-1216','153-1217','153-1218',
+    '153-1243','153-1244','153-1245','153-1246','153-1247','153-1532','153-154','153-155','153-1568',
+    '153-620','153-621','153-625','153-626','153-72','153-756','153-78','153-792','153-839',
+    '153-906','153-907','153-984','153-985','153-986','153-987','153-988','153-989','153-990','153-991','153-992',
+  ]),
+  'fiat:linea': new Set([
+    '100-1009','100-1010','100-1011','100-1012','100-1013','100-1014','100-1015','100-1016','100-1017',
+    '100-1020','100-1021','100-1022','100-1040','100-1041','100-1042','100-1043','100-1044','100-1045',
+    '100-1066','100-1067','100-1094','100-1095','100-1110','100-1136','100-1137','100-1144','100-1145',
+    '100-452','100-488','100-490','100-491','100-492','100-493','100-494','100-495','100-496','100-497','100-498','100-499','100-500','100-501',
+  ]),
+}"""
+assert old in s
+p.write_text(s.replace(old,new,1))
