@@ -1,0 +1,77 @@
+name: Vehicle Batch3 Analysis
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-3-analysis
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Acquire August 2026 TSB snapshot
+        run: |
+          python -m pip install --disable-pip-version-check requests openpyxl
+          curl -fsSL \
+            https://raw.githubusercontent.com/mehmetcaloglu/bizzat/b9ae77a6afa57dd3c64b36de6324af13561d7df5/scripts/maintenance/acquire-tsb-source.py \
+            -o /tmp/acquire-tsb-source.py
+          for attempt in 1 2 3 4; do
+            if python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json; then break; fi
+            if [ "$attempt" = 4 ]; then exit 1; fi
+            sleep $((attempt * 5))
+          done
+      - name: Build targeted report
+        run: |
+          python - <<'PY'
+          import hashlib, json, re
+          from collections import Counter
+
+          raw=open('/tmp/tsb.normalized.json','rb').read()
+          src=json.loads(raw)
+          assert src['provider']['version']=='2026-08'
+          assert len(src['records'])==27906
+          assert hashlib.sha256(raw).hexdigest()=='d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+
+          targets={
+            'kia:ceed': ('KIA', re.compile(r'^C(?:E|EE)[’\'`]?D\b|^CEED\b',re.I)),
+            'kia:rio': ('KIA', re.compile(r'^RIO\b',re.I)),
+            'peugeot:208': ('PEUGEOT', re.compile(r'^208\b',re.I)),
+            'peugeot:508': ('PEUGEOT', re.compile(r'^508\b',re.I)),
+            'volkswagen:jetta': ('VOLKSWAGEN', re.compile(r'^JETTA\b',re.I)),
+            'fiat:linea': ('FIAT', re.compile(r'^LINEA\b',re.I)),
+            'fiat:punto': ('FIAT', re.compile(r'^PUNTO\b',re.I)),
+          }
+          branch_terms=['SW','STATION WAGON','SPORTSWAGON','PRO CEED','PROCEED','COUPE','SEDAN','HB','HATCHBACK','GTI','GT LINE','GT-LINE','HYBRID','ELECTRIC','ELEKTRIK','RXH','4X4','AWD','CROSS','EVO','ABARTH']
+          tech_terms=['CRDI','CRDI','T-GDI','GDI','MPI','PURETECH','BLUEHDI','E-HDI','HDI','THP','VTI','TDI','TSI','DSG','MULTIJET','M.JET','FIRE','DUALOGIC','EAT6','EAT8','ETG','BMT']
+          report={'provider':src['provider'],'sha256':hashlib.sha256(raw).hexdigest(),'recordCount':len(src['records']),'targets':{}}
+          for key,(brand,rx) in targets.items():
+            rows=[]
+            for r in src['records']:
+              b=(r.get('brandRaw') or '').upper()
+              t=(r.get('typeRaw') or '').strip()
+              if brand in b and rx.search(t):
+                rows.append({'sourceKey':r['sourceKey'],'brandRaw':r.get('brandRaw'),'typeRaw':t,'availableModelYears':r.get('availableModelYears',[])})
+            rows.sort(key=lambda x:x['sourceKey'])
+            terms={term:sum(term in row['typeRaw'].upper() for row in rows) for term in branch_terms}
+            tech={term:sum(term in row['typeRaw'].upper() for row in rows) for term in tech_terms}
+            tokens=Counter()
+            for row in rows: tokens.update(re.findall(r'[A-ZÇĞİÖŞÜ0-9.+-]+',row['typeRaw'].upper()))
+            report['targets'][key]={
+              'count':len(rows),
+              'branchTermCounts':{k:v for k,v in terms.items() if v},
+              'techTermCounts':{k:v for k,v in tech.items() if v},
+              'commonTokens':tokens.most_common(80),
+              'rows':rows,
+            }
+            print(key,len(rows),report['targets'][key]['branchTermCounts'])
+          json.dump(report,open('/tmp/vehicle-batch3-analysis.json','w'),ensure_ascii=False,indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vehicle-batch3-analysis
+          path: /tmp/vehicle-batch3-analysis.json
+          retention-days: 1
