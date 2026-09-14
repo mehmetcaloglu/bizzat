@@ -1,0 +1,189 @@
+name: Vehicle Batch4 Materialize Once
+
+on:
+  push:
+    branches:
+      - feat/vehicle-curation-policy-batch-4
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/vehicle-curation-policy-batch-4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.20.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Acquire pinned August 2026 TSB snapshot
+        run: |
+          python -m pip install --disable-pip-version-check requests openpyxl
+          curl -fsSL \
+            https://raw.githubusercontent.com/mehmetcaloglu/bizzat/b9ae77a6afa57dd3c64b36de6324af13561d7df5/scripts/maintenance/acquire-tsb-source.py \
+            -o /tmp/acquire-tsb-source.py
+          python /tmp/acquire-tsb-source.py --year 2026 --month 8 --output /tmp/tsb.normalized.json
+          python - <<'PY'
+          import hashlib,json
+          raw=open('/tmp/tsb.normalized.json','rb').read(); data=json.loads(raw)
+          assert data['provider']['version']=='2026-08'
+          assert len(data['records'])==27906
+          assert hashlib.sha256(raw).hexdigest()=='d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+          PY
+      - name: Regenerate reviewed catalog
+        run: |
+          python - <<'PY'
+          import json
+          cat=json.load(open('data/reference/vehicles/catalog.json'))
+          brands={b['key']:b['name'] for b in cat['brands']}
+          out={}
+          for s in cat['series']:
+            out.setdefault(brands[s['brandKey']],[]).append(s['name'])
+          for values in out.values(): values.sort()
+          json.dump(out,open('/tmp/bootstrap.json','w'),ensure_ascii=False,indent=2)
+          PY
+          pnpm reference:generate:vehicle-catalog -- \
+            /tmp/tsb.normalized.json \
+            data/reference/vehicles/brand-aliases.json \
+            data/reference/vehicles/series-aliases.json \
+            /tmp/bootstrap.json \
+            /tmp/batch4-generated \
+            2026-09-14.4 \
+            data/reference/vehicles
+      - name: Verify delta and update generated metadata
+        run: |
+          python - <<'PY'
+          import json, shutil
+          P='data/reference/vehicles'
+          old_cat=json.load(open(f'{P}/catalog.json'))
+          old_map=json.load(open(f'{P}/tsb-mappings.json'))
+          new_cat=json.load(open('/tmp/batch4-generated/catalog.generated.json'))
+          new_map=json.load(open('/tmp/batch4-generated/tsb-mappings.generated.json'))
+          candidates=json.load(open('/tmp/batch4-generated/candidates.json'))
+          summary=json.load(open('/tmp/batch4-generated/summary.json'))
+
+          expected={
+            'sourceRecords':27906,
+            'mappedSourceCodes':1100,
+            'canonicalBrands':20,
+            'canonicalSeries':65,
+            'canonicalModels':735,
+            'modelReviewRequired':5779,
+          }
+          for k,v in expected.items(): assert summary[k]==v,(k,summary[k],v)
+          assert summary['exactCandidates']==1100
+          assert summary['slugCollisionsExcluded']==0
+
+          old_maps={m['sourceKey']:m['vehicleModelKey'] for m in old_map['mappings']}
+          new_maps={m['sourceKey']:m['vehicleModelKey'] for m in new_map['mappings']}
+          old_models={m['key']:m for m in old_cat['models']}
+          new_models={m['key']:m for m in new_cat['models']}
+          assert len(old_maps)==1011 and len(old_models)==702
+          assert all(new_maps.get(k)==v for k,v in old_maps.items())
+          assert all(new_models.get(k)==v for k,v in old_models.items())
+          added=set(new_maps)-set(old_maps)
+          added_models=set(new_models)-set(old_models)
+          assert len(added)==89
+          assert len(added_models)==33
+          assert all(new_maps[k].startswith(('hyundai:i20:','renault:fluence:')) for k in added)
+          assert all(k.startswith(('hyundai:i20:','renault:fluence:')) for k in added_models)
+          assert sum(new_maps[k].startswith('hyundai:i20:') for k in added)==37
+          assert sum(new_maps[k].startswith('renault:fluence:') for k in added)==52
+          deferred={'177-1165','177-1328','177-1003','177-1287','122-1066','122-1002','122-593','122-1067'}
+          assert not deferred & set(new_maps)
+
+          shutil.copyfile('/tmp/batch4-generated/catalog.generated.json',f'{P}/catalog.json')
+          shutil.copyfile('/tmp/batch4-generated/tsb-mappings.generated.json',f'{P}/tsb-mappings.json')
+
+          manifest=json.load(open(f'{P}/source-manifest.json'))
+          manifest['version']='2026-09-14.4'
+          tsb=next(s for s in manifest['sources'] if s.get('role')=='turkey-coverage')
+          tsb['accessedDate']='2026-09-14'
+          tsb['sourcePeriod']='2026-08'
+          tsb['normalizedSnapshotSha256']='d810927023cc1fe50b457c83dec3b3dd485cee0f110f2a6b6d476c25d33c2b11'
+          cur=manifest['curation']
+          for key in ['sourceRecords','exactCandidates','mappedSourceCodes','canonicalBrands','canonicalSeries','canonicalModels','slugCollisionsExcluded','ambiguousSeriesExcluded','unknownBrandExcluded','noSeriesExcluded','modelReviewRequired']:
+            cur[key]=summary[key]
+          cur['tsbSnapshotRecords']=summary['sourceRecords']
+          addition=' Hyundai i20 and Renault Fluence use reviewed exact source-code scopes with series-local technical normalization; plain i20 engine/trim rows and evidenced Fluence petrol/dCi paths are admitted while taxonomy-sensitive branches stay review-only.'
+          if 'Hyundai i20 and Renault Fluence use reviewed' not in cur['method']:
+            cur['method'] += addition
+          gaps=cur['knownGaps']
+          new_gaps=[
+            'Hyundai i20 Active/N/Troy/48V, CVVT/D-CVVT and accessory/package-heavy source rows remain review-only; CVVT grammar is intentionally not enabled globally because it would silently expand other Hyundai series.',
+            'Renault Fluence Z.E., Bold Edition, Elegance and uncertain/typo aliases remain review-only pending separately evidenced taxonomy.',
+          ]
+          for g in new_gaps:
+            if g not in gaps: gaps.append(g)
+          examples=cur['reviewedReferenceExamples']
+          for x in ['Hyundai/i20/1.0 T-GDi/Style Plus','Renault/Fluence/1.5 dCi/Icon']:
+            if x not in examples: examples.append(x)
+          policies=cur['reviewedTechnicalPolicySeries']
+          for x in ['hyundai:i20','renault:fluence']:
+            if x not in policies: policies.append(x)
+
+          models_by_brand={}
+          series_brand={s['key']:s['brandKey'] for s in new_cat['series']}
+          for m in new_cat['models']:
+            b=series_brand[m['seriesKey']]
+            models_by_brand[b]=models_by_brand.get(b,0)+1
+          for row in cur.get('coverageByKnownBrand',[]):
+            bk=row['brandKey']
+            rows=[c for c in candidates if c.get('brandKeyCandidate')==bk]
+            if not rows: continue
+            mapped=sum(c.get('vehicleModelKey') is not None for c in rows)
+            review=sum(c.get('modelStatus')=='model-review' for c in rows)
+            row['sourceRows']=len(rows)
+            row['model-review']=review
+            row['excluded']=len(rows)-mapped-review
+            if mapped: row['mapped']=mapped
+            else: row.pop('mapped',None)
+            row['selectableLeaves']=models_by_brand.get(bk,0)
+          json.dump(manifest,open(f'{P}/source-manifest.json','w'),ensure_ascii=False,indent=2); open(f'{P}/source-manifest.json','a').write('\n')
+
+          backlog=json.load(open(f'{P}/curation-backlog.json'))
+          backlog['version']='2026-09-14.4'
+          backlog['sourcePeriod']='2026-08'
+          backlog['sourceRecords']=summary['sourceRecords']
+          backlog['unassignedByReason']={'ambiguous-series':summary['ambiguousSeriesExcluded'],'no-series':summary['noSeriesExcluded'],'unknown-brand':summary['unknownBrandExcluded']}
+          model_count={}
+          for m in new_cat['models']: model_count[m['seriesKey']]=model_count.get(m['seriesKey'],0)+1
+          for row in backlog['series']:
+            sk=row['seriesKey']
+            rows=[c for c in candidates if c.get('seriesKeyCandidate')==sk]
+            if not rows: continue
+            mapped=sum(c.get('vehicleModelKey') is not None for c in rows)
+            review=sum(c.get('modelStatus')=='model-review' for c in rows)
+            row['sourceRecords']=len(rows)
+            row['mappedSourceCodes']=mapped
+            row['modelReviewRequired']=review
+            row['excludedSourceCodes']=len(rows)-mapped-review
+            row['selectableModels']=model_count.get(sk,0)
+          backlog['series'].sort(key=lambda r:(-r['modelReviewRequired'],r['seriesKey']))
+          i20=next(r for r in backlog['series'] if r['seriesKey']=='hyundai:i20')
+          fluence=next(r for r in backlog['series'] if r['seriesKey']=='renault:fluence')
+          assert i20=={'seriesKey':'hyundai:i20','sourceRecords':139,'mappedSourceCodes':49,'modelReviewRequired':90,'excludedSourceCodes':0,'selectableModels':26},i20
+          assert fluence=={'seriesKey':'renault:fluence','sourceRecords':61,'mappedSourceCodes':52,'modelReviewRequired':9,'excludedSourceCodes':0,'selectableModels':19},fluence
+          json.dump(backlog,open(f'{P}/curation-backlog.json','w'),ensure_ascii=False,indent=2); open(f'{P}/curation-backlog.json','a').write('\n')
+          PY
+      - name: Validate materialized files
+        run: |
+          git diff --check
+          pnpm contracts:build
+          pnpm --filter @bizzat/api test
+      - name: Commit materialized batch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/reference/vehicles/catalog.json data/reference/vehicles/tsb-mappings.json data/reference/vehicles/source-manifest.json data/reference/vehicles/curation-backlog.json
+          git diff --cached --stat
+          git commit -m 'data: materialize reviewed i20 and Fluence batch'
+          git push origin HEAD:feat/vehicle-curation-policy-batch-4
