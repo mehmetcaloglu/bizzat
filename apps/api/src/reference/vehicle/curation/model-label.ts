@@ -69,6 +69,8 @@ const SERIES_NORMALIZATION_POLICIES: Record<string, SeriesNormalizationPolicy> =
   'skoda:rapid': {},
   'opel:corsa': { defaultBody: /\b(?:3|5)\s*KAPI\b/g },
   'volkswagen:passat': {},
+  'volkswagen:jetta': {},
+  'fiat:linea': {},
 }
 
 const IBIZA_REVIEWED_SELECTIONS: Record<string, string[]> = {
@@ -177,6 +179,14 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   const passatBlueMotion = seriesKey === 'volkswagen:passat' && (
     /\b1\.6\s*TDI\b/.test(label) || /\b(?:BMT|BLUEMOTION)\b/.test(label)
   )
+  const jettaBlueMotion = seriesKey === 'volkswagen:jetta' && /\b(?:BMT|BLUEMOTION)\b/.test(label)
+
+  if (seriesKey === 'volkswagen:jetta') {
+    label = label.replace(/\b(?:TIPT(?:RONIC)?|TIPTR|T\.TRONIC)\.?\s*DSG\b/g, ' ')
+  }
+  if (seriesKey === 'fiat:linea') {
+    label = label.replace(/\b(?:DUALOGIC|DUALO|DUAL)\b/g, ' ')
+  }
 
   let group = ''
   let body = ''
@@ -223,7 +233,7 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   }
   label = label.replace(/\bBLUE HDI\b/g, 'BLUEHDI').replace(/\bBLUE DCI\b/g, 'BLUEDCI')
     .replace(/\bM\.JET\b/g, 'MULTIJET').replace(/\bHIBRIT\b/g, 'HYBRID').replace(/\bE-TSI\b/g, 'ETSI')
-  if (seriesKey === 'volkswagen:passat') label = label.replace(/\bBLUEMOTION\b/g, ' ')
+  if (seriesKey === 'volkswagen:passat' || seriesKey === 'volkswagen:jetta') label = label.replace(/\bBLUEMOTION\b/g, ' ')
   if (policy) {
     for (const pattern of TECHNICAL) label = label.replace(pattern, ' ')
   }
@@ -238,11 +248,14 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   if (!group) return null
   if (seriesKey === 'opel:corsa' && group === '1.2' && corsa12Turbo) group = '1.2 T'
   if (seriesKey === 'volkswagen:passat' && passatBlueMotion) group += ' BlueMotion'
+  if (seriesKey === 'volkswagen:jetta' && jettaBlueMotion) group += ' BlueMotion'
+  if (seriesKey === 'fiat:linea' && group === '1.4') group = '1.4 Fire'
+  if (seriesKey === 'fiat:linea' && group === '1.4 T-Jet') group = '1.4 Turbo'
   label = label.replace(/\s+/g, ' ').trim()
   // Reviewed punctuation-only aliases; unknown typos are not guessed.
   if (brand === 'peugeot' || brand === 'renault') label = label.replace(/^GT-LINE\b/, 'GT LINE')
   if (seriesKey === 'bmw:3-serisi' && !label) label = 'STANDART' // Real BMW marketplace leaf.
-  const trim = trimNames.get(brand)!.get(label)
+  const trim = seriesKey === 'fiat:linea' && label === 'VIA' ? 'VIA' : trimNames.get(brand)!.get(label)
   if (!trim) return null
   const path = brand === 'audi' ? [body, group, trim] : [`${group}${body ? ` ${body}` : ''}`, trim]
   return selection(path)
