@@ -12,7 +12,9 @@ import {
 } from '../../../lib/api-client'
 import {
   clearSelectedModel,
+  getPickerInteractionState,
   initialVehiclePickerState,
+  removeUnavailableModelFromLevels,
   selectBrand,
   selectGroup,
   selectModel,
@@ -171,12 +173,13 @@ export function VehiclePicker() {
   }
 
   async function handleCreateDraft() {
-    if (!picker.vehicleModelId || loadingTarget === 'draft') return
+    const vehicleModelId = picker.vehicleModelId
+    if (!vehicleModelId || loadingTarget === 'draft' || draft) return
 
     setError(null)
     setLoadingTarget('draft')
     try {
-      const response = await createCarSaleDraft(picker.vehicleModelId)
+      const response = await createCarSaleDraft(vehicleModelId)
       setDraft(response.listing)
     } catch (createError) {
       if (isUnauthorized(createError)) {
@@ -187,6 +190,7 @@ export function VehiclePicker() {
         && createError.code === 'VEHICLE_MODEL_NOT_AVAILABLE'
       ) {
         setPicker((current) => clearSelectedModel(current))
+        setLevels((current) => removeUnavailableModelFromLevels(current, vehicleModelId))
         setError('Bu araç seçeneği artık kullanılamıyor. Araç detayını yeniden seç.')
       } else {
         setError(errorMessage(createError))
@@ -197,9 +201,12 @@ export function VehiclePicker() {
   }
 
   const path = breadcrumb(picker)
-  const canCreate = authState === 'authenticated'
-    && picker.vehicleModelId !== null
-    && loadingTarget === null
+  const interaction = getPickerInteractionState({
+    authenticated: authState === 'authenticated',
+    vehicleModelId: picker.vehicleModelId,
+    isCreatingDraft: loadingTarget === 'draft',
+    hasCreatedDraft: draft !== null,
+  })
 
   return (
     <main className="listing-create-shell">
@@ -252,7 +259,7 @@ export function VehiclePicker() {
                 data-selected={picker.brand?.id === brand.id}
                 key={brand.id}
                 type="button"
-                disabled={authState !== 'authenticated'}
+                disabled={interaction.selectionDisabled}
                 onClick={() => void handleBrand(brand)}
               >
                 <span>{brand.name}</span>
@@ -281,6 +288,7 @@ export function VehiclePicker() {
                 data-selected={picker.series?.id === item.id}
                 key={item.id}
                 type="button"
+                disabled={interaction.selectionDisabled}
                 onClick={() => void handleSeries(item)}
               >
                 <span>{item.name}</span>
@@ -320,6 +328,7 @@ export function VehiclePicker() {
                         data-selected={selected}
                         key={item.key}
                         type="button"
+                        disabled={interaction.selectionDisabled}
                         onClick={() => item.kind === 'group'
                           ? void handleGroup(depth, item)
                           : handleModel(depth, item)}
@@ -329,6 +338,9 @@ export function VehiclePicker() {
                       </button>
                     )
                   })}
+                  {items.length === 0 && (
+                    <p className="picker-empty">Bu seviyede seçilebilir seçenek kalmadı.</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -351,10 +363,14 @@ export function VehiclePicker() {
         <button
           className="primary-action"
           type="button"
-          disabled={!canCreate}
+          disabled={!interaction.canCreateDraft}
           onClick={() => void handleCreateDraft()}
         >
-          {loadingTarget === 'draft' ? 'Taslak oluşturuluyor…' : 'İlan taslağını oluştur'}
+          {draft
+            ? 'Taslak oluşturuldu'
+            : loadingTarget === 'draft'
+              ? 'Taslak oluşturuluyor…'
+              : 'İlan taslağını oluştur'}
         </button>
       </section>
 
