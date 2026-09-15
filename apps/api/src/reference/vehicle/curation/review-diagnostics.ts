@@ -22,6 +22,10 @@ const REVIEWED_POLICY_SERIES = new Set([
   'mercedes-benz:c-serisi',
   'audi:a3',
   'audi:a4',
+  'skoda:octavia',
+  'skoda:superb',
+  'skoda:fabia',
+  'skoda:rapid',
 ])
 
 export function diagnoseVehicleModelReview(

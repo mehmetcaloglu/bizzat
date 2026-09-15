@@ -63,6 +63,10 @@ const SERIES_NORMALIZATION_POLICIES: Record<string, SeriesNormalizationPolicy> =
   'mercedes-benz:c-serisi': { defaultBody: /\b(?:SEDAN|LIMOUSINE)\b/g },
   'audi:a3': {},
   'audi:a4': {},
+  'skoda:octavia': {},
+  'skoda:superb': {},
+  'skoda:fabia': {},
+  'skoda:rapid': {},
 }
 
 const IBIZA_REVIEWED_SELECTIONS: Record<string, string[]> = {

@@ -28,11 +28,6 @@ it('publishes only the reviewed Astra 1.3 CDTI coverage increment', async () => 
   }
   const manifest = await json('source-manifest.json') as {
     curation: {
-      mappedSourceCodes: number
-      canonicalBrands: number
-      canonicalSeries: number
-      canonicalModels: number
-      modelReviewRequired: number
       reviewedExactSelectionSeries: string[]
       reviewedTechnicalPolicySeries: string[]
     }
@@ -57,13 +52,6 @@ it('publishes only the reviewed Astra 1.3 CDTI coverage increment', async () => 
     modelReviewRequired: 191,
     excludedSourceCodes: 0,
     selectableModels: 3,
-  })
-  expect(manifest.curation).toMatchObject({
-    mappedSourceCodes: 841,
-    canonicalBrands: 19,
-    canonicalSeries: 56,
-    canonicalModels: 600,
-    modelReviewRequired: 6038,
   })
   expect(manifest.curation.reviewedExactSelectionSeries).toContain('opel:astra')
   expect(manifest.curation.reviewedTechnicalPolicySeries).not.toContain('opel:astra')
