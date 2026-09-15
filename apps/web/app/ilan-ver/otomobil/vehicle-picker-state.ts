@@ -25,6 +25,13 @@ export interface VehiclePickerState {
   vehicleModelId: string | null
 }
 
+export interface PickerInteractionStateInput {
+  authenticated: boolean
+  vehicleModelId: string | null
+  isCreatingDraft: boolean
+  hasCreatedDraft: boolean
+}
+
 export const initialVehiclePickerState: VehiclePickerState = {
   brand: null,
   series: null,
@@ -91,4 +98,25 @@ export function clearSelectedModel(state: VehiclePickerState): VehiclePickerStat
     path,
     vehicleModelId: null,
   }
+}
+
+export function getPickerInteractionState(
+  input: PickerInteractionStateInput,
+): { selectionDisabled: boolean; canCreateDraft: boolean } {
+  const selectionDisabled = !input.authenticated || input.isCreatingDraft
+  const canCreateDraft = input.authenticated
+    && input.vehicleModelId !== null
+    && !input.isCreatingDraft
+    && !input.hasCreatedDraft
+
+  return { selectionDisabled, canCreateDraft }
+}
+
+export function removeUnavailableModelFromLevels(
+  levels: VehicleSelectionItem[][],
+  vehicleModelId: string,
+): VehicleSelectionItem[][] {
+  return levels.map((items) => items.filter((item) => (
+    item.kind !== 'model' || item.id !== vehicleModelId
+  )))
 }
