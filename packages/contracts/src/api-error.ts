@@ -8,6 +8,7 @@ export const ApiErrorCodeSchema = Type.Union([
   Type.Literal('DEPENDENCY_UNAVAILABLE'),
   Type.Literal('LISTING_NOT_FOUND'),
   Type.Literal('LISTING_NOT_EDITABLE'),
+  Type.Literal('VEHICLE_MODEL_NOT_AVAILABLE'),
   Type.Literal('VERIFICATION_REQUIRED'),
   Type.Literal('VERIFICATION_FAILED'),
   Type.Literal('REFERENCE_PARENT_NOT_FOUND'),
