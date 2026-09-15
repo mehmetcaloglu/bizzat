@@ -92,7 +92,7 @@ async function createCanonicalModel(active = true) {
     .executeTakeFirstOrThrow()
   modelIds.push(model.id)
 
-  return { modelId: model.id }
+  return { modelId: model.id, seriesId: series.id, brandId: brand.id }
 }
 
 beforeAll(async () => {
@@ -199,6 +199,46 @@ describe('car sale draft API', () => {
     })
     expect(read.statusCode).toBe(200)
     expect(read.json()).toEqual(body)
+  })
+
+  it('keeps an existing draft readable after its canonical catalog branch becomes inactive', async () => {
+    const user = await createSignedInUser('Inactive Catalog Draft Owner')
+    const { modelId, seriesId, brandId } = await createCanonicalModel()
+
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/v1/listings/car-sale/drafts',
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+      payload: { vehicleModelId: modelId },
+    })
+    expect(created.statusCode).toBe(201)
+    const listingId = created.json().listing.id as string
+
+    await db.updateTable('vehicle_models').set({ active: false }).where('id', '=', modelId).execute()
+    await db.updateTable('vehicle_series').set({ active: false }).where('id', '=', seriesId).execute()
+    await db.updateTable('vehicle_brands').set({ active: false }).where('id', '=', brandId).execute()
+
+    const read = await app.inject({
+      method: 'GET',
+      url: `/api/v1/listings/${listingId}`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+
+    expect(read.statusCode).toBe(200)
+    expect(read.json().listing).toMatchObject({
+      id: listingId,
+      status: 'draft',
+      type: 'car_sale',
+      vehicle: {
+        modelId,
+        brand: { name: 'Renault Route Test' },
+        series: { name: 'Clio Route Test' },
+        selectionPath: [
+          { name: '1.0 TCe' },
+          { name: 'Evolution' },
+        ],
+      },
+    })
   })
 
   it('fails closed for unknown or inactive vehicle models without creating an orphan listing', async () => {
