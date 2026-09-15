@@ -11,6 +11,7 @@ import {
   type CarSaleDraftResponse,
 } from '../../../lib/api-client'
 import {
+  clearSelectedModel,
   initialVehiclePickerState,
   selectBrand,
   selectGroup,
@@ -185,7 +186,7 @@ export function VehiclePicker() {
         createError instanceof ApiClientError
         && createError.code === 'VEHICLE_MODEL_NOT_AVAILABLE'
       ) {
-        setPicker((current) => ({ ...current, vehicleModelId: null }))
+        setPicker((current) => clearSelectedModel(current))
         setError('Bu araç seçeneği artık kullanılamıyor. Araç detayını yeniden seç.')
       } else {
         setError(errorMessage(createError))
