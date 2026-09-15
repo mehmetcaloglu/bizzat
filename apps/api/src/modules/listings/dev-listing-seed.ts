@@ -49,7 +49,7 @@ export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFix
   },
   {
     id: '0199f000-0000-7000-8000-000000000003',
-    vehicleCatalogKey: 'hyundai:i20:1-4-mpi-elite',
+    vehicleCatalogKey: 'volkswagen:golf:1-5-etsi-style',
     location: {
       providerCode: 'fixture-tr',
       provinceSourceKey: '06',
@@ -58,8 +58,8 @@ export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFix
     },
     modelYear: 2023,
     mileageKm: 31400,
-    priceAmount: 1040000,
-    description: 'Geliştirme ortamı için oluşturulmuş örnek i20 ilanı. Liste ve detay ekranı geliştirmesinde kullanılacak sahte veridir.',
+    priceAmount: 1520000,
+    description: 'Geliştirme ortamı için oluşturulmuş örnek Golf ilanı. Liste ve detay ekranı geliştirmesinde kullanılacak sahte veridir.',
   },
 ]
 
