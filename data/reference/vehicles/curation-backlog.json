@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-14.3",
+  "version": "2026-09-14.4",
   "sourcePeriod": "2026-08",
   "measurement": "Unresolved source-row counts, including unreviewed or out-of-MVP aliases; not missing-model counts or Turkish passenger-car completeness percentages.",
   "sourceRecords": 27906,
@@ -56,14 +56,6 @@
       "modelReviewRequired": 152,
       "excludedSourceCodes": 0,
       "selectableModels": 7
-    },
-    {
-      "seriesKey": "hyundai:i20",
-      "sourceRecords": 139,
-      "mappedSourceCodes": 12,
-      "modelReviewRequired": 127,
-      "excludedSourceCodes": 0,
-      "selectableModels": 12
     },
     {
       "seriesKey": "opel:insignia",
@@ -136,6 +128,14 @@
       "modelReviewRequired": 94,
       "excludedSourceCodes": 0,
       "selectableModels": 31
+    },
+    {
+      "seriesKey": "hyundai:i20",
+      "sourceRecords": 139,
+      "mappedSourceCodes": 49,
+      "modelReviewRequired": 90,
+      "excludedSourceCodes": 0,
+      "selectableModels": 26
     },
     {
       "seriesKey": "mercedes-benz:s-serisi",
@@ -264,14 +264,6 @@
       "modelReviewRequired": 61,
       "excludedSourceCodes": 0,
       "selectableModels": 102
-    },
-    {
-      "seriesKey": "renault:fluence",
-      "sourceRecords": 61,
-      "mappedSourceCodes": 0,
-      "modelReviewRequired": 61,
-      "excludedSourceCodes": 0,
-      "selectableModels": 0
     },
     {
       "seriesKey": "hyundai:i30",
@@ -912,6 +904,14 @@
       "modelReviewRequired": 9,
       "excludedSourceCodes": 0,
       "selectableModels": 48
+    },
+    {
+      "seriesKey": "renault:fluence",
+      "sourceRecords": 61,
+      "mappedSourceCodes": 52,
+      "modelReviewRequired": 9,
+      "excludedSourceCodes": 0,
+      "selectableModels": 19
     },
     {
       "seriesKey": "renault:talisman",
