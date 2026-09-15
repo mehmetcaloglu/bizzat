@@ -27,13 +27,17 @@ a {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
 button:focus-visible,
 a:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline: 3px solid rgb(102 183 242 / 35%);
   outline-offset: 2px;
 }
@@ -195,7 +199,8 @@ button:disabled {
 .listing-error,
 .draft-success,
 .listing-create-footer,
-.vehicle-picker {
+.vehicle-picker,
+.listing-details-step {
   width: min(1240px, 100%);
   margin-left: auto;
   margin-right: auto;
@@ -466,6 +471,190 @@ button:disabled {
   color: #70877e;
 }
 
+.listing-details-step {
+  margin-top: 42px;
+  padding-top: 28px;
+  border-top: 1px solid var(--bizzat-border);
+}
+
+.listing-details-heading {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.listing-details-step-number {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: var(--bizzat-blue-strong);
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.listing-details-heading h2 {
+  margin: 0;
+  color: #26333c;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.listing-details-heading > div > p:last-child {
+  max-width: 720px;
+  margin: 7px 0 0;
+  color: var(--bizzat-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.listing-details-form {
+  padding: 24px;
+  background: #fbfdff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 12px;
+}
+
+.listing-details-step[aria-disabled='true'] .listing-details-form {
+  background: #fcfdfe;
+}
+
+.listing-details-form fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.listing-details-form fieldset:disabled {
+  opacity: 0.62;
+}
+
+.listing-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.location-grid {
+  margin-top: 18px;
+}
+
+.listing-details-form label {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.listing-details-form label > span:first-child {
+  color: #34434d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.listing-details-form input,
+.listing-details-form select,
+.listing-details-form textarea {
+  width: 100%;
+  padding: 11px 12px;
+  color: var(--bizzat-text);
+  background: #ffffff;
+  border: 1px solid #ccdbe5;
+  border-radius: 8px;
+}
+
+.listing-details-form input,
+.listing-details-form select {
+  min-height: 44px;
+}
+
+.listing-details-form textarea {
+  min-height: 132px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.listing-details-form input:disabled,
+.listing-details-form select:disabled,
+.listing-details-form textarea:disabled {
+  color: #87939c;
+  background: #f3f6f8;
+}
+
+.field-with-suffix {
+  display: flex;
+  align-items: stretch;
+}
+
+.field-with-suffix input {
+  min-width: 0;
+  border-radius: 8px 0 0 8px;
+}
+
+.field-with-suffix > span {
+  min-width: 50px;
+  padding: 0 11px;
+  display: grid;
+  place-items: center;
+  color: #65737d;
+  background: #f3f7fa;
+  border: 1px solid #ccdbe5;
+  border-left: 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.description-field {
+  margin-top: 18px;
+}
+
+.description-field small {
+  justify-self: end;
+  color: var(--bizzat-muted);
+  font-size: 12px;
+}
+
+.listing-details-actions {
+  margin-top: 20px;
+  padding-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid var(--bizzat-border);
+}
+
+.listing-details-actions > div {
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.listing-details-hint,
+.listing-details-error,
+.listing-details-saved {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.listing-details-hint {
+  color: var(--bizzat-muted);
+}
+
+.listing-details-error {
+  color: var(--bizzat-error);
+}
+
+.listing-details-saved {
+  color: var(--bizzat-success);
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
   .listing-create-shell {
     padding: 0 20px 40px;
@@ -511,6 +700,10 @@ button:disabled {
   .detail-options {
     max-height: 280px;
   }
+
+  .listing-details-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 620px) {
@@ -547,7 +740,8 @@ button:disabled {
   }
 
   .listing-notice,
-  .listing-create-footer {
+  .listing-create-footer,
+  .listing-details-actions {
     align-items: stretch;
     flex-direction: column;
   }
@@ -566,6 +760,10 @@ button:disabled {
 
   .picker-options {
     max-height: 260px;
+  }
+
+  .listing-details-form {
+    padding: 18px 14px;
   }
 }
 
