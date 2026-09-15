@@ -228,12 +228,12 @@ describe('car sale draft API', () => {
     expect(Number(after.count)).toBe(Number(before.count))
   })
 
-  it('does not accept client-owned owner/status fields and hides another users draft as not found', async () => {
+  it('cannot be reassigned or published by client fields and hides another users draft as not found', async () => {
     const owner = await createSignedInUser('Draft Owner A')
     const other = await createSignedInUser('Draft Owner B')
     const { modelId } = await createCanonicalModel()
 
-    const injectedOwner = await app.inject({
+    const created = await app.inject({
       method: 'POST',
       url: '/api/v1/listings/car-sale/drafts',
       headers: { cookie: owner.cookie, host: 'localhost:3000' },
@@ -243,16 +243,18 @@ describe('car sale draft API', () => {
         status: 'published',
       },
     })
-    expect(injectedOwner.statusCode).toBe(400)
-
-    const created = await app.inject({
-      method: 'POST',
-      url: '/api/v1/listings/car-sale/drafts',
-      headers: { cookie: owner.cookie, host: 'localhost:3000' },
-      payload: { vehicleModelId: modelId },
-    })
     expect(created.statusCode).toBe(201)
     const listingId = created.json().listing.id as string
+
+    const persisted = await db
+      .selectFrom('listings')
+      .select(['owner_user_id', 'status'])
+      .where('id', '=', listingId)
+      .executeTakeFirstOrThrow()
+    expect(persisted).toEqual({
+      owner_user_id: owner.userId,
+      status: 'draft',
+    })
 
     const otherRead = await app.inject({
       method: 'GET',
