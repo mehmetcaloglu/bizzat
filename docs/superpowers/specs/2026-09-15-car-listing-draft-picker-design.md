@@ -23,118 +23,93 @@ Bu slice **yayınlama akışı değildir**. EİDS, fiyat, konum, fotoğraf, aç�
 
 ## 2. Neden şimdi bu iş
 
-Araç katalog tarafı artık MVP için yeterli bir çalışma tabanı sağlıyor ve `AGENTS.md` açıkça B2 sonrası `listings` + `car_details` domainine geçilmesini istiyor.
+Araç katalog tarafı MVP için yeterli bir çalışma tabanı sağlıyor ve `AGENTS.md` B2 sonrası `listings` + `car_details` domainine geçilmesini açıkça istiyor.
 
-Mevcut kodda:
+Mevcut kodda auth/session, canonical araç tabloları, marka/seri endpointleri ve değişken derinlikte `selection` endpointi var; ancak `listings`, `car_details` veya ilan verme web yüzeyi yok. Bu nedenle iş mevcut bir ekrana küçük picker eklemek değil, ilk gerçek ürün vertical slice'ıdır.
 
-- auth/session var,
-- canonical araç tabloları var,
-- marka/seri endpointleri var,
-- değişken derinlikte `selection` endpointi var,
-- ancak `listings`, `car_details` veya ilan verme web yüzeyi henüz yok.
+## 3. Yaklaşım kararı
 
-Bu nedenle iş mevcut bir ekrana küçük picker eklemek değil; ilk gerçek ürün vertical slice'ıdır.
-
-## 3. Değerlendirilen yaklaşımlar
-
-### A. Önerilen: ince vertical slice
+### Önerilen ve seçilen: ince vertical slice
 
 `listings` + `car_details` için minimum kalıcı domain, authenticated draft API ve web'de gerçek canonical picker birlikte çıkar.
 
-**Artıları**
+Bunun yerine değerlendirilen iki yaklaşım reddedildi:
 
-- Kullanıcı açısından gerçek ürün değeri üretir.
-- Katalog tasarımını uçtan uca doğrular.
-- Backend/frontend aynı PR'da gerçek kontrat üzerinden bağlanır.
-- Sonraki yıl/km/fiyat/EİDS/media adımları küçük migration ve feature PR'ları olarak eklenebilir.
-
-**Eksisi**
-
-- İlk listing domain migration'ı ve API sınırı şimdi tanımlanır.
-
-### B. Generic listing-schema/form engine'i önce kurmak
-
-İlk günden `packages/listing-schema`, tüm otomobil alanları ve daire alanları için dinamik form motoru kurmak.
-
-**Reddedildi:** İlk kullanıcı değerini geciktirir, henüz gerçek iki kategori formu üzerinden doğrulanmamış abstraction üretir ve YAGNI ihlali olur.
-
-### C. Sadece frontend picker demosu
-
-Araç ağacını web'de gezdirip server-side ilan kaydı oluşturmamak.
-
-**Reddedildi:** Canonical model kimliğinin listing domainine gerçekten bağlandığını kanıtlamaz; demo olarak kalır.
+- **Generic listing-schema/form engine'i önce kurmak:** İki gerçek kategori akışı görülmeden abstraction üretir, ilk kullanıcı değerini geciktirir ve YAGNI ihlalidir.
+- **Sadece frontend picker demosu:** Canonical model UUID'sinin listing domainine gerçekten bağlandığını kanıtlamaz ve demo olarak kalır.
 
 ## 4. Scope
 
 ### Dahil
 
-- `listing_types` için ilk desteklenen publishable type: `car_sale`
-- `listings` minimum core tablosu
-- `car_details` minimum one-to-one tablosu
-- authenticated otomobil draft oluşturma API'si
-- kullanıcının kendi draft'ını okuma API'si
-- aktif canonical `vehicle_models.id` doğrulaması
+- ilk desteklenen listing type: `car_sale`
+- `listing_types`, minimum `listings` ve minimum `car_details`
+- authenticated otomobil draft create/read API
+- aktif canonical terminal `vehicle_models.id` doğrulaması
 - listing + car detail atomik transaction
 - `/ilan-ver/otomobil` responsive web akışı
 - marka → seri → değişken derinlikte seçim ağacı
 - terminal model seçildikten sonra draft oluşturma
-- seçili yolun kullanıcıya özetlenmesi
+- seçili canonical yolun kullanıcıya özetlenmesi
 - gerçek PostgreSQL integration testleri
-- web component/flow testleri
+- web picker/flow testleri
 
 ### Dahil değil
 
-- EİDS provider veya mock EİDS akışı
-- publish endpointi
-- durum geçişleri (`pending_verification`, `published` vb.)
-- model yılı
-- kilometre
-- yakıt/vites/kasa/motor/çekiş/renk vb. otomobil alanları
-- fiyat
-- konum
-- fotoğraf/media
-- açıklama
-- iletişim telefonu
-- ilan listesi veya ilan detay sayfası
+- EİDS provider veya mock EİDS
+- publish endpointi veya state transition API
+- model yılı, kilometre, yakıt, vites, kasa, motor, çekiş, renk
+- fiyat, konum, fotoğraf/media, açıklama, telefon
+- ilan listesi/public ilan detay
 - moderasyon
 - generic EAV veya generic form engine
 
-Bu alanların eksikliği geçici ve bilinçlidir; ilk slice'ın tek görevi canonical araç seçimini gerçek draft kimliğine bağlamaktır.
+İlk slice'ın tek görevi canonical araç seçimini gerçek draft kimliğine güvenli biçimde bağlamaktır.
 
 ## 5. Domain modeli
 
 ### 5.1 `listing_types`
 
-İlk migration yalnız desteklenen type'ı tanımlar:
+İlk migration yalnız gerçekten desteklenen type'ı seed eder:
 
 ```text
 id          uuid primary key default uuidv7()
 code        text unique not null  -- car_sale
-created_at  timestamptz not null
+created_at  timestamptz not null default now()
 ```
 
-Bu tablo gelecekte `apartment_sale` ve `apartment_rent` eklenirken aynı listing core'u kullanmayı sağlar. Henüz uygulanmayan type'lar seed edilmez; DB'de var görünerek yanlışlıkla desteklenmiş izlenimi oluşturmaz.
+Henüz uygulanmayan `apartment_sale` / `apartment_rent` satırları şimdiden seed edilmez.
 
 ### 5.2 `listings`
 
-İlk slice yalnız gerçekten gereken core alanlarını oluşturur:
-
 ```text
 id                uuid primary key default uuidv7()
-owner_user_id     uuid not null
+owner_user_id     uuid not null references auth."user"(id)
 listing_type_id   uuid not null references listing_types(id)
 status            text not null default 'draft'
-created_at        timestamptz not null
-updated_at        timestamptz not null
+created_at        timestamptz not null default now()
+updated_at        timestamptz not null default now()
 ```
+
+`status` için DB `CHECK` şu stabil vocabulary'yi kabul eder:
+
+```text
+draft
+pending_verification
+pending_review
+published
+rejected
+inactive
+```
+
+Bu slice yalnız `draft` oluşturur ve hiçbir transition endpointi sunmaz.
 
 Kurallar:
 
-- Bu slice yalnız `draft` oluşturur.
 - Client `owner_user_id` veya `status` gönderemez.
-- `owner_user_id` Better Auth session user UUID'sinden gelir.
-- Gelecekteki title/description/price/location/contact alanları ihtiyaç duyulan slice'ta migration ile eklenir; şimdiden nullable kolon yığını açılmaz.
-- Minimum status vocabulary uzun vadede `draft`, `pending_verification`, `pending_review`, `published`, `rejected`, `inactive` olarak korunur; ancak bu slice transition API'si oluşturmaz.
+- Owner Better Auth session user UUID'sinden gelir.
+- Future title/description/price/location/contact kolonları ihtiyaç duyulan slice'ta eklenir; şimdiden nullable kolon yığını açılmaz.
+- Auth user silme davranışı bu slice'ta yeni account-deletion policy üretmez; FK varsayılan restrict/no-action davranışıyla referential integrity'yi korur.
 
 ### 5.3 `car_details`
 
@@ -143,19 +118,18 @@ listing_id         uuid primary key references listings(id) on delete cascade
 vehicle_model_id   uuid not null references vehicle_models(id)
 ```
 
-Önemli karar:
+Authoritative araç kimliği yalnız terminal `vehicle_models.id`'dir.
 
-- `make_id` ve `series_id` ayrıca saklanmaz.
-- Canonical listing araç kimliği yalnız terminal `vehicle_models.id`'dir.
-- Marka ve seri `vehicle_models -> vehicle_series -> vehicle_brands` ilişkisiyle türetilir.
-- Bu karar 2026-09-09 sonrası güncel vehicle catalog guardrail'lerini, eski teknik mimari taslağındaki redundant `make_id/series_id/model_id` üçlüsüne tercih eder.
-- `model_year` bu slice'ta eklenmez; sonraki otomobil alanları slice'ında `car_details.model_year` olarak eklenir ve taxonomy'nin parçası yapılmaz.
+- `make_id` ve `series_id` tekrar saklanmaz.
+- Marka/seri gerektiğinde `vehicle_models -> vehicle_series -> vehicle_brands` üzerinden türetilir.
+- Bu güncel karar, eski teknik mimari taslağındaki redundant `make_id/series_id/model_id` üçlüsünün yerini alır.
+- `model_year` taxonomy değildir ve bu slice'ta eklenmez; sonraki otomobil alanları slice'ında `car_details.model_year` olur.
 
 ## 6. API tasarımı
 
-### 6.1 Mevcut reference endpointleri değişmez
+### 6.1 Mevcut reference API değişmez
 
-Picker mevcut endpointleri kullanır:
+Picker şunları kullanır:
 
 ```text
 GET /api/v1/reference/vehicle/brands
@@ -163,7 +137,7 @@ GET /api/v1/reference/vehicle/brands/:brandId/series
 GET /api/v1/reference/vehicle/series/:seriesId/selection?parentKey=...
 ```
 
-Web kaynak/TSB tablosuna erişmez ve katalog JSON dosyasını bundle içine almaz.
+Web TSB/source tablolarına erişmez ve `catalog.json`ı bundle içine almaz.
 
 ### 6.2 Draft oluşturma
 
@@ -174,12 +148,10 @@ POST /api/v1/listings/car-sale/drafts
 Request:
 
 ```json
-{
-  "vehicleModelId": "uuid"
-}
+{ "vehicleModelId": "uuid" }
 ```
 
-Response `201`:
+Response `201` özet şekli:
 
 ```json
 {
@@ -200,11 +172,7 @@ Response `201`:
 }
 ```
 
-Neden category-specific route:
-
-- İlk slice yalnız `car_sale` destekliyor.
-- Generic `POST /listings` discriminated-union contract'ını henüz daire akışı olmadan tasarlamak gereksiz abstraction olur.
-- Daha sonra iki gerçek listing type akışı oluştuğunda ortak create contract gerekirse bilinçli olarak çıkarılabilir.
+Category-specific route bilinçlidir: yalnız `car_sale` varken generic discriminated-union `POST /listings` kontratı tasarlamak gereksiz abstraction olur. İkinci gerçek listing type geldiğinde ortak create contract tekrar değerlendirilebilir.
 
 ### 6.3 Kendi draft'ını okuma
 
@@ -212,11 +180,9 @@ Neden category-specific route:
 GET /api/v1/listings/:listingId
 ```
 
-Bu slice'ta yalnız owner kendi draft'ını okuyabilir. Başkasının draft'ı için bilgi sızdırmayan `404 LISTING_NOT_FOUND` davranışı tercih edilir.
+Bu slice'ta yalnız owner kendi draft'ını okuyabilir. Başkasının draft'ı için bilgi sızdırmayan `404 LISTING_NOT_FOUND` kullanılır. Public published listing read sonraki listing-detail slice'ına aittir.
 
-Public published listing read davranışı sonraki listing detail slice'ına aittir.
-
-## 7. Backend bileşenleri
+## 7. Backend sınırları
 
 Yeni modül:
 
@@ -227,46 +193,30 @@ apps/api/src/modules/listings/
   listing.repository.ts
 ```
 
-Sorumluluklar:
+- **Route:** session auth + TypeBox validation + service call; SQL yok.
+- **Service:** `car_sale` type resolve, active canonical model doğrulama, owner authorization ve transaction boundary.
+- **Repository:** listing type lookup ve listing/car detail persistence/read SQL; ürün policy'si yok.
 
-### Route
+Vehicle doğrulaması canonical `vehicle_models` üzerinden yapılır. Listing modülü `vehicle_source_*` tablolarına veya TSB mapping katmanına erişmez.
 
-- session authentication
-- TypeBox request/response contract
-- service çağrısı
-- SQL içermez
-
-### Service
-
-- `car_sale` listing type'ını resolve eder
-- `vehicleModelId`'nin aktif canonical terminal model olduğunu vehicle catalog public service üzerinden doğrular
-- transaction boundary'yi yönetir
-- owner authorization yapar
-
-### Repository
-
-- listing type lookup
-- listing + car_details insert/read SQL
-- product policy kararı vermez
-
-Vehicle model doğrulaması source/TSB tablolarından değil canonical `vehicle_models` üzerinden yapılır. Listing modülü vehicle source repository'sine erişmez.
+Vehicle catalog modülüne minimum public servis metodu eklenebilir: aktif model UUID'sini doğrulayıp brand/series/selection-path özetini döndürür. Bu, listing modülünün vehicle repository'sine doğrudan uzanmasını önler.
 
 ## 8. Transaction ve bütünlük
 
-Draft create atomik olmalıdır:
+Draft create atomiktir:
 
 ```text
+active canonical vehicle model doğrula
 BEGIN
-  active canonical vehicle model doğrula
   car_sale listing type resolve et
   listings row insert et
   car_details row insert et
 COMMIT
 ```
 
-İkinci insert başarısız olursa orphan `listings` row kalmaz.
+İkinci insert başarısızsa orphan listing kalmaz.
 
-DB foreign key ayrıca inactive olmayan yanlış UUID problemini çözmez; bu nedenle service active model kontrolü yapar. FK ise silinmiş/geçersiz kimlik bütünlüğünü ikinci katman olarak korur.
+Aktiflik kontrolü ile insert arasında maintenance kaynaklı eşzamanlı deactivation teorik olarak mümkün olsa da catalog import explicit bakım işlemidir; bu slice bunun için lock/complex concurrency protokolü eklemez. FK kimlik bütünlüğünü, service ise create anındaki active-policy'yi korur.
 
 ## 9. Web akışı
 
@@ -277,8 +227,6 @@ Yeni route:
 ```
 
 Sayfanın tek işi doğru otomobili seçip draft oluşturmaktır.
-
-Akış:
 
 ```text
 Satılık Otomobil
@@ -294,49 +242,47 @@ Terminal model
 [İlan taslağını oluştur]
 ```
 
-### Picker davranışı
+Picker davranışı:
 
 - Marka değişirse seri + tüm alt seçimler sıfırlanır.
 - Seri değişirse tüm selection-path seçimleri sıfırlanır.
-- `group` seçilince aynı endpoint `parentKey` ile bir sonraki seviyeyi yükler.
-- `model` seçilince artık yeni child request yapılmaz; UUID terminal seçimdir.
-- Geri dönülüp üst seviye değiştirilirse eski terminal UUID temizlenir.
-- Loading/error/empty state açıkça gösterilir.
-- API 404 dönerse stale seçim temizlenip ilgili seviyeden yeniden seçim istenir.
-- Kullanıcı terminal model seçmeden draft create CTA aktif olmaz.
-- Draft create başarılı olduğunda listing ID gösterilir ve sonraki alanların gelecek adım olduğu belirtilir; henüz sahte fiyat/yıl/form alanları gösterilmez.
+- `group` seçilince `parentKey` ile bir sonraki seviye yüklenir.
+- `model` seçilince child request yapılmaz; dönen UUID terminal seçimdir.
+- Üst seçim değişirse stale terminal UUID temizlenir.
+- Loading/error/empty state görünürdür.
+- Selection endpointi 404 dönerse stale seviye temizlenip kullanıcıdan yeniden seçim istenir.
+- Terminal model seçilmeden create CTA aktif değildir.
+- Create request pending iken CTA tekrar gönderimi engellemek için disable edilir.
+- Başarılı create sonrası listing ID ve seçili araç özeti gösterilir; henüz sahte future form alanları render edilmez.
 
-### Görsel yön
+Görsel yön:
 
-- Mevcut Bizzat açık mavi/beyaz, koyu gri metin yönü korunur.
-- Sahibinden'in adım mantığı referans alınır; birebir görsel kopya yapılmaz.
-- Birincil vurgu seçim ilerlemesidir; dashboard kart kalabalığı veya dekoratif gradient kullanılmaz.
-- Masaüstünde seçim yolu ve aktif kolon okunaklı; mobilde tek kolon/ardışık ilerleme kullanılır.
-- Kullanıcıya teknik `catalog_key` gösterilmez.
+- açık mavi/beyaz, koyu gri metin yönü korunur,
+- Sahibinden'in adım mantığı referans alınır ama görsel kopya yapılmaz,
+- ana vurgu seçim ilerlemesidir; dashboard-kart kalabalığı veya dekoratif gradient yok,
+- desktop'ta seçim yolu/aktif seviye okunaklı, mobilde ardışık tek kolon,
+- kullanıcıya `catalog_key` gösterilmez.
 
 ## 10. Auth davranışı
 
-- Draft create ve draft read authenticated endpointtir.
-- Session mevcut `getAuthSession()` helper'ı ile okunur.
+- Draft create/read authenticated endpointtir.
+- Session mevcut `getAuthSession()` ile okunur.
 - Session yoksa `401 UNAUTHENTICATED`.
 - `owner_user_id` request body'sinden kabul edilmez.
-- Public sign-up role veya başka authorization parametreleri bu akışa taşınmaz.
-
-Web sayfası unauthenticated durumda login yönlendirmesi/CTA'sı gösterir ve mümkün olduğunda ilan verme route'una geri dönüş hedefini korur. Yeni custom JWT veya auth mekanizması yazılmaz.
+- Yeni JWT/cookie parser/auth mekanizması yazılmaz.
+- Web unauthenticated durumda login CTA/yönlendirmesi gösterir ve ilan verme route'una dönüş hedefini mümkün olduğunca korur.
 
 ## 11. Contracts
 
-`packages/contracts` içine listing draft contract'ları eklenir.
+`packages/contracts` içine yalnız bu slice'ın gerçek alanları eklenir:
 
-İlk contract yalnız bu slice'ın gerçekten kullandığı alanları taşır:
-
-- `vehicleModelId`
+- request `vehicleModelId`
 - listing `id`
 - `status: 'draft'`
 - `type: 'car_sale'`
-- kullanıcıya gösterilecek canonical vehicle brand/series/selectionPath özeti
+- canonical vehicle brand/series/selectionPath özeti
 
-Future field'lar şimdiden optional olarak eklenmez.
+Future field'lar optional placeholder olarak kontrata eklenmez.
 
 ## 12. Test stratejisi
 
@@ -346,24 +292,24 @@ Implementasyon TDD ile yapılır.
 
 Önce başarısız testler:
 
-1. Migration sonrası `listing_types`, `listings`, `car_details` ilişkileri oluşur.
-2. Unauthenticated draft create `401` döner.
-3. Aktif terminal model ile draft create `201` döner.
-4. İnactive/bilinmeyen model ile create fail-closed olur.
-5. Oluşturulan listing owner session user'dır; client owner belirleyemez.
+1. Migration `listing_types`, `listings`, `car_details` ve FK/check invariant'larını oluşturur.
+2. Unauthenticated create `401` döner.
+3. Aktif terminal model ile create `201` döner.
+4. Inactive/bilinmeyen model fail-closed olur.
+5. Owner session user'dır; client owner/status belirleyemez.
 6. `listings` ve `car_details` atomik oluşur.
 7. Başka kullanıcının draft read'i `404` döner.
-8. Response canonical brand/series/selectionPath bilgisini döndürür.
-9. Web picker brand → series → variable group → model akışını gerçek contract shape ile ilerletir.
+8. Response canonical brand/series/selectionPath döndürür.
+9. Web picker brand → series → variable group → model ilerler.
 10. Parent değişiminde descendant seçimleri temizlenir.
-11. Terminal seçilmeden CTA aktif olmaz.
-12. Create başarılı olduğunda dönen listing ID ekranda görünür.
+11. Terminal seçilmeden CTA aktif olmaz ve pending durumda double-submit engellenir.
+12. Create başarılı olduğunda dönen listing ID/araç özeti görünür.
 
 ### GREEN
 
-Yalnız testleri geçirmek için gereken minimum production kodu eklenir.
+Yalnız bu testleri geçirmek için gereken minimum production kodu eklenir.
 
-### Final verification
+### Final doğrulama
 
 - `pnpm lint`
 - `pnpm typecheck`
@@ -373,22 +319,22 @@ Yalnız testleri geçirmek için gereken minimum production kodu eklenir.
 - `pnpm build`
 - normal repo CI
 
-Mock DB ile migration/transaction doğrulaması yapılmaz.
+DB migration/transaction davranışı mock DB ile ikame edilmez.
 
-## 13. Migration/backward compatibility
+## 13. Backward compatibility
 
-- Yeni migration existing vehicle/location/auth tablolarını değiştirmez.
+- Yeni migration existing auth/location/vehicle tablolarını değiştirmez.
 - `vehicle_models` UUID'leri yeniden üretilmez.
 - Catalog import davranışı değişmez.
-- Listing FK'si mevcut canonical model ID'lerine bağlanır.
-- Catalog row ileride inactive olsa bile geçmiş listing kimliği korunur; draft üzerinde yeniden seçim gerekip gerekmediği ayrı ürün kuralıdır ve bu slice'ta otomatik silme yapılmaz.
+- Listing FK mevcut canonical model UUID'sine bağlanır.
+- Catalog row daha sonra inactive olsa bile geçmiş listing kimliği silinmez; draft üzerinde yeniden seçim gerekip gerekmediği ayrı ürün kuralıdır.
 
 ## 14. Sonraki küçük slice'lar
 
-Bu PR green olduktan sonra sıra:
+Bu slice green olduktan sonra önerilen sıra:
 
-1. `car_details` alanları: model yılı + km + temel otomobil özellikleri
-2. erken EİDS/vehicle authority boundary ve local/test mock provider
+1. `car_details`: model yılı + km + temel otomobil özellikleri
+2. erken EİDS/vehicle-authority boundary ve local/test mock provider
 3. fiyat + konum
 4. fotoğraf/media
 5. açıklama + telefon tercihi
@@ -396,11 +342,9 @@ Bu PR green olduktan sonra sıra:
 7. kendi ilanlarım
 8. public listing list/detail
 
-Her slice ölçülebilir ürün davranışı ekler; listing domain tek seferde büyük generic framework'e dönüştürülmez.
+Her slice ölçülebilir kullanıcı davranışı ekler; listing domain tek seferde büyük generic framework'e dönüştürülmez.
 
-## 15. Kabul kriteri
-
-Bu tasarım tamamlandığında sistem şu invariant'ı gerçek uçtan uca akışta kanıtlamalıdır:
+## 15. Kabul invariant'ı
 
 > Kullanıcının araç seçim ağacında seçtiği tek authoritative araç kimliği terminal canonical `vehicle_models.id`'dir ve oluşturulan Satılık Otomobil draft'ı bu UUID'yi atomik olarak `car_details` içinde saklar.
 
