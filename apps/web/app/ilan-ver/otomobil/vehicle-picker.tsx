@@ -9,7 +9,7 @@ import {
   listVehicleSelection,
   listVehicleSeries,
   type CarSaleDraftResponse,
-} from '../../../lib/api-client.js'
+} from '../../../lib/api-client'
 import {
   initialVehiclePickerState,
   selectBrand,
@@ -21,7 +21,7 @@ import {
   type VehicleSelectionGroup,
   type VehicleSelectionItem,
   type VehicleSelectionModel,
-} from './vehicle-picker-state.js'
+} from './vehicle-picker-state'
 
 type AuthState = 'checking' | 'authenticated' | 'unauthenticated' | 'error'
 
@@ -225,9 +225,9 @@ export function VehiclePicker() {
         <div className="listing-notice" role="status">
           <div>
             <strong>İlan vermek için giriş yap.</strong>
-            <span>Giriş yaptıktan sonra araç seçimine kaldığın yerden başlayabilirsin.</span>
+            <span>Giriş yaptıktan sonra araç seçimine devam edebilirsin.</span>
           </div>
-          <a className="listing-link-button" href="/login?next=/ilan-ver/otomobil">Giriş yap</a>
+          <a className="listing-link-button" href="/login">Giriş yap</a>
         </div>
       )}
 
