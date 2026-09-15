@@ -80,3 +80,15 @@ export function selectModel(
     vehicleModelId: model.id,
   }
 }
+
+export function clearSelectedModel(state: VehiclePickerState): VehiclePickerState {
+  const path = state.path.at(-1)?.kind === 'model'
+    ? state.path.slice(0, -1)
+    : state.path
+
+  return {
+    ...state,
+    path,
+    vehicleModelId: null,
+  }
+}
