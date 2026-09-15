@@ -137,6 +137,26 @@ export interface VehicleSourceMappingsTable {
   updated_at: Generated<Date>
 }
 
+export interface ListingTypesTable {
+  id: Generated<string>
+  code: string
+  created_at: Generated<Date>
+}
+
+export interface ListingsTable {
+  id: Generated<string>
+  owner_user_id: string
+  listing_type_id: string
+  status: Generated<string>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
+export interface CarDetailsTable {
+  listing_id: string
+  vehicle_model_id: string
+}
+
 export interface Database {
   profiles: ProfilesTable
   reference_data_providers: ReferenceDataProvidersTable
@@ -151,6 +171,9 @@ export interface Database {
   vehicle_source_imports: VehicleSourceImportsTable
   vehicle_source_records: VehicleSourceRecordsTable
   vehicle_source_mappings: VehicleSourceMappingsTable
+  listing_types: ListingTypesTable
+  listings: ListingsTable
+  car_details: CarDetailsTable
 }
 
 export function createDatabase(connectionString: string): Kysely<Database> {
