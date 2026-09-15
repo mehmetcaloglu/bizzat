@@ -18,6 +18,12 @@ export interface ReferenceNeighborhood {
   kind: string | null
 }
 
+export interface ReferenceLocationPath {
+  province: { id: string; name: string }
+  district: { id: string; name: string }
+  neighborhood: { id: string; name: string }
+}
+
 export class LocationRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
@@ -67,5 +73,38 @@ export class LocationRepository {
       .where('active', '=', true)
       .orderBy('name', 'asc')
       .execute()
+  }
+
+  async findActivePath(input: {
+    provinceId: string
+    districtId: string
+    neighborhoodId: string
+  }): Promise<ReferenceLocationPath | null> {
+    const row = await this.db
+      .selectFrom('neighborhoods')
+      .innerJoin('districts', 'districts.id', 'neighborhoods.district_id')
+      .innerJoin('provinces', 'provinces.id', 'districts.province_id')
+      .select([
+        'provinces.id as provinceId',
+        'provinces.name as provinceName',
+        'districts.id as districtId',
+        'districts.name as districtName',
+        'neighborhoods.id as neighborhoodId',
+        'neighborhoods.name as neighborhoodName',
+      ])
+      .where('provinces.id', '=', input.provinceId)
+      .where('districts.id', '=', input.districtId)
+      .where('neighborhoods.id', '=', input.neighborhoodId)
+      .where('provinces.active', '=', true)
+      .where('districts.active', '=', true)
+      .where('neighborhoods.active', '=', true)
+      .executeTakeFirst()
+
+    if (!row) return null
+    return {
+      province: { id: row.provinceId, name: row.provinceName },
+      district: { id: row.districtId, name: row.districtName },
+      neighborhood: { id: row.neighborhoodId, name: row.neighborhoodName },
+    }
   }
 }
