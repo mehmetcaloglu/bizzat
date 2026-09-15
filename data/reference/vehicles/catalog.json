@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-13.1",
+  "version": "2026-09-14.3",
   "brands": [
     {
       "key": "audi",
@@ -132,6 +132,11 @@
       "key": "fiat:egea",
       "brandKey": "fiat",
       "name": "Egea"
+    },
+    {
+      "key": "fiat:linea",
+      "brandKey": "fiat",
+      "name": "Lınea"
     },
     {
       "key": "fiat:panda",
@@ -279,6 +284,11 @@
       "name": "Astra"
     },
     {
+      "key": "opel:corsa",
+      "brandKey": "opel",
+      "name": "Corsa"
+    },
+    {
       "key": "peugeot:308",
       "brandKey": "peugeot",
       "name": "308"
@@ -377,6 +387,16 @@
       "key": "volkswagen:golf",
       "brandKey": "volkswagen",
       "name": "Golf"
+    },
+    {
+      "key": "volkswagen:jetta",
+      "brandKey": "volkswagen",
+      "name": "Jetta"
+    },
+    {
+      "key": "volkswagen:passat",
+      "brandKey": "volkswagen",
+      "name": "Passat"
     },
     {
       "key": "volkswagen:polo",
@@ -3868,6 +3888,441 @@
       ]
     },
     {
+      "key": "fiat:linea:1-3-multijet-active-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Active Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-active-plus",
+          "name": "Active Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-actual",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Actual",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-actual",
+          "name": "Actual"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-actual-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Actual Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-actual-plus",
+          "name": "Actual Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-dynamic-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Dynamic Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-dynamic-plus",
+          "name": "Dynamic Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-easy",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Easy",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-easy",
+          "name": "Easy"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-emotion-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Emotion Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-emotion-plus",
+          "name": "Emotion Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-lounge",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Lounge",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-lounge",
+          "name": "Lounge"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-mood",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Mood",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-mood",
+          "name": "Mood"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-pop",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Pop",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-pop",
+          "name": "Pop"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-urban",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet Urban",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-urban",
+          "name": "Urban"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-3-multijet-via",
+      "seriesKey": "fiat:linea",
+      "name": "1.3 Multijet VIA",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-3-multijet",
+          "name": "1.3 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-3-multijet-via",
+          "name": "VIA"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-fire-active-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Fire Active Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-fire",
+          "name": "1.4 Fire"
+        },
+        {
+          "key": "fiat:linea:1-4-fire-active-plus",
+          "name": "Active Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-fire-actual",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Fire Actual",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-fire",
+          "name": "1.4 Fire"
+        },
+        {
+          "key": "fiat:linea:1-4-fire-actual",
+          "name": "Actual"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-fire-actual-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Fire Actual Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-fire",
+          "name": "1.4 Fire"
+        },
+        {
+          "key": "fiat:linea:1-4-fire-actual-plus",
+          "name": "Actual Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-fire-easy",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Fire Easy",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-fire",
+          "name": "1.4 Fire"
+        },
+        {
+          "key": "fiat:linea:1-4-fire-easy",
+          "name": "Easy"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-fire-mood",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Fire Mood",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-fire",
+          "name": "1.4 Fire"
+        },
+        {
+          "key": "fiat:linea:1-4-fire-mood",
+          "name": "Mood"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-fire-pop",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Fire Pop",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-fire",
+          "name": "1.4 Fire"
+        },
+        {
+          "key": "fiat:linea:1-4-fire-pop",
+          "name": "Pop"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-fire-via",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Fire VIA",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-fire",
+          "name": "1.4 Fire"
+        },
+        {
+          "key": "fiat:linea:1-4-fire-via",
+          "name": "VIA"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-turbo-active-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Turbo Active Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-turbo",
+          "name": "1.4 Turbo"
+        },
+        {
+          "key": "fiat:linea:1-4-turbo-active-plus",
+          "name": "Active Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-turbo-dynamic-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Turbo Dynamic Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-turbo",
+          "name": "1.4 Turbo"
+        },
+        {
+          "key": "fiat:linea:1-4-turbo-dynamic-plus",
+          "name": "Dynamic Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-4-turbo-emotion-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.4 Turbo Emotion Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-4-turbo",
+          "name": "1.4 Turbo"
+        },
+        {
+          "key": "fiat:linea:1-4-turbo-emotion-plus",
+          "name": "Emotion Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-6-multijet-active-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.6 Multijet Active Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-6-multijet",
+          "name": "1.6 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-6-multijet-active-plus",
+          "name": "Active Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-6-multijet-dynamic",
+      "seriesKey": "fiat:linea",
+      "name": "1.6 Multijet Dynamic",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-6-multijet",
+          "name": "1.6 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-6-multijet-dynamic",
+          "name": "Dynamic"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-6-multijet-dynamic-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.6 Multijet Dynamic Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-6-multijet",
+          "name": "1.6 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-6-multijet-dynamic-plus",
+          "name": "Dynamic Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-6-multijet-easy",
+      "seriesKey": "fiat:linea",
+      "name": "1.6 Multijet Easy",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-6-multijet",
+          "name": "1.6 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-6-multijet-easy",
+          "name": "Easy"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-6-multijet-emotion-plus",
+      "seriesKey": "fiat:linea",
+      "name": "1.6 Multijet Emotion Plus",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-6-multijet",
+          "name": "1.6 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-6-multijet-emotion-plus",
+          "name": "Emotion Plus"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-6-multijet-lounge",
+      "seriesKey": "fiat:linea",
+      "name": "1.6 Multijet Lounge",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-6-multijet",
+          "name": "1.6 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-6-multijet-lounge",
+          "name": "Lounge"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-6-multijet-urban",
+      "seriesKey": "fiat:linea",
+      "name": "1.6 Multijet Urban",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-6-multijet",
+          "name": "1.6 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-6-multijet-urban",
+          "name": "Urban"
+        }
+      ]
+    },
+    {
+      "key": "fiat:linea:1-6-multijet-via",
+      "seriesKey": "fiat:linea",
+      "name": "1.6 Multijet VIA",
+      "selectionPath": [
+        {
+          "key": "fiat:linea:1-6-multijet",
+          "name": "1.6 Multijet"
+        },
+        {
+          "key": "fiat:linea:1-6-multijet-via",
+          "name": "VIA"
+        }
+      ]
+    },
+    {
       "key": "fiat:panda:1-1-active",
       "seriesKey": "fiat:panda",
       "name": "1.1 Active",
@@ -5589,6 +6044,291 @@
         {
           "key": "opel:astra:1-3-cdti-sport",
           "name": "Sport"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-design",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 Design",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "opel:corsa:1-2-design",
+          "name": "Design"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-edition",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 Edition",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "opel:corsa:1-2-edition",
+          "name": "Edition"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-elegance",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 Elegance",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "opel:corsa:1-2-elegance",
+          "name": "Elegance"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-enjoy",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 Enjoy",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "opel:corsa:1-2-enjoy",
+          "name": "Enjoy"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-essentia",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 Essentia",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "opel:corsa:1-2-essentia",
+          "name": "Essentia"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-essential",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 Essential",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "opel:corsa:1-2-essential",
+          "name": "Essential"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-innovation",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 Innovation",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2",
+          "name": "1.2"
+        },
+        {
+          "key": "opel:corsa:1-2-innovation",
+          "name": "Innovation"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-t-dynamic",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 T Dynamic",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2-t",
+          "name": "1.2 T"
+        },
+        {
+          "key": "opel:corsa:1-2-t-dynamic",
+          "name": "Dynamic"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-t-edition",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 T Edition",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2-t",
+          "name": "1.2 T"
+        },
+        {
+          "key": "opel:corsa:1-2-t-edition",
+          "name": "Edition"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-t-elegance",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 T Elegance",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2-t",
+          "name": "1.2 T"
+        },
+        {
+          "key": "opel:corsa:1-2-t-elegance",
+          "name": "Elegance"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-t-gs",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 T GS",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2-t",
+          "name": "1.2 T"
+        },
+        {
+          "key": "opel:corsa:1-2-t-gs",
+          "name": "GS"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-t-innovation",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 T Innovation",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2-t",
+          "name": "1.2 T"
+        },
+        {
+          "key": "opel:corsa:1-2-t-innovation",
+          "name": "Innovation"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-2-t-ultimate",
+      "seriesKey": "opel:corsa",
+      "name": "1.2 T Ultimate",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-2-t",
+          "name": "1.2 T"
+        },
+        {
+          "key": "opel:corsa:1-2-t-ultimate",
+          "name": "Ultimate"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-4-black-edition",
+      "seriesKey": "opel:corsa",
+      "name": "1.4 Black Edition",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "opel:corsa:1-4-black-edition",
+          "name": "Black Edition"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-4-color-edition",
+      "seriesKey": "opel:corsa",
+      "name": "1.4 Color Edition",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "opel:corsa:1-4-color-edition",
+          "name": "Color Edition"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-4-cosmo",
+      "seriesKey": "opel:corsa",
+      "name": "1.4 Cosmo",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "opel:corsa:1-4-cosmo",
+          "name": "Cosmo"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-4-design",
+      "seriesKey": "opel:corsa",
+      "name": "1.4 Design",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "opel:corsa:1-4-design",
+          "name": "Design"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-4-enjoy",
+      "seriesKey": "opel:corsa",
+      "name": "1.4 Enjoy",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "opel:corsa:1-4-enjoy",
+          "name": "Enjoy"
+        }
+      ]
+    },
+    {
+      "key": "opel:corsa:1-4-essentia",
+      "seriesKey": "opel:corsa",
+      "name": "1.4 Essentia",
+      "selectionPath": [
+        {
+          "key": "opel:corsa:1-4",
+          "name": "1.4"
+        },
+        {
+          "key": "opel:corsa:1-4-essentia",
+          "name": "Essentia"
         }
       ]
     },
@@ -9597,6 +10337,501 @@
         {
           "key": "volkswagen:golf:2-0-tsi-r",
           "name": "R"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-2-tsi-bluemotion-comfortline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.2 TSI BlueMotion Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-2-tsi-bluemotion",
+          "name": "1.2 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:jetta:1-2-tsi-bluemotion-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-2-tsi-bluemotion-highline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.2 TSI BlueMotion Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-2-tsi-bluemotion",
+          "name": "1.2 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:jetta:1-2-tsi-bluemotion-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-2-tsi-bluemotion-trendline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.2 TSI BlueMotion Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-2-tsi-bluemotion",
+          "name": "1.2 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:jetta:1-2-tsi-bluemotion-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-2-tsi-comfortline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.2 TSI Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-2-tsi",
+          "name": "1.2 TSI"
+        },
+        {
+          "key": "volkswagen:jetta:1-2-tsi-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-2-tsi-highline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.2 TSI Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-2-tsi",
+          "name": "1.2 TSI"
+        },
+        {
+          "key": "volkswagen:jetta:1-2-tsi-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-2-tsi-trendline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.2 TSI Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-2-tsi",
+          "name": "1.2 TSI"
+        },
+        {
+          "key": "volkswagen:jetta:1-2-tsi-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-4-tsi-bluemotion-comfortline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.4 TSI BlueMotion Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-4-tsi-bluemotion",
+          "name": "1.4 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:jetta:1-4-tsi-bluemotion-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-4-tsi-bluemotion-highline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.4 TSI BlueMotion Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-4-tsi-bluemotion",
+          "name": "1.4 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:jetta:1-4-tsi-bluemotion-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-4-tsi-bluemotion-trendline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.4 TSI BlueMotion Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-4-tsi-bluemotion",
+          "name": "1.4 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:jetta:1-4-tsi-bluemotion-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-4-tsi-comfortline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.4 TSI Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "volkswagen:jetta:1-4-tsi-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-4-tsi-highline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.4 TSI Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "volkswagen:jetta:1-4-tsi-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-4-tsi-trendline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.4 TSI Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "volkswagen:jetta:1-4-tsi-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-6-primeline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.6 Primeline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "volkswagen:jetta:1-6-primeline",
+          "name": "Primeline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-6-tdi-comfortline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.6 TDI Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-6-tdi",
+          "name": "1.6 TDI"
+        },
+        {
+          "key": "volkswagen:jetta:1-6-tdi-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-6-tdi-highline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.6 TDI Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-6-tdi",
+          "name": "1.6 TDI"
+        },
+        {
+          "key": "volkswagen:jetta:1-6-tdi-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:1-6-tdi-trendline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "1.6 TDI Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:1-6-tdi",
+          "name": "1.6 TDI"
+        },
+        {
+          "key": "volkswagen:jetta:1-6-tdi-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:jetta:2-0-fsi-trendline",
+      "seriesKey": "volkswagen:jetta",
+      "name": "2.0 FSI Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:jetta:2-0-fsi",
+          "name": "2.0 FSI"
+        },
+        {
+          "key": "volkswagen:jetta:2-0-fsi-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-4-tsi-bluemotion-comfortline",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.4 TSI BlueMotion Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-4-tsi-bluemotion",
+          "name": "1.4 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-4-tsi-bluemotion-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-4-tsi-bluemotion-highline",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.4 TSI BlueMotion Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-4-tsi-bluemotion",
+          "name": "1.4 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-4-tsi-bluemotion-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-4-tsi-bluemotion-trendline",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.4 TSI BlueMotion Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-4-tsi-bluemotion",
+          "name": "1.4 TSI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-4-tsi-bluemotion-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-4-tsi-comfortline",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.4 TSI Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "volkswagen:passat:1-4-tsi-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-4-tsi-highline",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.4 TSI Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-4-tsi",
+          "name": "1.4 TSI"
+        },
+        {
+          "key": "volkswagen:passat:1-4-tsi-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-6-tdi-bluemotion-business",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.6 TDI BlueMotion Business",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion",
+          "name": "1.6 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion-business",
+          "name": "Business"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-6-tdi-bluemotion-comfortline",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.6 TDI BlueMotion Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion",
+          "name": "1.6 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-6-tdi-bluemotion-elegance",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.6 TDI BlueMotion Elegance",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion",
+          "name": "1.6 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion-elegance",
+          "name": "Elegance"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-6-tdi-bluemotion-exclusive",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.6 TDI BlueMotion Exclusive",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion",
+          "name": "1.6 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion-exclusive",
+          "name": "Exclusive"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-6-tdi-bluemotion-highline",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.6 TDI BlueMotion Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion",
+          "name": "1.6 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-6-tdi-bluemotion-impression",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.6 TDI BlueMotion Impression",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion",
+          "name": "1.6 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion-impression",
+          "name": "Impression"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-6-tdi-bluemotion-r-line",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.6 TDI BlueMotion R-Line",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion",
+          "name": "1.6 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion-r-line",
+          "name": "R-Line"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:1-6-tdi-bluemotion-trendline",
+      "seriesKey": "volkswagen:passat",
+      "name": "1.6 TDI BlueMotion Trendline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion",
+          "name": "1.6 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:1-6-tdi-bluemotion-trendline",
+          "name": "Trendline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:2-0-tdi-bluemotion-comfortline",
+      "seriesKey": "volkswagen:passat",
+      "name": "2.0 TDI BlueMotion Comfortline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:2-0-tdi-bluemotion",
+          "name": "2.0 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:2-0-tdi-bluemotion-comfortline",
+          "name": "Comfortline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:2-0-tdi-bluemotion-highline",
+      "seriesKey": "volkswagen:passat",
+      "name": "2.0 TDI BlueMotion Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:2-0-tdi-bluemotion",
+          "name": "2.0 TDI BlueMotion"
+        },
+        {
+          "key": "volkswagen:passat:2-0-tdi-bluemotion-highline",
+          "name": "Highline"
+        }
+      ]
+    },
+    {
+      "key": "volkswagen:passat:2-0-tfsi-highline",
+      "seriesKey": "volkswagen:passat",
+      "name": "2.0 TFSI Highline",
+      "selectionPath": [
+        {
+          "key": "volkswagen:passat:2-0-tfsi",
+          "name": "2.0 TFSI"
+        },
+        {
+          "key": "volkswagen:passat:2-0-tfsi-highline",
+          "name": "Highline"
         }
       ]
     },
