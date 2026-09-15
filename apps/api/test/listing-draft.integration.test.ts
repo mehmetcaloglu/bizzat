@@ -29,7 +29,7 @@ function cookieHeader(setCookie: string | string[] | undefined): string {
 
 async function createSignedInUser(label: string) {
   const token = crypto.randomUUID().slice(0, 8)
-  const email = `${label}-${Date.now()}-${token}@example.com`
+  const email = `listing-${Date.now()}-${token}@example.com`
   const password = 'correct-horse-battery-staple'
 
   const signUp = await app.inject({
