@@ -4,13 +4,14 @@ import type {
   ActiveVehicleSelectionModel,
   ReferenceVehicleItem,
   VehicleCatalogRepository,
+  VehicleModelSummaryRow,
 } from './vehicle-catalog.repository.js'
 
 export type ReferenceVehicleSelectionItem =
   | { key: string; name: string; kind: 'group' }
   | { key: string; name: string; kind: 'model'; id: string }
 
-export interface ActiveVehicleModelSummary {
+export interface VehicleModelSummary {
   modelId: string
   brand: { id: string; name: string }
   series: { id: string; name: string }
@@ -19,6 +20,15 @@ export interface ActiveVehicleModelSummary {
 
 function selectionPath(model: ActiveVehicleSelectionModel) {
   return model.selectionPath ?? [{ key: model.catalogKey, name: model.name }]
+}
+
+function modelSummary(row: VehicleModelSummaryRow): VehicleModelSummary {
+  return {
+    modelId: row.modelId,
+    brand: { id: row.brandId, name: row.brandName },
+    series: { id: row.seriesId, name: row.seriesName },
+    selectionPath: row.selectionPath ?? [{ key: row.modelCatalogKey, name: row.modelName }],
+  }
 }
 
 export class VehicleCatalogService {
@@ -83,15 +93,13 @@ export class VehicleCatalogService {
     ))
   }
 
-  async findActiveModelSummary(modelId: string): Promise<ActiveVehicleModelSummary | null> {
-    const row = await this.repository.findActiveModelSummaryById(modelId)
-    if (!row) return null
+  async findModelSummary(modelId: string): Promise<VehicleModelSummary | null> {
+    const row = await this.repository.findModelSummaryById(modelId)
+    return row ? modelSummary(row) : null
+  }
 
-    return {
-      modelId: row.modelId,
-      brand: { id: row.brandId, name: row.brandName },
-      series: { id: row.seriesId, name: row.seriesName },
-      selectionPath: row.selectionPath ?? [{ key: row.modelCatalogKey, name: row.modelName }],
-    }
+  async findActiveModelSummary(modelId: string): Promise<VehicleModelSummary | null> {
+    const row = await this.repository.findActiveModelSummaryById(modelId)
+    return row ? modelSummary(row) : null
   }
 }
