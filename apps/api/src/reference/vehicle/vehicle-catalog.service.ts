@@ -1,4 +1,5 @@
 import { AppError } from '../../common/errors/app-error.js'
+import type { VehicleSelectionNode } from './catalog.types.js'
 import type {
   ActiveVehicleSelectionModel,
   ReferenceVehicleItem,
@@ -8,6 +9,13 @@ import type {
 export type ReferenceVehicleSelectionItem =
   | { key: string; name: string; kind: 'group' }
   | { key: string; name: string; kind: 'model'; id: string }
+
+export interface ActiveVehicleModelSummary {
+  modelId: string
+  brand: { id: string; name: string }
+  series: { id: string; name: string }
+  selectionPath: VehicleSelectionNode[]
+}
 
 function selectionPath(model: ActiveVehicleSelectionModel) {
   return model.selectionPath ?? [{ key: model.catalogKey, name: model.name }]
@@ -73,5 +81,17 @@ export class VehicleCatalogService {
     return [...items.values()].sort((left, right) => (
       left.name.localeCompare(right.name, 'tr') || left.key.localeCompare(right.key)
     ))
+  }
+
+  async findActiveModelSummary(modelId: string): Promise<ActiveVehicleModelSummary | null> {
+    const row = await this.repository.findActiveModelSummaryById(modelId)
+    if (!row) return null
+
+    return {
+      modelId: row.modelId,
+      brand: { id: row.brandId, name: row.brandName },
+      series: { id: row.seriesId, name: row.seriesName },
+      selectionPath: row.selectionPath ?? [{ key: row.modelCatalogKey, name: row.modelName }],
+    }
   }
 }
