@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-14.3",
+  "version": "2026-09-14.4",
   "brands": [
     {
       "key": "audi",
@@ -302,6 +302,11 @@
       "key": "renault:clio",
       "brandKey": "renault",
       "name": "Clio"
+    },
+    {
+      "key": "renault:fluence",
+      "brandKey": "renault",
+      "name": "Fluence"
     },
     {
       "key": "renault:megane",
@@ -4833,6 +4838,51 @@
       ]
     },
     {
+      "key": "hyundai:i20:1-0-t-gdi-elite",
+      "seriesKey": "hyundai:i20",
+      "name": "1.0 T-GDi Elite",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-0-t-gdi",
+          "name": "1.0 T-GDi"
+        },
+        {
+          "key": "hyundai:i20:1-0-t-gdi-elite",
+          "name": "Elite"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-0-t-gdi-elite-plus",
+      "seriesKey": "hyundai:i20",
+      "name": "1.0 T-GDi Elite Plus",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-0-t-gdi",
+          "name": "1.0 T-GDi"
+        },
+        {
+          "key": "hyundai:i20:1-0-t-gdi-elite-plus",
+          "name": "Elite Plus"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-0-t-gdi-jump",
+      "seriesKey": "hyundai:i20",
+      "name": "1.0 T-GDi Jump",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-0-t-gdi",
+          "name": "1.0 T-GDi"
+        },
+        {
+          "key": "hyundai:i20:1-0-t-gdi-jump",
+          "name": "Jump"
+        }
+      ]
+    },
+    {
       "key": "hyundai:i20:1-0-t-gdi-star",
       "seriesKey": "hyundai:i20",
       "name": "1.0 T-GDi Star",
@@ -4844,6 +4894,36 @@
         {
           "key": "hyundai:i20:1-0-t-gdi-star",
           "name": "Star"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-0-t-gdi-style",
+      "seriesKey": "hyundai:i20",
+      "name": "1.0 T-GDi Style",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-0-t-gdi",
+          "name": "1.0 T-GDi"
+        },
+        {
+          "key": "hyundai:i20:1-0-t-gdi-style",
+          "name": "Style"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-0-t-gdi-style-plus",
+      "seriesKey": "hyundai:i20",
+      "name": "1.0 T-GDi Style Plus",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-0-t-gdi",
+          "name": "1.0 T-GDi"
+        },
+        {
+          "key": "hyundai:i20:1-0-t-gdi-style-plus",
+          "name": "Style Plus"
         }
       ]
     },
@@ -4983,6 +5063,21 @@
       ]
     },
     {
+      "key": "hyundai:i20:1-4-crdi-select",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 CRDi Select",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-crdi",
+          "name": "1.4 CRDi"
+        },
+        {
+          "key": "hyundai:i20:1-4-crdi-select",
+          "name": "Select"
+        }
+      ]
+    },
+    {
       "key": "hyundai:i20:1-4-crdi-sense",
       "seriesKey": "hyundai:i20",
       "name": "1.4 CRDi Sense",
@@ -4998,6 +5093,36 @@
       ]
     },
     {
+      "key": "hyundai:i20:1-4-crdi-style",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 CRDi Style",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-crdi",
+          "name": "1.4 CRDi"
+        },
+        {
+          "key": "hyundai:i20:1-4-crdi-style",
+          "name": "Style"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-4-crdi-team",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 CRDi Team",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-crdi",
+          "name": "1.4 CRDi"
+        },
+        {
+          "key": "hyundai:i20:1-4-crdi-team",
+          "name": "Team"
+        }
+      ]
+    },
+    {
       "key": "hyundai:i20:1-4-crdi-tune",
       "seriesKey": "hyundai:i20",
       "name": "1.4 CRDi Tune",
@@ -5009,6 +5134,96 @@
         {
           "key": "hyundai:i20:1-4-crdi-tune",
           "name": "Tune"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-4-mpi-elite",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 MPI Elite",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-mpi",
+          "name": "1.4 MPI"
+        },
+        {
+          "key": "hyundai:i20:1-4-mpi-elite",
+          "name": "Elite"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-4-mpi-elite-plus",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 MPI Elite Plus",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-mpi",
+          "name": "1.4 MPI"
+        },
+        {
+          "key": "hyundai:i20:1-4-mpi-elite-plus",
+          "name": "Elite Plus"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-4-mpi-jump",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 MPI Jump",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-mpi",
+          "name": "1.4 MPI"
+        },
+        {
+          "key": "hyundai:i20:1-4-mpi-jump",
+          "name": "Jump"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-4-mpi-star",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 MPI Star",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-mpi",
+          "name": "1.4 MPI"
+        },
+        {
+          "key": "hyundai:i20:1-4-mpi-star",
+          "name": "Star"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-4-mpi-style",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 MPI Style",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-mpi",
+          "name": "1.4 MPI"
+        },
+        {
+          "key": "hyundai:i20:1-4-mpi-style",
+          "name": "Style"
+        }
+      ]
+    },
+    {
+      "key": "hyundai:i20:1-4-mpi-style-plus",
+      "seriesKey": "hyundai:i20",
+      "name": "1.4 MPI Style Plus",
+      "selectionPath": [
+        {
+          "key": "hyundai:i20:1-4-mpi",
+          "name": "1.4 MPI"
+        },
+        {
+          "key": "hyundai:i20:1-4-mpi-style-plus",
+          "name": "Style Plus"
         }
       ]
     },
@@ -7844,6 +8059,291 @@
         {
           "key": "renault:clio:1-6-grandtour-extreme-edition",
           "name": "Extreme Edition"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-authentique",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Authentique",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-authentique",
+          "name": "Authentique"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-business",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Business",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-business",
+          "name": "Business"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-dynamique",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Dynamique",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-dynamique",
+          "name": "Dynamique"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-extreme",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Extreme",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-extreme",
+          "name": "Extreme"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-extreme-edition",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Extreme Edition",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-extreme-edition",
+          "name": "Extreme Edition"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-icon",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Icon",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-icon",
+          "name": "Icon"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-joy",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Joy",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-joy",
+          "name": "Joy"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-privilege",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Privilege",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-privilege",
+          "name": "Privilege"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-touch",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Touch",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-touch",
+          "name": "Touch"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-5-dci-touch-plus",
+      "seriesKey": "renault:fluence",
+      "name": "1.5 dCi Touch Plus",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-5-dci",
+          "name": "1.5 dCi"
+        },
+        {
+          "key": "renault:fluence:1-5-dci-touch-plus",
+          "name": "Touch Plus"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-business",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 Business",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:fluence:1-6-business",
+          "name": "Business"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-dci-icon",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 dCi Icon",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6-dci",
+          "name": "1.6 dCi"
+        },
+        {
+          "key": "renault:fluence:1-6-dci-icon",
+          "name": "Icon"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-dynamique",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 Dynamique",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:fluence:1-6-dynamique",
+          "name": "Dynamique"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-extreme",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 Extreme",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:fluence:1-6-extreme",
+          "name": "Extreme"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-extreme-edition",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 Extreme Edition",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:fluence:1-6-extreme-edition",
+          "name": "Extreme Edition"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-icon",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 Icon",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:fluence:1-6-icon",
+          "name": "Icon"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-joy",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 Joy",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:fluence:1-6-joy",
+          "name": "Joy"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-privilege",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 Privilege",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:fluence:1-6-privilege",
+          "name": "Privilege"
+        }
+      ]
+    },
+    {
+      "key": "renault:fluence:1-6-touch",
+      "seriesKey": "renault:fluence",
+      "name": "1.6 Touch",
+      "selectionPath": [
+        {
+          "key": "renault:fluence:1-6",
+          "name": "1.6"
+        },
+        {
+          "key": "renault:fluence:1-6-touch",
+          "name": "Touch"
         }
       ]
     },

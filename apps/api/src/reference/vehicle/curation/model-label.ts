@@ -71,6 +71,8 @@ const SERIES_NORMALIZATION_POLICIES: Record<string, SeriesNormalizationPolicy> =
   'volkswagen:passat': {},
   'volkswagen:jetta': {},
   'fiat:linea': {},
+  'hyundai:i20': {},
+  'renault:fluence': {},
 }
 
 const IBIZA_REVIEWED_SELECTIONS: Record<string, string[]> = {
@@ -186,6 +188,12 @@ export function canonicalModelSelection(seriesKey: string, proposed: string, typ
   }
   if (seriesKey === 'fiat:linea') {
     label = label.replace(/\b(?:DUALOGIC|DUALO|DUAL)\b/g, ' ')
+  }
+  if (seriesKey === 'hyundai:i20') {
+    label = label
+      .replace(/\b1\.0T\b/g, '1.0 T-GDI')
+      .replace(/\b1\.0\s+T\b(?!-GDI)/g, '1.0 T-GDI')
+      .replace(/\b(?:7DCT|6AT|6MT)\b/g, ' ')
   }
 
   let group = ''
