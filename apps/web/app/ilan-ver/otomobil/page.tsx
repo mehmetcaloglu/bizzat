@@ -1,4 +1,4 @@
-import { VehiclePicker } from './vehicle-picker.js'
+import { VehiclePicker } from './vehicle-picker'
 
 export default function CarListingPage() {
   return <VehiclePicker />
