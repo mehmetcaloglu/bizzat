@@ -1,4 +1,4 @@
-import { type Generated, type JSONColumnType, Kysely, PostgresDialect } from 'kysely'
+import { type ColumnType, type Generated, type JSONColumnType, Kysely, PostgresDialect } from 'kysely'
 import { Pool } from 'pg'
 import type { VehicleSelectionNode } from '../reference/vehicle/catalog.types.js'
 
@@ -148,6 +148,12 @@ export interface ListingsTable {
   owner_user_id: string
   listing_type_id: string
   status: Generated<string>
+  description: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  price_amount: ColumnType<string | null, string | number | null | undefined, string | number | null | undefined>
+  currency: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  province_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  district_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  neighborhood_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
   created_at: Generated<Date>
   updated_at: Generated<Date>
 }
@@ -155,6 +161,8 @@ export interface ListingsTable {
 export interface CarDetailsTable {
   listing_id: string
   vehicle_model_id: string
+  model_year: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  mileage_km: ColumnType<number | null, number | null | undefined, number | null | undefined>
 }
 
 export interface Database {
