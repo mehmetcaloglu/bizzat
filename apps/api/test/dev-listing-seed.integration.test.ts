@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { sql, type Kysely } from 'kysely'
 import { createAuth, createAuthPool } from '../src/auth/auth.js'
@@ -5,6 +6,7 @@ import { migrateAuth } from '../src/auth/auth-migrator.js'
 import { createDatabase, type Database } from '../src/db/client.js'
 import { migrateBootstrap, migrateDomain } from '../src/db/migrator.js'
 import {
+  DEVELOPMENT_CAR_LISTING_FIXTURES,
   seedDevelopmentCarListings,
   type DevelopmentCarListingFixture,
 } from '../src/modules/listings/dev-listing-seed.js'
@@ -99,6 +101,40 @@ afterAll(async () => {
 })
 
 describe('development car listing seed', () => {
+  it('keeps every default fixture resolvable by the committed small development fixtures', async () => {
+    const vehicleCatalog = JSON.parse(await readFile(
+      new URL('../../../data/reference/vehicles/fixture.catalog.json', import.meta.url),
+      'utf8',
+    )) as { models: Array<{ key: string }> }
+    const locationCatalog = JSON.parse(await readFile(
+      new URL('../../../data/reference/locations/fixture.locations.json', import.meta.url),
+      'utf8',
+    )) as {
+      provider: { code: string }
+      provinces: Array<{ sourceKey: string }>
+      districts: Array<{ sourceKey: string; provinceSourceKey: string }>
+      neighborhoods: Array<{ sourceKey: string; districtSourceKey: string }>
+    }
+
+    const modelKeys = new Set(vehicleCatalog.models.map((model) => model.key))
+
+    for (const defaultFixture of DEVELOPMENT_CAR_LISTING_FIXTURES) {
+      expect(modelKeys.has(defaultFixture.vehicleCatalogKey)).toBe(true)
+      expect(locationCatalog.provider.code).toBe(defaultFixture.location.providerCode)
+      expect(locationCatalog.provinces.some(
+        (province) => province.sourceKey === defaultFixture.location.provinceSourceKey,
+      )).toBe(true)
+      expect(locationCatalog.districts.some(
+        (district) => district.sourceKey === defaultFixture.location.districtSourceKey
+          && district.provinceSourceKey === defaultFixture.location.provinceSourceKey,
+      )).toBe(true)
+      expect(locationCatalog.neighborhoods.some(
+        (neighborhood) => neighborhood.sourceKey === defaultFixture.location.neighborhoodSourceKey
+          && neighborhood.districtSourceKey === defaultFixture.location.districtSourceKey,
+      )).toBe(true)
+    }
+  })
+
   it('upserts deterministic published fixtures without creating duplicates', async () => {
     const first = await seedDevelopmentCarListings(db, userId, 'test', [fixture])
     const second = await seedDevelopmentCarListings(db, userId, 'test', [fixture])
