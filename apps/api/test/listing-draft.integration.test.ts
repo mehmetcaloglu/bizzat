@@ -17,7 +17,7 @@ let db: Kysely<Database>
 let app: FastifyInstance
 const authPool = createAuthPool(databaseUrl)
 const auth = createAuth({ databaseUrl, baseUrl, secret }, authPool)
-const listingIds: string[] = []
+const userIds: string[] = []
 const modelIds: string[] = []
 const seriesIds: string[] = []
 const brandIds: string[] = []
@@ -39,6 +39,8 @@ async function createSignedInUser(label: string) {
     payload: { name: label, email, password },
   })
   expect(signUp.statusCode).toBe(200)
+  const userId = signUp.json().user.id as string
+  userIds.push(userId)
 
   const signIn = await app.inject({
     method: 'POST',
@@ -49,7 +51,7 @@ async function createSignedInUser(label: string) {
   expect(signIn.statusCode).toBe(200)
 
   return {
-    userId: signUp.json().user.id as string,
+    userId,
     cookie: cookieHeader(signIn.headers['set-cookie']),
   }
 }
@@ -108,10 +110,19 @@ beforeAll(async () => {
 })
 
 afterEach(async () => {
-  if (listingIds.length > 0) {
-    await db.deleteFrom('car_details').where('listing_id', 'in', listingIds.splice(0)).execute()
+  const owners = userIds.splice(0)
+  if (owners.length > 0) {
+    const ownedListings = await db
+      .selectFrom('listings')
+      .select('id')
+      .where('owner_user_id', 'in', owners)
+      .execute()
+    const ownedListingIds = ownedListings.map((listing) => listing.id)
+    if (ownedListingIds.length > 0) {
+      await db.deleteFrom('car_details').where('listing_id', 'in', ownedListingIds).execute()
+    }
+    await db.deleteFrom('listings').where('owner_user_id', 'in', owners).execute()
   }
-  await db.deleteFrom('listings').where('owner_user_id', 'is not', null).execute()
   if (modelIds.length > 0) {
     await db.deleteFrom('vehicle_models').where('id', 'in', modelIds.splice(0)).execute()
   }
@@ -154,7 +165,6 @@ describe('car sale draft API', () => {
 
     expect(response.statusCode).toBe(201)
     const body = response.json()
-    listingIds.push(body.listing.id)
     expect(body.listing).toMatchObject({
       status: 'draft',
       type: 'car_sale',
@@ -243,7 +253,6 @@ describe('car sale draft API', () => {
     })
     expect(created.statusCode).toBe(201)
     const listingId = created.json().listing.id as string
-    listingIds.push(listingId)
 
     const otherRead = await app.inject({
       method: 'GET',
