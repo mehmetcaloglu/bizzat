@@ -1,7 +1,7 @@
 import type {
   VehicleReferenceItem,
   VehicleSelectionItem,
-} from '../app/ilan-ver/otomobil/vehicle-picker-state.js'
+} from '../app/ilan-ver/otomobil/vehicle-picker-state'
 
 interface ApiErrorBody {
   error?: {
