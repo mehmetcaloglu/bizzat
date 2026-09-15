@@ -10,6 +10,7 @@ import {
   listVehicleSeries,
   type CarSaleDraftResponse,
 } from '../../../lib/api-client'
+import { CarListingDetailsForm } from './car-listing-details-form'
 import {
   clearSelectedModel,
   getPickerInteractionState,
@@ -220,7 +221,7 @@ export function VehiclePicker() {
           <p className="listing-create-eyebrow">Satılık otomobil</p>
           <h1 id="car-listing-title">Satılık otomobil ilanı</h1>
           <p className="listing-create-lead">
-            Önce aracını seç. İlanın diğer bilgilerini sonraki adımlarda tamamlayacağız.
+            Önce aracını seç. Ardından temel ilan bilgilerini aynı sayfada tamamla.
           </p>
         </div>
         <div className="selection-trail" aria-label="Seçim yolu">
@@ -388,6 +389,8 @@ export function VehiclePicker() {
           </div>
         </section>
       )}
+
+      <CarListingDetailsForm listing={draft} onSaved={setDraft} />
     </main>
   )
 }

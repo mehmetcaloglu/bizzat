@@ -21,6 +21,32 @@ export interface MeSummary {
   }
 }
 
+export interface LocationReferenceItem {
+  id: string
+  name: string
+}
+
+export interface ProvinceReferenceItem extends LocationReferenceItem {
+  code: string
+}
+
+export interface NeighborhoodReferenceItem extends LocationReferenceItem {
+  kind: string | null
+}
+
+export interface CarSaleDraftCoreDetails {
+  modelYear: number
+  mileageKm: number
+  priceAmount: number
+  currency: 'TRY'
+  description: string
+  location: {
+    province: LocationReferenceItem
+    district: LocationReferenceItem
+    neighborhood: LocationReferenceItem
+  }
+}
+
 export interface CarSaleDraftResponse {
   listing: {
     id: string
@@ -32,7 +58,18 @@ export interface CarSaleDraftResponse {
       series: VehicleReferenceItem
       selectionPath: Array<{ key: string; name: string }>
     }
+    details: CarSaleDraftCoreDetails | null
   }
+}
+
+export interface UpdateCarSaleDraftCoreDetailsInput {
+  modelYear: number
+  mileageKm: number
+  priceAmount: number
+  provinceId: string
+  districtId: string
+  neighborhoodId: string
+  description: string
 }
 
 export class ApiClientError extends Error {
@@ -106,9 +143,43 @@ export async function listVehicleSelection(
   return response.items
 }
 
+export async function listProvinces(): Promise<ProvinceReferenceItem[]> {
+  const response = await requestJson<{ items: ProvinceReferenceItem[] }>(
+    '/api/v1/reference/provinces',
+  )
+  return response.items
+}
+
+export async function listDistricts(provinceId: string): Promise<LocationReferenceItem[]> {
+  const response = await requestJson<{ items: LocationReferenceItem[] }>(
+    `/api/v1/reference/provinces/${encodeURIComponent(provinceId)}/districts`,
+  )
+  return response.items
+}
+
+export async function listNeighborhoods(districtId: string): Promise<NeighborhoodReferenceItem[]> {
+  const response = await requestJson<{ items: NeighborhoodReferenceItem[] }>(
+    `/api/v1/reference/districts/${encodeURIComponent(districtId)}/neighborhoods`,
+  )
+  return response.items
+}
+
 export function createCarSaleDraft(vehicleModelId: string): Promise<CarSaleDraftResponse> {
   return requestJson<CarSaleDraftResponse>('/api/v1/listings/car-sale/drafts', {
     method: 'POST',
     body: JSON.stringify({ vehicleModelId }),
   })
+}
+
+export function updateCarSaleDraftCoreDetails(
+  listingId: string,
+  input: UpdateCarSaleDraftCoreDetailsInput,
+): Promise<CarSaleDraftResponse> {
+  return requestJson<CarSaleDraftResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/car-sale/details`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    },
+  )
 }

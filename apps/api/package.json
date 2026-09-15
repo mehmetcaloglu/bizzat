@@ -16,7 +16,8 @@
     "reference:import:vehicle-source": "tsx src/reference/vehicle/source/source-import-cli.ts",
     "reference:apply:vehicle-mappings": "tsx src/reference/vehicle/source/mapping-apply-cli.ts",
     "reference:report:vehicle-source": "tsx src/reference/vehicle/source/source-report-cli.ts",
-    "reference:generate:vehicle-catalog": "tsx src/reference/vehicle/curation/generate-catalog-cli.ts"
+    "reference:generate:vehicle-catalog": "tsx src/reference/vehicle/curation/generate-catalog-cli.ts",
+    "listings:seed:dev": "tsx src/modules/listings/dev-listing-seed-cli.ts"
   },
   "dependencies": {
     "@bizzat/contracts": "workspace:*",

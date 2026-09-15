@@ -2,6 +2,7 @@ import { AppError } from '../common/errors/app-error.js'
 import type {
   LocationRepository,
   ReferenceDistrict,
+  ReferenceLocationPath,
   ReferenceNeighborhood,
   ReferenceProvince,
 } from './location.repository.js'
@@ -27,5 +28,13 @@ export class LocationService {
       throw new AppError(404, 'REFERENCE_PARENT_NOT_FOUND', 'Konum bulunamadı.')
     }
     return this.repository.listActiveNeighborhoods(districtId)
+  }
+
+  resolveActivePath(input: {
+    provinceId: string
+    districtId: string
+    neighborhoodId: string
+  }): Promise<ReferenceLocationPath | null> {
+    return this.repository.findActivePath(input)
   }
 }
