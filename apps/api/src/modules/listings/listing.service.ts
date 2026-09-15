@@ -56,7 +56,7 @@ export class ListingService {
       throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
     }
 
-    const vehicle = await this.vehicleCatalog.findActiveModelSummary(draft.vehicleModelId)
+    const vehicle = await this.vehicleCatalog.findModelSummary(draft.vehicleModelId)
     if (!vehicle) {
       throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
     }
