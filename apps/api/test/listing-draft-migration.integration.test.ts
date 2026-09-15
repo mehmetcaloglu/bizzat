@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import type { Kysely } from 'kysely'
+import { sql, type Kysely } from 'kysely'
 import { createAuth, createAuthPool } from '../src/auth/auth.js'
 import { migrateAuth } from '../src/auth/auth-migrator.js'
 import { createDatabase, type Database } from '../src/db/client.js'
@@ -13,6 +13,16 @@ const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
 let db: Kysely<Database>
 const authPool = createAuthPool(databaseUrl)
 const auth = createAuth({ databaseUrl, baseUrl, secret }, authPool)
+
+async function insertAuthUser(label: string): Promise<string> {
+  const id = crypto.randomUUID()
+  const email = `${label}-${Date.now()}-${id.slice(0, 8)}@example.com`
+  await sql`
+    insert into auth."user" (id, name, email, "emailVerified", "createdAt", "updatedAt")
+    values (${id}::uuid, ${label}, ${email}, false, now(), now())
+  `.execute(db)
+  return id
+}
 
 beforeAll(async () => {
   db = createDatabase(databaseUrl)
@@ -36,21 +46,7 @@ describe('listing draft persistence', () => {
 
     expect(carSale.code).toBe('car_sale')
 
-    const userId = crypto.randomUUID()
-    const email = `listing-migration-${Date.now()}@example.com`
-
-    await db
-      .insertInto('auth.user')
-      .values({
-        id: userId,
-        name: 'Listing Migration Test',
-        email,
-        emailVerified: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .execute()
-
+    const userId = await insertAuthUser('Listing Migration Test')
     const model = await db
       .selectFrom('vehicle_models')
       .select('id')
@@ -92,11 +88,12 @@ describe('listing draft persistence', () => {
       .select('id')
       .where('code', '=', 'car_sale')
       .executeTakeFirstOrThrow()
+    const userId = await insertAuthUser('Invalid Status Test')
 
     await expect(db
       .insertInto('listings')
       .values({
-        owner_user_id: crypto.randomUUID(),
+        owner_user_id: userId,
         listing_type_id: carSale.id,
         status: 'not-a-real-status',
       })
