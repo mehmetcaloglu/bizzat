@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
   clearSelectedModel,
+  getPickerInteractionState,
   initialVehiclePickerState,
+  removeUnavailableModelFromLevels,
   selectBrand,
   selectGroup,
   selectModel,
@@ -19,6 +21,12 @@ const model = {
   name: 'Evolution',
   kind: 'model' as const,
   id: 'model-1',
+}
+const siblingModel = {
+  key: 'renault:clio:1-0-tce-touch',
+  name: 'Touch',
+  kind: 'model' as const,
+  id: 'model-2',
 }
 
 function completedState() {
@@ -71,5 +79,61 @@ describe('vehicle picker state', () => {
 
     expect(state.path).toEqual([engine])
     expect(state.vehicleModelId).toBeNull()
+  })
+
+  it('locks selection while draft creation is in flight and prevents duplicate create after success', () => {
+    expect(getPickerInteractionState({
+      authenticated: true,
+      vehicleModelId: model.id,
+      isCreatingDraft: false,
+      hasCreatedDraft: false,
+    })).toEqual({
+      selectionDisabled: false,
+      canCreateDraft: true,
+    })
+
+    expect(getPickerInteractionState({
+      authenticated: true,
+      vehicleModelId: model.id,
+      isCreatingDraft: true,
+      hasCreatedDraft: false,
+    })).toEqual({
+      selectionDisabled: true,
+      canCreateDraft: false,
+    })
+
+    expect(getPickerInteractionState({
+      authenticated: true,
+      vehicleModelId: model.id,
+      isCreatingDraft: false,
+      hasCreatedDraft: true,
+    })).toEqual({
+      selectionDisabled: false,
+      canCreateDraft: false,
+    })
+  })
+
+  it('disables selection when authentication is unavailable', () => {
+    expect(getPickerInteractionState({
+      authenticated: false,
+      vehicleModelId: model.id,
+      isCreatingDraft: false,
+      hasCreatedDraft: false,
+    })).toEqual({
+      selectionDisabled: true,
+      canCreateDraft: false,
+    })
+  })
+
+  it('removes a rejected terminal model from loaded levels while preserving siblings', () => {
+    const levels = [
+      [engine],
+      [model, siblingModel],
+    ]
+
+    expect(removeUnavailableModelFromLevels(levels, model.id)).toEqual([
+      [engine],
+      [siblingModel],
+    ])
   })
 })
