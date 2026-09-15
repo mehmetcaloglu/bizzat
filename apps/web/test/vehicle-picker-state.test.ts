@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  clearSelectedModel,
   initialVehiclePickerState,
   selectBrand,
   selectGroup,
   selectModel,
   selectSeries,
-} from '../app/ilan-ver/otomobil/vehicle-picker-state.js'
+} from '../app/ilan-ver/otomobil/vehicle-picker-state'
 
 const brand = { id: 'brand-1', name: 'Renault' }
 const otherBrand = { id: 'brand-2', name: 'Volkswagen' }
@@ -63,5 +64,12 @@ describe('vehicle picker state', () => {
 
     expect(state.path).toEqual([engine, model])
     expect(state.vehicleModelId).toBe(model.id)
+  })
+
+  it('removes an unavailable terminal model while preserving its parent selection', () => {
+    const state = clearSelectedModel(completedState())
+
+    expect(state.path).toEqual([engine])
+    expect(state.vehicleModelId).toBeNull()
   })
 })
