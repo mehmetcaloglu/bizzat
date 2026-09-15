@@ -14,6 +14,17 @@ export interface ActiveVehicleSelectionModel {
   selectionPath: VehicleSelectionNode[] | null
 }
 
+export interface ActiveVehicleModelSummaryRow {
+  modelId: string
+  modelCatalogKey: string
+  modelName: string
+  selectionPath: VehicleSelectionNode[] | null
+  seriesId: string
+  seriesName: string
+  brandId: string
+  brandName: string
+}
+
 export class VehicleCatalogRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
@@ -78,5 +89,27 @@ export class VehicleCatalogRepository {
       name: row.name,
       selectionPath: row.selection_path,
     }))
+  }
+
+  async findActiveModelSummaryById(id: string): Promise<ActiveVehicleModelSummaryRow | null> {
+    return await this.db
+      .selectFrom('vehicle_models')
+      .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
+      .innerJoin('vehicle_brands', 'vehicle_brands.id', 'vehicle_series.brand_id')
+      .select([
+        'vehicle_models.id as modelId',
+        'vehicle_models.catalog_key as modelCatalogKey',
+        'vehicle_models.name as modelName',
+        'vehicle_models.selection_path as selectionPath',
+        'vehicle_series.id as seriesId',
+        'vehicle_series.name as seriesName',
+        'vehicle_brands.id as brandId',
+        'vehicle_brands.name as brandName',
+      ])
+      .where('vehicle_models.id', '=', id)
+      .where('vehicle_models.active', '=', true)
+      .where('vehicle_series.active', '=', true)
+      .where('vehicle_brands.active', '=', true)
+      .executeTakeFirst() ?? null
   }
 }
