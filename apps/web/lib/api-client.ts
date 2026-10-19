@@ -44,7 +44,14 @@ export type CarBodyType =
   | 'coupe'
   | 'cabrio'
   | 'mpv'
+  | 'roadster'
   | 'diger'
+
+export type CarVehicleCondition = 'second_hand' | 'imported_new' | 'new'
+export type CarDrivetrain = 'front' | 'rear' | 'four_wd' | 'awd'
+export type CarPlateNationality = 'tr' | 'ma'
+export type CarPaintStatus = 'original' | 'partial' | 'painted'
+export type CarReplacementStatus = 'none' | 'replaced'
 
 export interface CarSaleDraftCoreDetails {
   modelYear: number
@@ -81,8 +88,18 @@ export interface CarSaleDraftResponse {
     attributes: {
       fuelType: CarFuelType
       transmission: CarTransmission
+      vehicleCondition: CarVehicleCondition
       bodyType: CarBodyType
+      enginePowerHp: number
+      engineDisplacementCc: number
+      drivetrain: CarDrivetrain
       color: string
+      underWarranty: boolean
+      heavyDamageRecorded: boolean
+      plateNationality: CarPlateNationality
+      swapAvailable: boolean
+      paintStatus: CarPaintStatus
+      replacementStatus: CarReplacementStatus
     } | null
     contact: {
       phoneE164: string
@@ -104,7 +121,17 @@ export interface UpdateCarSaleDraftCoreDetailsInput {
   fuelType: CarFuelType
   transmission: CarTransmission
   bodyType: CarBodyType
+  vehicleCondition: CarVehicleCondition
+  enginePowerHp: number
+  engineDisplacementCc: number
+  drivetrain: CarDrivetrain
   color: string
+  underWarranty: boolean
+  heavyDamageRecorded: boolean
+  plateNationality: CarPlateNationality
+  swapAvailable: boolean
+  paintStatus: CarPaintStatus
+  replacementStatus: CarReplacementStatus
   contactPhoneE164: string
   showPhone: boolean
 }
@@ -127,8 +154,18 @@ export interface PublicCarListingItem {
   attributes: {
     fuelType: CarFuelType
     transmission: CarTransmission
+    vehicleCondition: CarVehicleCondition
     bodyType: CarBodyType
+    enginePowerHp: number
+    engineDisplacementCc: number
+    drivetrain: CarDrivetrain
     color: string
+    underWarranty: boolean
+    heavyDamageRecorded: boolean
+    plateNationality: CarPlateNationality
+    swapAvailable: boolean
+    paintStatus: CarPaintStatus
+    replacementStatus: CarReplacementStatus
   }
   imageUrl: string | null
 }
