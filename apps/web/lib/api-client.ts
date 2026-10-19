@@ -91,7 +91,7 @@ export interface CarSaleDraftResponse {
       vehicleCondition: CarVehicleCondition
       bodyType: CarBodyType
       enginePowerHp: number
-      engineDisplacementCc: number
+      engineDisplacementCc: number | null
       drivetrain: CarDrivetrain
       color: string
       underWarranty: boolean
@@ -123,7 +123,7 @@ export interface UpdateCarSaleDraftCoreDetailsInput {
   bodyType: CarBodyType
   vehicleCondition: CarVehicleCondition
   enginePowerHp: number
-  engineDisplacementCc: number
+  engineDisplacementCc: number | null
   drivetrain: CarDrivetrain
   color: string
   underWarranty: boolean
@@ -157,7 +157,7 @@ export interface PublicCarListingItem {
     vehicleCondition: CarVehicleCondition
     bodyType: CarBodyType
     enginePowerHp: number
-    engineDisplacementCc: number
+    engineDisplacementCc: number | null
     drivetrain: CarDrivetrain
     color: string
     underWarranty: boolean
