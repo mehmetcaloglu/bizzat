@@ -113,19 +113,18 @@ function mediaRoot(): string {
   return path.resolve(process.env.BIZZAT_MEDIA_ROOT ?? '.data/media')
 }
 
-function encodePublicCursor(row: { updatedAt: Date; id: string }): string {
-  return Buffer.from(JSON.stringify([row.updatedAt.toISOString(), row.id])).toString('base64url')
+function encodePublicCursor(row: { updatedAtCursor: string; id: string }): string {
+  return Buffer.from(JSON.stringify([row.updatedAtCursor, row.id])).toString('base64url')
 }
 
-function decodePublicCursor(cursor: string): { updatedAt: Date; id: string } {
+function decodePublicCursor(cursor: string): { updatedAtCursor: string; id: string } {
   try {
     const parsed = JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8')) as unknown
     if (!Array.isArray(parsed) || parsed.length !== 2) throw new Error('invalid cursor')
-    const [updatedAtRaw, id] = parsed
-    if (typeof updatedAtRaw !== 'string' || typeof id !== 'string') throw new Error('invalid cursor')
-    const updatedAt = new Date(updatedAtRaw)
-    if (Number.isNaN(updatedAt.getTime())) throw new Error('invalid cursor')
-    return { updatedAt, id }
+    const [updatedAtCursor, id] = parsed
+    if (typeof updatedAtCursor !== 'string' || typeof id !== 'string') throw new Error('invalid cursor')
+    if (!/^\d{4}-\d{2}-\d{2}/.test(updatedAtCursor)) throw new Error('invalid cursor')
+    return { updatedAtCursor, id }
   } catch {
     throw new AppError(400, 'VALIDATION_ERROR', 'Liste devam bilgisi geçersiz.')
   }
