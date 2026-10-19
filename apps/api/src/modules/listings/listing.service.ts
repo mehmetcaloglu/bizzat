@@ -113,6 +113,24 @@ function mediaRoot(): string {
   return path.resolve(process.env.BIZZAT_MEDIA_ROOT ?? '.data/media')
 }
 
+function encodePublicCursor(row: { updatedAt: Date; id: string }): string {
+  return Buffer.from(JSON.stringify([row.updatedAt.toISOString(), row.id])).toString('base64url')
+}
+
+function decodePublicCursor(cursor: string): { updatedAt: Date; id: string } {
+  try {
+    const parsed = JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8')) as unknown
+    if (!Array.isArray(parsed) || parsed.length !== 2) throw new Error('invalid cursor')
+    const [updatedAtRaw, id] = parsed
+    if (typeof updatedAtRaw !== 'string' || typeof id !== 'string') throw new Error('invalid cursor')
+    const updatedAt = new Date(updatedAtRaw)
+    if (Number.isNaN(updatedAt.getTime())) throw new Error('invalid cursor')
+    return { updatedAt, id }
+  } catch {
+    throw new AppError(400, 'VALIDATION_ERROR', 'Liste devam bilgisi geçersiz.')
+  }
+}
+
 export class ListingService {
   constructor(
     private readonly db: Kysely<Database>,
@@ -364,10 +382,15 @@ export class ListingService {
     }
   }
 
-  async listPublicCarListings(limit: number): Promise<PublicCarListingListResponse> {
-    const rows = await this.repository.listPublicCarListings(limit)
+  async listPublicCarListings(
+    limit: number,
+    cursor?: string,
+  ): Promise<PublicCarListingListResponse> {
+    const decodedCursor = cursor ? decodePublicCursor(cursor) : undefined
+    const rows = await this.repository.listPublicCarListings(limit + 1, decodedCursor)
+    const pageRows = rows.slice(0, limit)
     return {
-      items: rows.flatMap((row) => {
+      items: pageRows.flatMap((row) => {
         if (
           row.title === null
           || row.priceAmount === null
@@ -426,6 +449,9 @@ export class ListingService {
           imageUrl: row.imageId ? `/api/v1/listings/public/images/${row.imageId}` : null,
         }]
       }),
+      nextCursor: rows.length > limit && pageRows.length > 0
+        ? encodePublicCursor(pageRows[pageRows.length - 1]!)
+        : null,
     }
   }
 }
