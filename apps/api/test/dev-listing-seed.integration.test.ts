@@ -23,6 +23,11 @@ const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
 
 const listingId = '0199f000-0000-7000-8000-000000000091'
 const productionGuardListingId = '0199f000-0000-7000-8000-000000000092'
+const paginationListingIds = [
+  '0199f000-0000-7000-8000-000000000093',
+  '0199f000-0000-7000-8000-000000000094',
+  '0199f000-0000-7000-8000-000000000095',
+] as const
 let db: Kysely<Database>
 let app: FastifyInstance
 const authPool = createAuthPool(databaseUrl)
@@ -102,8 +107,9 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await app.close()
-  await db.deleteFrom('car_details').where('listing_id', 'in', [listingId, productionGuardListingId]).execute()
-  await db.deleteFrom('listings').where('id', 'in', [listingId, productionGuardListingId]).execute()
+  const cleanupListingIds = [listingId, productionGuardListingId, ...paginationListingIds]
+  await db.deleteFrom('car_details').where('listing_id', 'in', cleanupListingIds).execute()
+  await db.deleteFrom('listings').where('id', 'in', cleanupListingIds).execute()
   await sql`delete from auth."user" where id = ${userId}::uuid`.execute(db)
   await db.deleteFrom('vehicle_models').where('catalog_key', '=', fixture.vehicleCatalogKey).execute()
   await db.deleteFrom('vehicle_series').where('catalog_key', '=', 'seed-test:car').execute()
@@ -199,6 +205,37 @@ describe('development car listing seed', () => {
         color: 'Beyaz',
       }),
     }))
+  })
+
+  it('continues the public feed with a stable cursor', async () => {
+    const fixtures = paginationListingIds.map((id, index) => ({
+      ...fixture,
+      id,
+      title: `Pagination listing ${index + 1}`,
+    }))
+    await seedDevelopmentCarListings(db, userId, 'test', fixtures)
+
+    const first = await app.inject({
+      method: 'GET',
+      url: '/api/v1/listings/public/car-sale?limit=2',
+      headers: { host: 'localhost:3000' },
+    })
+    expect(first.statusCode).toBe(200)
+    expect(first.json().items).toHaveLength(2)
+    expect(first.json().nextCursor).toEqual(expect.any(String))
+
+    const second = await app.inject({
+      method: 'GET',
+      url: `/api/v1/listings/public/car-sale?limit=2&cursor=${encodeURIComponent(first.json().nextCursor)}`,
+      headers: { host: 'localhost:3000' },
+    })
+    expect(second.statusCode).toBe(200)
+
+    const seen = new Set([
+      ...first.json().items.map((item: { id: string }) => item.id),
+      ...second.json().items.map((item: { id: string }) => item.id),
+    ])
+    for (const id of paginationListingIds) expect(seen.has(id)).toBe(true)
   })
 
   it('refuses to run in production', async () => {
