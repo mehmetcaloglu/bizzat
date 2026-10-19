@@ -303,9 +303,18 @@ export async function uploadCarSaleDraftImage(
   return await response.json() as CarSaleDraftResponse
 }
 
-export async function listPublicCarListings(limit = 12): Promise<PublicCarListingItem[]> {
-  const response = await requestJson<{ items: PublicCarListingItem[] }>(
-    `/api/v1/listings/public/car-sale?limit=${encodeURIComponent(String(limit))}`,
+export interface PublicCarListingPage {
+  items: PublicCarListingItem[]
+  nextCursor: string | null
+}
+
+export function listPublicCarListings(
+  limit = 12,
+  cursor?: string,
+): Promise<PublicCarListingPage> {
+  const query = new URLSearchParams({ limit: String(limit) })
+  if (cursor) query.set('cursor', cursor)
+  return requestJson<PublicCarListingPage>(
+    `/api/v1/listings/public/car-sale?${query.toString()}`,
   )
-  return response.items
 }
