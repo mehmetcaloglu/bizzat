@@ -38,6 +38,6 @@ describe('car listing picker page', () => {
     expect(html).toContain('İletişim telefonu')
     expect(html).toContain('Fotoğraflar')
     expect(html).toContain('Fotoğraf ekle')
-    expect(html).toContain('İlanı kaydet')
+    expect(html).toContain('Taslağı kaydet')
   })
 })
