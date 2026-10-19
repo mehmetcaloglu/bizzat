@@ -64,7 +64,7 @@ function attributes(row: OwnedCarListingRow): CarSaleDraft['attributes'] {
     || !row.vehicleCondition
     || !row.bodyType
     || row.enginePowerHp === null
-    || row.engineDisplacementCc === null
+    || (row.fuelType !== 'elektrik' && row.engineDisplacementCc === null)
     || !row.drivetrain
     || !row.color
     || row.underWarranty === null
@@ -212,6 +212,16 @@ export class ListingService {
     }
 
     const color = input.color === undefined ? existing.color : input.color.trim()
+    const nextFuelType = input.fuelType ?? existing.fuelType
+    const nextEngineDisplacementCc = nextFuelType === 'elektrik'
+      ? null
+      : input.engineDisplacementCc === undefined
+        ? existing.engineDisplacementCc
+        : input.engineDisplacementCc
+    if (nextFuelType !== 'elektrik' && nextEngineDisplacementCc === null) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'Motor hacmi bu yakıt tipi için gerekli.')
+    }
+
     const phone = input.contactPhoneE164 === undefined
       ? existing.contactPhoneE164
       : input.contactPhoneE164.trim()
@@ -247,12 +257,12 @@ export class ListingService {
         listingId,
         modelYear: input.modelYear,
         mileageKm: input.mileageKm,
-        fuelType: input.fuelType ?? existing.fuelType,
+        fuelType: nextFuelType,
         transmission: input.transmission ?? existing.transmission,
         bodyType: input.bodyType ?? existing.bodyType,
         vehicleCondition: input.vehicleCondition ?? existing.vehicleCondition,
         enginePowerHp: input.enginePowerHp ?? existing.enginePowerHp,
-        engineDisplacementCc: input.engineDisplacementCc ?? existing.engineDisplacementCc,
+        engineDisplacementCc: nextEngineDisplacementCc,
         drivetrain: input.drivetrain ?? existing.drivetrain,
         color,
         underWarranty: input.underWarranty ?? existing.underWarranty,
@@ -371,7 +381,7 @@ export class ListingService {
           || row.vehicleCondition === null
           || row.bodyType === null
           || row.enginePowerHp === null
-          || row.engineDisplacementCc === null
+          || (row.fuelType !== 'elektrik' && row.engineDisplacementCc === null)
           || row.drivetrain === null
           || row.color === null
           || row.underWarranty === null
