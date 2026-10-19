@@ -1161,6 +1161,23 @@ button:disabled {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.listing-form-section {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--bizzat-border);
+}
+
+.listing-form-section h3 {
+  margin: 0;
+  color: #30414b;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.secondary-attribute-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .contact-panel {
   margin-top: 18px;
   padding: 18px;
@@ -1363,6 +1380,7 @@ button:disabled {
   }
 
   .attribute-grid,
+  .secondary-attribute-grid,
   .contact-panel {
     grid-template-columns: 1fr;
   }
