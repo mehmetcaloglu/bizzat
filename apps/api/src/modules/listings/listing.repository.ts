@@ -13,6 +13,7 @@ export interface OwnedCarListingRow {
   status: string
   listingTypeCode: string
   vehicleModelId: string
+  title: string | null
   description: string | null
   priceAmount: string | null
   currency: string | null
@@ -22,8 +23,40 @@ export interface OwnedCarListingRow {
   districtName: string | null
   neighborhoodId: string | null
   neighborhoodName: string | null
+  contactPhoneE164: string | null
+  showPhone: boolean
   modelYear: number | null
   mileageKm: number | null
+  fuelType: string | null
+  transmission: string | null
+  bodyType: string | null
+  color: string | null
+}
+
+export interface ListingImageRow {
+  id: string
+  storageKey: string
+  sortOrder: number
+  mimeType: string
+  sizeBytes: number
+}
+
+export interface PublicCarListingRow {
+  id: string
+  title: string | null
+  priceAmount: string | null
+  currency: string | null
+  modelYear: number | null
+  mileageKm: number | null
+  brandName: string
+  seriesName: string
+  provinceName: string | null
+  districtName: string | null
+  fuelType: string | null
+  transmission: string | null
+  bodyType: string | null
+  color: string | null
+  imageId: string | null
 }
 
 export class ListingRepository {
@@ -78,6 +111,7 @@ export class ListingRepository {
         'listings.status as status',
         'listing_types.code as listingTypeCode',
         'car_details.vehicle_model_id as vehicleModelId',
+        'listings.title as title',
         'listings.description as description',
         'listings.price_amount as priceAmount',
         'listings.currency as currency',
@@ -87,8 +121,14 @@ export class ListingRepository {
         'districts.name as districtName',
         'listings.neighborhood_id as neighborhoodId',
         'neighborhoods.name as neighborhoodName',
+        'listings.contact_phone_e164 as contactPhoneE164',
+        'listings.show_phone as showPhone',
         'car_details.model_year as modelYear',
         'car_details.mileage_km as mileageKm',
+        'car_details.fuel_type as fuelType',
+        'car_details.transmission as transmission',
+        'car_details.body_type as bodyType',
+        'car_details.color as color',
       ])
       .where('listings.id', '=', listingId)
       .where('listings.owner_user_id', '=', ownerUserId)
@@ -99,21 +139,27 @@ export class ListingRepository {
   async updateOwnedDraftCommonDetails(input: {
     listingId: string
     ownerUserId: string
+    title: string | null
     description: string
     priceAmount: number
     provinceId: string
     districtId: string
     neighborhoodId: string
+    contactPhoneE164: string | null
+    showPhone: boolean
   }): Promise<boolean> {
     const result = await this.db
       .updateTable('listings')
       .set({
+        title: input.title,
         description: input.description,
         price_amount: String(input.priceAmount),
         currency: 'TRY',
         province_id: input.provinceId,
         district_id: input.districtId,
         neighborhood_id: input.neighborhoodId,
+        contact_phone_e164: input.contactPhoneE164,
+        show_phone: input.showPhone,
         updated_at: sql`now()`,
       })
       .where('id', '=', input.listingId)
@@ -128,16 +174,144 @@ export class ListingRepository {
     listingId: string
     modelYear: number
     mileageKm: number
+    fuelType: string | null
+    transmission: string | null
+    bodyType: string | null
+    color: string | null
   }): Promise<boolean> {
     const result = await this.db
       .updateTable('car_details')
       .set({
         model_year: input.modelYear,
         mileage_km: input.mileageKm,
+        fuel_type: input.fuelType,
+        transmission: input.transmission,
+        body_type: input.bodyType,
+        color: input.color,
       })
       .where('listing_id', '=', input.listingId)
       .executeTakeFirst()
 
     return result.numUpdatedRows === 1n
+  }
+
+  async countImages(listingId: string): Promise<number> {
+    const row = await this.db
+      .selectFrom('listing_images')
+      .select(({ fn }) => fn.countAll<number>().as('count'))
+      .where('listing_id', '=', listingId)
+      .executeTakeFirstOrThrow()
+    return Number(row.count)
+  }
+
+  async insertImage(input: {
+    id: string
+    listingId: string
+    storageKey: string
+    sortOrder: number
+    mimeType: string
+    sizeBytes: number
+  }): Promise<void> {
+    await this.db.insertInto('listing_images').values({
+      id: input.id,
+      listing_id: input.listingId,
+      storage_key: input.storageKey,
+      sort_order: input.sortOrder,
+      mime_type: input.mimeType,
+      size_bytes: input.sizeBytes,
+    }).execute()
+  }
+
+  async listImages(listingId: string): Promise<ListingImageRow[]> {
+    return await this.db
+      .selectFrom('listing_images')
+      .select([
+        'id',
+        'storage_key as storageKey',
+        'sort_order as sortOrder',
+        'mime_type as mimeType',
+        'size_bytes as sizeBytes',
+      ])
+      .where('listing_id', '=', listingId)
+      .orderBy('sort_order', 'asc')
+      .orderBy('created_at', 'asc')
+      .execute()
+  }
+
+  async findOwnedImage(
+    ownerUserId: string,
+    listingId: string,
+    imageId: string,
+  ): Promise<ListingImageRow | null> {
+    return await this.db
+      .selectFrom('listing_images')
+      .innerJoin('listings', 'listings.id', 'listing_images.listing_id')
+      .select([
+        'listing_images.id as id',
+        'listing_images.storage_key as storageKey',
+        'listing_images.sort_order as sortOrder',
+        'listing_images.mime_type as mimeType',
+        'listing_images.size_bytes as sizeBytes',
+      ])
+      .where('listing_images.id', '=', imageId)
+      .where('listing_images.listing_id', '=', listingId)
+      .where('listings.owner_user_id', '=', ownerUserId)
+      .executeTakeFirst() ?? null
+  }
+
+  async findPublicImage(imageId: string): Promise<ListingImageRow | null> {
+    return await this.db
+      .selectFrom('listing_images')
+      .innerJoin('listings', 'listings.id', 'listing_images.listing_id')
+      .select([
+        'listing_images.id as id',
+        'listing_images.storage_key as storageKey',
+        'listing_images.sort_order as sortOrder',
+        'listing_images.mime_type as mimeType',
+        'listing_images.size_bytes as sizeBytes',
+      ])
+      .where('listing_images.id', '=', imageId)
+      .where('listings.status', '=', 'published')
+      .executeTakeFirst() ?? null
+  }
+
+  async listPublicCarListings(limit: number): Promise<PublicCarListingRow[]> {
+    return await this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .innerJoin('car_details', 'car_details.listing_id', 'listings.id')
+      .innerJoin('vehicle_models', 'vehicle_models.id', 'car_details.vehicle_model_id')
+      .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
+      .innerJoin('vehicle_brands', 'vehicle_brands.id', 'vehicle_series.brand_id')
+      .leftJoin('provinces', 'provinces.id', 'listings.province_id')
+      .leftJoin('districts', 'districts.id', 'listings.district_id')
+      .select([
+        'listings.id as id',
+        'listings.title as title',
+        'listings.price_amount as priceAmount',
+        'listings.currency as currency',
+        'car_details.model_year as modelYear',
+        'car_details.mileage_km as mileageKm',
+        'vehicle_brands.name as brandName',
+        'vehicle_series.name as seriesName',
+        'provinces.name as provinceName',
+        'districts.name as districtName',
+        'car_details.fuel_type as fuelType',
+        'car_details.transmission as transmission',
+        'car_details.body_type as bodyType',
+        'car_details.color as color',
+        sql<string | null>`(
+          select li.id::text
+          from listing_images li
+          where li.listing_id = listings.id
+          order by li.sort_order asc, li.created_at asc
+          limit 1
+        )`.as('imageId'),
+      ])
+      .where('listings.status', '=', 'published')
+      .where('listing_types.code', '=', 'car_sale')
+      .orderBy('listings.updated_at', 'desc')
+      .limit(limit)
+      .execute()
   }
 }
