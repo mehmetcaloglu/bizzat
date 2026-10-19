@@ -67,13 +67,17 @@ export async function up(db: Kysely<Database>): Promise<void> {
       id uuid primary key default uuidv7(),
       listing_id uuid not null references listings(id) on delete cascade,
       storage_key text not null unique,
+      card_storage_key text not null unique,
       sort_order integer not null default 0,
-      mime_type text not null,
+      mime_type text not null default 'image/webp',
       size_bytes integer not null,
+      width integer not null,
+      height integer not null,
       created_at timestamptz not null default now(),
       constraint listing_images_sort_order_check check (sort_order >= 0),
       constraint listing_images_size_check check (size_bytes > 0 and size_bytes <= 8000000),
-      constraint listing_images_mime_check check (mime_type in ('image/jpeg', 'image/png', 'image/webp'))
+      constraint listing_images_dimensions_check check (width > 0 and height > 0),
+      constraint listing_images_mime_check check (mime_type = 'image/webp')
     );
 
     create index listing_images_listing_sort_idx
