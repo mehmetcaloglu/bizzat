@@ -9,9 +9,14 @@ import {
   updateCarSaleDraftCoreDetails,
   uploadCarSaleDraftImage,
   type CarBodyType,
+  type CarDrivetrain,
   type CarFuelType,
+  type CarPaintStatus,
+  type CarPlateNationality,
+  type CarReplacementStatus,
   type CarSaleDraftResponse,
   type CarTransmission,
+  type CarVehicleCondition,
   type LocationReferenceItem,
   type NeighborhoodReferenceItem,
   type ProvinceReferenceItem,
@@ -36,8 +41,18 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
   const [priceAmount, setPriceAmount] = useState('')
   const [fuelType, setFuelType] = useState<CarFuelType | ''>('')
   const [transmission, setTransmission] = useState<CarTransmission | ''>('')
+  const [vehicleCondition, setVehicleCondition] = useState<CarVehicleCondition | ''>('')
   const [bodyType, setBodyType] = useState<CarBodyType | ''>('')
+  const [enginePowerHp, setEnginePowerHp] = useState('')
+  const [engineDisplacementCc, setEngineDisplacementCc] = useState('')
+  const [drivetrain, setDrivetrain] = useState<CarDrivetrain | ''>('')
   const [color, setColor] = useState('')
+  const [underWarranty, setUnderWarranty] = useState<'yes' | 'no' | ''>('')
+  const [heavyDamageRecorded, setHeavyDamageRecorded] = useState<'yes' | 'no' | ''>('')
+  const [plateNationality, setPlateNationality] = useState<CarPlateNationality | ''>('')
+  const [swapAvailable, setSwapAvailable] = useState<'yes' | 'no' | ''>('')
+  const [paintStatus, setPaintStatus] = useState<CarPaintStatus | ''>('')
+  const [replacementStatus, setReplacementStatus] = useState<CarReplacementStatus | ''>('')
   const [description, setDescription] = useState('')
   const [contactPhone, setContactPhone] = useState('')
   const [showPhone, setShowPhone] = useState(true)
@@ -62,8 +77,18 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
       setPriceAmount('')
       setFuelType('')
       setTransmission('')
+      setVehicleCondition('')
       setBodyType('')
+      setEnginePowerHp('')
+      setEngineDisplacementCc('')
+      setDrivetrain('')
       setColor('')
+      setUnderWarranty('')
+      setHeavyDamageRecorded('')
+      setPlateNationality('')
+      setSwapAvailable('')
+      setPaintStatus('')
+      setReplacementStatus('')
       setDescription('')
       setContactPhone('')
       setShowPhone(true)
@@ -88,8 +113,18 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     setPriceAmount(details ? String(details.priceAmount) : '')
     setFuelType(listing.attributes?.fuelType ?? '')
     setTransmission(listing.attributes?.transmission ?? '')
+    setVehicleCondition(listing.attributes?.vehicleCondition ?? '')
     setBodyType(listing.attributes?.bodyType ?? '')
+    setEnginePowerHp(listing.attributes ? String(listing.attributes.enginePowerHp) : '')
+    setEngineDisplacementCc(listing.attributes ? String(listing.attributes.engineDisplacementCc) : '')
+    setDrivetrain(listing.attributes?.drivetrain ?? '')
     setColor(listing.attributes?.color ?? '')
+    setUnderWarranty(listing.attributes ? (listing.attributes.underWarranty ? 'yes' : 'no') : '')
+    setHeavyDamageRecorded(listing.attributes ? (listing.attributes.heavyDamageRecorded ? 'yes' : 'no') : '')
+    setPlateNationality(listing.attributes?.plateNationality ?? '')
+    setSwapAvailable(listing.attributes ? (listing.attributes.swapAvailable ? 'yes' : 'no') : '')
+    setPaintStatus(listing.attributes?.paintStatus ?? '')
+    setReplacementStatus(listing.attributes?.replacementStatus ?? '')
     setDescription(details?.description ?? '')
     setContactPhone(listing.contact?.phoneE164 ?? '')
     setShowPhone(listing.contact?.showPhone ?? true)
@@ -173,6 +208,8 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     const parsedModelYear = Number(modelYear)
     const parsedMileageKm = Number(mileageKm)
     const parsedPriceAmount = Number(priceAmount)
+    const parsedEnginePowerHp = Number(enginePowerHp)
+    const parsedEngineDisplacementCc = Number(engineDisplacementCc)
     if (
       !Number.isInteger(parsedModelYear)
       || !Number.isInteger(parsedMileageKm)
@@ -180,8 +217,18 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
       || title.trim().length < 10
       || !fuelType
       || !transmission
+      || !vehicleCondition
       || !bodyType
+      || !Number.isInteger(parsedEnginePowerHp)
+      || !Number.isInteger(parsedEngineDisplacementCc)
+      || !drivetrain
       || color.trim().length < 2
+      || !underWarranty
+      || !heavyDamageRecorded
+      || !plateNationality
+      || !swapAvailable
+      || !paintStatus
+      || !replacementStatus
       || !/^\+90[0-9]{10}$/.test(contactPhone.trim())
       || !provinceId
       || !districtId
@@ -202,8 +249,18 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
         priceAmount: parsedPriceAmount,
         fuelType,
         transmission,
+        vehicleCondition,
         bodyType,
+        enginePowerHp: parsedEnginePowerHp,
+        engineDisplacementCc: parsedEngineDisplacementCc,
+        drivetrain,
         color: color.trim(),
+        underWarranty: underWarranty === 'yes',
+        heavyDamageRecorded: heavyDamageRecorded === 'yes',
+        plateNationality,
+        swapAvailable: swapAvailable === 'yes',
+        paintStatus,
+        replacementStatus,
         provinceId,
         districtId,
         neighborhoodId,
@@ -363,55 +420,146 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
             </label>
           </div>
 
-          <div className="listing-details-grid attribute-grid">
-            <label>
-              <span>Yakıt</span>
-              <select value={fuelType} required onChange={(event) => setFuelType(event.target.value as CarFuelType)}>
-                <option value="">Yakıt seç</option>
-                <option value="benzin">Benzin</option>
-                <option value="dizel">Dizel</option>
-                <option value="lpg">LPG</option>
-                <option value="hibrit">Hibrit</option>
-                <option value="elektrik">Elektrik</option>
-              </select>
-            </label>
+          <div className="listing-form-section">
+            <h3>Araç özellikleri</h3>
+            <div className="listing-details-grid attribute-grid">
+              <label>
+                <span>Yakıt</span>
+                <select value={fuelType} required onChange={(event) => setFuelType(event.target.value as CarFuelType)}>
+                  <option value="">Yakıt seç</option>
+                  <option value="benzin">Benzin</option>
+                  <option value="dizel">Dizel</option>
+                  <option value="lpg">Benzin & LPG</option>
+                  <option value="hibrit">Hibrit</option>
+                  <option value="elektrik">Elektrik</option>
+                </select>
+              </label>
 
-            <label>
-              <span>Vites</span>
-              <select value={transmission} required onChange={(event) => setTransmission(event.target.value as CarTransmission)}>
-                <option value="">Vites seç</option>
-                <option value="manuel">Manuel</option>
-                <option value="otomatik">Otomatik</option>
-                <option value="yari_otomatik">Yarı otomatik</option>
-              </select>
-            </label>
+              <label>
+                <span>Vites</span>
+                <select value={transmission} required onChange={(event) => setTransmission(event.target.value as CarTransmission)}>
+                  <option value="">Vites seç</option>
+                  <option value="manuel">Manuel</option>
+                  <option value="otomatik">Otomatik</option>
+                  <option value="yari_otomatik">Yarı otomatik</option>
+                </select>
+              </label>
 
-            <label>
-              <span>Kasa tipi</span>
-              <select value={bodyType} required onChange={(event) => setBodyType(event.target.value as CarBodyType)}>
-                <option value="">Kasa tipi seç</option>
-                <option value="hatchback">Hatchback</option>
-                <option value="sedan">Sedan</option>
-                <option value="station_wagon">Station Wagon</option>
-                <option value="suv">SUV</option>
-                <option value="coupe">Coupe</option>
-                <option value="cabrio">Cabrio</option>
-                <option value="mpv">MPV</option>
-                <option value="diger">Diğer</option>
-              </select>
-            </label>
+              <label>
+                <span>Araç durumu</span>
+                <select value={vehicleCondition} required onChange={(event) => setVehicleCondition(event.target.value as CarVehicleCondition)}>
+                  <option value="">Durum seç</option>
+                  <option value="second_hand">İkinci el</option>
+                  <option value="new">Sıfır</option>
+                  <option value="imported_new">Yurtdışından ithal sıfır</option>
+                </select>
+              </label>
 
-            <label>
-              <span>Renk</span>
-              <input
-                value={color}
-                minLength={2}
-                maxLength={40}
-                required
-                onChange={(event) => setColor(event.target.value)}
-                placeholder="Beyaz"
-              />
-            </label>
+              <label>
+                <span>Kasa tipi</span>
+                <select value={bodyType} required onChange={(event) => setBodyType(event.target.value as CarBodyType)}>
+                  <option value="">Kasa tipi seç</option>
+                  <option value="hatchback">Hatchback</option>
+                  <option value="sedan">Sedan</option>
+                  <option value="station_wagon">Station Wagon</option>
+                  <option value="suv">SUV</option>
+                  <option value="coupe">Coupe</option>
+                  <option value="cabrio">Cabrio</option>
+                  <option value="mpv">MPV</option>
+                  <option value="roadster">Roadster</option>
+                  <option value="diger">Diğer</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Motor gücü</span>
+                <div className="field-with-suffix">
+                  <input type="number" min={1} max={2000} required value={enginePowerHp} onChange={(event) => setEnginePowerHp(event.target.value)} placeholder="100" />
+                  <span>hp</span>
+                </div>
+              </label>
+
+              <label>
+                <span>Motor hacmi</span>
+                <div className="field-with-suffix">
+                  <input type="number" min={1} max={20000} required value={engineDisplacementCc} onChange={(event) => setEngineDisplacementCc(event.target.value)} placeholder="999" />
+                  <span>cc</span>
+                </div>
+              </label>
+
+              <label>
+                <span>Çekiş</span>
+                <select value={drivetrain} required onChange={(event) => setDrivetrain(event.target.value as CarDrivetrain)}>
+                  <option value="">Çekiş seç</option>
+                  <option value="front">Önden çekiş</option>
+                  <option value="rear">Arkadan itiş</option>
+                  <option value="four_wd">4WD (Sürekli)</option>
+                  <option value="awd">AWD (Elektronik)</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Renk</span>
+                <input value={color} minLength={2} maxLength={40} required onChange={(event) => setColor(event.target.value)} placeholder="Beyaz" />
+              </label>
+            </div>
+
+            <div className="listing-details-grid attribute-grid secondary-attribute-grid">
+              <label>
+                <span>Garanti</span>
+                <select value={underWarranty} required onChange={(event) => setUnderWarranty(event.target.value as 'yes' | 'no' | '')}>
+                  <option value="">Seç</option>
+                  <option value="yes">Evet</option>
+                  <option value="no">Hayır</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Ağır hasar kaydı</span>
+                <select value={heavyDamageRecorded} required onChange={(event) => setHeavyDamageRecorded(event.target.value as 'yes' | 'no' | '')}>
+                  <option value="">Seç</option>
+                  <option value="yes">Var</option>
+                  <option value="no">Yok</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Plaka / uyruk</span>
+                <select value={plateNationality} required onChange={(event) => setPlateNationality(event.target.value as CarPlateNationality)}>
+                  <option value="">Seç</option>
+                  <option value="tr">Türkiye (TR) plakalı</option>
+                  <option value="ma">Mavi (MA) plakalı</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Takas</span>
+                <select value={swapAvailable} required onChange={(event) => setSwapAvailable(event.target.value as 'yes' | 'no' | '')}>
+                  <option value="">Seç</option>
+                  <option value="yes">Olur</option>
+                  <option value="no">Olmaz</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Boya durumu</span>
+                <select value={paintStatus} required onChange={(event) => setPaintStatus(event.target.value as CarPaintStatus)}>
+                  <option value="">Seç</option>
+                  <option value="original">Boyasız</option>
+                  <option value="partial">Parça boyalı</option>
+                  <option value="painted">Boyalı</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Değişen parça</span>
+                <select value={replacementStatus} required onChange={(event) => setReplacementStatus(event.target.value as CarReplacementStatus)}>
+                  <option value="">Seç</option>
+                  <option value="none">Değişensiz</option>
+                  <option value="replaced">Değişen var</option>
+                </select>
+              </label>
+            </div>
           </div>
 
           <div className="listing-details-grid location-grid">
