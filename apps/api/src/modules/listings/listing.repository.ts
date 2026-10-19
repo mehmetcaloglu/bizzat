@@ -56,6 +56,7 @@ export interface ListingImageRow {
 
 export interface PublicCarListingRow {
   id: string
+  updatedAt: Date
   title: string | null
   priceAmount: string | null
   currency: string | null
@@ -131,6 +132,7 @@ export class ListingRepository {
       .leftJoin('neighborhoods', 'neighborhoods.id', 'listings.neighborhood_id')
       .select([
         'listings.id as id',
+        'listings.updated_at as updatedAt',
         'listings.status as status',
         'listing_types.code as listingTypeCode',
         'car_details.vehicle_model_id as vehicleModelId',
@@ -355,8 +357,11 @@ export class ListingRepository {
       .executeTakeFirst() ?? null
   }
 
-  async listPublicCarListings(limit: number): Promise<PublicCarListingRow[]> {
-    return await this.db
+  async listPublicCarListings(
+    limit: number,
+    cursor?: { updatedAt: Date; id: string },
+  ): Promise<PublicCarListingRow[]> {
+    let query = this.db
       .selectFrom('listings')
       .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
       .innerJoin('car_details', 'car_details.listing_id', 'listings.id')
@@ -400,7 +405,17 @@ export class ListingRepository {
       ])
       .where('listings.status', '=', 'published')
       .where('listing_types.code', '=', 'car_sale')
+
+    if (cursor) {
+      query = query.where(sql<boolean>`(
+        listings.updated_at < ${cursor.updatedAt}
+        or (listings.updated_at = ${cursor.updatedAt} and listings.id < ${cursor.id}::uuid)
+      )`)
+    }
+
+    return await query
       .orderBy('listings.updated_at', 'desc')
+      .orderBy('listings.id', 'desc')
       .limit(limit)
       .execute()
   }
