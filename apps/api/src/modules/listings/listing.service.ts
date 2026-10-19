@@ -236,7 +236,7 @@ export class ListingService {
       : input.engineDisplacementCc === undefined
         ? existing.engineDisplacementCc
         : input.engineDisplacementCc
-    if (nextFuelType !== 'elektrik' && nextEngineDisplacementCc === null) {
+    if (nextFuelType && nextFuelType !== 'elektrik' && nextEngineDisplacementCc === null) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Motor hacmi bu yakıt tipi için gerekli.')
     }
 
