@@ -1,3 +1,4 @@
+import { rm } from 'node:fs/promises'
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 import type { FastifyInstance } from 'fastify'
 import { sql, type Kysely } from 'kysely'
@@ -14,6 +15,8 @@ const databaseUrl = process.env.TEST_DATABASE_URL
 if (!databaseUrl) throw new Error('TEST_DATABASE_URL is required')
 const secret = process.env.BETTER_AUTH_SECRET ?? 'bizzat-test-auth-secret-00000000000001'
 const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
+const mediaRoot = `/tmp/bizzat-listing-media-${process.pid}`
+process.env.BIZZAT_MEDIA_ROOT = mediaRoot
 
 let db: Kysely<Database>
 let app: FastifyInstance
@@ -170,6 +173,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   await app.close()
+  await rm(mediaRoot, { recursive: true, force: true })
   await db.destroy()
   await authPool.end()
 })
@@ -194,10 +198,31 @@ describe('car sale draft core details', () => {
         districtId: istanbul.district_id,
         neighborhoodId: istanbul.neighborhood_id,
         description,
+        title: '2026 Renault Clio temiz aile aracı',
+        fuelType: 'benzin',
+        transmission: 'otomatik',
+        bodyType: 'hatchback',
+        color: 'Beyaz',
+        contactPhoneE164: '+905551234567',
+        showPhone: true,
       },
     })
 
     expect(response.statusCode).toBe(200)
+    expect(response.json().listing).toMatchObject({
+      title: '2026 Renault Clio temiz aile aracı',
+      attributes: {
+        fuelType: 'benzin',
+        transmission: 'otomatik',
+        bodyType: 'hatchback',
+        color: 'Beyaz',
+      },
+      contact: {
+        phoneE164: '+905551234567',
+        showPhone: true,
+      },
+      images: [],
+    })
     expect(response.json().listing.details).toEqual({
       modelYear: new Date().getFullYear(),
       mileageKm: 42800,
@@ -246,6 +271,38 @@ describe('car sale draft core details', () => {
       model_year: new Date().getFullYear(),
       mileage_km: 42800,
     })
+  })
+
+  it('uploads and reads an owned draft photo', async () => {
+    const user = await createSignedInUser('Photo Owner')
+    const modelId = await createCanonicalModel()
+    const listingId = await createDraft(user.cookie, modelId)
+    const bytes = Buffer.from([0xff, 0xd8, 0xff, 0xd9])
+
+    const upload = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/images`,
+      headers: {
+        cookie: user.cookie,
+        host: 'localhost:3000',
+        'content-type': 'image/jpeg',
+      },
+      payload: bytes,
+    })
+
+    expect(upload.statusCode).toBe(201)
+    expect(upload.json().listing.images).toHaveLength(1)
+    const image = upload.json().listing.images[0] as { id: string; url: string }
+    expect(image.url).toBe(`/api/v1/listings/${listingId}/images/${image.id}`)
+
+    const read = await app.inject({
+      method: 'GET',
+      url: image.url,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(read.statusCode).toBe(200)
+    expect(read.headers['content-type']).toContain('image/jpeg')
+    expect(read.rawPayload).toEqual(bytes)
   })
 
   it('rejects location ids that do not belong to the same active hierarchy', async () => {
