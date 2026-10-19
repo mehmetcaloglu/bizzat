@@ -39,6 +39,7 @@ const PublicImageParamsSchema = Type.Object({
 
 const PublicListQuerySchema = Type.Object({
   limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 30 })),
+  cursor: Type.Optional(Type.String({ minLength: 1 })),
 })
 
 export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = async (
@@ -65,7 +66,10 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
         200: PublicCarListingListResponseSchema,
       },
     },
-  }, async (request) => service.listPublicCarListings(request.query.limit ?? 12))
+  }, async (request) => service.listPublicCarListings(
+    request.query.limit ?? 12,
+    request.query.cursor,
+  ))
 
   app.get('/listings/public/images/:imageId', {
     schema: {
