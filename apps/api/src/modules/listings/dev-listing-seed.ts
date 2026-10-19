@@ -16,6 +16,13 @@ export interface DevelopmentCarListingFixture {
   mileageKm: number
   priceAmount: number
   description: string
+  title?: string
+  fuelType?: 'benzin' | 'dizel' | 'lpg' | 'hibrit' | 'elektrik'
+  transmission?: 'manuel' | 'otomatik' | 'yari_otomatik'
+  bodyType?: 'hatchback' | 'sedan' | 'station_wagon' | 'suv' | 'coupe' | 'cabrio' | 'mpv' | 'diger'
+  color?: string
+  contactPhoneE164?: string
+  showPhone?: boolean
 }
 
 export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFixture[] = [
@@ -32,6 +39,13 @@ export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFix
     mileageKm: 18500,
     priceAmount: 1250000,
     description: 'Geliştirme ortamı için oluşturulmuş örnek Clio ilanı. Bakımlı ve günlük kullanımı temsil eden sahte veridir.',
+    title: '2024 Renault Clio Evolution temiz aile aracı',
+    fuelType: 'benzin',
+    transmission: 'otomatik',
+    bodyType: 'hatchback',
+    color: 'Beyaz',
+    contactPhoneE164: '+905551110001',
+    showPhone: true,
   },
   {
     id: '0199f000-0000-7000-8000-000000000002',
@@ -46,6 +60,13 @@ export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFix
     mileageKm: 62000,
     priceAmount: 850000,
     description: 'Geliştirme ortamı için oluşturulmuş örnek Egea ilanı. Gerçek bir satıcıya veya gerçek araca ait değildir.',
+    title: '2022 Fiat Egea Easy ekonomik ve bakımlı',
+    fuelType: 'benzin',
+    transmission: 'manuel',
+    bodyType: 'sedan',
+    color: 'Gri',
+    contactPhoneE164: '+905551110002',
+    showPhone: true,
   },
   {
     id: '0199f000-0000-7000-8000-000000000003',
@@ -60,6 +81,13 @@ export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFix
     mileageKm: 31400,
     priceAmount: 1520000,
     description: 'Geliştirme ortamı için oluşturulmuş örnek Golf ilanı. Liste ve detay ekranı geliştirmesinde kullanılacak sahte veridir.',
+    title: '2023 Volkswagen Golf Style düşük kilometre',
+    fuelType: 'hibrit',
+    transmission: 'otomatik',
+    bodyType: 'hatchback',
+    color: 'Mavi',
+    contactPhoneE164: '+905551110003',
+    showPhone: false,
   },
 ]
 
@@ -152,23 +180,29 @@ export async function seedDevelopmentCarListings(
           owner_user_id: ownerUserId,
           listing_type_id: listingTypeId,
           status: 'published',
+          title: fixture.title ?? 'Geliştirme otomobil ilanı',
           description: fixture.description,
           price_amount: String(fixture.priceAmount),
           currency: 'TRY',
           province_id: location.province_id,
           district_id: location.district_id,
           neighborhood_id: location.neighborhood_id,
+          contact_phone_e164: fixture.contactPhoneE164 ?? '+905000000000',
+          show_phone: fixture.showPhone ?? false,
         })
         .onConflict((conflict) => conflict.column('id').doUpdateSet({
           owner_user_id: ownerUserId,
           listing_type_id: listingTypeId,
           status: 'published',
+          title: fixture.title ?? 'Geliştirme otomobil ilanı',
           description: fixture.description,
           price_amount: String(fixture.priceAmount),
           currency: 'TRY',
           province_id: location.province_id,
           district_id: location.district_id,
           neighborhood_id: location.neighborhood_id,
+          contact_phone_e164: fixture.contactPhoneE164 ?? '+905000000000',
+          show_phone: fixture.showPhone ?? false,
           updated_at: sql`now()`,
         }))
         .execute()
@@ -180,11 +214,19 @@ export async function seedDevelopmentCarListings(
           vehicle_model_id: vehicleModelId,
           model_year: fixture.modelYear,
           mileage_km: fixture.mileageKm,
+          fuel_type: fixture.fuelType ?? 'benzin',
+          transmission: fixture.transmission ?? 'manuel',
+          body_type: fixture.bodyType ?? 'sedan',
+          color: fixture.color ?? 'Beyaz',
         })
         .onConflict((conflict) => conflict.column('listing_id').doUpdateSet({
           vehicle_model_id: vehicleModelId,
           model_year: fixture.modelYear,
           mileage_km: fixture.mileageKm,
+          fuel_type: fixture.fuelType ?? 'benzin',
+          transmission: fixture.transmission ?? 'manuel',
+          body_type: fixture.bodyType ?? 'sedan',
+          color: fixture.color ?? 'Beyaz',
         }))
         .execute()
 
