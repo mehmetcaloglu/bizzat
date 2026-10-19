@@ -169,7 +169,17 @@ export interface CarDetailsTable {
   fuel_type: ColumnType<string | null, string | null | undefined, string | null | undefined>
   transmission: ColumnType<string | null, string | null | undefined, string | null | undefined>
   body_type: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  vehicle_condition: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  engine_power_hp: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  engine_displacement_cc: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  drivetrain: ColumnType<string | null, string | null | undefined, string | null | undefined>
   color: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  under_warranty: ColumnType<boolean | null, boolean | null | undefined, boolean | null | undefined>
+  heavy_damage_recorded: ColumnType<boolean | null, boolean | null | undefined, boolean | null | undefined>
+  plate_nationality: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  swap_available: ColumnType<boolean | null, boolean | null | undefined, boolean | null | undefined>
+  paint_status: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  replacement_status: ColumnType<string | null, string | null | undefined, string | null | undefined>
 }
 
 export interface ListingImagesTable {
