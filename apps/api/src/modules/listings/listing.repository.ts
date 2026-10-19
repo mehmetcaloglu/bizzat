@@ -426,6 +426,7 @@ export class ListingRepository {
       .leftJoin('districts', 'districts.id', 'listings.district_id')
       .select([
         'listings.id as id',
+        'listings.updated_at as updatedAt',
         'listings.title as title',
         'listings.price_amount as priceAmount',
         'listings.currency as currency',
