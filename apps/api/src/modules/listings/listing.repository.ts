@@ -56,7 +56,7 @@ export interface ListingImageRow {
 
 export interface PublicCarListingRow {
   id: string
-  updatedAt: Date
+  updatedAtCursor: string
   title: string | null
   priceAmount: string | null
   currency: string | null
@@ -413,7 +413,7 @@ export class ListingRepository {
 
   async listPublicCarListings(
     limit: number,
-    cursor?: { updatedAt: Date; id: string },
+    cursor?: { updatedAtCursor: string; id: string },
   ): Promise<PublicCarListingRow[]> {
     let query = this.db
       .selectFrom('listings')
@@ -426,7 +426,7 @@ export class ListingRepository {
       .leftJoin('districts', 'districts.id', 'listings.district_id')
       .select([
         'listings.id as id',
-        'listings.updated_at as updatedAt',
+        sql<string>`listings.updated_at::text`.as('updatedAtCursor'),
         'listings.title as title',
         'listings.price_amount as priceAmount',
         'listings.currency as currency',
@@ -463,8 +463,11 @@ export class ListingRepository {
 
     if (cursor) {
       query = query.where(sql<boolean>`(
-        listings.updated_at < ${cursor.updatedAt}
-        or (listings.updated_at = ${cursor.updatedAt} and listings.id < ${cursor.id}::uuid)
+        listings.updated_at < ${cursor.updatedAtCursor}::timestamptz
+        or (
+          listings.updated_at = ${cursor.updatedAtCursor}::timestamptz
+          and listings.id < ${cursor.id}::uuid
+        )
       )`)
     }
 
