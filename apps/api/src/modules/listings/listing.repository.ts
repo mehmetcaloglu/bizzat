@@ -46,9 +46,12 @@ export interface OwnedCarListingRow {
 export interface ListingImageRow {
   id: string
   storageKey: string
+  cardStorageKey: string
   sortOrder: number
   mimeType: string
   sizeBytes: number
+  width: number
+  height: number
 }
 
 export interface PublicCarListingRow {
@@ -245,6 +248,19 @@ export class ListingRepository {
     return result.numUpdatedRows === 1n
   }
 
+  async lockOwnedListingForImage(
+    ownerUserId: string,
+    listingId: string,
+  ): Promise<{ status: string } | null> {
+    return await this.db
+      .selectFrom('listings')
+      .select('status')
+      .where('id', '=', listingId)
+      .where('owner_user_id', '=', ownerUserId)
+      .forUpdate()
+      .executeTakeFirst() ?? null
+  }
+
   async countImages(listingId: string): Promise<number> {
     const row = await this.db
       .selectFrom('listing_images')
@@ -258,17 +274,22 @@ export class ListingRepository {
     id: string
     listingId: string
     storageKey: string
+    cardStorageKey: string
     sortOrder: number
-    mimeType: string
     sizeBytes: number
+    width: number
+    height: number
   }): Promise<void> {
     await this.db.insertInto('listing_images').values({
       id: input.id,
       listing_id: input.listingId,
       storage_key: input.storageKey,
+      card_storage_key: input.cardStorageKey,
       sort_order: input.sortOrder,
-      mime_type: input.mimeType,
+      mime_type: 'image/webp',
       size_bytes: input.sizeBytes,
+      width: input.width,
+      height: input.height,
     }).execute()
   }
 
@@ -278,9 +299,12 @@ export class ListingRepository {
       .select([
         'id',
         'storage_key as storageKey',
+        'card_storage_key as cardStorageKey',
         'sort_order as sortOrder',
         'mime_type as mimeType',
         'size_bytes as sizeBytes',
+        'width',
+        'height',
       ])
       .where('listing_id', '=', listingId)
       .orderBy('sort_order', 'asc')
@@ -299,9 +323,12 @@ export class ListingRepository {
       .select([
         'listing_images.id as id',
         'listing_images.storage_key as storageKey',
+        'listing_images.card_storage_key as cardStorageKey',
         'listing_images.sort_order as sortOrder',
         'listing_images.mime_type as mimeType',
         'listing_images.size_bytes as sizeBytes',
+        'listing_images.width as width',
+        'listing_images.height as height',
       ])
       .where('listing_images.id', '=', imageId)
       .where('listing_images.listing_id', '=', listingId)
@@ -316,9 +343,12 @@ export class ListingRepository {
       .select([
         'listing_images.id as id',
         'listing_images.storage_key as storageKey',
+        'listing_images.card_storage_key as cardStorageKey',
         'listing_images.sort_order as sortOrder',
         'listing_images.mime_type as mimeType',
         'listing_images.size_bytes as sizeBytes',
+        'listing_images.width as width',
+        'listing_images.height as height',
       ])
       .where('listing_images.id', '=', imageId)
       .where('listings.status', '=', 'published')
