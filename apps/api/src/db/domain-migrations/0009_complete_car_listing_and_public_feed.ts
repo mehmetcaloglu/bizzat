@@ -18,7 +18,17 @@ export async function up(db: Kysely<Database>): Promise<void> {
       add column fuel_type text,
       add column transmission text,
       add column body_type text,
+      add column vehicle_condition text,
+      add column engine_power_hp smallint,
+      add column engine_displacement_cc integer,
+      add column drivetrain text,
       add column color text,
+      add column under_warranty boolean,
+      add column heavy_damage_recorded boolean,
+      add column plate_nationality text,
+      add column swap_available boolean,
+      add column paint_status text,
+      add column replacement_status text,
       add constraint car_details_fuel_type_check check (
         fuel_type is null or fuel_type in ('benzin', 'dizel', 'lpg', 'hibrit', 'elektrik')
       ),
@@ -26,7 +36,28 @@ export async function up(db: Kysely<Database>): Promise<void> {
         transmission is null or transmission in ('manuel', 'otomatik', 'yari_otomatik')
       ),
       add constraint car_details_body_type_check check (
-        body_type is null or body_type in ('hatchback', 'sedan', 'station_wagon', 'suv', 'coupe', 'cabrio', 'mpv', 'diger')
+        body_type is null or body_type in ('hatchback', 'sedan', 'station_wagon', 'suv', 'coupe', 'cabrio', 'mpv', 'roadster', 'diger')
+      ),
+      add constraint car_details_vehicle_condition_check check (
+        vehicle_condition is null or vehicle_condition in ('second_hand', 'imported_new', 'new')
+      ),
+      add constraint car_details_engine_power_check check (
+        engine_power_hp is null or engine_power_hp between 1 and 2000
+      ),
+      add constraint car_details_engine_displacement_check check (
+        engine_displacement_cc is null or engine_displacement_cc between 1 and 20000
+      ),
+      add constraint car_details_drivetrain_check check (
+        drivetrain is null or drivetrain in ('front', 'rear', 'four_wd', 'awd')
+      ),
+      add constraint car_details_plate_nationality_check check (
+        plate_nationality is null or plate_nationality in ('tr', 'ma')
+      ),
+      add constraint car_details_paint_status_check check (
+        paint_status is null or paint_status in ('original', 'partial', 'painted')
+      ),
+      add constraint car_details_replacement_status_check check (
+        replacement_status is null or replacement_status in ('none', 'replaced')
       ),
       add constraint car_details_color_length_check check (
         color is null or char_length(color) between 2 and 40
@@ -56,10 +87,27 @@ export async function down(db: Kysely<Database>): Promise<void> {
 
     alter table car_details
       drop constraint if exists car_details_color_length_check,
+      drop constraint if exists car_details_replacement_status_check,
+      drop constraint if exists car_details_paint_status_check,
+      drop constraint if exists car_details_plate_nationality_check,
+      drop constraint if exists car_details_drivetrain_check,
+      drop constraint if exists car_details_engine_displacement_check,
+      drop constraint if exists car_details_engine_power_check,
+      drop constraint if exists car_details_vehicle_condition_check,
       drop constraint if exists car_details_body_type_check,
       drop constraint if exists car_details_transmission_check,
       drop constraint if exists car_details_fuel_type_check,
+      drop column if exists replacement_status,
+      drop column if exists paint_status,
+      drop column if exists swap_available,
+      drop column if exists plate_nationality,
+      drop column if exists heavy_damage_recorded,
+      drop column if exists under_warranty,
       drop column if exists color,
+      drop column if exists drivetrain,
+      drop column if exists engine_displacement_cc,
+      drop column if exists engine_power_hp,
+      drop column if exists vehicle_condition,
       drop column if exists body_type,
       drop column if exists transmission,
       drop column if exists fuel_type;
