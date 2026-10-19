@@ -318,3 +318,24 @@ export function listPublicCarListings(
     `/api/v1/listings/public/car-sale?${query.toString()}`,
   )
 }
+
+
+export function removeCarSaleDraftImage(
+  listingId: string,
+  imageId: string,
+): Promise<CarSaleDraftResponse> {
+  return requestJson<CarSaleDraftResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/images/${encodeURIComponent(imageId)}`,
+    { method: 'DELETE' },
+  )
+}
+
+export function makeCarSaleDraftImageCover(
+  listingId: string,
+  imageId: string,
+): Promise<CarSaleDraftResponse> {
+  return requestJson<CarSaleDraftResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/images/${encodeURIComponent(imageId)}/cover`,
+    { method: 'PATCH' },
+  )
+}
