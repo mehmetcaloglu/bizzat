@@ -34,6 +34,18 @@ export interface NeighborhoodReferenceItem extends LocationReferenceItem {
   kind: string | null
 }
 
+export type CarFuelType = 'benzin' | 'dizel' | 'lpg' | 'hibrit' | 'elektrik'
+export type CarTransmission = 'manuel' | 'otomatik' | 'yari_otomatik'
+export type CarBodyType =
+  | 'hatchback'
+  | 'sedan'
+  | 'station_wagon'
+  | 'suv'
+  | 'coupe'
+  | 'cabrio'
+  | 'mpv'
+  | 'diger'
+
 export interface CarSaleDraftCoreDetails {
   modelYear: number
   mileageKm: number
@@ -45,6 +57,12 @@ export interface CarSaleDraftCoreDetails {
     district: LocationReferenceItem
     neighborhood: LocationReferenceItem
   }
+}
+
+export interface ListingImageSummary {
+  id: string
+  url: string
+  sortOrder: number
 }
 
 export interface CarSaleDraftResponse {
@@ -59,6 +77,18 @@ export interface CarSaleDraftResponse {
       selectionPath: Array<{ key: string; name: string }>
     }
     details: CarSaleDraftCoreDetails | null
+    title: string | null
+    attributes: {
+      fuelType: CarFuelType
+      transmission: CarTransmission
+      bodyType: CarBodyType
+      color: string
+    } | null
+    contact: {
+      phoneE164: string
+      showPhone: boolean
+    } | null
+    images: ListingImageSummary[]
   }
 }
 
@@ -70,6 +100,37 @@ export interface UpdateCarSaleDraftCoreDetailsInput {
   districtId: string
   neighborhoodId: string
   description: string
+  title: string
+  fuelType: CarFuelType
+  transmission: CarTransmission
+  bodyType: CarBodyType
+  color: string
+  contactPhoneE164: string
+  showPhone: boolean
+}
+
+export interface PublicCarListingItem {
+  id: string
+  title: string
+  priceAmount: number
+  currency: 'TRY'
+  modelYear: number
+  mileageKm: number
+  vehicle: {
+    brandName: string
+    seriesName: string
+  }
+  location: {
+    provinceName: string
+    districtName: string
+  }
+  attributes: {
+    fuelType: CarFuelType
+    transmission: CarTransmission
+    bodyType: CarBodyType
+    color: string
+  }
+  imageUrl: string | null
 }
 
 export class ApiClientError extends Error {
@@ -83,6 +144,21 @@ export class ApiClientError extends Error {
   }
 }
 
+async function apiError(response: Response): Promise<ApiClientError> {
+  let body: ApiErrorBody | null = null
+  try {
+    body = await response.json() as ApiErrorBody
+  } catch {
+    body = null
+  }
+
+  return new ApiClientError(
+    response.status,
+    body?.error?.code ?? 'REQUEST_FAILED',
+    body?.error?.message ?? 'İstek tamamlanamadı.',
+  )
+}
+
 async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, {
     ...init,
@@ -94,21 +170,7 @@ async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
     },
   })
 
-  if (!response.ok) {
-    let body: ApiErrorBody | null = null
-    try {
-      body = await response.json() as ApiErrorBody
-    } catch {
-      body = null
-    }
-
-    throw new ApiClientError(
-      response.status,
-      body?.error?.code ?? 'REQUEST_FAILED',
-      body?.error?.message ?? 'İstek tamamlanamadı.',
-    )
-  }
-
+  if (!response.ok) throw await apiError(response)
   return await response.json() as T
 }
 
@@ -182,4 +244,31 @@ export function updateCarSaleDraftCoreDetails(
       body: JSON.stringify(input),
     },
   )
+}
+
+export async function uploadCarSaleDraftImage(
+  listingId: string,
+  file: File,
+): Promise<CarSaleDraftResponse> {
+  const response = await fetch(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/images`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': file.type,
+      },
+      body: file,
+    },
+  )
+  if (!response.ok) throw await apiError(response)
+  return await response.json() as CarSaleDraftResponse
+}
+
+export async function listPublicCarListings(limit = 12): Promise<PublicCarListingItem[]> {
+  const response = await requestJson<{ items: PublicCarListingItem[] }>(
+    `/api/v1/listings/public/car-sale?limit=${encodeURIComponent(String(limit))}`,
+  )
+  return response.items
 }
