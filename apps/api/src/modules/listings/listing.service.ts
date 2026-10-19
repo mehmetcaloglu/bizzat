@@ -362,6 +362,54 @@ export class ListingService {
     return this.getOwnedDraft(ownerUserId, listingId)
   }
 
+  async removeDraftImage(
+    ownerUserId: string,
+    listingId: string,
+    imageId: string,
+  ): Promise<CarSaleDraft> {
+    const removed = await this.db.transaction().execute(async (transaction) => {
+      const repository = new ListingRepository(transaction)
+      const locked = await repository.lockOwnedListingForImage(ownerUserId, listingId)
+      if (!locked) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+      if (locked.status !== 'draft') {
+        throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilanın fotoğrafları artık düzenlenemez.')
+      }
+
+      const image = await repository.deleteImage(listingId, imageId)
+      if (!image) throw new AppError(404, 'LISTING_NOT_FOUND', 'Fotoğraf bulunamadı.')
+      await repository.compactImageOrder(listingId, image.sortOrder)
+      return image
+    })
+
+    await Promise.all([
+      unlink(path.join(mediaRoot(), removed.storageKey)).catch(() => undefined),
+      unlink(path.join(mediaRoot(), removed.cardStorageKey)).catch(() => undefined),
+    ])
+
+    return this.getOwnedDraft(ownerUserId, listingId)
+  }
+
+  async makeDraftImageCover(
+    ownerUserId: string,
+    listingId: string,
+    imageId: string,
+  ): Promise<CarSaleDraft> {
+    await this.db.transaction().execute(async (transaction) => {
+      const repository = new ListingRepository(transaction)
+      const locked = await repository.lockOwnedListingForImage(ownerUserId, listingId)
+      if (!locked) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+      if (locked.status !== 'draft') {
+        throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilanın fotoğrafları artık düzenlenemez.')
+      }
+
+      if (!await repository.makeImageCover(listingId, imageId)) {
+        throw new AppError(404, 'LISTING_NOT_FOUND', 'Fotoğraf bulunamadı.')
+      }
+    })
+
+    return this.getOwnedDraft(ownerUserId, listingId)
+  }
+
   async readOwnedImage(ownerUserId: string, listingId: string, imageId: string) {
     const image = await this.repository.findOwnedImage(ownerUserId, listingId, imageId)
     if (!image) throw new AppError(404, 'LISTING_NOT_FOUND', 'Fotoğraf bulunamadı.')
