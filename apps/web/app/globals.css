@@ -1389,3 +1389,51 @@ button:disabled {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+
+.market-session-status,
+.market-user-name {
+  color: #687781;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.market-signout {
+  padding: 7px 10px;
+  color: #596a75;
+  background: transparent;
+  border: 1px solid var(--bizzat-border);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.market-signout:hover {
+  color: var(--bizzat-blue-strong);
+  border-color: var(--bizzat-border-strong);
+}
+
+.field-error {
+  color: var(--bizzat-error) !important;
+  font-weight: 700;
+}
+
+.public-list-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.public-list-actions button {
+  min-width: 180px;
+  padding: 11px 18px;
+  color: #315064;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border-strong);
+  font-weight: 800;
+}
+
+.public-list-state a {
+  margin-top: 8px;
+  font-weight: 800;
+  text-decoration: none;
+}
