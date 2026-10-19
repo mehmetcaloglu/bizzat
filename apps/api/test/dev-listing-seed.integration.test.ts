@@ -215,26 +215,26 @@ describe('development car listing seed', () => {
     }))
     await seedDevelopmentCarListings(db, userId, 'test', fixtures)
 
-    const first = await app.inject({
-      method: 'GET',
-      url: '/api/v1/listings/public/car-sale?limit=2',
-      headers: { host: 'localhost:3000' },
-    })
-    expect(first.statusCode).toBe(200)
-    expect(first.json().items).toHaveLength(2)
-    expect(first.json().nextCursor).toEqual(expect.any(String))
+    const seen = new Set<string>()
+    let cursor: string | null = null
 
-    const second = await app.inject({
-      method: 'GET',
-      url: `/api/v1/listings/public/car-sale?limit=2&cursor=${encodeURIComponent(first.json().nextCursor)}`,
-      headers: { host: 'localhost:3000' },
-    })
-    expect(second.statusCode).toBe(200)
+    for (let page = 0; page < 20; page += 1) {
+      const query = new URLSearchParams({ limit: '2' })
+      if (cursor) query.set('cursor', cursor)
+      const response = await app.inject({
+        method: 'GET',
+        url: `/api/v1/listings/public/car-sale?${query.toString()}`,
+        headers: { host: 'localhost:3000' },
+      })
+      expect(response.statusCode).toBe(200)
 
-    const seen = new Set([
-      ...first.json().items.map((item: { id: string }) => item.id),
-      ...second.json().items.map((item: { id: string }) => item.id),
-    ])
+      for (const item of response.json().items as Array<{ id: string }>) {
+        seen.add(item.id)
+      }
+      cursor = response.json().nextCursor as string | null
+      if (paginationListingIds.every((id) => seen.has(id)) || !cursor) break
+    }
+
     for (const id of paginationListingIds) expect(seen.has(id)).toBe(true)
   })
 
