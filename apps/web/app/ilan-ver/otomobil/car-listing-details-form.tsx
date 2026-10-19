@@ -17,14 +17,17 @@ import {
   type CarSaleDraftResponse,
   type CarTransmission,
   type CarVehicleCondition,
+  type ListingImageSummary,
   type LocationReferenceItem,
   type NeighborhoodReferenceItem,
   type ProvinceReferenceItem,
 } from '../../../lib/api-client'
+import { normalizeTurkishPhone } from './car-listing-form-state'
 
 interface CarListingDetailsFormProps {
   listing: CarSaleDraftResponse['listing'] | null
   onSaved: (listing: CarSaleDraftResponse['listing']) => void
+  onImagesSaved: (images: ListingImageSummary[]) => void
 }
 
 type LoadingTarget = 'provinces' | 'districts' | 'neighborhoods' | 'save' | null
@@ -34,7 +37,11 @@ function errorMessage(error: unknown): string {
   return 'Bilgiler kaydedilemedi. Tekrar deneyebilirsin.'
 }
 
-export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFormProps) {
+export function CarListingDetailsForm({
+  listing,
+  onSaved,
+  onImagesSaved,
+}: CarListingDetailsFormProps) {
   const [title, setTitle] = useState('')
   const [modelYear, setModelYear] = useState('')
   const [mileageKm, setMileageKm] = useState('')
@@ -55,6 +62,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
   const [replacementStatus, setReplacementStatus] = useState<CarReplacementStatus | ''>('')
   const [description, setDescription] = useState('')
   const [contactPhone, setContactPhone] = useState('')
+  const [phoneError, setPhoneError] = useState<string | null>(null)
   const [showPhone, setShowPhone] = useState(true)
   const [provinceId, setProvinceId] = useState('')
   const [districtId, setDistrictId] = useState('')
@@ -91,6 +99,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
       setReplacementStatus('')
       setDescription('')
       setContactPhone('')
+      setPhoneError(null)
       setShowPhone(true)
       setProvinceId('')
       setDistrictId('')
@@ -116,7 +125,11 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     setVehicleCondition(listing.attributes?.vehicleCondition ?? '')
     setBodyType(listing.attributes?.bodyType ?? '')
     setEnginePowerHp(listing.attributes ? String(listing.attributes.enginePowerHp) : '')
-    setEngineDisplacementCc(listing.attributes ? String(listing.attributes.engineDisplacementCc) : '')
+    setEngineDisplacementCc(
+      listing.attributes?.engineDisplacementCc === null || listing.attributes === null
+        ? ''
+        : String(listing.attributes.engineDisplacementCc),
+    )
     setDrivetrain(listing.attributes?.drivetrain ?? '')
     setColor(listing.attributes?.color ?? '')
     setUnderWarranty(listing.attributes ? (listing.attributes.underWarranty ? 'yes' : 'no') : '')
@@ -210,6 +223,8 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     const parsedPriceAmount = Number(priceAmount)
     const parsedEnginePowerHp = Number(enginePowerHp)
     const parsedEngineDisplacementCc = Number(engineDisplacementCc)
+    const normalizedPhone = normalizeTurkishPhone(contactPhone)
+    setPhoneError(null)
     if (
       !Number.isInteger(parsedModelYear)
       || !Number.isInteger(parsedMileageKm)
@@ -220,7 +235,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
       || !vehicleCondition
       || !bodyType
       || !Number.isInteger(parsedEnginePowerHp)
-      || !Number.isInteger(parsedEngineDisplacementCc)
+      || (fuelType !== 'elektrik' && !Number.isInteger(parsedEngineDisplacementCc))
       || !drivetrain
       || color.trim().length < 2
       || !underWarranty
@@ -229,11 +244,14 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
       || !swapAvailable
       || !paintStatus
       || !replacementStatus
-      || !/^\+90[0-9]{10}$/.test(contactPhone.trim())
+      || !normalizedPhone
       || !provinceId
       || !districtId
       || !neighborhoodId
     ) {
+      if (!normalizedPhone) {
+        setPhoneError('Geçerli bir Türkiye telefon numarası gir.')
+      }
       setError('Başlık, araç özellikleri, iletişim ve konum dahil tüm alanları geçerli şekilde doldur.')
       return
     }
@@ -252,7 +270,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
         vehicleCondition,
         bodyType,
         enginePowerHp: parsedEnginePowerHp,
-        engineDisplacementCc: parsedEngineDisplacementCc,
+        engineDisplacementCc: fuelType === 'elektrik' ? null : parsedEngineDisplacementCc,
         drivetrain,
         color: color.trim(),
         underWarranty: underWarranty === 'yes',
@@ -265,7 +283,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
         districtId,
         neighborhoodId,
         description,
-        contactPhoneE164: contactPhone.trim(),
+        contactPhoneE164: normalizedPhone,
         showPhone,
       })
       onSaved(response.listing)
@@ -291,7 +309,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
   }
 
   async function handlePhotos(event: ChangeEvent<HTMLInputElement>) {
-    if (!listing || uploading) return
+    if (!listing || uploading || loadingTarget === 'save') return
     const files = Array.from(event.target.files ?? [])
     event.target.value = ''
     if (files.length === 0) return
@@ -315,11 +333,9 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     setError(null)
     setMessage(null)
     try {
-      let latest = listing
       for (const file of selected) {
-        const response = await uploadCarSaleDraftImage(latest.id, file)
-        latest = response.listing
-        onSaved(latest)
+        const response = await uploadCarSaleDraftImage(listing.id, file)
+        onImagesSaved(response.listing.images)
       }
       setMessage(`${selected.length} fotoğraf eklendi.`)
     } catch (uploadError) {
@@ -425,7 +441,15 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
             <div className="listing-details-grid attribute-grid">
               <label>
                 <span>Yakıt</span>
-                <select value={fuelType} required onChange={(event) => setFuelType(event.target.value as CarFuelType)}>
+                <select
+                  value={fuelType}
+                  required
+                  onChange={(event) => {
+                    const nextFuel = event.target.value as CarFuelType
+                    setFuelType(nextFuel)
+                    if (nextFuel === 'elektrik') setEngineDisplacementCc('')
+                  }}
+                >
                   <option value="">Yakıt seç</option>
                   <option value="benzin">Benzin</option>
                   <option value="dizel">Dizel</option>
@@ -482,7 +506,16 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
               <label>
                 <span>Motor hacmi</span>
                 <div className="field-with-suffix">
-                  <input type="number" min={1} max={20000} required value={engineDisplacementCc} onChange={(event) => setEngineDisplacementCc(event.target.value)} placeholder="999" />
+                  <input
+                    type="number"
+                    min={1}
+                    max={20000}
+                    required={fuelType !== 'elektrik'}
+                    disabled={fuelType === 'elektrik'}
+                    value={engineDisplacementCc}
+                    onChange={(event) => setEngineDisplacementCc(event.target.value)}
+                    placeholder={fuelType === 'elektrik' ? 'Uygulanmaz' : '999'}
+                  />
                   <span>cc</span>
                 </div>
               </label>
@@ -633,11 +666,16 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
                 type="tel"
                 inputMode="tel"
                 required
-                pattern="\+90[0-9]{10}"
+                autoComplete="tel"
                 value={contactPhone}
-                onChange={(event) => setContactPhone(event.target.value)}
-                placeholder="+905551234567"
+                onChange={(event) => {
+                  setContactPhone(event.target.value)
+                  setPhoneError(null)
+                }}
+                placeholder="0555 123 45 67"
               />
+              <small>0 5xx xxx xx xx veya +90 5xx xxx xx xx</small>
+              {phoneError && <small className="field-error">{phoneError}</small>}
             </label>
             <label className="phone-visibility">
               <input
@@ -660,7 +698,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
               type="file"
               accept="image/jpeg,image/png,image/webp"
               multiple
-              disabled={locked || uploading}
+              disabled={locked || uploading || saving}
               onChange={(event) => void handlePhotos(event)}
             />
             {uploading ? 'Yükleniyor…' : 'Fotoğraf ekle'}
@@ -689,8 +727,8 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
             {error && <span className="listing-details-error" role="alert">{error}</span>}
             {message && <span className="listing-details-saved" role="status">{message}</span>}
           </div>
-          <button className="primary-action" type="submit" disabled={locked || saving}>
-            {saving ? 'Kaydediliyor…' : 'İlanı kaydet'}
+          <button className="primary-action" type="submit" disabled={locked || saving || uploading}>
+            {saving ? 'Kaydediliyor…' : 'Taslağı kaydet'}
           </button>
         </div>
       </form>
