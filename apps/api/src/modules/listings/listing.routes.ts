@@ -70,9 +70,6 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
   app.get('/listings/public/images/:imageId', {
     schema: {
       params: PublicImageParamsSchema,
-      response: {
-        404: ApiErrorResponseSchema,
-      },
     },
   }, async (request, reply) => {
     const image = await service.readPublicImage(request.params.imageId)
@@ -164,10 +161,6 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
   app.get('/listings/:listingId/images/:imageId', {
     schema: {
       params: ListingImageParamsSchema,
-      response: {
-        401: ApiErrorResponseSchema,
-        404: ApiErrorResponseSchema,
-      },
     },
   }, async (request, reply) => {
     const session = await getAuthSession(options.auth, request.headers)
