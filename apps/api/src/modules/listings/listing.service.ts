@@ -12,6 +12,10 @@ import type { Database } from '../../db/client.js'
 import type { LocationService } from '../../reference/location.service.js'
 import type { VehicleCatalogService } from '../../reference/vehicle/vehicle-catalog.service.js'
 import {
+  ListingImageValidationError,
+  processListingImage,
+} from './listing-media.js'
+import {
   ListingRepository,
   type ListingImageRow,
   type OwnedCarListingRow,
@@ -21,12 +25,6 @@ type CarSaleDraft = CarSaleDraftResponse['listing']
 type CarFuelType = NonNullable<CarSaleDraft['attributes']>['fuelType']
 type CarTransmission = NonNullable<CarSaleDraft['attributes']>['transmission']
 type CarBodyType = NonNullable<CarSaleDraft['attributes']>['bodyType']
-
-const imageExtensions: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-}
 
 function coreDetails(row: OwnedCarListingRow): CarSaleDraft['details'] {
   if (
@@ -278,40 +276,58 @@ export class ListingService {
     mimeType: string,
     bytes: Buffer,
   ): Promise<CarSaleDraft> {
-    const existing = await this.repository.findOwnedCarListing(ownerUserId, listingId)
-    if (!existing) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
-    if (existing.status !== 'draft') {
-      throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilana artık fotoğraf eklenemez.')
-    }
-
-    const extension = imageExtensions[mimeType]
-    if (!extension) throw new AppError(400, 'VALIDATION_ERROR', 'Desteklenmeyen fotoğraf formatı.')
-    if (bytes.length === 0 || bytes.length > 8_000_000) {
-      throw new AppError(400, 'VALIDATION_ERROR', 'Fotoğraf 8 MB veya daha küçük olmalı.')
-    }
-
-    const imageCount = await this.repository.countImages(listingId)
-    if (imageCount >= 10) {
-      throw new AppError(400, 'VALIDATION_ERROR', 'Bir ilana en fazla 10 fotoğraf ekleyebilirsin.')
+    let processed
+    try {
+      processed = await processListingImage(bytes, mimeType)
+    } catch (error) {
+      if (error instanceof ListingImageValidationError) {
+        throw new AppError(400, 'VALIDATION_ERROR', error.message)
+      }
+      throw error
     }
 
     const imageId = randomUUID()
-    const storageKey = `private/${listingId}/${imageId}.${extension}`
+    const storageKey = `private/${listingId}/${imageId}/full.webp`
+    const cardStorageKey = `private/${listingId}/${imageId}/card.webp`
     const fullPath = path.join(mediaRoot(), storageKey)
+    const cardPath = path.join(mediaRoot(), cardStorageKey)
+
     await mkdir(path.dirname(fullPath), { recursive: true })
-    await writeFile(fullPath, bytes)
+    await Promise.all([
+      writeFile(fullPath, processed.full),
+      writeFile(cardPath, processed.card),
+    ])
 
     try {
-      await this.repository.insertImage({
-        id: imageId,
-        listingId,
-        storageKey,
-        sortOrder: imageCount,
-        mimeType,
-        sizeBytes: bytes.length,
+      await this.db.transaction().execute(async (transaction) => {
+        const repository = new ListingRepository(transaction)
+        const locked = await repository.lockOwnedListingForImage(ownerUserId, listingId)
+        if (!locked) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+        if (locked.status !== 'draft') {
+          throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilana artık fotoğraf eklenemez.')
+        }
+
+        const imageCount = await repository.countImages(listingId)
+        if (imageCount >= 10) {
+          throw new AppError(400, 'VALIDATION_ERROR', 'Bir ilana en fazla 10 fotoğraf ekleyebilirsin.')
+        }
+
+        await repository.insertImage({
+          id: imageId,
+          listingId,
+          storageKey,
+          cardStorageKey,
+          sortOrder: imageCount,
+          sizeBytes: processed.full.length,
+          width: processed.width,
+          height: processed.height,
+        })
       })
     } catch (error) {
-      await unlink(fullPath).catch(() => undefined)
+      await Promise.all([
+        unlink(fullPath).catch(() => undefined),
+        unlink(cardPath).catch(() => undefined),
+      ])
       throw error
     }
 
@@ -332,7 +348,7 @@ export class ListingService {
     const image = await this.repository.findPublicImage(imageId)
     if (!image) throw new AppError(404, 'LISTING_NOT_FOUND', 'Fotoğraf bulunamadı.')
     try {
-      return { mimeType: image.mimeType, bytes: await readFile(path.join(mediaRoot(), image.storageKey)) }
+      return { mimeType: image.mimeType, bytes: await readFile(path.join(mediaRoot(), image.cardStorageKey)) }
     } catch {
       throw new AppError(404, 'LISTING_NOT_FOUND', 'Fotoğraf bulunamadı.')
     }
