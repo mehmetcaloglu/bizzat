@@ -1,13 +1,17 @@
 'use client'
 
-import { type FormEvent, useEffect, useState } from 'react'
+import { type ChangeEvent, type FormEvent, useEffect, useState } from 'react'
 import {
   ApiClientError,
   listDistricts,
   listNeighborhoods,
   listProvinces,
   updateCarSaleDraftCoreDetails,
+  uploadCarSaleDraftImage,
+  type CarBodyType,
+  type CarFuelType,
   type CarSaleDraftResponse,
+  type CarTransmission,
   type LocationReferenceItem,
   type NeighborhoodReferenceItem,
   type ProvinceReferenceItem,
@@ -26,10 +30,17 @@ function errorMessage(error: unknown): string {
 }
 
 export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFormProps) {
+  const [title, setTitle] = useState('')
   const [modelYear, setModelYear] = useState('')
   const [mileageKm, setMileageKm] = useState('')
   const [priceAmount, setPriceAmount] = useState('')
+  const [fuelType, setFuelType] = useState<CarFuelType | ''>('')
+  const [transmission, setTransmission] = useState<CarTransmission | ''>('')
+  const [bodyType, setBodyType] = useState<CarBodyType | ''>('')
+  const [color, setColor] = useState('')
   const [description, setDescription] = useState('')
+  const [contactPhone, setContactPhone] = useState('')
+  const [showPhone, setShowPhone] = useState(true)
   const [provinceId, setProvinceId] = useState('')
   const [districtId, setDistrictId] = useState('')
   const [neighborhoodId, setNeighborhoodId] = useState('')
@@ -37,6 +48,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
   const [districts, setDistricts] = useState<LocationReferenceItem[]>([])
   const [neighborhoods, setNeighborhoods] = useState<NeighborhoodReferenceItem[]>([])
   const [loadingTarget, setLoadingTarget] = useState<LoadingTarget>(null)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
@@ -44,10 +56,17 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     let cancelled = false
 
     if (!listing) {
+      setTitle('')
       setModelYear('')
       setMileageKm('')
       setPriceAmount('')
+      setFuelType('')
+      setTransmission('')
+      setBodyType('')
+      setColor('')
       setDescription('')
+      setContactPhone('')
+      setShowPhone(true)
       setProvinceId('')
       setDistrictId('')
       setNeighborhoodId('')
@@ -63,17 +82,23 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     }
 
     const details = listing.details
+    setTitle(listing.title ?? '')
     setModelYear(details ? String(details.modelYear) : '')
     setMileageKm(details ? String(details.mileageKm) : '')
     setPriceAmount(details ? String(details.priceAmount) : '')
+    setFuelType(listing.attributes?.fuelType ?? '')
+    setTransmission(listing.attributes?.transmission ?? '')
+    setBodyType(listing.attributes?.bodyType ?? '')
+    setColor(listing.attributes?.color ?? '')
     setDescription(details?.description ?? '')
+    setContactPhone(listing.contact?.phoneE164 ?? '')
+    setShowPhone(listing.contact?.showPhone ?? true)
     setProvinceId(details?.location.province.id ?? '')
     setDistrictId(details?.location.district.id ?? '')
     setNeighborhoodId(details?.location.neighborhood.id ?? '')
     setDistricts([])
     setNeighborhoods([])
     setError(null)
-    setMessage(null)
 
     async function loadLocationOptions() {
       setLoadingTarget('provinces')
@@ -101,7 +126,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     return () => {
       cancelled = true
     }
-  }, [listing?.id, listing?.details])
+  }, [listing?.id, listing?.details, listing?.title, listing?.attributes, listing?.contact])
 
   async function handleProvince(nextProvinceId: string) {
     setProvinceId(nextProvinceId)
@@ -152,11 +177,17 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
       !Number.isInteger(parsedModelYear)
       || !Number.isInteger(parsedMileageKm)
       || !Number.isInteger(parsedPriceAmount)
+      || title.trim().length < 10
+      || !fuelType
+      || !transmission
+      || !bodyType
+      || color.trim().length < 2
+      || !/^\+90[0-9]{10}$/.test(contactPhone.trim())
       || !provinceId
       || !districtId
       || !neighborhoodId
     ) {
-      setError('Tüm ilan bilgilerini geçerli değerlerle doldur.')
+      setError('Başlık, araç özellikleri, iletişim ve konum dahil tüm alanları geçerli şekilde doldur.')
       return
     }
 
@@ -165,16 +196,23 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     setLoadingTarget('save')
     try {
       const response = await updateCarSaleDraftCoreDetails(listing.id, {
+        title: title.trim(),
         modelYear: parsedModelYear,
         mileageKm: parsedMileageKm,
         priceAmount: parsedPriceAmount,
+        fuelType,
+        transmission,
+        bodyType,
+        color: color.trim(),
         provinceId,
         districtId,
         neighborhoodId,
         description,
+        contactPhoneE164: contactPhone.trim(),
+        showPhone,
       })
       onSaved(response.listing)
-      setMessage('İlan bilgileri kaydedildi.')
+      setMessage('İlan bilgileri kaydedildi. Fotoğrafları da ekleyerek taslağını tamamlayabilirsin.')
     } catch (saveError) {
       if (saveError instanceof ApiClientError && saveError.code === 'LISTING_LOCATION_INVALID') {
         setProvinceId('')
@@ -195,6 +233,45 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     }
   }
 
+  async function handlePhotos(event: ChangeEvent<HTMLInputElement>) {
+    if (!listing || uploading) return
+    const files = Array.from(event.target.files ?? [])
+    event.target.value = ''
+    if (files.length === 0) return
+
+    const remaining = Math.max(0, 10 - listing.images.length)
+    if (remaining === 0) {
+      setError('Bu ilana zaten 10 fotoğraf eklenmiş.')
+      return
+    }
+
+    const selected = files.slice(0, remaining)
+    const invalid = selected.find((file) =>
+      !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 8_000_000
+    )
+    if (invalid) {
+      setError('Fotoğraflar JPG, PNG veya WebP olmalı ve her biri en fazla 8 MB olabilir.')
+      return
+    }
+
+    setUploading(true)
+    setError(null)
+    setMessage(null)
+    try {
+      let latest = listing
+      for (const file of selected) {
+        const response = await uploadCarSaleDraftImage(latest.id, file)
+        latest = response.listing
+        onSaved(latest)
+      }
+      setMessage(`${selected.length} fotoğraf eklendi.`)
+    } catch (uploadError) {
+      setError(errorMessage(uploadError))
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const locked = listing === null
   const saving = loadingTarget === 'save'
   const maxModelYear = new Date().getFullYear() + 1
@@ -209,13 +286,27 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
           <p>
             {locked
               ? 'Önce aracını seçip taslağı oluştur. Bu alanlar sonra açılacak.'
-              : 'Aracın temel ilan bilgilerini doldur. Diğer özellikleri sonraki adımlarda ekleyeceğiz.'}
+              : 'Başlık, araç özellikleri, konum ve iletişim bilgisini tamamla; ardından fotoğraflarını ekle.'}
           </p>
         </div>
       </div>
 
       <form className="listing-details-form" onSubmit={(event) => void handleSubmit(event)}>
         <fieldset disabled={locked || saving}>
+          <label className="full-width-field">
+            <span>İlan başlığı</span>
+            <input
+              name="title"
+              minLength={10}
+              maxLength={120}
+              required
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="Örn. 2024 Renault Clio Evolution temiz aile aracı"
+            />
+            <small>{title.length}/120</small>
+          </label>
+
           <div className="listing-details-grid">
             <label>
               <span>Model yılı</span>
@@ -246,7 +337,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
                   required
                   value={mileageKm}
                   onChange={(event) => setMileageKm(event.target.value)}
-                  placeholder="45.000"
+                  placeholder="45000"
                 />
                 <span>km</span>
               </div>
@@ -265,10 +356,61 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
                   required
                   value={priceAmount}
                   onChange={(event) => setPriceAmount(event.target.value)}
-                  placeholder="1.250.000"
+                  placeholder="1250000"
                 />
                 <span>TL</span>
               </div>
+            </label>
+          </div>
+
+          <div className="listing-details-grid attribute-grid">
+            <label>
+              <span>Yakıt</span>
+              <select value={fuelType} required onChange={(event) => setFuelType(event.target.value as CarFuelType)}>
+                <option value="">Yakıt seç</option>
+                <option value="benzin">Benzin</option>
+                <option value="dizel">Dizel</option>
+                <option value="lpg">LPG</option>
+                <option value="hibrit">Hibrit</option>
+                <option value="elektrik">Elektrik</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Vites</span>
+              <select value={transmission} required onChange={(event) => setTransmission(event.target.value as CarTransmission)}>
+                <option value="">Vites seç</option>
+                <option value="manuel">Manuel</option>
+                <option value="otomatik">Otomatik</option>
+                <option value="yari_otomatik">Yarı otomatik</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Kasa tipi</span>
+              <select value={bodyType} required onChange={(event) => setBodyType(event.target.value as CarBodyType)}>
+                <option value="">Kasa tipi seç</option>
+                <option value="hatchback">Hatchback</option>
+                <option value="sedan">Sedan</option>
+                <option value="station_wagon">Station Wagon</option>
+                <option value="suv">SUV</option>
+                <option value="coupe">Coupe</option>
+                <option value="cabrio">Cabrio</option>
+                <option value="mpv">MPV</option>
+                <option value="diger">Diğer</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Renk</span>
+              <input
+                value={color}
+                minLength={2}
+                maxLength={40}
+                required
+                onChange={(event) => setColor(event.target.value)}
+                placeholder="Beyaz"
+              />
             </label>
           </div>
 
@@ -335,7 +477,63 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
             />
             <small>{description.length}/5000</small>
           </label>
+
+          <div className="contact-panel">
+            <label>
+              <span>İletişim telefonu</span>
+              <input
+                type="tel"
+                inputMode="tel"
+                required
+                pattern="\+90[0-9]{10}"
+                value={contactPhone}
+                onChange={(event) => setContactPhone(event.target.value)}
+                placeholder="+905551234567"
+              />
+            </label>
+            <label className="phone-visibility">
+              <input
+                type="checkbox"
+                checked={showPhone}
+                onChange={(event) => setShowPhone(event.target.checked)}
+              />
+              <span>Telefon numaramı ilanda göster</span>
+            </label>
+          </div>
         </fieldset>
+
+        <div className="photo-uploader" aria-disabled={locked}>
+          <div>
+            <span className="photo-uploader-title">Fotoğraflar</span>
+            <p>JPG, PNG veya WebP · fotoğraf başına en fazla 8 MB · en fazla 10 fotoğraf</p>
+          </div>
+          <label className="photo-upload-button" aria-disabled={locked || uploading}>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              disabled={locked || uploading}
+              onChange={(event) => void handlePhotos(event)}
+            />
+            {uploading ? 'Yükleniyor…' : 'Fotoğraf ekle'}
+          </label>
+        </div>
+
+        {listing && listing.images.length > 0 && (
+          <div className="photo-grid" aria-label="Yüklenen fotoğraflar">
+            {listing.images.map((image, index) => (
+              <div className="photo-tile" key={image.id}>
+                <div
+                  className="photo-tile-image"
+                  role="img"
+                  aria-label={`İlan fotoğrafı ${index + 1}`}
+                  style={{ backgroundImage: `url("${image.url}")` }}
+                />
+                <span>{index === 0 ? 'Kapak fotoğrafı' : `Fotoğraf ${index + 1}`}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="listing-details-actions">
           <div aria-live="polite">
@@ -344,7 +542,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
             {message && <span className="listing-details-saved" role="status">{message}</span>}
           </div>
           <button className="primary-action" type="submit" disabled={locked || saving}>
-            {saving ? 'Kaydediliyor…' : 'Bilgileri kaydet'}
+            {saving ? 'Kaydediliyor…' : 'İlanı kaydet'}
           </button>
         </div>
       </form>
