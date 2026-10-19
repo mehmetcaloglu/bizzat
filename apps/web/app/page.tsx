@@ -1,17 +1,11 @@
 import Link from 'next/link'
+import { MarketHeader } from './components/market-header'
 import { PublicCarListings } from './components/public-car-listings'
 
 export default function HomePage() {
   return (
     <main className="market-shell">
-      <header className="market-header">
-        <Link className="wordmark market-wordmark" href="/">bizzat</Link>
-        <nav className="market-nav" aria-label="Ana menü">
-          <Link href="/otomobil">Otomobiller</Link>
-          <Link href="/login">Giriş yap</Link>
-          <Link className="market-primary-link" href="/ilan-ver/otomobil">İlan ver</Link>
-        </nav>
-      </header>
+      <MarketHeader />
 
       <section className="market-hero">
         <div className="market-hero-copy">
@@ -27,7 +21,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="market-hero-panel">
-          <span>İlk MVP</span>
+          <span>Bireysel otomobil ilanları</span>
           <strong>Satılık otomobil</strong>
           <p>Marka-model seçimi, ilan bilgileri, fotoğraflar ve bireysel iletişim tek akışta.</p>
         </div>
