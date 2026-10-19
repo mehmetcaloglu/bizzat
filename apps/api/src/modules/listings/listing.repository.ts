@@ -295,6 +295,60 @@ export class ListingRepository {
     }).execute()
   }
 
+  async deleteImage(listingId: string, imageId: string): Promise<ListingImageRow | null> {
+    return await this.db
+      .deleteFrom('listing_images')
+      .where('listing_id', '=', listingId)
+      .where('id', '=', imageId)
+      .returning([
+        'id',
+        'storage_key as storageKey',
+        'card_storage_key as cardStorageKey',
+        'sort_order as sortOrder',
+        'mime_type as mimeType',
+        'size_bytes as sizeBytes',
+        'width',
+        'height',
+      ])
+      .executeTakeFirst() ?? null
+  }
+
+  async compactImageOrder(listingId: string, removedSortOrder: number): Promise<void> {
+    await this.db
+      .updateTable('listing_images')
+      .set({ sort_order: sql`sort_order - 1` })
+      .where('listing_id', '=', listingId)
+      .where('sort_order', '>', removedSortOrder)
+      .execute()
+  }
+
+  async makeImageCover(listingId: string, imageId: string): Promise<boolean> {
+    const image = await this.db
+      .selectFrom('listing_images')
+      .select(['id', 'sort_order as sortOrder'])
+      .where('listing_id', '=', listingId)
+      .where('id', '=', imageId)
+      .executeTakeFirst()
+
+    if (!image) return false
+    if (image.sortOrder === 0) return true
+
+    await this.db
+      .updateTable('listing_images')
+      .set({ sort_order: sql`sort_order + 1` })
+      .where('listing_id', '=', listingId)
+      .where('sort_order', '<', image.sortOrder)
+      .execute()
+
+    await this.db
+      .updateTable('listing_images')
+      .set({ sort_order: 0 })
+      .where('id', '=', imageId)
+      .execute()
+
+    return true
+  }
+
   async listImages(listingId: string): Promise<ListingImageRow[]> {
     return await this.db
       .selectFrom('listing_images')
