@@ -19,8 +19,18 @@ export interface DevelopmentCarListingFixture {
   title?: string
   fuelType?: 'benzin' | 'dizel' | 'lpg' | 'hibrit' | 'elektrik'
   transmission?: 'manuel' | 'otomatik' | 'yari_otomatik'
-  bodyType?: 'hatchback' | 'sedan' | 'station_wagon' | 'suv' | 'coupe' | 'cabrio' | 'mpv' | 'diger'
+  bodyType?: 'hatchback' | 'sedan' | 'station_wagon' | 'suv' | 'coupe' | 'cabrio' | 'mpv' | 'roadster' | 'diger'
+  vehicleCondition?: 'second_hand' | 'imported_new' | 'new'
+  enginePowerHp?: number
+  engineDisplacementCc?: number
+  drivetrain?: 'front' | 'rear' | 'four_wd' | 'awd'
   color?: string
+  underWarranty?: boolean
+  heavyDamageRecorded?: boolean
+  plateNationality?: 'tr' | 'ma'
+  swapAvailable?: boolean
+  paintStatus?: 'original' | 'partial' | 'painted'
+  replacementStatus?: 'none' | 'replaced'
   contactPhoneE164?: string
   showPhone?: boolean
 }
@@ -43,7 +53,17 @@ export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFix
     fuelType: 'benzin',
     transmission: 'otomatik',
     bodyType: 'hatchback',
+    vehicleCondition: 'second_hand',
+    enginePowerHp: 90,
+    engineDisplacementCc: 999,
+    drivetrain: 'front',
     color: 'Beyaz',
+    underWarranty: true,
+    heavyDamageRecorded: false,
+    plateNationality: 'tr',
+    swapAvailable: false,
+    paintStatus: 'original',
+    replacementStatus: 'none',
     contactPhoneE164: '+905551110001',
     showPhone: true,
   },
@@ -64,7 +84,17 @@ export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFix
     fuelType: 'benzin',
     transmission: 'manuel',
     bodyType: 'sedan',
+    vehicleCondition: 'second_hand',
+    enginePowerHp: 95,
+    engineDisplacementCc: 1368,
+    drivetrain: 'front',
     color: 'Gri',
+    underWarranty: false,
+    heavyDamageRecorded: false,
+    plateNationality: 'tr',
+    swapAvailable: true,
+    paintStatus: 'partial',
+    replacementStatus: 'none',
     contactPhoneE164: '+905551110002',
     showPhone: true,
   },
@@ -85,7 +115,17 @@ export const DEVELOPMENT_CAR_LISTING_FIXTURES: readonly DevelopmentCarListingFix
     fuelType: 'hibrit',
     transmission: 'otomatik',
     bodyType: 'hatchback',
+    vehicleCondition: 'second_hand',
+    enginePowerHp: 150,
+    engineDisplacementCc: 1498,
+    drivetrain: 'front',
     color: 'Mavi',
+    underWarranty: true,
+    heavyDamageRecorded: false,
+    plateNationality: 'tr',
+    swapAvailable: false,
+    paintStatus: 'original',
+    replacementStatus: 'none',
     contactPhoneE164: '+905551110003',
     showPhone: false,
   },
@@ -217,7 +257,17 @@ export async function seedDevelopmentCarListings(
           fuel_type: fixture.fuelType ?? 'benzin',
           transmission: fixture.transmission ?? 'manuel',
           body_type: fixture.bodyType ?? 'sedan',
+          vehicle_condition: fixture.vehicleCondition ?? 'second_hand',
+          engine_power_hp: fixture.enginePowerHp ?? 100,
+          engine_displacement_cc: fixture.engineDisplacementCc ?? 1598,
+          drivetrain: fixture.drivetrain ?? 'front',
           color: fixture.color ?? 'Beyaz',
+          under_warranty: fixture.underWarranty ?? false,
+          heavy_damage_recorded: fixture.heavyDamageRecorded ?? false,
+          plate_nationality: fixture.plateNationality ?? 'tr',
+          swap_available: fixture.swapAvailable ?? false,
+          paint_status: fixture.paintStatus ?? 'original',
+          replacement_status: fixture.replacementStatus ?? 'none',
         })
         .onConflict((conflict) => conflict.column('listing_id').doUpdateSet({
           vehicle_model_id: vehicleModelId,
@@ -226,7 +276,17 @@ export async function seedDevelopmentCarListings(
           fuel_type: fixture.fuelType ?? 'benzin',
           transmission: fixture.transmission ?? 'manuel',
           body_type: fixture.bodyType ?? 'sedan',
+          vehicle_condition: fixture.vehicleCondition ?? 'second_hand',
+          engine_power_hp: fixture.enginePowerHp ?? 100,
+          engine_displacement_cc: fixture.engineDisplacementCc ?? 1598,
+          drivetrain: fixture.drivetrain ?? 'front',
           color: fixture.color ?? 'Beyaz',
+          under_warranty: fixture.underWarranty ?? false,
+          heavy_damage_recorded: fixture.heavyDamageRecorded ?? false,
+          plate_nationality: fixture.plateNationality ?? 'tr',
+          swap_available: fixture.swapAvailable ?? false,
+          paint_status: fixture.paintStatus ?? 'original',
+          replacement_status: fixture.replacementStatus ?? 'none',
         }))
         .execute()
 
