@@ -97,7 +97,10 @@ export const CarSaleAttributesSchema = Type.Object({
   vehicleCondition: CarVehicleConditionSchema,
   bodyType: CarBodyTypeSchema,
   enginePowerHp: Type.Integer({ minimum: 1, maximum: 2000 }),
-  engineDisplacementCc: Type.Integer({ minimum: 1, maximum: 20000 }),
+  engineDisplacementCc: Type.Union([
+    Type.Integer({ minimum: 1, maximum: 20000 }),
+    Type.Null(),
+  ]),
   drivetrain: CarDrivetrainSchema,
   color: Type.String({ minLength: 2, maxLength: 40 }),
   underWarranty: Type.Boolean(),
@@ -137,7 +140,10 @@ export const UpdateCarSaleDraftCoreDetailsRequestSchema = Type.Object({
   bodyType: Type.Optional(CarBodyTypeSchema),
   vehicleCondition: Type.Optional(CarVehicleConditionSchema),
   enginePowerHp: Type.Optional(Type.Integer({ minimum: 1, maximum: 2000 })),
-  engineDisplacementCc: Type.Optional(Type.Integer({ minimum: 1, maximum: 20000 })),
+  engineDisplacementCc: Type.Optional(Type.Union([
+    Type.Integer({ minimum: 1, maximum: 20000 }),
+    Type.Null(),
+  ])),
   drivetrain: Type.Optional(CarDrivetrainSchema),
   color: Type.Optional(Type.String({ minLength: 2, maxLength: 40 })),
   underWarranty: Type.Optional(Type.Boolean()),
