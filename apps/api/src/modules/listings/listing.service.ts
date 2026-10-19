@@ -60,12 +60,38 @@ function coreDetails(row: OwnedCarListingRow): CarSaleDraft['details'] {
 }
 
 function attributes(row: OwnedCarListingRow): CarSaleDraft['attributes'] {
-  if (!row.fuelType || !row.transmission || !row.bodyType || !row.color) return null
+  if (
+    !row.fuelType
+    || !row.transmission
+    || !row.vehicleCondition
+    || !row.bodyType
+    || row.enginePowerHp === null
+    || row.engineDisplacementCc === null
+    || !row.drivetrain
+    || !row.color
+    || row.underWarranty === null
+    || row.heavyDamageRecorded === null
+    || !row.plateNationality
+    || row.swapAvailable === null
+    || !row.paintStatus
+    || !row.replacementStatus
+  ) return null
+
   return {
     fuelType: row.fuelType as CarFuelType,
     transmission: row.transmission as CarTransmission,
+    vehicleCondition: row.vehicleCondition as NonNullable<CarSaleDraft['attributes']>['vehicleCondition'],
     bodyType: row.bodyType as CarBodyType,
+    enginePowerHp: row.enginePowerHp,
+    engineDisplacementCc: row.engineDisplacementCc,
+    drivetrain: row.drivetrain as NonNullable<CarSaleDraft['attributes']>['drivetrain'],
     color: row.color,
+    underWarranty: row.underWarranty,
+    heavyDamageRecorded: row.heavyDamageRecorded,
+    plateNationality: row.plateNationality as NonNullable<CarSaleDraft['attributes']>['plateNationality'],
+    swapAvailable: row.swapAvailable,
+    paintStatus: row.paintStatus as NonNullable<CarSaleDraft['attributes']>['paintStatus'],
+    replacementStatus: row.replacementStatus as NonNullable<CarSaleDraft['attributes']>['replacementStatus'],
   }
 }
 
@@ -226,7 +252,17 @@ export class ListingService {
         fuelType: input.fuelType ?? existing.fuelType,
         transmission: input.transmission ?? existing.transmission,
         bodyType: input.bodyType ?? existing.bodyType,
+        vehicleCondition: input.vehicleCondition ?? existing.vehicleCondition,
+        enginePowerHp: input.enginePowerHp ?? existing.enginePowerHp,
+        engineDisplacementCc: input.engineDisplacementCc ?? existing.engineDisplacementCc,
+        drivetrain: input.drivetrain ?? existing.drivetrain,
         color,
+        underWarranty: input.underWarranty ?? existing.underWarranty,
+        heavyDamageRecorded: input.heavyDamageRecorded ?? existing.heavyDamageRecorded,
+        plateNationality: input.plateNationality ?? existing.plateNationality,
+        swapAvailable: input.swapAvailable ?? existing.swapAvailable,
+        paintStatus: input.paintStatus ?? existing.paintStatus,
+        replacementStatus: input.replacementStatus ?? existing.replacementStatus,
       })
       if (!detailsUpdated) {
         throw new AppError(500, 'INTERNAL_ERROR', 'İlan detayları güncellenemedi.')
@@ -316,8 +352,18 @@ export class ListingService {
           || row.districtName === null
           || row.fuelType === null
           || row.transmission === null
+          || row.vehicleCondition === null
           || row.bodyType === null
+          || row.enginePowerHp === null
+          || row.engineDisplacementCc === null
+          || row.drivetrain === null
           || row.color === null
+          || row.underWarranty === null
+          || row.heavyDamageRecorded === null
+          || row.plateNationality === null
+          || row.swapAvailable === null
+          || row.paintStatus === null
+          || row.replacementStatus === null
         ) return []
 
         return [{
@@ -338,8 +384,18 @@ export class ListingService {
           attributes: {
             fuelType: row.fuelType as CarFuelType,
             transmission: row.transmission as CarTransmission,
+            vehicleCondition: row.vehicleCondition as NonNullable<CarSaleDraft['attributes']>['vehicleCondition'],
             bodyType: row.bodyType as CarBodyType,
+            enginePowerHp: row.enginePowerHp,
+            engineDisplacementCc: row.engineDisplacementCc,
+            drivetrain: row.drivetrain as NonNullable<CarSaleDraft['attributes']>['drivetrain'],
             color: row.color,
+            underWarranty: row.underWarranty,
+            heavyDamageRecorded: row.heavyDamageRecorded,
+            plateNationality: row.plateNationality as NonNullable<CarSaleDraft['attributes']>['plateNationality'],
+            swapAvailable: row.swapAvailable,
+            paintStatus: row.paintStatus as NonNullable<CarSaleDraft['attributes']>['paintStatus'],
+            replacementStatus: row.replacementStatus as NonNullable<CarSaleDraft['attributes']>['replacementStatus'],
           },
           imageUrl: row.imageId ? `/api/v1/listings/public/images/${row.imageId}` : null,
         }]
