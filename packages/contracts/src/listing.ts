@@ -193,6 +193,7 @@ export const PublicCarListingItemSchema = Type.Object({
 
 export const PublicCarListingListResponseSchema = Type.Object({
   items: Type.Array(PublicCarListingItemSchema),
+  nextCursor: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
 })
 
 export type CreateCarSaleDraftRequest = Static<typeof CreateCarSaleDraftRequestSchema>
