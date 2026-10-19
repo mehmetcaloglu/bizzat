@@ -162,6 +162,52 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
     return reply.code(201).send({ listing })
   })
 
+  app.delete('/listings/:listingId/images/:imageId', {
+    schema: {
+      params: ListingImageParamsSchema,
+      response: {
+        200: CarSaleDraftResponseSchema,
+        401: ApiErrorResponseSchema,
+        404: ApiErrorResponseSchema,
+        409: ApiErrorResponseSchema,
+      },
+    },
+  }, async (request) => {
+    const session = await getAuthSession(options.auth, request.headers)
+    if (!session) throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
+
+    return {
+      listing: await service.removeDraftImage(
+        session.user.id,
+        request.params.listingId,
+        request.params.imageId,
+      ),
+    }
+  })
+
+  app.patch('/listings/:listingId/images/:imageId/cover', {
+    schema: {
+      params: ListingImageParamsSchema,
+      response: {
+        200: CarSaleDraftResponseSchema,
+        401: ApiErrorResponseSchema,
+        404: ApiErrorResponseSchema,
+        409: ApiErrorResponseSchema,
+      },
+    },
+  }, async (request) => {
+    const session = await getAuthSession(options.auth, request.headers)
+    if (!session) throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
+
+    return {
+      listing: await service.makeDraftImageCover(
+        session.user.id,
+        request.params.listingId,
+        request.params.imageId,
+      ),
+    }
+  })
+
   app.get('/listings/:listingId/images/:imageId', {
     schema: {
       params: ListingImageParamsSchema,
