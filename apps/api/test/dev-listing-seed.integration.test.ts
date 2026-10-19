@@ -1,7 +1,10 @@
 import { readFile } from 'node:fs/promises'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import type { FastifyInstance } from 'fastify'
 import { sql, type Kysely } from 'kysely'
 import { createAuth, createAuthPool } from '../src/auth/auth.js'
+import { buildApp } from '../src/app.js'
+import { checkDatabase } from '../src/db/check.js'
 import { migrateAuth } from '../src/auth/auth-migrator.js'
 import { createDatabase, type Database } from '../src/db/client.js'
 import { migrateBootstrap, migrateDomain } from '../src/db/migrator.js'
@@ -21,6 +24,7 @@ const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
 const listingId = '0199f000-0000-7000-8000-000000000091'
 const productionGuardListingId = '0199f000-0000-7000-8000-000000000092'
 let db: Kysely<Database>
+let app: FastifyInstance
 const authPool = createAuthPool(databaseUrl)
 const auth = createAuth({ databaseUrl, baseUrl, secret }, authPool)
 const userId = crypto.randomUUID()
@@ -46,6 +50,13 @@ beforeAll(async () => {
   await migrateBootstrap(db)
   await migrateAuth(auth)
   await migrateDomain(db)
+  app = buildApp({
+    logger: false,
+    readinessCheck: () => checkDatabase(db),
+    auth,
+    authBaseUrl: baseUrl,
+    db,
+  })
 
   await sql`
     insert into auth."user" (id, name, email, "emailVerified", "createdAt", "updatedAt")
@@ -90,6 +101,7 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  await app.close()
   await db.deleteFrom('car_details').where('listing_id', 'in', [listingId, productionGuardListingId]).execute()
   await db.deleteFrom('listings').where('id', 'in', [listingId, productionGuardListingId]).execute()
   await sql`delete from auth."user" where id = ${userId}::uuid`.execute(db)
@@ -166,6 +178,27 @@ describe('development car listing seed', () => {
       model_year: 2024,
       mileage_km: 21500,
     })
+
+    const publicResponse = await app.inject({
+      method: 'GET',
+      url: '/api/v1/listings/public/car-sale?limit=10',
+      headers: { host: 'localhost:3000' },
+    })
+    expect(publicResponse.statusCode).toBe(200)
+    expect(publicResponse.json().items).toContainEqual(expect.objectContaining({
+      id: listingId,
+      title: 'Geliştirme otomobil ilanı',
+      priceAmount: 1234000,
+      modelYear: 2024,
+      mileageKm: 21500,
+      location: expect.objectContaining({ provinceName: 'İstanbul' }),
+      attributes: expect.objectContaining({
+        fuelType: 'benzin',
+        transmission: 'manuel',
+        bodyType: 'sedan',
+        color: 'Beyaz',
+      }),
+    }))
   })
 
   it('refuses to run in production', async () => {
