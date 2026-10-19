@@ -6,6 +6,8 @@ import {
   listDistricts,
   listNeighborhoods,
   listProvinces,
+  makeCarSaleDraftImageCover,
+  removeCarSaleDraftImage,
   updateCarSaleDraftCoreDetails,
   uploadCarSaleDraftImage,
   type CarBodyType,
@@ -72,6 +74,7 @@ export function CarListingDetailsForm({
   const [neighborhoods, setNeighborhoods] = useState<NeighborhoodReferenceItem[]>([])
   const [loadingTarget, setLoadingTarget] = useState<LoadingTarget>(null)
   const [uploading, setUploading] = useState(false)
+  const [mediaActionId, setMediaActionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
@@ -342,6 +345,36 @@ export function CarListingDetailsForm({
       setError(errorMessage(uploadError))
     } finally {
       setUploading(false)
+    }
+  }
+
+  async function handleRemoveImage(imageId: string) {
+    if (!listing || mediaActionId) return
+    setMediaActionId(imageId)
+    setError(null)
+    try {
+      const response = await removeCarSaleDraftImage(listing.id, imageId)
+      onImagesSaved(response.listing.images)
+      setMessage('Fotoğraf kaldırıldı.')
+    } catch (removeError) {
+      setError(errorMessage(removeError))
+    } finally {
+      setMediaActionId(null)
+    }
+  }
+
+  async function handleMakeCover(imageId: string) {
+    if (!listing || mediaActionId) return
+    setMediaActionId(imageId)
+    setError(null)
+    try {
+      const response = await makeCarSaleDraftImageCover(listing.id, imageId)
+      onImagesSaved(response.listing.images)
+      setMessage('Kapak fotoğrafı güncellendi.')
+    } catch (coverError) {
+      setError(errorMessage(coverError))
+    } finally {
+      setMediaActionId(null)
     }
   }
 
@@ -690,7 +723,9 @@ export function CarListingDetailsForm({
 
         <div className="photo-uploader" aria-disabled={locked}>
           <div>
-            <span className="photo-uploader-title">Fotoğraflar</span>
+            <span className="photo-uploader-title">
+              Fotoğraflar {listing ? `· ${listing.images.length}/10` : ''}
+            </span>
             <p>JPG, PNG veya WebP · fotoğraf başına en fazla 8 MB · en fazla 10 fotoğraf</p>
           </div>
           <label className="photo-upload-button" aria-disabled={locked || uploading}>
@@ -698,7 +733,7 @@ export function CarListingDetailsForm({
               type="file"
               accept="image/jpeg,image/png,image/webp"
               multiple
-              disabled={locked || uploading || saving}
+              disabled={locked || uploading || saving || mediaActionId !== null}
               onChange={(event) => void handlePhotos(event)}
             />
             {uploading ? 'Yükleniyor…' : 'Fotoğraf ekle'}
@@ -716,6 +751,24 @@ export function CarListingDetailsForm({
                   style={{ backgroundImage: `url("${image.url}")` }}
                 />
                 <span>{index === 0 ? 'Kapak fotoğrafı' : `Fotoğraf ${index + 1}`}</span>
+                <div className="photo-tile-actions">
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      disabled={mediaActionId !== null}
+                      onClick={() => void handleMakeCover(image.id)}
+                    >
+                      Kapak yap
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    disabled={mediaActionId !== null}
+                    onClick={() => void handleRemoveImage(image.id)}
+                  >
+                    {mediaActionId === image.id ? 'İşleniyor…' : 'Kaldır'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -727,7 +780,11 @@ export function CarListingDetailsForm({
             {error && <span className="listing-details-error" role="alert">{error}</span>}
             {message && <span className="listing-details-saved" role="status">{message}</span>}
           </div>
-          <button className="primary-action" type="submit" disabled={locked || saving || uploading}>
+          <button
+            className="primary-action"
+            type="submit"
+            disabled={locked || saving || uploading || mediaActionId !== null}
+          >
             {saving ? 'Kaydediliyor…' : 'Taslağı kaydet'}
           </button>
         </div>
