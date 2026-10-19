@@ -30,7 +30,17 @@ export interface OwnedCarListingRow {
   fuelType: string | null
   transmission: string | null
   bodyType: string | null
+  vehicleCondition: string | null
+  enginePowerHp: number | null
+  engineDisplacementCc: number | null
+  drivetrain: string | null
   color: string | null
+  underWarranty: boolean | null
+  heavyDamageRecorded: boolean | null
+  plateNationality: string | null
+  swapAvailable: boolean | null
+  paintStatus: string | null
+  replacementStatus: string | null
 }
 
 export interface ListingImageRow {
@@ -55,7 +65,17 @@ export interface PublicCarListingRow {
   fuelType: string | null
   transmission: string | null
   bodyType: string | null
+  vehicleCondition: string | null
+  enginePowerHp: number | null
+  engineDisplacementCc: number | null
+  drivetrain: string | null
   color: string | null
+  underWarranty: boolean | null
+  heavyDamageRecorded: boolean | null
+  plateNationality: string | null
+  swapAvailable: boolean | null
+  paintStatus: string | null
+  replacementStatus: string | null
   imageId: string | null
 }
 
@@ -128,7 +148,17 @@ export class ListingRepository {
         'car_details.fuel_type as fuelType',
         'car_details.transmission as transmission',
         'car_details.body_type as bodyType',
+        'car_details.vehicle_condition as vehicleCondition',
+        'car_details.engine_power_hp as enginePowerHp',
+        'car_details.engine_displacement_cc as engineDisplacementCc',
+        'car_details.drivetrain as drivetrain',
         'car_details.color as color',
+        'car_details.under_warranty as underWarranty',
+        'car_details.heavy_damage_recorded as heavyDamageRecorded',
+        'car_details.plate_nationality as plateNationality',
+        'car_details.swap_available as swapAvailable',
+        'car_details.paint_status as paintStatus',
+        'car_details.replacement_status as replacementStatus',
       ])
       .where('listings.id', '=', listingId)
       .where('listings.owner_user_id', '=', ownerUserId)
@@ -177,7 +207,17 @@ export class ListingRepository {
     fuelType: string | null
     transmission: string | null
     bodyType: string | null
+    vehicleCondition: string | null
+    enginePowerHp: number | null
+    engineDisplacementCc: number | null
+    drivetrain: string | null
     color: string | null
+    underWarranty: boolean | null
+    heavyDamageRecorded: boolean | null
+    plateNationality: string | null
+    swapAvailable: boolean | null
+    paintStatus: string | null
+    replacementStatus: string | null
   }): Promise<boolean> {
     const result = await this.db
       .updateTable('car_details')
@@ -187,7 +227,17 @@ export class ListingRepository {
         fuel_type: input.fuelType,
         transmission: input.transmission,
         body_type: input.bodyType,
+        vehicle_condition: input.vehicleCondition,
+        engine_power_hp: input.enginePowerHp,
+        engine_displacement_cc: input.engineDisplacementCc,
+        drivetrain: input.drivetrain,
         color: input.color,
+        under_warranty: input.underWarranty,
+        heavy_damage_recorded: input.heavyDamageRecorded,
+        plate_nationality: input.plateNationality,
+        swap_available: input.swapAvailable,
+        paint_status: input.paintStatus,
+        replacement_status: input.replacementStatus,
       })
       .where('listing_id', '=', input.listingId)
       .executeTakeFirst()
@@ -299,7 +349,17 @@ export class ListingRepository {
         'car_details.fuel_type as fuelType',
         'car_details.transmission as transmission',
         'car_details.body_type as bodyType',
+        'car_details.vehicle_condition as vehicleCondition',
+        'car_details.engine_power_hp as enginePowerHp',
+        'car_details.engine_displacement_cc as engineDisplacementCc',
+        'car_details.drivetrain as drivetrain',
         'car_details.color as color',
+        'car_details.under_warranty as underWarranty',
+        'car_details.heavy_damage_recorded as heavyDamageRecorded',
+        'car_details.plate_nationality as plateNationality',
+        'car_details.swap_available as swapAvailable',
+        'car_details.paint_status as paintStatus',
+        'car_details.replacement_status as replacementStatus',
         sql<string | null>`(
           select li.id::text
           from listing_images li
