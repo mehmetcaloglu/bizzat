@@ -186,9 +186,12 @@ export interface ListingImagesTable {
   id: Generated<string>
   listing_id: string
   storage_key: string
+  card_storage_key: string
   sort_order: Generated<number>
-  mime_type: string
+  mime_type: Generated<string>
   size_bytes: number
+  width: number
+  height: number
   created_at: Generated<Date>
 }
 
