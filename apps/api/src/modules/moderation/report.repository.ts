@@ -38,14 +38,12 @@ export class ReportRepository {
   async findReportableListing(listingId: string): Promise<ReportableListingRow | null> {
     return await this.db
       .selectFrom('listings')
-      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
       .select([
         'listings.id as id',
         'listings.owner_user_id as ownerUserId',
         'listings.status as status',
       ])
       .where('listings.id', '=', listingId)
-      .where('listing_types.code', '=', 'car_sale')
       .executeTakeFirst() ?? null
   }
 
@@ -71,7 +69,6 @@ export class ReportRepository {
     let query = this.db
       .selectFrom('reports')
       .innerJoin('listings', 'listings.id', 'reports.listing_id')
-      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
       .leftJoin('provinces', 'provinces.id', 'listings.province_id')
       .leftJoin('districts', 'districts.id', 'listings.district_id')
       .select([
@@ -96,7 +93,6 @@ export class ReportRepository {
           limit 1
         )`.as('imageId'),
       ])
-      .where('listing_types.code', '=', 'car_sale')
 
     if (status) {
       query = query.where('reports.status', '=', status)

@@ -6,6 +6,12 @@ export interface VehicleAuthorityVerificationInput {
   plateNationality: string
 }
 
+export interface PropertyAuthorityVerificationInput {
+  listingId: string
+  ownerUserId: string
+  listingType: 'apartment_sale' | 'apartment_rent'
+}
+
 export type VerificationOutcome =
   | { status: 'verified'; providerReference: string | null }
   | { status: 'failed'; failureCode: string }
@@ -15,6 +21,9 @@ export interface VerificationProvider {
   readonly name: string
   verifyVehicleAuthority(
     input: VehicleAuthorityVerificationInput,
+  ): Promise<VerificationOutcome>
+  verifyPropertyAuthority(
+    input: PropertyAuthorityVerificationInput,
   ): Promise<VerificationOutcome>
 }
 
@@ -29,6 +38,15 @@ export class MockVehicleAuthorityVerificationProvider implements VerificationPro
       providerReference: `mock:${input.listingId}`,
     }
   }
+
+  async verifyPropertyAuthority(
+    input: PropertyAuthorityVerificationInput,
+  ): Promise<VerificationOutcome> {
+    return {
+      status: 'verified',
+      providerReference: `mock:property:${input.listingId}`,
+    }
+  }
 }
 
 export class UnavailableVerificationProvider implements VerificationProvider {
@@ -37,6 +55,13 @@ export class UnavailableVerificationProvider implements VerificationProvider {
   constructor(private readonly failureCode = 'EIDS_PROVIDER_NOT_CONFIGURED') {}
 
   async verifyVehicleAuthority(): Promise<VerificationOutcome> {
+    return {
+      status: 'unavailable',
+      failureCode: this.failureCode,
+    }
+  }
+
+  async verifyPropertyAuthority(): Promise<VerificationOutcome> {
     return {
       status: 'unavailable',
       failureCode: this.failureCode,

@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ilan oluşturma/yayınlama + kendi ilanlarım + filtre/sıralamalı public feed/detay + ilan raporlama ve minimum moderasyon |
+| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ve daire ilan oluşturma/yayınlama + kendi ilanlarım + filtre/sıralamalı public feed/detay + ilan raporlama ve minimum moderasyon |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -42,9 +42,11 @@ Ana sayfa, liste/filtreleme, ilan detayı, auth, ilan oluşturma, EİDS/yetki ka
 
 Ayrıntı: [docs/MVP_SCOPE.md](docs/MVP_SCOPE.md).
 
-## Satılık Otomobil ilan akışı
+## İlan akışları
 
-Otomobil tarafında ilk dikey dilim çalışır durumdadır:
+### Otomobil
+
+Otomobil dikey dilimi çalışır durumdadır:
 
 - `/ilan-ver/otomobil` altında canonical araç seçimi, ilan bilgileri ve fotoğraf yükleme,
 - `/ilanlarim` üzerinde kullanıcının kendi taslak, yayın ve pasif ilanlarını görüp yönetmesi,
@@ -56,6 +58,18 @@ Otomobil tarafında ilk dikey dilim çalışır durumdadır:
 - public ilan detayında “İlanı raporla” formu,
 - `/moderasyon/raporlar` üzerinde moderatör rapor kuyruğu, not girme, raporu reddetme ve ilanı yayından kaldırma.
 
+### Daire
+
+Satılık ve kiralık daire dikey dilimi çalışır durumdadır:
+
+- `/ilan-ver/daire` altında işlem türü seçimi, daire bilgileri, konum, iletişim ve fotoğraf yükleme,
+- `/ilan-ver/daire?draft=<id>` ile taslak düzenleme,
+- `/daire` üzerinde satılık/kiralık geçişli public feed; konum, fiyat, oda sayısı, m², bina yaşı, ısıtma, otopark, eşyalı ve site filtreleri; fiyat/m² sıralaması,
+- `/daire/:listingId` üzerinde public detay, fotoğraf galerisi, daire özellikleri ve telefonu gösterme akışı,
+- `/ilanlarim` üzerinde daire taslaklarını düzenleme, yayınlama ve yayından kaldırma.
+
+Satılıkta krediye uygunluk ve takas; kiralamada depozito alanı işlem türüne bağlıdır. Yayın öncesi daire bilgileri, aktif konum, telefon ve en az bir fotoğraf kontrol edilir.
+
 Public API yüzeyi:
 
 - `GET /api/v1/listings/public/car-sale` — cursor pagination’lı feed
@@ -63,14 +77,25 @@ Public API yüzeyi:
 - `GET /api/v1/listings/public/car-sale/:listingId/contact` — yalnız `showPhone` açıksa telefon
 - `GET /api/v1/listings/public/images/:imageId` — işlenmiş kart görseli
 - `GET /api/v1/listings/public/images/:imageId/full` — işlenmiş detay görseli
+- `GET /api/v1/listings/public/apartment` — `transactionType=sale|rent` daire feed’i
+- `GET /api/v1/listings/public/apartment/:listingId` — daire detayı
+- `GET /api/v1/listings/public/apartment/:listingId/contact` — yalnız `showPhone` açıksa telefon
 
-Feed filtreleri: `brandId`, `seriesId`, `modelId`, `provinceId`, `districtId`, `minPrice`, `maxPrice`, `minYear`, `maxYear`, `minMileageKm`, `maxMileageKm`, `fuelType`, `transmission`, `bodyType`, `drivetrain`, `vehicleCondition`, `color`, `q`, `swapAvailable`, `listedWithinDays`. Sıralamalar: `newest` (varsayılan), `oldest`, `price_asc`, `price_desc`, `mileage_asc`, `mileage_desc`, `year_asc`, `year_desc`. Cursor seçilen sıralama ve filtrelere göre üretilir; aynı cursor farklı sıralama veya filtreyle reddedilir.
+Otomobil feed filtreleri: `brandId`, `seriesId`, `modelId`, `provinceId`, `districtId`, `minPrice`, `maxPrice`, `minYear`, `maxYear`, `minMileageKm`, `maxMileageKm`, `fuelType`, `transmission`, `bodyType`, `drivetrain`, `vehicleCondition`, `color`, `q`, `swapAvailable`, `listedWithinDays`. Sıralamalar: `newest` (varsayılan), `oldest`, `price_asc`, `price_desc`, `mileage_asc`, `mileage_desc`, `year_asc`, `year_desc`.
+
+Daire feed filtreleri: `transactionType`, `provinceId`, `districtId`, `minPrice`, `maxPrice`, `roomCount`, `minGrossM2`, `maxGrossM2`, `minBuildingAge`, `maxBuildingAge`, `minFloor`, `maxFloor`, `heating`, `bathroomCount`, `furnished`, `inSite`, `parking`, `creditEligible`, `swapAvailable`, `q`, `listedWithinDays`. Sıralamalar: `newest`, `oldest`, `price_asc`, `price_desc`, `gross_m2_asc`, `gross_m2_desc`. Her iki feed’de cursor seçilen sıralama ve filtrelere göre üretilir; aynı cursor farklı sıralama veya filtreyle reddedilir.
 
 Authenticated yönetim yüzeyi:
 
-- `GET /api/v1/me/listings` — kullanıcının tüm otomobil ilanları ve durumları
-- `POST /api/v1/listings/:listingId/publish` — taslak/pasif ilanı doğrulama sonrası yayınlar
-- `POST /api/v1/listings/:listingId/unpublish` — yayındaki ilanı pasife alır
+- `GET /api/v1/me/listings` — kullanıcının otomobil ilanları ve durumları
+- `POST /api/v1/listings/:listingId/publish` — otomobil taslağını/pasif ilanını doğrulama sonrası yayınlar
+- `POST /api/v1/listings/:listingId/unpublish` — yayındaki otomobil ilanını pasife alır
+- `GET /api/v1/me/apartment-listings` — kullanıcının daire ilanları ve durumları
+- `POST /api/v1/listings/apartment/drafts` — `{ transactionType: sale|rent }` taslak oluşturur
+- `PATCH /api/v1/listings/:listingId/apartment-details` — daire bilgilerini kaydeder
+- `POST /api/v1/listings/:listingId/apartment/images` — daire fotoğrafı yükler
+- `POST /api/v1/listings/:listingId/apartment/publish` — daire ilanını doğrulama sonrası yayınlar
+- `POST /api/v1/listings/:listingId/apartment/unpublish` — yayındaki daire ilanını pasife alır
 
 Raporlama ve moderasyon yüzeyi:
 
@@ -82,9 +107,9 @@ Rapor nedenleri: `fraud`, `wrong_category`, `prohibited`, `duplicate`, `misleadi
 
 Telefon numarası detay yanıtına konmaz; yalnız açık kullanıcı tercihi varsa ayrı contact endpoint’inden döner. Public görseller metadata’dan arındırılmış WebP varyantlarıdır.
 
-EİDS doğrulaması `VerificationProvider` sınırı arkasındadır. Local/test ortamında explicit `EIDS_PROVIDER=mock` kullanılabilir. Production’da mock provider reddedilir; gerçek provider yoksa veya doğrulama başarısız/kullanılamazsa ilan yayınlanmaz (`fail closed`). Her deneme `verification_checks` tablosuna minimal sonuç olarak yazılır; ham provider yanıtı saklanmaz.
+EİDS doğrulaması `VerificationProvider` sınırı arkasındadır; otomobil için `vehicle_authority`, daire için `property_authority` kontrolü çalışır. Local/test ortamında explicit `EIDS_PROVIDER=mock` kullanılabilir. Production’da mock provider reddedilir; gerçek provider yoksa veya doğrulama başarısız/kullanılamazsa ilan yayınlanmaz (`fail closed`). Her deneme `verification_checks` tablosuna minimal sonuç olarak yazılır; ham provider yanıtı saklanmaz.
 
-Henüz bu dilimde olmayanlar: daire kategorisi, yayındaki ilanın düzenlenmesi, moderasyon SLA/itiraz akışı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında feed’i doldurmak için:
+Henüz bu dilimde olmayanlar: yayındaki ilanın düzenlenmesi, daire filtrelerinin URL query state’ine taşınması, rapor rate limit’i, moderasyon SLA/itiraz akışı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında otomobil feed’ini doldurmak için:
 
 ```bash
 pnpm listings:seed:dev -- <owner-user-uuid>

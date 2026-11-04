@@ -37,6 +37,7 @@ export function MarketHeader() {
       <Link className="wordmark market-wordmark" href="/">bizzat</Link>
       <nav className="market-nav" aria-label="Ana menü">
         <Link href="/otomobil">Otomobiller</Link>
+        <Link href="/daire">Daireler</Link>
         {isPending ? (
           <span className="market-session-status">Oturum…</span>
         ) : session ? (
@@ -56,7 +57,7 @@ export function MarketHeader() {
             <Link href="/register">Hesap oluştur</Link>
           </>
         )}
-        <Link className="market-primary-link" href="/ilan-ver/otomobil">İlan ver</Link>
+        <Link className="market-primary-link" href="/ilan-ver">İlan ver</Link>
       </nav>
     </header>
   )

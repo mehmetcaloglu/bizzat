@@ -2431,3 +2431,406 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+.listing-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.listing-category-card {
+  display: grid;
+  gap: 8px;
+  padding: 24px;
+  color: var(--bizzat-text);
+  text-align: left;
+  font: inherit;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgb(44 73 91 / 5%);
+  cursor: pointer;
+}
+
+.listing-category-card:hover,
+.listing-category-card.is-selected {
+  border-color: var(--bizzat-blue-strong);
+  box-shadow: 0 12px 34px rgb(44 73 91 / 10%);
+}
+
+.listing-category-card > span {
+  color: var(--bizzat-blue-strong);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.listing-category-card strong {
+  font-size: 20px;
+}
+
+.listing-category-card p {
+  margin: 0;
+  color: var(--bizzat-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.listing-create-card {
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 16px;
+  box-shadow: 0 12px 38px rgb(44 73 91 / 6%);
+}
+
+.listing-create-card h2 {
+  margin: 4px 0 18px;
+  color: #273842;
+}
+
+.listing-create-submit,
+.listing-create-secondary {
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.listing-create-submit {
+  color: #ffffff;
+  background: var(--bizzat-blue-strong);
+}
+
+.listing-create-submit:hover:not(:disabled) {
+  background: #1f6b9e;
+}
+
+.listing-create-secondary {
+  color: var(--bizzat-blue-strong);
+  background: #eaf5fb;
+}
+
+.listing-create-secondary:hover:not(:disabled) {
+  background: #dcecf6;
+}
+
+.listing-create-submit:disabled,
+.listing-create-secondary:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.listing-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.listing-form-grid label {
+  display: grid;
+  gap: 5px;
+}
+
+.listing-form-grid label > span {
+  color: #667680;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.listing-form-grid input,
+.listing-form-grid select,
+.listing-form-grid textarea {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  color: var(--bizzat-text);
+  background: #ffffff;
+  border: 1px solid #ccdbe5;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.listing-form-grid textarea {
+  resize: vertical;
+}
+
+.listing-form-grid .span-2 {
+  grid-column: span 2;
+}
+
+.listing-checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  color: #4d5c66;
+  font-size: 13px;
+}
+
+.listing-checkbox-label input {
+  width: 16px;
+  min-height: 16px;
+}
+
+.listing-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.listing-save-note {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  color: #1d654e;
+  background: #e9f7f1;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.listing-save-note a {
+  color: var(--bizzat-blue-strong);
+  font-weight: 800;
+}
+
+.apartment-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.apartment-form-header h2 {
+  margin-bottom: 8px;
+}
+
+.listing-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.listing-image-card {
+  overflow: hidden;
+  background: #f6f9fb;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 10px;
+}
+
+.listing-image-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.listing-image-card button {
+  margin: 6px;
+  padding: 5px 8px;
+  color: #52636e;
+  background: #ffffff;
+  border: 1px solid #ccdbe5;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.apartment-create-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 16px;
+  color: #52636e;
+  background: #f4f8fb;
+  border: 1px dashed #b9d3e3;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.apartment-create-cta a {
+  color: var(--bizzat-blue-strong);
+  font-weight: 900;
+}
+
+.apartment-feed {
+  display: grid;
+  gap: 18px;
+}
+
+.apartment-feed-shell {
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 14px;
+}
+
+.apartment-type-switch {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 4px;
+  background: #eef5f9;
+  border-radius: 9px;
+}
+
+.apartment-type-switch button {
+  padding: 8px 18px;
+  color: #5a6b76;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.apartment-type-switch button.is-active {
+  color: var(--bizzat-blue-strong);
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgb(44 73 91 / 8%);
+}
+
+.apartment-filter-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.apartment-filter-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.apartment-filter-row label {
+  display: grid;
+  gap: 5px;
+}
+
+.apartment-filter-row label > span {
+  color: #667680;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.apartment-filter-row input,
+.apartment-filter-row select {
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 9px;
+  color: var(--bizzat-text);
+  background: #ffffff;
+  border: 1px solid #ccdbe5;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.apartment-filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.apartment-filter-actions button {
+  padding: 9px 14px;
+  color: #ffffff;
+  background: var(--bizzat-blue-strong);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.apartment-filter-actions button.apartment-filter-clear {
+  color: #5e6d77;
+  background: #f2f6f8;
+}
+
+.apartment-filter-actions > span {
+  margin-left: auto;
+  color: var(--bizzat-muted);
+  font-size: 12px;
+}
+
+.apartment-results {
+  min-width: 0;
+}
+
+.apartment-card {
+  overflow: hidden;
+}
+
+.apartment-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #6f7f89;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.apartment-type-badge {
+  padding: 3px 7px;
+  color: var(--bizzat-blue-strong);
+  background: #eaf5fb;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.apartment-detail .listing-detail-price-box {
+  margin-top: 12px;
+}
+
+.apartment-detail .listing-detail-attributes {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.my-apartment-section {
+  margin-top: 34px;
+}
+
+.my-listings-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .listing-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .apartment-filter-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .listing-category-grid,
+  .listing-form-grid,
+  .apartment-filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .listing-form-grid .span-2 {
+    grid-column: auto;
+  }
+
+  .apartment-create-cta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .apartment-detail .listing-detail-attributes {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,4 +1,8 @@
-import type { PublicCarListingSort } from '@bizzat/contracts'
+import type {
+  ApartmentTransactionType,
+  PublicApartmentListingSort,
+  PublicCarListingSort,
+} from '@bizzat/contracts'
 import { sql, type Kysely, type RawBuilder, type Transaction } from 'kysely'
 import type { Database } from '../../db/client.js'
 import type { VehicleSelectionNode } from '../../reference/vehicle/catalog.types.js'
@@ -176,6 +180,169 @@ export interface PublicListingContactRow {
   showPhone: boolean
 }
 
+export interface ApartmentListingRow {
+  id: string
+  listingTypeCode: string
+  status: string
+  updatedAt: Date
+  publishedAt: Date | null
+  title: string | null
+  description: string | null
+  priceAmount: string | null
+  currency: string | null
+  provinceId: string | null
+  provinceName: string | null
+  districtId: string | null
+  districtName: string | null
+  neighborhoodId: string | null
+  neighborhoodName: string | null
+  contactPhoneE164: string | null
+  showPhone: boolean
+  transactionType: string | null
+  roomCount: string | null
+  grossM2: number | null
+  netM2: number | null
+  buildingAge: number | null
+  floor: number | null
+  totalFloors: number | null
+  heating: string | null
+  bathroomCount: number | null
+  kitchen: string | null
+  balcony: boolean | null
+  elevator: boolean | null
+  parking: string | null
+  furnished: boolean | null
+  occupancy: string | null
+  inSite: boolean | null
+  deedStatus: string | null
+  creditEligible: boolean | null
+  swapAvailable: boolean | null
+  depositAmount: string | null
+  imageId: string | null
+}
+
+export interface PublicApartmentListingRow extends ApartmentListingRow {
+  publishedAtCursor: string
+  priceCursor: string
+  grossM2Cursor: string
+}
+
+export interface ApartmentOwnerSummaryRow {
+  id: string
+  listingTypeCode: string
+  status: string
+  updatedAt: Date
+  publishedAt: Date | null
+  title: string | null
+  priceAmount: string | null
+  currency: string | null
+  roomCount: string | null
+  grossM2: number | null
+  provinceName: string | null
+  districtName: string | null
+  imageId: string | null
+}
+
+export interface ApartmentFeedFilters {
+  transactionType: ApartmentTransactionType
+  provinceId?: string
+  districtId?: string
+  minPrice?: number
+  maxPrice?: number
+  roomCount?: string
+  minGrossM2?: number
+  maxGrossM2?: number
+  minBuildingAge?: number
+  maxBuildingAge?: number
+  minFloor?: number
+  maxFloor?: number
+  heating?: string
+  bathroomCount?: number
+  furnished?: boolean
+  inSite?: boolean
+  parking?: string
+  creditEligible?: boolean
+  swapAvailable?: boolean
+  q?: string
+  listedWithinDays?: number
+}
+
+export interface PublicApartmentCursor {
+  sort: PublicApartmentListingSort
+  filterKey: string
+  value: string
+  id: string
+}
+
+function apartmentListingOrder(
+  sort: PublicApartmentListingSort,
+): { primary: RawBuilder<unknown>; direction: 'asc' | 'desc' } {
+  switch (sort) {
+    case 'newest':
+      return {
+        primary: sql`coalesce(listings.published_at, listings.updated_at)`,
+        direction: 'desc',
+      }
+    case 'oldest':
+      return {
+        primary: sql`coalesce(listings.published_at, listings.updated_at)`,
+        direction: 'asc',
+      }
+    case 'price_asc':
+      return { primary: sql`listings.price_amount`, direction: 'asc' }
+    case 'price_desc':
+      return { primary: sql`listings.price_amount`, direction: 'desc' }
+    case 'gross_m2_asc':
+      return { primary: sql`apartment_details.gross_m2`, direction: 'asc' }
+    case 'gross_m2_desc':
+      return { primary: sql`apartment_details.gross_m2`, direction: 'desc' }
+  }
+}
+
+function apartmentCursorCondition(
+  sort: PublicApartmentListingSort,
+  cursor: PublicApartmentCursor,
+): RawBuilder<boolean> {
+  switch (sort) {
+    case 'newest':
+      return sql<boolean>`(
+        coalesce(listings.published_at, listings.updated_at) < ${cursor.value}::timestamptz
+        or (
+          coalesce(listings.published_at, listings.updated_at) = ${cursor.value}::timestamptz
+          and listings.id < ${cursor.id}::uuid
+        )
+      )`
+    case 'oldest':
+      return sql<boolean>`(
+        coalesce(listings.published_at, listings.updated_at) > ${cursor.value}::timestamptz
+        or (
+          coalesce(listings.published_at, listings.updated_at) = ${cursor.value}::timestamptz
+          and listings.id > ${cursor.id}::uuid
+        )
+      )`
+    case 'price_asc':
+      return sql<boolean>`(
+        listings.price_amount > ${cursor.value}::numeric
+        or (listings.price_amount = ${cursor.value}::numeric and listings.id > ${cursor.id}::uuid)
+      )`
+    case 'price_desc':
+      return sql<boolean>`(
+        listings.price_amount < ${cursor.value}::numeric
+        or (listings.price_amount = ${cursor.value}::numeric and listings.id < ${cursor.id}::uuid)
+      )`
+    case 'gross_m2_asc':
+      return sql<boolean>`(
+        apartment_details.gross_m2 > ${cursor.value}::integer
+        or (apartment_details.gross_m2 = ${cursor.value}::integer and listings.id > ${cursor.id}::uuid)
+      )`
+    case 'gross_m2_desc':
+      return sql<boolean>`(
+        apartment_details.gross_m2 < ${cursor.value}::integer
+        or (apartment_details.gross_m2 = ${cursor.value}::integer and listings.id < ${cursor.id}::uuid)
+      )`
+  }
+}
+
 function publicListingOrder(
   sort: PublicCarListingSort,
 ): { primary: RawBuilder<unknown>; direction: 'asc' | 'desc' } {
@@ -346,6 +513,424 @@ export class ListingRepository {
       .where('listings.owner_user_id', '=', ownerUserId)
       .where('listing_types.code', '=', 'car_sale')
       .executeTakeFirst() ?? null
+  }
+
+  async findOwnedApartmentListing(
+    ownerUserId: string,
+    listingId: string,
+  ): Promise<ApartmentListingRow | null> {
+    return await this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .leftJoin('apartment_details', 'apartment_details.listing_id', 'listings.id')
+      .leftJoin('provinces', 'provinces.id', 'listings.province_id')
+      .leftJoin('districts', 'districts.id', 'listings.district_id')
+      .leftJoin('neighborhoods', 'neighborhoods.id', 'listings.neighborhood_id')
+      .select([
+        'listings.id as id',
+        'listing_types.code as listingTypeCode',
+        'listings.status as status',
+        'listings.updated_at as updatedAt',
+        'listings.published_at as publishedAt',
+        'listings.title as title',
+        'listings.description as description',
+        'listings.price_amount as priceAmount',
+        'listings.currency as currency',
+        'listings.province_id as provinceId',
+        'provinces.name as provinceName',
+        'listings.district_id as districtId',
+        'districts.name as districtName',
+        'listings.neighborhood_id as neighborhoodId',
+        'neighborhoods.name as neighborhoodName',
+        'listings.contact_phone_e164 as contactPhoneE164',
+        'listings.show_phone as showPhone',
+        'apartment_details.transaction_type as transactionType',
+        'apartment_details.room_count as roomCount',
+        'apartment_details.gross_m2 as grossM2',
+        'apartment_details.net_m2 as netM2',
+        'apartment_details.building_age as buildingAge',
+        'apartment_details.floor as floor',
+        'apartment_details.total_floors as totalFloors',
+        'apartment_details.heating as heating',
+        'apartment_details.bathroom_count as bathroomCount',
+        'apartment_details.kitchen as kitchen',
+        'apartment_details.balcony as balcony',
+        'apartment_details.elevator as elevator',
+        'apartment_details.parking as parking',
+        'apartment_details.furnished as furnished',
+        'apartment_details.occupancy as occupancy',
+        'apartment_details.in_site as inSite',
+        'apartment_details.deed_status as deedStatus',
+        'apartment_details.credit_eligible as creditEligible',
+        'apartment_details.swap_available as swapAvailable',
+        'apartment_details.deposit_amount as depositAmount',
+        sql<string | null>`(
+          select li.id::text
+          from listing_images li
+          where li.listing_id = listings.id
+          order by li.sort_order asc, li.created_at asc
+          limit 1
+        )`.as('imageId'),
+      ])
+      .where('listings.id', '=', listingId)
+      .where('listings.owner_user_id', '=', ownerUserId)
+      .where('listing_types.code', 'in', ['apartment_sale', 'apartment_rent'])
+      .executeTakeFirst() ?? null
+  }
+
+  async updateOwnedApartmentCore(input: {
+    ownerUserId: string
+    listingId: string
+    title: string | null
+    description: string
+    priceAmount: number
+    provinceId: string
+    districtId: string
+    neighborhoodId: string
+    contactPhoneE164: string | null
+    showPhone: boolean
+  }): Promise<boolean> {
+    const result = await this.db
+      .updateTable('listings')
+      .set({
+        title: input.title,
+        description: input.description,
+        price_amount: input.priceAmount,
+        currency: 'TRY',
+        province_id: input.provinceId,
+        district_id: input.districtId,
+        neighborhood_id: input.neighborhoodId,
+        contact_phone_e164: input.contactPhoneE164,
+        show_phone: input.showPhone,
+        updated_at: sql`now()`,
+      })
+      .where('id', '=', input.listingId)
+      .where('owner_user_id', '=', input.ownerUserId)
+      .where('status', '=', 'draft')
+      .executeTakeFirst()
+    return result.numUpdatedRows === 1n
+  }
+
+  async upsertApartmentDetails(input: {
+    listingId: string
+    transactionType: ApartmentTransactionType
+    roomCount: string
+    grossM2: number
+    netM2: number | null
+    buildingAge: number | null
+    floor: number | null
+    totalFloors: number | null
+    heating: string
+    bathroomCount: number
+    kitchen: string
+    balcony: boolean
+    elevator: boolean
+    parking: string
+    furnished: boolean
+    occupancy: string
+    inSite: boolean
+    deedStatus: string
+    creditEligible: boolean | null
+    swapAvailable: boolean | null
+    depositAmount: number | null
+  }): Promise<void> {
+    await this.db
+      .insertInto('apartment_details')
+      .values({
+        listing_id: input.listingId,
+        transaction_type: input.transactionType,
+        room_count: input.roomCount,
+        gross_m2: input.grossM2,
+        net_m2: input.netM2,
+        building_age: input.buildingAge,
+        floor: input.floor,
+        total_floors: input.totalFloors,
+        heating: input.heating,
+        bathroom_count: input.bathroomCount,
+        kitchen: input.kitchen,
+        balcony: input.balcony,
+        elevator: input.elevator,
+        parking: input.parking,
+        furnished: input.furnished,
+        occupancy: input.occupancy,
+        in_site: input.inSite,
+        deed_status: input.deedStatus,
+        credit_eligible: input.creditEligible,
+        swap_available: input.swapAvailable,
+        deposit_amount: input.depositAmount,
+      })
+      .onConflict((conflict) => conflict.column('listing_id').doUpdateSet({
+        transaction_type: input.transactionType,
+        room_count: input.roomCount,
+        gross_m2: input.grossM2,
+        net_m2: input.netM2,
+        building_age: input.buildingAge,
+        floor: input.floor,
+        total_floors: input.totalFloors,
+        heating: input.heating,
+        bathroom_count: input.bathroomCount,
+        kitchen: input.kitchen,
+        balcony: input.balcony,
+        elevator: input.elevator,
+        parking: input.parking,
+        furnished: input.furnished,
+        occupancy: input.occupancy,
+        in_site: input.inSite,
+        deed_status: input.deedStatus,
+        credit_eligible: input.creditEligible,
+        swap_available: input.swapAvailable,
+        deposit_amount: input.depositAmount,
+      }))
+      .execute()
+  }
+
+  async listOwnedApartmentSummaries(ownerUserId: string): Promise<ApartmentOwnerSummaryRow[]> {
+    return await this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .leftJoin('apartment_details', 'apartment_details.listing_id', 'listings.id')
+      .leftJoin('provinces', 'provinces.id', 'listings.province_id')
+      .leftJoin('districts', 'districts.id', 'listings.district_id')
+      .select([
+        'listings.id as id',
+        'listing_types.code as listingTypeCode',
+        'listings.status as status',
+        'listings.updated_at as updatedAt',
+        'listings.published_at as publishedAt',
+        'listings.title as title',
+        'listings.price_amount as priceAmount',
+        'listings.currency as currency',
+        'apartment_details.room_count as roomCount',
+        'apartment_details.gross_m2 as grossM2',
+        'provinces.name as provinceName',
+        'districts.name as districtName',
+        sql<string | null>`(
+          select li.id::text
+          from listing_images li
+          where li.listing_id = listings.id
+          order by li.sort_order asc, li.created_at asc
+          limit 1
+        )`.as('imageId'),
+      ])
+      .where('listings.owner_user_id', '=', ownerUserId)
+      .where('listing_types.code', 'in', ['apartment_sale', 'apartment_rent'])
+      .orderBy('listings.updated_at', 'desc')
+      .orderBy('listings.id', 'desc')
+      .execute()
+  }
+
+  async findPublicApartmentById(listingId: string): Promise<ApartmentListingRow | null> {
+    return await this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .innerJoin('apartment_details', 'apartment_details.listing_id', 'listings.id')
+      .leftJoin('provinces', 'provinces.id', 'listings.province_id')
+      .leftJoin('districts', 'districts.id', 'listings.district_id')
+      .leftJoin('neighborhoods', 'neighborhoods.id', 'listings.neighborhood_id')
+      .select([
+        'listings.id as id',
+        'listing_types.code as listingTypeCode',
+        'listings.status as status',
+        'listings.updated_at as updatedAt',
+        'listings.published_at as publishedAt',
+        'listings.title as title',
+        'listings.description as description',
+        'listings.price_amount as priceAmount',
+        'listings.currency as currency',
+        'listings.province_id as provinceId',
+        'provinces.name as provinceName',
+        'listings.district_id as districtId',
+        'districts.name as districtName',
+        'listings.neighborhood_id as neighborhoodId',
+        'neighborhoods.name as neighborhoodName',
+        'listings.contact_phone_e164 as contactPhoneE164',
+        'listings.show_phone as showPhone',
+        'apartment_details.transaction_type as transactionType',
+        'apartment_details.room_count as roomCount',
+        'apartment_details.gross_m2 as grossM2',
+        'apartment_details.net_m2 as netM2',
+        'apartment_details.building_age as buildingAge',
+        'apartment_details.floor as floor',
+        'apartment_details.total_floors as totalFloors',
+        'apartment_details.heating as heating',
+        'apartment_details.bathroom_count as bathroomCount',
+        'apartment_details.kitchen as kitchen',
+        'apartment_details.balcony as balcony',
+        'apartment_details.elevator as elevator',
+        'apartment_details.parking as parking',
+        'apartment_details.furnished as furnished',
+        'apartment_details.occupancy as occupancy',
+        'apartment_details.in_site as inSite',
+        'apartment_details.deed_status as deedStatus',
+        'apartment_details.credit_eligible as creditEligible',
+        'apartment_details.swap_available as swapAvailable',
+        'apartment_details.deposit_amount as depositAmount',
+        sql<string | null>`(
+          select li.id::text
+          from listing_images li
+          where li.listing_id = listings.id
+          order by li.sort_order asc, li.created_at asc
+          limit 1
+        )`.as('imageId'),
+      ])
+      .where('listings.id', '=', listingId)
+      .where('listings.status', '=', 'published')
+      .where('listing_types.code', 'in', ['apartment_sale', 'apartment_rent'])
+      .executeTakeFirst() ?? null
+  }
+
+  async findPublicApartmentContact(listingId: string): Promise<PublicListingContactRow | null> {
+    return await this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .select([
+        'listings.contact_phone_e164 as phoneE164',
+        'listings.show_phone as showPhone',
+      ])
+      .where('listings.id', '=', listingId)
+      .where('listings.status', '=', 'published')
+      .where('listing_types.code', 'in', ['apartment_sale', 'apartment_rent'])
+      .executeTakeFirst() ?? null
+  }
+
+  async listPublicApartmentListings(
+    limit: number,
+    options: {
+      sort: PublicApartmentListingSort
+      filters: ApartmentFeedFilters
+      cursor?: PublicApartmentCursor
+    },
+  ): Promise<PublicApartmentListingRow[]> {
+    const { filters, cursor, sort } = options
+    let query = this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .innerJoin('apartment_details', 'apartment_details.listing_id', 'listings.id')
+      .leftJoin('provinces', 'provinces.id', 'listings.province_id')
+      .leftJoin('districts', 'districts.id', 'listings.district_id')
+      .leftJoin('neighborhoods', 'neighborhoods.id', 'listings.neighborhood_id')
+      .select([
+        'listings.id as id',
+        'listing_types.code as listingTypeCode',
+        'listings.status as status',
+        'listings.updated_at as updatedAt',
+        'listings.published_at as publishedAt',
+        'listings.title as title',
+        'listings.description as description',
+        'listings.price_amount as priceAmount',
+        'listings.currency as currency',
+        'listings.province_id as provinceId',
+        'provinces.name as provinceName',
+        'listings.district_id as districtId',
+        'districts.name as districtName',
+        'listings.neighborhood_id as neighborhoodId',
+        'neighborhoods.name as neighborhoodName',
+        'listings.contact_phone_e164 as contactPhoneE164',
+        'listings.show_phone as showPhone',
+        'apartment_details.transaction_type as transactionType',
+        'apartment_details.room_count as roomCount',
+        'apartment_details.gross_m2 as grossM2',
+        'apartment_details.net_m2 as netM2',
+        'apartment_details.building_age as buildingAge',
+        'apartment_details.floor as floor',
+        'apartment_details.total_floors as totalFloors',
+        'apartment_details.heating as heating',
+        'apartment_details.bathroom_count as bathroomCount',
+        'apartment_details.kitchen as kitchen',
+        'apartment_details.balcony as balcony',
+        'apartment_details.elevator as elevator',
+        'apartment_details.parking as parking',
+        'apartment_details.furnished as furnished',
+        'apartment_details.occupancy as occupancy',
+        'apartment_details.in_site as inSite',
+        'apartment_details.deed_status as deedStatus',
+        'apartment_details.credit_eligible as creditEligible',
+        'apartment_details.swap_available as swapAvailable',
+        'apartment_details.deposit_amount as depositAmount',
+        sql<string | null>`(
+          select li.id::text
+          from listing_images li
+          where li.listing_id = listings.id
+          order by li.sort_order asc, li.created_at asc
+          limit 1
+        )`.as('imageId'),
+        sql<string>`coalesce(listings.published_at, listings.updated_at)::text`.as('publishedAtCursor'),
+        sql<string>`listings.price_amount::text`.as('priceCursor'),
+        sql<string>`apartment_details.gross_m2::text`.as('grossM2Cursor'),
+      ])
+      .where('listings.status', '=', 'published')
+      .where('listing_types.code', 'in', ['apartment_sale', 'apartment_rent'])
+      .where('apartment_details.transaction_type', '=', filters.transactionType)
+      .where(sql<boolean>`listings.price_amount is not null`)
+      .where(sql<boolean>`apartment_details.gross_m2 is not null`)
+
+    if (filters.provinceId) query = query.where('listings.province_id', '=', filters.provinceId)
+    if (filters.districtId) query = query.where('listings.district_id', '=', filters.districtId)
+    if (filters.minPrice !== undefined) {
+      query = query.where(sql<boolean>`listings.price_amount >= ${filters.minPrice}::numeric`)
+    }
+    if (filters.maxPrice !== undefined) {
+      query = query.where(sql<boolean>`listings.price_amount <= ${filters.maxPrice}::numeric`)
+    }
+    if (filters.roomCount) query = query.where('apartment_details.room_count', '=', filters.roomCount)
+    if (filters.minGrossM2 !== undefined) {
+      query = query.where(sql<boolean>`apartment_details.gross_m2 >= ${filters.minGrossM2}::integer`)
+    }
+    if (filters.maxGrossM2 !== undefined) {
+      query = query.where(sql<boolean>`apartment_details.gross_m2 <= ${filters.maxGrossM2}::integer`)
+    }
+    if (filters.minBuildingAge !== undefined) {
+      query = query.where(sql<boolean>`apartment_details.building_age >= ${filters.minBuildingAge}::integer`)
+    }
+    if (filters.maxBuildingAge !== undefined) {
+      query = query.where(sql<boolean>`apartment_details.building_age <= ${filters.maxBuildingAge}::integer`)
+    }
+    if (filters.minFloor !== undefined) {
+      query = query.where(sql<boolean>`apartment_details.floor >= ${filters.minFloor}::integer`)
+    }
+    if (filters.maxFloor !== undefined) {
+      query = query.where(sql<boolean>`apartment_details.floor <= ${filters.maxFloor}::integer`)
+    }
+    if (filters.heating) query = query.where('apartment_details.heating', '=', filters.heating)
+    if (filters.bathroomCount !== undefined) {
+      query = query.where('apartment_details.bathroom_count', '=', filters.bathroomCount)
+    }
+    if (filters.furnished !== undefined) {
+      query = query.where('apartment_details.furnished', '=', filters.furnished)
+    }
+    if (filters.inSite !== undefined) {
+      query = query.where('apartment_details.in_site', '=', filters.inSite)
+    }
+    if (filters.parking) query = query.where('apartment_details.parking', '=', filters.parking)
+    if (filters.creditEligible !== undefined) {
+      query = query.where('apartment_details.credit_eligible', '=', filters.creditEligible)
+    }
+    if (filters.swapAvailable !== undefined) {
+      query = query.where('apartment_details.swap_available', '=', filters.swapAvailable)
+    }
+    if (filters.q) {
+      const pattern = `%${filters.q}%`
+      query = query.where(sql<boolean>`(
+        listings.title ilike ${pattern}
+        or listings.description ilike ${pattern}
+      )`)
+    }
+    if (filters.listedWithinDays !== undefined) {
+      query = query.where(sql<boolean>`(
+        coalesce(listings.published_at, listings.updated_at)
+          >= now() - (${filters.listedWithinDays} * interval '1 day')
+      )`)
+    }
+    if (cursor) {
+      query = query.where(apartmentCursorCondition(sort, cursor))
+    }
+
+    const order = apartmentListingOrder(sort)
+    return await query
+      .orderBy(order.primary, order.direction)
+      .orderBy('listings.id', order.direction)
+      .limit(limit)
+      .execute()
   }
 
   async listOwnedCarListings(ownerUserId: string): Promise<OwnerCarListingSummaryRow[]> {

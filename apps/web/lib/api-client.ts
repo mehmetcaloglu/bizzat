@@ -109,6 +109,184 @@ export interface CarSaleDraftResponse {
   }
 }
 
+export type ApartmentTransactionType = 'sale' | 'rent'
+export type ApartmentRoomCount =
+  | 'studio' | '1+0' | '1+1' | '1.5+1' | '2+0' | '2+1' | '2.5+1' | '2+2'
+  | '3+0' | '3+1' | '3.5+1' | '3+2' | '4+0' | '4+1' | '4.5+1' | '4+2'
+  | '5+1' | '5+2' | '6+1' | '7+1' | '8+1' | '9+1' | '10+'
+export type ApartmentHeating =
+  | 'none' | 'stove' | 'central' | 'combi' | 'underfloor'
+  | 'air_conditioning' | 'heat_pump' | 'solar' | 'fireplace'
+export type ApartmentKitchen = 'open' | 'closed'
+export type ApartmentParking = 'none' | 'open' | 'closed' | 'both'
+export type ApartmentOccupancy = 'empty' | 'tenant' | 'owner'
+export type ApartmentDeedStatus =
+  | 'condominium' | 'easement' | 'shared' | 'detached' | 'land'
+  | 'cooperative' | 'usufruct' | 'foreign' | 'unregistered'
+
+export interface ApartmentAttributeValues {
+  roomCount: ApartmentRoomCount
+  grossM2: number
+  netM2: number | null
+  buildingAge: number | null
+  floor: number | null
+  totalFloors: number | null
+  heating: ApartmentHeating
+  bathroomCount: number
+  kitchen: ApartmentKitchen
+  balcony: boolean
+  elevator: boolean
+  parking: ApartmentParking
+  furnished: boolean
+  occupancy: ApartmentOccupancy
+  inSite: boolean
+  deedStatus: ApartmentDeedStatus
+  creditEligible: boolean | null
+  swapAvailable: boolean | null
+  depositAmount: number | null
+}
+
+export interface ApartmentDraftDetails extends ApartmentAttributeValues {
+  priceAmount: number
+  currency: 'TRY'
+  description: string
+  location: {
+    province: LocationReferenceItem
+    district: LocationReferenceItem
+    neighborhood: LocationReferenceItem
+  }
+}
+
+export interface ApartmentDraftResponse {
+  listing: {
+    id: string
+    status: 'draft'
+    type: 'apartment_sale' | 'apartment_rent'
+    transactionType: ApartmentTransactionType
+    title: string | null
+    details: ApartmentDraftDetails | null
+    contact: {
+      phoneE164: string
+      showPhone: boolean
+    } | null
+    images: ListingImageSummary[]
+  }
+}
+
+export interface UpdateApartmentDraftDetailsInput extends ApartmentAttributeValues {
+  priceAmount: number
+  provinceId: string
+  districtId: string
+  neighborhoodId: string
+  description: string
+  title?: string
+  contactPhoneE164?: string
+  showPhone?: boolean
+}
+
+export interface ApartmentOwnerListingSummary {
+  id: string
+  type: 'apartment_sale' | 'apartment_rent'
+  status: OwnerCarListingStatus
+  title: string | null
+  priceAmount: number | null
+  currency: 'TRY' | null
+  roomCount: ApartmentRoomCount | null
+  grossM2: number | null
+  location: {
+    provinceName: string | null
+    districtName: string | null
+  }
+  imageUrl: string | null
+  updatedAt: string
+  publishedAt: string | null
+}
+
+export interface ApartmentOwnerListingListResponse {
+  items: ApartmentOwnerListingSummary[]
+}
+
+export interface PublicApartmentListingItem {
+  id: string
+  type: 'apartment_sale' | 'apartment_rent'
+  title: string
+  priceAmount: number
+  currency: 'TRY'
+  roomCount: ApartmentRoomCount
+  grossM2: number
+  netM2: number | null
+  buildingAge: number | null
+  floor: number | null
+  location: {
+    provinceName: string
+    districtName: string
+  }
+  attributes: ApartmentAttributeValues
+  imageUrl: string | null
+}
+
+export interface PublicApartmentListingDetail extends Omit<PublicApartmentListingItem, 'imageUrl' | 'location' | 'attributes'> {
+  description: string
+  totalFloors: number | null
+  location: {
+    provinceName: string
+    districtName: string
+    neighborhoodName: string
+  }
+  attributes: ApartmentAttributeValues
+  images: Array<{
+    id: string
+    sortOrder: number
+    cardUrl: string
+    fullUrl: string
+  }>
+  contact: { showPhone: boolean }
+}
+
+export type PublicApartmentListingSort =
+  | 'newest'
+  | 'oldest'
+  | 'price_asc'
+  | 'price_desc'
+  | 'gross_m2_asc'
+  | 'gross_m2_desc'
+
+export interface ApartmentFeedFilters {
+  transactionType: ApartmentTransactionType
+  provinceId?: string
+  districtId?: string
+  minPrice?: number
+  maxPrice?: number
+  roomCount?: ApartmentRoomCount
+  minGrossM2?: number
+  maxGrossM2?: number
+  minBuildingAge?: number
+  maxBuildingAge?: number
+  minFloor?: number
+  maxFloor?: number
+  heating?: ApartmentHeating
+  bathroomCount?: number
+  furnished?: boolean
+  inSite?: boolean
+  parking?: ApartmentParking
+  creditEligible?: boolean
+  swapAvailable?: boolean
+  q?: string
+  listedWithinDays?: number
+}
+
+export interface PublicApartmentListingQuery {
+  limit?: number
+  cursor?: string
+  sort?: PublicApartmentListingSort
+  filters?: ApartmentFeedFilters
+}
+
+export interface PublicApartmentListingPage {
+  items: PublicApartmentListingItem[]
+  nextCursor: string | null
+}
+
 export interface UpdateCarSaleDraftCoreDetailsInput {
   modelYear: number
   mileageKm: number
@@ -607,5 +785,134 @@ export function makeCarSaleDraftImageCover(
   return requestJson<CarSaleDraftResponse>(
     `/api/v1/listings/${encodeURIComponent(listingId)}/images/${encodeURIComponent(imageId)}/cover`,
     { method: 'PATCH' },
+  )
+}
+
+export interface ApartmentPublishResponse {
+  listing: {
+    id: string
+    status: 'published'
+    publishedAt: string
+  }
+}
+
+export interface ApartmentUnpublishResponse {
+  listing: {
+    id: string
+    status: 'inactive'
+  }
+}
+
+export function createApartmentDraft(
+  transactionType: ApartmentTransactionType,
+): Promise<ApartmentDraftResponse> {
+  return requestJson<ApartmentDraftResponse>('/api/v1/listings/apartment/drafts', {
+    method: 'POST',
+    body: JSON.stringify({ transactionType }),
+  })
+}
+
+export function getOwnedApartmentListing(listingId: string): Promise<ApartmentDraftResponse> {
+  return requestJson<ApartmentDraftResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/apartment`,
+  )
+}
+
+export function updateApartmentDraftDetails(
+  listingId: string,
+  input: UpdateApartmentDraftDetailsInput,
+): Promise<ApartmentDraftResponse> {
+  return requestJson<ApartmentDraftResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/apartment-details`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export async function uploadApartmentDraftImage(
+  listingId: string,
+  file: File,
+): Promise<ApartmentDraftResponse> {
+  const response = await fetch(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/apartment/images`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': file.type,
+      },
+      body: file,
+    },
+  )
+  if (!response.ok) throw await apiError(response)
+  return await response.json() as ApartmentDraftResponse
+}
+
+export function removeApartmentDraftImage(
+  listingId: string,
+  imageId: string,
+): Promise<ApartmentDraftResponse> {
+  return requestJson<ApartmentDraftResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/apartment/images/${encodeURIComponent(imageId)}`,
+    { method: 'DELETE' },
+  )
+}
+
+export function makeApartmentDraftImageCover(
+  listingId: string,
+  imageId: string,
+): Promise<ApartmentDraftResponse> {
+  return requestJson<ApartmentDraftResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/apartment/images/${encodeURIComponent(imageId)}/cover`,
+    { method: 'PATCH' },
+  )
+}
+
+export function publishApartmentListing(listingId: string): Promise<ApartmentPublishResponse> {
+  return requestJson<ApartmentPublishResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/apartment/publish`,
+    { method: 'POST' },
+  )
+}
+
+export function unpublishApartmentListing(listingId: string): Promise<ApartmentUnpublishResponse> {
+  return requestJson<ApartmentUnpublishResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/apartment/unpublish`,
+    { method: 'POST' },
+  )
+}
+
+export function listMyApartmentListings(): Promise<ApartmentOwnerListingListResponse> {
+  return requestJson<ApartmentOwnerListingListResponse>('/api/v1/me/apartment-listings')
+}
+
+export function listPublicApartmentListings(
+  input: PublicApartmentListingQuery = {},
+): Promise<PublicApartmentListingPage> {
+  const query = new URLSearchParams({ limit: String(input.limit ?? 12) })
+  if (input.cursor) query.set('cursor', input.cursor)
+  if (input.sort) query.set('sort', input.sort)
+  for (const [key, value] of Object.entries(input.filters ?? {})) {
+    if (value !== undefined && value !== '') query.set(key, String(value))
+  }
+  return requestJson<PublicApartmentListingPage>(
+    `/api/v1/listings/public/apartment?${query.toString()}`,
+  )
+}
+
+export function getPublicApartmentListing(
+  listingId: string,
+): Promise<{ listing: PublicApartmentListingDetail }> {
+  return requestJson<{ listing: PublicApartmentListingDetail }>(
+    `/api/v1/listings/public/apartment/${encodeURIComponent(listingId)}`,
+  )
+}
+
+export function getPublicApartmentContact(listingId: string): Promise<{ phoneE164: string }> {
+  return requestJson<{ phoneE164: string }>(
+    `/api/v1/listings/public/apartment/${encodeURIComponent(listingId)}/contact`,
   )
 }
