@@ -10,7 +10,8 @@ describe('public marketplace surfaces', () => {
     expect(html).toContain('Aradığın ilanı doğrudan sahibinden bul.')
     expect(html).toContain('Son otomobil ilanları')
     expect(html).toContain('Otomobillere bak')
-    expect(html).toContain('Aracını ilan ver')
+    expect(html).toContain('Dairelere bak')
+    expect(html).toContain('İlan ver')
   })
 
   it('renders the public car listing page', () => {

@@ -79,11 +79,12 @@ describe('my listings', () => {
         onUnpublish={() => undefined}
       />,
     )
-    expect(empty).toContain('Henüz bir ilanın yok.')
+    expect(empty).toContain('Henüz otomobil ilanın yok.')
 
     const page = renderToStaticMarkup(<MyListingsPage />)
     expect(page).toContain('İlanlarım')
-    expect(page).toContain('Yeni otomobil ilanı')
+    expect(page).toContain('Otomobil ilanı ver')
+    expect(page).toContain('Daire ilanı ver')
   })
 
   it('shows action loading and error state without losing the listing', () => {

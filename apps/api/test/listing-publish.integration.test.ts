@@ -490,6 +490,9 @@ describe('listing publish and owner management', () => {
       async verifyVehicleAuthority() {
         return { status: 'failed', failureCode: 'EIDS_AUTHORITY_MISMATCH' }
       },
+      async verifyPropertyAuthority() {
+        return { status: 'failed', failureCode: 'EIDS_AUTHORITY_MISMATCH' }
+      },
     }
     const failingApp = buildTestApp(failingProvider)
 

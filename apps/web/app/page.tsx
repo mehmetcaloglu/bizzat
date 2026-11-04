@@ -12,18 +12,19 @@ export default function HomePage() {
           <p className="listing-create-eyebrow">Bireyselden bireysele</p>
           <h1>Aradığın ilanı doğrudan sahibinden bul.</h1>
           <p>
-            Galerici ve profesyonel mağaza kalabalığı olmadan, bireysel otomobil ilanlarını
-            sade bir deneyimle keşfet.
+            Galerici ve profesyonel mağaza kalabalığı olmadan, bireysel otomobil ve daire
+            ilanlarını sade bir deneyimle keşfet.
           </p>
           <div className="market-hero-actions">
             <Link className="market-cta" href="/otomobil">Otomobillere bak</Link>
-            <Link className="market-secondary-cta" href="/ilan-ver/otomobil">Aracını ilan ver</Link>
+            <Link className="market-secondary-cta" href="/daire">Dairelere bak</Link>
+            <Link className="market-secondary-cta" href="/ilan-ver">İlan ver</Link>
           </div>
         </div>
         <div className="market-hero-panel">
-          <span>Bireysel otomobil ilanları</span>
-          <strong>Satılık otomobil</strong>
-          <p>Marka-model seçimi, ilan bilgileri, fotoğraflar ve bireysel iletişim tek akışta.</p>
+          <span>Bireysel ilanlar</span>
+          <strong>Otomobil ve daire</strong>
+          <p>Araç veya daire bilgilerini gir, fotoğraflarını ekle ve doğrudan iletişime geç.</p>
         </div>
       </section>
 
@@ -40,7 +41,7 @@ export default function HomePage() {
 
       <section className="market-trust-strip" aria-label="Bizzat yaklaşımı">
         <div><strong>Bireysel odak</strong><span>Profesyonel mağaza hesabı yok.</span></div>
-        <div><strong>Açık bilgi</strong><span>Temel araç ve konum bilgileri net görünür.</span></div>
+        <div><strong>Açık bilgi</strong><span>Temel ilan ve konum bilgileri net görünür.</span></div>
         <div><strong>Doğrudan iletişim</strong><span>İlan sahibi isterse telefonunu gösterir.</span></div>
       </section>
     </main>

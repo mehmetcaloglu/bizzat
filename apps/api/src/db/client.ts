@@ -183,6 +183,30 @@ export interface CarDetailsTable {
   replacement_status: ColumnType<string | null, string | null | undefined, string | null | undefined>
 }
 
+export interface ApartmentDetailsTable {
+  listing_id: string
+  transaction_type: string
+  room_count: string
+  gross_m2: number
+  net_m2: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  building_age: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  floor: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  total_floors: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  heating: string
+  bathroom_count: number
+  kitchen: string
+  balcony: boolean
+  elevator: boolean
+  parking: string
+  furnished: boolean
+  occupancy: string
+  in_site: boolean
+  deed_status: string
+  credit_eligible: ColumnType<boolean | null, boolean | null | undefined, boolean | null | undefined>
+  swap_available: ColumnType<boolean | null, boolean | null | undefined, boolean | null | undefined>
+  deposit_amount: ColumnType<string | null, string | number | null | undefined, string | number | null | undefined>
+}
+
 export interface ListingImagesTable {
   id: Generated<string>
   listing_id: string
@@ -239,6 +263,7 @@ export interface Database {
   listing_types: ListingTypesTable
   listings: ListingsTable
   car_details: CarDetailsTable
+  apartment_details: ApartmentDetailsTable
   listing_images: ListingImagesTable
   verification_checks: VerificationChecksTable
   reports: ReportsTable

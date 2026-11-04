@@ -4,6 +4,7 @@ import type { BizzatAuth } from './auth/auth.js'
 import { authRoutes } from './auth/auth.routes.js'
 import { registerErrorHandling } from './common/errors/error-handler.js'
 import type { Database } from './db/client.js'
+import { apartmentRoutes } from './modules/apartments/apartment.routes.js'
 import { listingRoutes } from './modules/listings/listing.routes.js'
 import { moderationRoutes } from './modules/moderation/moderation.routes.js'
 import { systemRoutes } from './modules/system/system.routes.js'
@@ -55,6 +56,12 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
       db: options.db,
     })
     app.register(listingRoutes, {
+      prefix: '/api/v1',
+      auth: options.auth,
+      db: options.db,
+      verificationProvider: options.verificationProvider ?? createVerificationProvider(),
+    })
+    app.register(apartmentRoutes, {
       prefix: '/api/v1',
       auth: options.auth,
       db: options.db,

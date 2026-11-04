@@ -48,7 +48,7 @@ export function MyListingsView({
   if (listings.length === 0) {
     return (
       <div className="public-list-state my-listings-empty">
-        <strong>Henüz bir ilanın yok.</strong>
+        <strong>Henüz otomobil ilanın yok.</strong>
         <span>İlk otomobil ilanını oluşturarak başlayabilirsin.</span>
         <Link href="/ilan-ver/otomobil">İlan ver</Link>
       </div>
