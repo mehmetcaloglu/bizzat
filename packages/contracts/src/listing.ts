@@ -191,6 +191,17 @@ export const PublicCarListingItemSchema = Type.Object({
   imageUrl: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
 })
 
+export const PublicCarListingSortSchema = Type.Union([
+  Type.Literal('newest'),
+  Type.Literal('oldest'),
+  Type.Literal('price_asc'),
+  Type.Literal('price_desc'),
+  Type.Literal('mileage_asc'),
+  Type.Literal('mileage_desc'),
+  Type.Literal('year_asc'),
+  Type.Literal('year_desc'),
+])
+
 export const PublicCarListingListResponseSchema = Type.Object({
   items: Type.Array(PublicCarListingItemSchema),
   nextCursor: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
@@ -293,6 +304,7 @@ export const UnpublishCarSaleDraftResponseSchema = Type.Object({
 export type CreateCarSaleDraftRequest = Static<typeof CreateCarSaleDraftRequestSchema>
 export type UpdateCarSaleDraftCoreDetailsRequest = Static<typeof UpdateCarSaleDraftCoreDetailsRequestSchema>
 export type CarSaleDraftResponse = Static<typeof CarSaleDraftResponseSchema>
+export type PublicCarListingSort = Static<typeof PublicCarListingSortSchema>
 export type PublicCarListingListResponse = Static<typeof PublicCarListingListResponseSchema>
 export type PublicCarListingDetailResponse = Static<typeof PublicCarListingDetailResponseSchema>
 export type PublicCarListingContactResponse = Static<typeof PublicCarListingContactResponseSchema>

@@ -1,11 +1,17 @@
 import {
   ApiErrorResponseSchema,
+  CarBodyTypeSchema,
+  CarDrivetrainSchema,
+  CarFuelTypeSchema,
   CarSaleDraftResponseSchema,
+  CarTransmissionSchema,
+  CarVehicleConditionSchema,
   CreateCarSaleDraftRequestSchema,
   OwnerCarListingListResponseSchema,
   PublicCarListingContactResponseSchema,
   PublicCarListingDetailResponseSchema,
   PublicCarListingListResponseSchema,
+  PublicCarListingSortSchema,
   PublishCarSaleDraftResponseSchema,
   UnpublishCarSaleDraftResponseSchema,
   UpdateCarSaleDraftCoreDetailsRequestSchema,
@@ -22,7 +28,7 @@ import { LocationService } from '../../reference/location.service.js'
 import { VehicleCatalogRepository } from '../../reference/vehicle/vehicle-catalog.repository.js'
 import { VehicleCatalogService } from '../../reference/vehicle/vehicle-catalog.service.js'
 import type { VerificationProvider } from '../verifications/verification.provider.js'
-import { ListingRepository } from './listing.repository.js'
+import { ListingRepository, type PublicCarListingFilters } from './listing.repository.js'
 import { ListingService } from './listing.service.js'
 
 export interface ListingRoutesOptions {
@@ -45,9 +51,30 @@ const PublicImageParamsSchema = Type.Object({
 })
 
 const PublicListQuerySchema = Type.Object({
-  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 30 })),
+  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 50 })),
   cursor: Type.Optional(Type.String({ minLength: 1 })),
-})
+  sort: Type.Optional(PublicCarListingSortSchema),
+  brandId: Type.Optional(Type.String({ format: 'uuid' })),
+  seriesId: Type.Optional(Type.String({ format: 'uuid' })),
+  modelId: Type.Optional(Type.String({ format: 'uuid' })),
+  provinceId: Type.Optional(Type.String({ format: 'uuid' })),
+  districtId: Type.Optional(Type.String({ format: 'uuid' })),
+  minPrice: Type.Optional(Type.Number({ minimum: 1 })),
+  maxPrice: Type.Optional(Type.Number({ minimum: 1 })),
+  minYear: Type.Optional(Type.Integer({ minimum: 1950, maximum: 2100 })),
+  maxYear: Type.Optional(Type.Integer({ minimum: 1950, maximum: 2100 })),
+  minMileageKm: Type.Optional(Type.Integer({ minimum: 0 })),
+  maxMileageKm: Type.Optional(Type.Integer({ minimum: 0 })),
+  fuelType: Type.Optional(CarFuelTypeSchema),
+  transmission: Type.Optional(CarTransmissionSchema),
+  bodyType: Type.Optional(CarBodyTypeSchema),
+  drivetrain: Type.Optional(CarDrivetrainSchema),
+  vehicleCondition: Type.Optional(CarVehicleConditionSchema),
+  color: Type.Optional(Type.String({ minLength: 2, maxLength: 40 })),
+  q: Type.Optional(Type.String({ minLength: 1, maxLength: 80 })),
+  swapAvailable: Type.Optional(Type.Boolean()),
+  listedWithinDays: Type.Optional(Type.Integer({ minimum: 1, maximum: 30 })),
+}, { additionalProperties: false })
 
 export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = async (
   app,
@@ -74,10 +101,38 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
         200: PublicCarListingListResponseSchema,
       },
     },
-  }, async (request) => service.listPublicCarListings(
-    request.query.limit ?? 12,
-    request.query.cursor,
-  ))
+  }, async (request) => {
+    const filters: PublicCarListingFilters = {}
+    if (request.query.brandId) filters.brandId = request.query.brandId
+    if (request.query.seriesId) filters.seriesId = request.query.seriesId
+    if (request.query.modelId) filters.modelId = request.query.modelId
+    if (request.query.provinceId) filters.provinceId = request.query.provinceId
+    if (request.query.districtId) filters.districtId = request.query.districtId
+    if (request.query.minPrice !== undefined) filters.minPrice = request.query.minPrice
+    if (request.query.maxPrice !== undefined) filters.maxPrice = request.query.maxPrice
+    if (request.query.minYear !== undefined) filters.minYear = request.query.minYear
+    if (request.query.maxYear !== undefined) filters.maxYear = request.query.maxYear
+    if (request.query.minMileageKm !== undefined) filters.minMileageKm = request.query.minMileageKm
+    if (request.query.maxMileageKm !== undefined) filters.maxMileageKm = request.query.maxMileageKm
+    if (request.query.fuelType) filters.fuelType = request.query.fuelType
+    if (request.query.transmission) filters.transmission = request.query.transmission
+    if (request.query.bodyType) filters.bodyType = request.query.bodyType
+    if (request.query.drivetrain) filters.drivetrain = request.query.drivetrain
+    if (request.query.vehicleCondition) filters.vehicleCondition = request.query.vehicleCondition
+    if (request.query.color) filters.color = request.query.color
+    if (request.query.q) filters.q = request.query.q
+    if (request.query.swapAvailable !== undefined) filters.swapAvailable = request.query.swapAvailable
+    if (request.query.listedWithinDays !== undefined) {
+      filters.listedWithinDays = request.query.listedWithinDays
+    }
+
+    return await service.listPublicCarListings({
+      limit: request.query.limit ?? 12,
+      sort: request.query.sort ?? 'newest',
+      ...(request.query.cursor ? { cursor: request.query.cursor } : {}),
+      filters,
+    })
+  })
 
   app.get('/listings/public/car-sale/:listingId', {
     schema: {

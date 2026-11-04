@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ilan oluşturma/yayınlama + kendi ilanlarım + public feed/detay + ilan raporlama ve minimum moderasyon |
+| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ilan oluşturma/yayınlama + kendi ilanlarım + filtre/sıralamalı public feed/detay + ilan raporlama ve minimum moderasyon |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -50,7 +50,7 @@ Otomobil tarafında ilk dikey dilim çalışır durumdadır:
 - `/ilanlarim` üzerinde kullanıcının kendi taslak, yayın ve pasif ilanlarını görüp yönetmesi,
 - yayınlama ve yayından kaldırma; yayın öncesi zorunlu alan ve en az bir fotoğraf kontrolü,
 - EİDS yetki doğrulaması için provider adapter sınırı,
-- ana sayfa ve `/otomobil` üzerinde public otomobil feed’i,
+- ana sayfa ve `/otomobil` üzerinde public otomobil feed’i; `/otomobil` üzerinde URL query state’li filtre paneli ve sıralama,
 - `/otomobil/:listingId` üzerinde public ilan detayı, fotoğraf galerisi ve araç özellikleri,
 - ilan sahibinin telefon görünürlüğü tercihine saygılı “Telefonu göster” akışı,
 - public ilan detayında “İlanı raporla” formu,
@@ -63,6 +63,8 @@ Public API yüzeyi:
 - `GET /api/v1/listings/public/car-sale/:listingId/contact` — yalnız `showPhone` açıksa telefon
 - `GET /api/v1/listings/public/images/:imageId` — işlenmiş kart görseli
 - `GET /api/v1/listings/public/images/:imageId/full` — işlenmiş detay görseli
+
+Feed filtreleri: `brandId`, `seriesId`, `modelId`, `provinceId`, `districtId`, `minPrice`, `maxPrice`, `minYear`, `maxYear`, `minMileageKm`, `maxMileageKm`, `fuelType`, `transmission`, `bodyType`, `drivetrain`, `vehicleCondition`, `color`, `q`, `swapAvailable`, `listedWithinDays`. Sıralamalar: `newest` (varsayılan), `oldest`, `price_asc`, `price_desc`, `mileage_asc`, `mileage_desc`, `year_asc`, `year_desc`. Cursor seçilen sıralama ve filtrelere göre üretilir; aynı cursor farklı sıralama veya filtreyle reddedilir.
 
 Authenticated yönetim yüzeyi:
 
@@ -82,7 +84,7 @@ Telefon numarası detay yanıtına konmaz; yalnız açık kullanıcı tercihi va
 
 EİDS doğrulaması `VerificationProvider` sınırı arkasındadır. Local/test ortamında explicit `EIDS_PROVIDER=mock` kullanılabilir. Production’da mock provider reddedilir; gerçek provider yoksa veya doğrulama başarısız/kullanılamazsa ilan yayınlanmaz (`fail closed`). Her deneme `verification_checks` tablosuna minimal sonuç olarak yazılır; ham provider yanıtı saklanmaz.
 
-Henüz bu dilimde olmayanlar: feed filtre/sıralama, daire kategorisi, yayındaki ilanın düzenlenmesi, moderasyon SLA/itiraz akışı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında feed’i doldurmak için:
+Henüz bu dilimde olmayanlar: daire kategorisi, yayındaki ilanın düzenlenmesi, moderasyon SLA/itiraz akışı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında feed’i doldurmak için:
 
 ```bash
 pnpm listings:seed:dev -- <owner-user-uuid>
