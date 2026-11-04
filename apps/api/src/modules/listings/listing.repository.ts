@@ -1,5 +1,6 @@
 import { sql, type Kysely, type Transaction } from 'kysely'
 import type { Database } from '../../db/client.js'
+import type { VehicleSelectionNode } from '../../reference/vehicle/catalog.types.js'
 
 type ListingDatabase = Kysely<Database> | Transaction<Database>
 
@@ -81,6 +82,44 @@ export interface PublicCarListingRow {
   paintStatus: string | null
   replacementStatus: string | null
   imageId: string | null
+}
+
+export interface PublicCarListingDetailRow {
+  id: string
+  title: string | null
+  description: string | null
+  priceAmount: string | null
+  currency: string | null
+  modelYear: number | null
+  mileageKm: number | null
+  brandName: string
+  seriesName: string
+  modelName: string
+  modelCatalogKey: string
+  selectionPath: VehicleSelectionNode[] | null
+  provinceName: string | null
+  districtName: string | null
+  neighborhoodName: string | null
+  showPhone: boolean
+  fuelType: string | null
+  transmission: string | null
+  bodyType: string | null
+  vehicleCondition: string | null
+  enginePowerHp: number | null
+  engineDisplacementCc: number | null
+  drivetrain: string | null
+  color: string | null
+  underWarranty: boolean | null
+  heavyDamageRecorded: boolean | null
+  plateNationality: string | null
+  swapAvailable: boolean | null
+  paintStatus: string | null
+  replacementStatus: string | null
+}
+
+export interface PublicListingContactRow {
+  phoneE164: string | null
+  showPhone: boolean
 }
 
 export class ListingRepository {
@@ -408,6 +447,81 @@ export class ListingRepository {
       ])
       .where('listing_images.id', '=', imageId)
       .where('listings.status', '=', 'published')
+      .executeTakeFirst() ?? null
+  }
+
+  async findPublicCarListingById(listingId: string): Promise<PublicCarListingDetailRow | null> {
+    return await this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .innerJoin('car_details', 'car_details.listing_id', 'listings.id')
+      .innerJoin('vehicle_models', 'vehicle_models.id', 'car_details.vehicle_model_id')
+      .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
+      .innerJoin('vehicle_brands', 'vehicle_brands.id', 'vehicle_series.brand_id')
+      .leftJoin('provinces', 'provinces.id', 'listings.province_id')
+      .leftJoin('districts', 'districts.id', 'listings.district_id')
+      .leftJoin('neighborhoods', 'neighborhoods.id', 'listings.neighborhood_id')
+      .select([
+        'listings.id as id',
+        'listings.title as title',
+        'listings.description as description',
+        'listings.price_amount as priceAmount',
+        'listings.currency as currency',
+        'listings.show_phone as showPhone',
+        'car_details.model_year as modelYear',
+        'car_details.mileage_km as mileageKm',
+        'vehicle_brands.name as brandName',
+        'vehicle_series.name as seriesName',
+        'vehicle_models.name as modelName',
+        'vehicle_models.catalog_key as modelCatalogKey',
+        'vehicle_models.selection_path as selectionPath',
+        'provinces.name as provinceName',
+        'districts.name as districtName',
+        'neighborhoods.name as neighborhoodName',
+        'car_details.fuel_type as fuelType',
+        'car_details.transmission as transmission',
+        'car_details.body_type as bodyType',
+        'car_details.vehicle_condition as vehicleCondition',
+        'car_details.engine_power_hp as enginePowerHp',
+        'car_details.engine_displacement_cc as engineDisplacementCc',
+        'car_details.drivetrain as drivetrain',
+        'car_details.color as color',
+        'car_details.under_warranty as underWarranty',
+        'car_details.heavy_damage_recorded as heavyDamageRecorded',
+        'car_details.plate_nationality as plateNationality',
+        'car_details.swap_available as swapAvailable',
+        'car_details.paint_status as paintStatus',
+        'car_details.replacement_status as replacementStatus',
+      ])
+      .where('listings.id', '=', listingId)
+      .where('listings.status', '=', 'published')
+      .where('listing_types.code', '=', 'car_sale')
+      .executeTakeFirst() ?? null
+  }
+
+  async listPublicListingImages(
+    listingId: string,
+  ): Promise<Array<Pick<ListingImageRow, 'id' | 'sortOrder'>>> {
+    return await this.db
+      .selectFrom('listing_images')
+      .select(['id', 'sort_order as sortOrder'])
+      .where('listing_id', '=', listingId)
+      .orderBy('sort_order', 'asc')
+      .orderBy('created_at', 'asc')
+      .execute()
+  }
+
+  async findPublicListingContact(listingId: string): Promise<PublicListingContactRow | null> {
+    return await this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .select([
+        'listings.contact_phone_e164 as phoneE164',
+        'listings.show_phone as showPhone',
+      ])
+      .where('listings.id', '=', listingId)
+      .where('listings.status', '=', 'published')
+      .where('listing_types.code', '=', 'car_sale')
       .executeTakeFirst() ?? null
   }
 

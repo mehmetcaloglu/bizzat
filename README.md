@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + TSB source/mapping altyapısı; değişken seçim ağacı ve kısmi Türkiye katalog curation draft PR #11 içinde |
+| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil taslak/ilan verme akışı + public otomobil feed’i ve ilan detayı |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -41,6 +41,31 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 Ana sayfa, liste/filtreleme, ilan detayı, auth, ilan oluşturma, EİDS/yetki kapısı, kendi ilanlarını yönetme, telefonla iletişim, ilan raporlama ve minimum moderasyon MVP kapsamındadır. Favori, site içi mesajlaşma, ödeme/abonelik, doping, ekspertiz, rezervasyon, native mobil uygulama ve profesyonel mağazalar kapsam dışıdır.
 
 Ayrıntı: [docs/MVP_SCOPE.md](docs/MVP_SCOPE.md).
+
+## Satılık Otomobil ilan akışı
+
+Otomobil tarafında ilk dikey dilim çalışır durumdadır:
+
+- `/ilan-ver/otomobil` altında canonical araç seçimi, ilan bilgileri ve fotoğraf yükleme,
+- ana sayfa ve `/otomobil` üzerinde public otomobil feed’i,
+- `/otomobil/:listingId` üzerinde public ilan detayı, fotoğraf galerisi ve araç özellikleri,
+- ilan sahibinin telefon görünürlüğü tercihine saygılı “Telefonu göster” akışı.
+
+Public API yüzeyi:
+
+- `GET /api/v1/listings/public/car-sale` — cursor pagination’lı feed
+- `GET /api/v1/listings/public/car-sale/:listingId` — ilan detayı
+- `GET /api/v1/listings/public/car-sale/:listingId/contact` — yalnız `showPhone` açıksa telefon
+- `GET /api/v1/listings/public/images/:imageId` — işlenmiş kart görseli
+- `GET /api/v1/listings/public/images/:imageId/full` — işlenmiş detay görseli
+
+Telefon numarası detay yanıtına konmaz; yalnız açık kullanıcı tercihi varsa ayrı contact endpoint’inden döner. Public görseller metadata’dan arındırılmış WebP varyantlarıdır.
+
+Henüz bu dilimde olmayanlar: ilan yayınlama/EİDS geçişi, kendi ilanlarım yönetimi, feed filtre/sıralama, ilan raporlama/moderasyon ve daire kategorisi. Geliştirme ortamında feed’i doldurmak için:
+
+```bash
+pnpm listings:seed:dev -- <owner-user-uuid>
+```
 
 ## Teknik foundation
 

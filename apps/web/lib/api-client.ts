@@ -136,6 +136,23 @@ export interface UpdateCarSaleDraftCoreDetailsInput {
   showPhone: boolean
 }
 
+export interface PublicCarListingAttributes {
+  fuelType: CarFuelType
+  transmission: CarTransmission
+  vehicleCondition: CarVehicleCondition
+  bodyType: CarBodyType
+  enginePowerHp: number
+  engineDisplacementCc: number | null
+  drivetrain: CarDrivetrain
+  color: string
+  underWarranty: boolean
+  heavyDamageRecorded: boolean
+  plateNationality: CarPlateNationality
+  swapAvailable: boolean
+  paintStatus: CarPaintStatus
+  replacementStatus: CarReplacementStatus
+}
+
 export interface PublicCarListingItem {
   id: string
   title: string
@@ -151,23 +168,41 @@ export interface PublicCarListingItem {
     provinceName: string
     districtName: string
   }
-  attributes: {
-    fuelType: CarFuelType
-    transmission: CarTransmission
-    vehicleCondition: CarVehicleCondition
-    bodyType: CarBodyType
-    enginePowerHp: number
-    engineDisplacementCc: number | null
-    drivetrain: CarDrivetrain
-    color: string
-    underWarranty: boolean
-    heavyDamageRecorded: boolean
-    plateNationality: CarPlateNationality
-    swapAvailable: boolean
-    paintStatus: CarPaintStatus
-    replacementStatus: CarReplacementStatus
-  }
+  attributes: PublicCarListingAttributes
   imageUrl: string | null
+}
+
+export interface PublicCarListingDetailImage {
+  id: string
+  sortOrder: number
+  cardUrl: string
+  fullUrl: string
+}
+
+export interface PublicCarListingDetail {
+  id: string
+  title: string
+  description: string
+  priceAmount: number
+  currency: 'TRY'
+  modelYear: number
+  mileageKm: number
+  vehicle: {
+    brandName: string
+    seriesName: string
+    modelName: string
+    selectionPath: Array<{ key: string; name: string }>
+  }
+  location: {
+    provinceName: string
+    districtName: string
+    neighborhoodName: string
+  }
+  attributes: PublicCarListingAttributes
+  images: PublicCarListingDetailImage[]
+  contact: {
+    showPhone: boolean
+  }
 }
 
 export class ApiClientError extends Error {
@@ -316,6 +351,20 @@ export function listPublicCarListings(
   if (cursor) query.set('cursor', cursor)
   return requestJson<PublicCarListingPage>(
     `/api/v1/listings/public/car-sale?${query.toString()}`,
+  )
+}
+
+export function getPublicCarListing(
+  listingId: string,
+): Promise<{ listing: PublicCarListingDetail }> {
+  return requestJson<{ listing: PublicCarListingDetail }>(
+    `/api/v1/listings/public/car-sale/${encodeURIComponent(listingId)}`,
+  )
+}
+
+export function getPublicCarListingContact(listingId: string): Promise<{ phoneE164: string }> {
+  return requestJson<{ phoneE164: string }>(
+    `/api/v1/listings/public/car-sale/${encodeURIComponent(listingId)}/contact`,
   )
 }
 

@@ -196,7 +196,50 @@ export const PublicCarListingListResponseSchema = Type.Object({
   nextCursor: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
 })
 
+export const PublicCarListingDetailImageSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  sortOrder: Type.Integer({ minimum: 0 }),
+  cardUrl: Type.String({ minLength: 1 }),
+  fullUrl: Type.String({ minLength: 1 }),
+})
+
+export const PublicCarListingDetailSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  title: Type.String({ minLength: 1 }),
+  description: Type.String({ minLength: 1 }),
+  priceAmount: Type.Number({ minimum: 1 }),
+  currency: Type.Literal('TRY'),
+  modelYear: Type.Integer(),
+  mileageKm: Type.Integer({ minimum: 0 }),
+  vehicle: Type.Object({
+    brandName: Type.String({ minLength: 1 }),
+    seriesName: Type.String({ minLength: 1 }),
+    modelName: Type.String({ minLength: 1 }),
+    selectionPath: Type.Array(VehicleSelectionPathNodeSchema, { minItems: 1 }),
+  }),
+  location: Type.Object({
+    provinceName: Type.String({ minLength: 1 }),
+    districtName: Type.String({ minLength: 1 }),
+    neighborhoodName: Type.String({ minLength: 1 }),
+  }),
+  attributes: CarSaleAttributesSchema,
+  images: Type.Array(PublicCarListingDetailImageSchema),
+  contact: Type.Object({
+    showPhone: Type.Boolean(),
+  }),
+})
+
+export const PublicCarListingDetailResponseSchema = Type.Object({
+  listing: PublicCarListingDetailSchema,
+})
+
+export const PublicCarListingContactResponseSchema = Type.Object({
+  phoneE164: Type.String({ pattern: '^\\+90[0-9]{10}$' }),
+})
+
 export type CreateCarSaleDraftRequest = Static<typeof CreateCarSaleDraftRequestSchema>
 export type UpdateCarSaleDraftCoreDetailsRequest = Static<typeof UpdateCarSaleDraftCoreDetailsRequestSchema>
 export type CarSaleDraftResponse = Static<typeof CarSaleDraftResponseSchema>
 export type PublicCarListingListResponse = Static<typeof PublicCarListingListResponseSchema>
+export type PublicCarListingDetailResponse = Static<typeof PublicCarListingDetailResponseSchema>
+export type PublicCarListingContactResponse = Static<typeof PublicCarListingContactResponseSchema>
