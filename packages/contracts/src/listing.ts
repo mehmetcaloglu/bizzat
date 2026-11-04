@@ -156,9 +156,15 @@ export const UpdateCarSaleDraftCoreDetailsRequestSchema = Type.Object({
   showPhone: Type.Optional(Type.Boolean()),
 }, { additionalProperties: false })
 
+export const EditableListingStatusSchema = Type.Union([
+  Type.Literal('draft'),
+  Type.Literal('published'),
+  Type.Literal('inactive'),
+])
+
 export const CarSaleDraftSchema = Type.Object({
   id: Type.String({ format: 'uuid' }),
-  status: Type.Literal('draft'),
+  status: EditableListingStatusSchema,
   type: Type.Literal('car_sale'),
   vehicle: CarSaleDraftVehicleSummarySchema,
   details: Type.Union([CarSaleDraftCoreDetailsSchema, Type.Null()]),

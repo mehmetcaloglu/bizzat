@@ -606,7 +606,7 @@ export class ListingRepository {
       })
       .where('id', '=', input.listingId)
       .where('owner_user_id', '=', input.ownerUserId)
-      .where('status', '=', 'draft')
+      .where('status', 'in', ['draft', 'published', 'inactive'])
       .executeTakeFirst()
     return result.numUpdatedRows === 1n
   }
@@ -1119,7 +1119,7 @@ export class ListingRepository {
       })
       .where('id', '=', input.listingId)
       .where('owner_user_id', '=', input.ownerUserId)
-      .where('status', '=', 'draft')
+      .where('status', 'in', ['draft', 'published', 'inactive'])
       .executeTakeFirst()
 
     return result.numUpdatedRows === 1n

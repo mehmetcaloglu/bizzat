@@ -126,7 +126,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
     },
   }, async (request) => {
     const session = await requireSession(options.auth, request.headers)
-    return { listing: await service.getOwnedDraft(session.user.id, request.params.listingId) }
+    return { listing: await service.getOwnedEditableListing(session.user.id, request.params.listingId) }
   })
 
   app.patch('/listings/:listingId/apartment-details', {

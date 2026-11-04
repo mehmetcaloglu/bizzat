@@ -67,6 +67,9 @@ export function MyListingsView({
           const actionLoading = loadingActionId === listing.id
           const canPublish = listing.status === 'draft' || listing.status === 'inactive'
           const canUnpublish = listing.status === 'published'
+          const canEdit = listing.status === 'draft'
+            || listing.status === 'published'
+            || listing.status === 'inactive'
 
           return (
             <article className="my-listing-card" key={listing.id}>
@@ -108,7 +111,7 @@ export function MyListingsView({
                 </div>
 
                 <div className="my-listing-actions">
-                  {listing.status === 'draft' && (
+                  {canEdit && (
                     <Link
                       className="my-listing-secondary"
                       href={`/ilan-ver/otomobil?draft=${listing.id}`}

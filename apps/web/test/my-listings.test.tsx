@@ -64,6 +64,8 @@ describe('my listings', () => {
     expect(html).toContain('İstanbul · Güngören')
     expect(html).toContain('Düzenle')
     expect(html).toContain('href="/ilan-ver/otomobil?draft=0199f000-0000-7000-8000-000000000001"')
+    expect(html).toContain('href="/ilan-ver/otomobil?draft=0199f000-0000-7000-8000-000000000002"')
+    expect(html).toContain('href="/ilan-ver/otomobil?draft=0199f000-0000-7000-8000-000000000003"')
     expect(html).toContain('Yayınla')
     expect(html).toContain('Yayından kaldır')
     expect(html).toContain('href="/otomobil/0199f000-0000-7000-8000-000000000002"')
