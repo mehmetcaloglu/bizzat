@@ -12,6 +12,8 @@ export interface ListingTypeRow {
 export interface OwnedCarListingRow {
   id: string
   status: string
+  updatedAt: Date
+  publishedAt: Date | null
   listingTypeCode: string
   vehicleModelId: string
   title: string | null
@@ -42,6 +44,24 @@ export interface OwnedCarListingRow {
   swapAvailable: boolean | null
   paintStatus: string | null
   replacementStatus: string | null
+}
+
+export interface OwnerCarListingSummaryRow {
+  id: string
+  status: string
+  title: string | null
+  priceAmount: string | null
+  currency: string | null
+  modelYear: number | null
+  mileageKm: number | null
+  brandName: string
+  seriesName: string
+  modelName: string
+  provinceName: string | null
+  districtName: string | null
+  imageId: string | null
+  updatedAt: Date
+  publishedAt: Date | null
 }
 
 export interface ListingImageRow {
@@ -172,6 +192,7 @@ export class ListingRepository {
       .select([
         'listings.id as id',
         'listings.updated_at as updatedAt',
+        'listings.published_at as publishedAt',
         'listings.status as status',
         'listing_types.code as listingTypeCode',
         'car_details.vehicle_model_id as vehicleModelId',
@@ -208,6 +229,164 @@ export class ListingRepository {
       .where('listings.owner_user_id', '=', ownerUserId)
       .where('listing_types.code', '=', 'car_sale')
       .executeTakeFirst() ?? null
+  }
+
+  async listOwnedCarListings(ownerUserId: string): Promise<OwnerCarListingSummaryRow[]> {
+    return await this.db
+      .selectFrom('listings')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .innerJoin('car_details', 'car_details.listing_id', 'listings.id')
+      .innerJoin('vehicle_models', 'vehicle_models.id', 'car_details.vehicle_model_id')
+      .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
+      .innerJoin('vehicle_brands', 'vehicle_brands.id', 'vehicle_series.brand_id')
+      .leftJoin('provinces', 'provinces.id', 'listings.province_id')
+      .leftJoin('districts', 'districts.id', 'listings.district_id')
+      .select([
+        'listings.id as id',
+        'listings.status as status',
+        'listings.title as title',
+        'listings.price_amount as priceAmount',
+        'listings.currency as currency',
+        'car_details.model_year as modelYear',
+        'car_details.mileage_km as mileageKm',
+        'vehicle_brands.name as brandName',
+        'vehicle_series.name as seriesName',
+        'vehicle_models.name as modelName',
+        'provinces.name as provinceName',
+        'districts.name as districtName',
+        sql<string | null>`(
+          select li.id::text
+          from listing_images li
+          where li.listing_id = listings.id
+          order by li.sort_order asc, li.created_at asc
+          limit 1
+        )`.as('imageId'),
+        'listings.updated_at as updatedAt',
+        'listings.published_at as publishedAt',
+      ])
+      .where('listings.owner_user_id', '=', ownerUserId)
+      .where('listing_types.code', '=', 'car_sale')
+      .orderBy('listings.updated_at', 'desc')
+      .orderBy('listings.id', 'desc')
+      .execute()
+  }
+
+  async lockOwnedListingForStatus(
+    ownerUserId: string,
+    listingId: string,
+  ): Promise<{ status: string } | null> {
+    return await this.db
+      .selectFrom('listings')
+      .select('status')
+      .where('id', '=', listingId)
+      .where('owner_user_id', '=', ownerUserId)
+      .forUpdate()
+      .executeTakeFirst() ?? null
+  }
+
+  async markListingPendingVerification(
+    ownerUserId: string,
+    listingId: string,
+  ): Promise<boolean> {
+    const result = await this.db
+      .updateTable('listings')
+      .set({
+        status: 'pending_verification',
+        updated_at: sql`now()`,
+      })
+      .where('id', '=', listingId)
+      .where('owner_user_id', '=', ownerUserId)
+      .where('status', 'in', ['draft', 'inactive'])
+      .executeTakeFirst()
+    return result.numUpdatedRows === 1n
+  }
+
+  async publishOwnedListing(
+    ownerUserId: string,
+    listingId: string,
+    publishedAt: Date,
+  ): Promise<boolean> {
+    const result = await this.db
+      .updateTable('listings')
+      .set({
+        status: 'published',
+        published_at: publishedAt,
+        updated_at: sql`now()`,
+      })
+      .where('id', '=', listingId)
+      .where('owner_user_id', '=', ownerUserId)
+      .where('status', '=', 'pending_verification')
+      .executeTakeFirst()
+    return result.numUpdatedRows === 1n
+  }
+
+  async restoreListingStatus(
+    ownerUserId: string,
+    listingId: string,
+    status: 'draft' | 'inactive',
+  ): Promise<boolean> {
+    const result = await this.db
+      .updateTable('listings')
+      .set({
+        status,
+        updated_at: sql`now()`,
+      })
+      .where('id', '=', listingId)
+      .where('owner_user_id', '=', ownerUserId)
+      .where('status', '=', 'pending_verification')
+      .executeTakeFirst()
+    return result.numUpdatedRows === 1n
+  }
+
+  async unpublishOwnedListing(ownerUserId: string, listingId: string): Promise<boolean> {
+    const result = await this.db
+      .updateTable('listings')
+      .set({
+        status: 'inactive',
+        updated_at: sql`now()`,
+      })
+      .where('id', '=', listingId)
+      .where('owner_user_id', '=', ownerUserId)
+      .where('status', '=', 'published')
+      .executeTakeFirst()
+    return result.numUpdatedRows === 1n
+  }
+
+  async insertPendingVerificationCheck(input: {
+    listingId: string
+    type: string
+    provider: string
+  }): Promise<{ id: string }> {
+    return await this.db
+      .insertInto('verification_checks')
+      .values({
+        listing_id: input.listingId,
+        type: input.type,
+        provider: input.provider,
+        status: 'pending',
+      })
+      .returning('id')
+      .executeTakeFirstOrThrow()
+  }
+
+  async completeVerificationCheck(input: {
+    checkId: string
+    status: 'verified' | 'failed' | 'unavailable'
+    providerReference: string | null
+    failureCode: string | null
+    verifiedAt: Date | null
+  }): Promise<boolean> {
+    const result = await this.db
+      .updateTable('verification_checks')
+      .set({
+        status: input.status,
+        provider_reference: input.providerReference,
+        failure_code: input.failureCode,
+        verified_at: input.verifiedAt,
+      })
+      .where('id', '=', input.checkId)
+      .executeTakeFirst()
+    return result.numUpdatedRows === 1n
   }
 
   async updateOwnedDraftCommonDetails(input: {

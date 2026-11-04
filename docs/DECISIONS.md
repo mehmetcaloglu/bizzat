@@ -30,6 +30,7 @@ Bu kayıt, Bizzat için kesinleşen ürün kararlarını özetler. Henüz sonuç
 | 24 | Minimum moderasyon | İlan raporlama + moderatörün inceleyip yayından kaldırabilmesi | Bireysel ilan vaadi için ilk günden temel operasyon yolu gerekir; karmaşık ML/fraud sistemi ilk MVP şartı değildir. |
 
 | 25 | Araç seçim ağacı (2026-09-09) | Sahibinden referansındaki değişken derinlik; marka/seri sonrası gerekirse gövde, motor ve paket dalları | Kullanıcının açık devam talimatı önceki üç görünür seviyeyi değiştirir. Yaprak UUID korunur, kaynak tipleri doğrudan seçenek yapılmaz. Güncel kapsam kısmi; curation ve CI tamamlanmadan PR #11 merge edilmez. |
+| 26 | İlan yayınlama (2026-11-04) | Taslak veya pasif ilan yalnız zorunlu alanlar, en az bir fotoğraf ve başarılı yetki doğrulaması sonrası yayınlanır. Local/test explicit mock kullanabilir; production mock’u reddeder ve sağlayıcı yoksa fail-closed kalır. | Ana ilan döngüsünü kapatırken EİDS kapısını ve hassas veri sınırını korur; gerçek provider entegrasyonu ayrı açık konudur. |
 
 ## Önceki önerilerin durumu
 

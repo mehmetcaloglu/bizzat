@@ -157,6 +157,7 @@ export interface ListingsTable {
   neighborhood_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
   contact_phone_e164: ColumnType<string | null, string | null | undefined, string | null | undefined>
   show_phone: Generated<boolean>
+  published_at: ColumnType<Date | null, Date | string | null | undefined, Date | string | null | undefined>
   created_at: Generated<Date>
   updated_at: Generated<Date>
 }
@@ -195,6 +196,18 @@ export interface ListingImagesTable {
   created_at: Generated<Date>
 }
 
+export interface VerificationChecksTable {
+  id: Generated<string>
+  listing_id: string
+  type: string
+  provider: string
+  status: string
+  provider_reference: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  failure_code: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  verified_at: ColumnType<Date | null, Date | string | null | undefined, Date | string | null | undefined>
+  created_at: Generated<Date>
+}
+
 export interface Database {
   profiles: ProfilesTable
   reference_data_providers: ReferenceDataProvidersTable
@@ -213,6 +226,7 @@ export interface Database {
   listings: ListingsTable
   car_details: CarDetailsTable
   listing_images: ListingImagesTable
+  verification_checks: VerificationChecksTable
 }
 
 export function createDatabase(connectionString: string): Kysely<Database> {

@@ -1822,3 +1822,233 @@ button:disabled {
     transform: none;
   }
 }
+
+.draft-success-link {
+  margin-top: 8px;
+  display: inline-block;
+  color: var(--bizzat-blue-strong);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.my-listings-intro {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.my-listings-intro > div > p:last-child {
+  max-width: 620px;
+  margin: 10px 0 0;
+  color: var(--bizzat-muted);
+  line-height: 1.55;
+}
+
+.my-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.my-listing-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgb(44 73 91 / 5%);
+}
+
+.my-listing-media {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: #2d78aa;
+  background:
+    radial-gradient(circle at 30% 20%, rgb(255 255 255 / 80%), transparent 28%),
+    linear-gradient(135deg, #eaf6fd, #d9edf9);
+  font-size: 56px;
+  font-weight: 900;
+}
+
+.my-listing-media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.my-listing-body {
+  min-width: 0;
+  padding: 18px;
+  display: grid;
+  gap: 7px;
+  align-content: start;
+}
+
+.my-listing-topline {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  color: #84919a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.listing-status {
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.listing-status-draft {
+  color: #5f6d76;
+  background: #eef3f6;
+}
+
+.listing-status-pending_verification,
+.listing-status-pending_review {
+  color: #7b5b13;
+  background: #fff5d8;
+}
+
+.listing-status-published {
+  color: #145c40;
+  background: #e8f7ef;
+}
+
+.listing-status-rejected {
+  color: #8c3030;
+  background: #fbecec;
+}
+
+.listing-status-inactive {
+  color: #4f6574;
+  background: #eaf1f7;
+}
+
+.my-listing-body h2 {
+  margin: 2px 0 0;
+  color: #26343d;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.my-listing-vehicle,
+.my-listing-location {
+  margin: 0;
+  color: #6b7983;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.my-listing-location {
+  font-weight: 700;
+}
+
+.my-listing-facts {
+  margin-top: 6px;
+  display: grid;
+  gap: 5px;
+}
+
+.my-listing-facts strong {
+  color: #1f6694;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.my-listing-facts span {
+  color: #7b8992;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.my-listing-actions {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.my-listing-actions button,
+.my-listing-secondary {
+  min-height: 34px;
+  padding: 8px 11px;
+  color: #ffffff;
+  background: var(--bizzat-blue-strong);
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.my-listing-actions button:hover:not(:disabled),
+.my-listing-secondary:hover {
+  background: #1f6b9e;
+}
+
+.my-listing-actions button.my-listing-secondary {
+  color: #4f6574;
+  background: #f3f7fa;
+  border: 1px solid var(--bizzat-border);
+}
+
+.my-listing-actions button.my-listing-secondary:hover:not(:disabled) {
+  color: var(--bizzat-blue-strong);
+  border-color: var(--bizzat-border-strong);
+  background: #ffffff;
+}
+
+.my-listing-note {
+  color: #77858f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.my-listing-skeleton {
+  pointer-events: none;
+}
+
+.my-listing-skeleton .my-listing-media,
+.my-listing-skeleton .my-listing-body span {
+  background: linear-gradient(90deg, #f0f4f6, #f7f9fa, #f0f4f6);
+}
+
+.my-listing-skeleton .my-listing-body span {
+  height: 14px;
+  border-radius: 6px;
+}
+
+.my-listings-empty {
+  min-height: 220px;
+}
+
+@media (max-width: 1000px) {
+  .my-listings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .my-listings-intro {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .my-listing-card {
+    grid-template-columns: 1fr;
+  }
+
+  .my-listing-media {
+    min-height: 190px;
+  }
+}

@@ -205,6 +205,56 @@ export interface PublicCarListingDetail {
   }
 }
 
+export type OwnerCarListingStatus =
+  | 'draft'
+  | 'pending_verification'
+  | 'pending_review'
+  | 'published'
+  | 'rejected'
+  | 'inactive'
+
+export interface OwnerCarListingSummary {
+  id: string
+  type: 'car_sale'
+  status: OwnerCarListingStatus
+  title: string | null
+  priceAmount: number | null
+  currency: 'TRY' | null
+  modelYear: number | null
+  mileageKm: number | null
+  vehicle: {
+    brandName: string
+    seriesName: string
+    modelName: string
+  }
+  location: {
+    provinceName: string | null
+    districtName: string | null
+  }
+  imageUrl: string | null
+  updatedAt: string
+  publishedAt: string | null
+}
+
+export interface OwnerCarListingListResponse {
+  items: OwnerCarListingSummary[]
+}
+
+export interface PublishCarSaleListingResponse {
+  listing: {
+    id: string
+    status: 'published'
+    publishedAt: string
+  }
+}
+
+export interface UnpublishCarSaleListingResponse {
+  listing: {
+    id: string
+    status: 'inactive'
+  }
+}
+
 export class ApiClientError extends Error {
   constructor(
     readonly status: number,
@@ -318,6 +368,12 @@ export function updateCarSaleDraftCoreDetails(
   )
 }
 
+export function getOwnedCarListing(listingId: string): Promise<CarSaleDraftResponse> {
+  return requestJson<CarSaleDraftResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}`,
+  )
+}
+
 export async function uploadCarSaleDraftImage(
   listingId: string,
   file: File,
@@ -368,6 +424,27 @@ export function getPublicCarListingContact(listingId: string): Promise<{ phoneE1
   )
 }
 
+export function listMyCarListings(): Promise<OwnerCarListingListResponse> {
+  return requestJson<OwnerCarListingListResponse>('/api/v1/me/listings')
+}
+
+export function publishCarSaleListing(
+  listingId: string,
+): Promise<PublishCarSaleListingResponse> {
+  return requestJson<PublishCarSaleListingResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/publish`,
+    { method: 'POST' },
+  )
+}
+
+export function unpublishCarSaleListing(
+  listingId: string,
+): Promise<UnpublishCarSaleListingResponse> {
+  return requestJson<UnpublishCarSaleListingResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/unpublish`,
+    { method: 'POST' },
+  )
+}
 
 export function removeCarSaleDraftImage(
   listingId: string,

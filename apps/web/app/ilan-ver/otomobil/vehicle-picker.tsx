@@ -5,6 +5,7 @@ import {
   ApiClientError,
   createCarSaleDraft,
   getMe,
+  getOwnedCarListing,
   listVehicleBrands,
   listVehicleSelection,
   listVehicleSeries,
@@ -53,6 +54,20 @@ function breadcrumb(state: VehiclePickerState): string[] {
   ].filter((value): value is string => Boolean(value))
 }
 
+function pickerStateFromDraft(draft: CarSaleDraftResponse['listing']): VehiclePickerState {
+  const lastIndex = draft.vehicle.selectionPath.length - 1
+  return {
+    brand: draft.vehicle.brand,
+    series: draft.vehicle.series,
+    path: draft.vehicle.selectionPath.map((node, index): VehicleSelectionItem => (
+      index === lastIndex
+        ? { key: node.key, name: node.name, kind: 'model', id: draft.vehicle.modelId }
+        : { key: node.key, name: node.name, kind: 'group' }
+    )),
+    vehicleModelId: draft.vehicle.modelId,
+  }
+}
+
 export function VehiclePicker() {
   const [authState, setAuthState] = useState<AuthState>('checking')
   const [picker, setPicker] = useState<VehiclePickerState>(initialVehiclePickerState)
@@ -76,6 +91,23 @@ export function VehiclePicker() {
         const items = await listVehicleBrands()
         if (cancelled) return
         setBrands(items)
+
+        const draftId = new URLSearchParams(window.location.search).get('draft')
+        if (draftId) {
+          try {
+            const response = await getOwnedCarListing(draftId)
+            if (cancelled) return
+            setDraft(response.listing)
+            setPicker(pickerStateFromDraft(response.listing))
+          } catch (draftError) {
+            if (cancelled) return
+            if (isUnauthorized(draftError)) {
+              setAuthState('unauthenticated')
+            } else {
+              setError(errorMessage(draftError))
+            }
+          }
+        }
       } catch (bootError) {
         if (cancelled) return
         if (isUnauthorized(bootError)) {
@@ -387,6 +419,7 @@ export function VehiclePicker() {
               ...draft.vehicle.selectionPath.map((node) => node.name),
             ].join(' / ')}</p>
             <small>Taslak no: {draft.id}</small>
+            <a className="draft-success-link" href="/ilanlarim">İlanlarıma git</a>
           </div>
         </section>
       )}

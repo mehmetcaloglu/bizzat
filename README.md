@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil taslak/ilan verme akışı + public otomobil feed’i ve ilan detayı |
+| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ilan oluşturma/yayınlama + kendi ilanlarım + public otomobil feed’i ve ilan detayı |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -47,6 +47,9 @@ Ayrıntı: [docs/MVP_SCOPE.md](docs/MVP_SCOPE.md).
 Otomobil tarafında ilk dikey dilim çalışır durumdadır:
 
 - `/ilan-ver/otomobil` altında canonical araç seçimi, ilan bilgileri ve fotoğraf yükleme,
+- `/ilanlarim` üzerinde kullanıcının kendi taslak, yayın ve pasif ilanlarını görüp yönetmesi,
+- yayınlama ve yayından kaldırma; yayın öncesi zorunlu alan ve en az bir fotoğraf kontrolü,
+- EİDS yetki doğrulaması için provider adapter sınırı,
 - ana sayfa ve `/otomobil` üzerinde public otomobil feed’i,
 - `/otomobil/:listingId` üzerinde public ilan detayı, fotoğraf galerisi ve araç özellikleri,
 - ilan sahibinin telefon görünürlüğü tercihine saygılı “Telefonu göster” akışı.
@@ -59,9 +62,17 @@ Public API yüzeyi:
 - `GET /api/v1/listings/public/images/:imageId` — işlenmiş kart görseli
 - `GET /api/v1/listings/public/images/:imageId/full` — işlenmiş detay görseli
 
+Authenticated yönetim yüzeyi:
+
+- `GET /api/v1/me/listings` — kullanıcının tüm otomobil ilanları ve durumları
+- `POST /api/v1/listings/:listingId/publish` — taslak/pasif ilanı doğrulama sonrası yayınlar
+- `POST /api/v1/listings/:listingId/unpublish` — yayındaki ilanı pasife alır
+
 Telefon numarası detay yanıtına konmaz; yalnız açık kullanıcı tercihi varsa ayrı contact endpoint’inden döner. Public görseller metadata’dan arındırılmış WebP varyantlarıdır.
 
-Henüz bu dilimde olmayanlar: ilan yayınlama/EİDS geçişi, kendi ilanlarım yönetimi, feed filtre/sıralama, ilan raporlama/moderasyon ve daire kategorisi. Geliştirme ortamında feed’i doldurmak için:
+EİDS doğrulaması `VerificationProvider` sınırı arkasındadır. Local/test ortamında explicit `EIDS_PROVIDER=mock` kullanılabilir. Production’da mock provider reddedilir; gerçek provider yoksa veya doğrulama başarısız/kullanılamazsa ilan yayınlanmaz (`fail closed`). Her deneme `verification_checks` tablosuna minimal sonuç olarak yazılır; ham provider yanıtı saklanmaz.
+
+Henüz bu dilimde olmayanlar: feed filtre/sıralama, ilan raporlama/moderasyon, daire kategorisi, yayındaki ilanın düzenlenmesi ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında feed’i doldurmak için:
 
 ```bash
 pnpm listings:seed:dev -- <owner-user-uuid>

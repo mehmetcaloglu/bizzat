@@ -30,6 +30,7 @@ jobs:
       NODE_ENV: test
       BETTER_AUTH_URL: http://localhost:3000
       BETTER_AUTH_SECRET: bizzat-ci-auth-secret-00000000000001
+      EIDS_PROVIDER: mock
 
     steps:
       - uses: actions/checkout@v4
