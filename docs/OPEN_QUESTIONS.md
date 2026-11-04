@@ -126,10 +126,12 @@ Açık kalan küçük uygulama ayrıntıları:
 
 İlk MVP'de ilan raporlama ve moderatör kaldırma yeteneği var.
 
+Uygulama durumu (2026-11-04): public rapor endpoint'i, ziyaretçi/üye raporu, altı başlangıç rapor nedeni (`fraud`, `wrong_category`, `prohibited`, `duplicate`, `misleading`, `other`), moderatör/admin rapor kuyruğu, raporu reddetme (dismiss), ilanı yayından kaldırma ve moderasyon notu çalışıyor. Rapor nedenleri ilk set olarak kabul edildi; gerekirse genişletilecek.
+
 Henüz netleşmeyenler:
 
-- rapor nedenleri,
 - moderasyon SLA'sı,
+- anonim raporlarda rate limit / kötüye kullanım önlemleri,
 - tekrar eden kötüye kullanım davranışı,
 - kullanıcı itirazı,
 - hesap seviyesinde yaptırım,

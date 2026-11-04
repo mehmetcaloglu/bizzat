@@ -14,6 +14,8 @@ export const ApiErrorCodeSchema = Type.Union([
   Type.Literal('VEHICLE_MODEL_NOT_AVAILABLE'),
   Type.Literal('VERIFICATION_REQUIRED'),
   Type.Literal('VERIFICATION_FAILED'),
+  Type.Literal('REPORT_NOT_FOUND'),
+  Type.Literal('REPORT_ALREADY_REVIEWED'),
   Type.Literal('REFERENCE_PARENT_NOT_FOUND'),
   Type.Literal('RATE_LIMITED'),
   Type.Literal('INTERNAL_ERROR'),

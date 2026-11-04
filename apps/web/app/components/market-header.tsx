@@ -1,10 +1,31 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { getMe } from '../../lib/api-client'
 import { authClient } from '../../lib/auth-client'
 
 export function MarketHeader() {
   const { data: session, isPending } = authClient.useSession()
+  const [role, setRole] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!session) {
+      setRole(null)
+      return
+    }
+    let cancelled = false
+    void getMe()
+      .then((me) => {
+        if (!cancelled) setRole(me.profile.role)
+      })
+      .catch(() => {
+        if (!cancelled) setRole(null)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [session?.user.id])
 
   async function signOut() {
     await authClient.signOut()
@@ -21,6 +42,9 @@ export function MarketHeader() {
         ) : session ? (
           <>
             <Link href="/ilanlarim">İlanlarım</Link>
+            {(role === 'moderator' || role === 'admin') && (
+              <Link href="/moderasyon/raporlar">Moderasyon</Link>
+            )}
             <span className="market-user-name">{session.user.name}</span>
             <button className="market-signout" type="button" onClick={() => void signOut()}>
               Çıkış yap

@@ -4,6 +4,7 @@ import type {
   PublicCarListingDetail,
 } from '../../lib/api-client'
 import { PublicCarListingGallery } from './public-car-listing-gallery'
+import { ReportListingForm } from './report-listing-form'
 
 const fuelLabels: Record<PublicCarListingAttributes['fuelType'], string> = {
   benzin: 'Benzin',
@@ -202,6 +203,8 @@ export function PublicCarListingDetailView({
           </Link>
         </aside>
       </div>
+
+      <ReportListingForm listingId={listing.id} />
     </article>
   )
 }

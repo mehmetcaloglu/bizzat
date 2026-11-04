@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ilan oluşturma/yayınlama + kendi ilanlarım + public otomobil feed’i ve ilan detayı |
+| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ilan oluşturma/yayınlama + kendi ilanlarım + public feed/detay + ilan raporlama ve minimum moderasyon |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -52,7 +52,9 @@ Otomobil tarafında ilk dikey dilim çalışır durumdadır:
 - EİDS yetki doğrulaması için provider adapter sınırı,
 - ana sayfa ve `/otomobil` üzerinde public otomobil feed’i,
 - `/otomobil/:listingId` üzerinde public ilan detayı, fotoğraf galerisi ve araç özellikleri,
-- ilan sahibinin telefon görünürlüğü tercihine saygılı “Telefonu göster” akışı.
+- ilan sahibinin telefon görünürlüğü tercihine saygılı “Telefonu göster” akışı,
+- public ilan detayında “İlanı raporla” formu,
+- `/moderasyon/raporlar` üzerinde moderatör rapor kuyruğu, not girme, raporu reddetme ve ilanı yayından kaldırma.
 
 Public API yüzeyi:
 
@@ -68,11 +70,19 @@ Authenticated yönetim yüzeyi:
 - `POST /api/v1/listings/:listingId/publish` — taslak/pasif ilanı doğrulama sonrası yayınlar
 - `POST /api/v1/listings/:listingId/unpublish` — yayındaki ilanı pasife alır
 
+Raporlama ve moderasyon yüzeyi:
+
+- `POST /api/v1/listings/:listingId/reports` — public ilan için ziyaretçi veya üye raporu
+- `GET /api/v1/moderation/reports` — moderatör/admin rapor kuyruğu
+- `PATCH /api/v1/moderation/reports/:reportId` — `reject` veya `dismiss` kararı ve moderasyon notu
+
+Rapor nedenleri: `fraud`, `wrong_category`, `prohibited`, `duplicate`, `misleading`, `other`. Rapor durumları: `open`, `reviewing`, `resolved`, `dismissed`. Moderatör ilanı reddettiğinde ilan `rejected` durumuna geçer, public okumalardan kalkar ve sahibi tarafından doğrudan yeniden yayınlanamaz; o ilana ait açık raporlar birlikte kapatılır. Moderatör işlemi `reviewed_by_user_id`, `reviewed_at` ve `resolution_note` alanlarına yazılır. Moderatör/admin rolü public sign-up’tan gelmez; `profiles.role` server-owned olarak yönetilir.
+
 Telefon numarası detay yanıtına konmaz; yalnız açık kullanıcı tercihi varsa ayrı contact endpoint’inden döner. Public görseller metadata’dan arındırılmış WebP varyantlarıdır.
 
 EİDS doğrulaması `VerificationProvider` sınırı arkasındadır. Local/test ortamında explicit `EIDS_PROVIDER=mock` kullanılabilir. Production’da mock provider reddedilir; gerçek provider yoksa veya doğrulama başarısız/kullanılamazsa ilan yayınlanmaz (`fail closed`). Her deneme `verification_checks` tablosuna minimal sonuç olarak yazılır; ham provider yanıtı saklanmaz.
 
-Henüz bu dilimde olmayanlar: feed filtre/sıralama, ilan raporlama/moderasyon, daire kategorisi, yayındaki ilanın düzenlenmesi ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında feed’i doldurmak için:
+Henüz bu dilimde olmayanlar: feed filtre/sıralama, daire kategorisi, yayındaki ilanın düzenlenmesi, moderasyon SLA/itiraz akışı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında feed’i doldurmak için:
 
 ```bash
 pnpm listings:seed:dev -- <owner-user-uuid>
