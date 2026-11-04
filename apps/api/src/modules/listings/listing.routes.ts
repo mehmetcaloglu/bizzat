@@ -2,9 +2,12 @@ import {
   ApiErrorResponseSchema,
   CarSaleDraftResponseSchema,
   CreateCarSaleDraftRequestSchema,
+  OwnerCarListingListResponseSchema,
   PublicCarListingContactResponseSchema,
   PublicCarListingDetailResponseSchema,
   PublicCarListingListResponseSchema,
+  PublishCarSaleDraftResponseSchema,
+  UnpublishCarSaleDraftResponseSchema,
   UpdateCarSaleDraftCoreDetailsRequestSchema,
 } from '@bizzat/contracts'
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
@@ -18,12 +21,14 @@ import { LocationRepository } from '../../reference/location.repository.js'
 import { LocationService } from '../../reference/location.service.js'
 import { VehicleCatalogRepository } from '../../reference/vehicle/vehicle-catalog.repository.js'
 import { VehicleCatalogService } from '../../reference/vehicle/vehicle-catalog.service.js'
+import type { VerificationProvider } from '../verifications/verification.provider.js'
 import { ListingRepository } from './listing.repository.js'
 import { ListingService } from './listing.service.js'
 
 export interface ListingRoutesOptions {
   auth: BizzatAuth
   db: Kysely<Database>
+  verificationProvider: VerificationProvider
 }
 
 const ListingParamsSchema = Type.Object({
@@ -59,6 +64,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
     new ListingRepository(options.db),
     new VehicleCatalogService(new VehicleCatalogRepository(options.db)),
     new LocationService(new LocationRepository(options.db)),
+    options.verificationProvider,
   )
 
   app.get('/listings/public/car-sale', {
@@ -148,6 +154,59 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
     )
 
     return reply.code(201).send({ listing })
+  })
+
+  app.get('/me/listings', {
+    schema: {
+      response: {
+        200: OwnerCarListingListResponseSchema,
+        401: ApiErrorResponseSchema,
+      },
+    },
+  }, async (request) => {
+    const session = await getAuthSession(options.auth, request.headers)
+    if (!session) {
+      throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
+    }
+    return await service.listMyCarListings(session.user.id)
+  })
+
+  app.post('/listings/:listingId/publish', {
+    schema: {
+      params: ListingParamsSchema,
+      response: {
+        200: PublishCarSaleDraftResponseSchema,
+        400: ApiErrorResponseSchema,
+        401: ApiErrorResponseSchema,
+        404: ApiErrorResponseSchema,
+        409: ApiErrorResponseSchema,
+        503: ApiErrorResponseSchema,
+      },
+    },
+  }, async (request) => {
+    const session = await getAuthSession(options.auth, request.headers)
+    if (!session) {
+      throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
+    }
+    return await service.publishCarSaleListing(session.user.id, request.params.listingId)
+  })
+
+  app.post('/listings/:listingId/unpublish', {
+    schema: {
+      params: ListingParamsSchema,
+      response: {
+        200: UnpublishCarSaleDraftResponseSchema,
+        401: ApiErrorResponseSchema,
+        404: ApiErrorResponseSchema,
+        409: ApiErrorResponseSchema,
+      },
+    },
+  }, async (request) => {
+    const session = await getAuthSession(options.auth, request.headers)
+    if (!session) {
+      throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
+    }
+    return await service.unpublishCarSaleListing(session.user.id, request.params.listingId)
   })
 
   app.patch('/listings/:listingId/car-sale/details', {

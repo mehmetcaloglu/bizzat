@@ -237,9 +237,65 @@ export const PublicCarListingContactResponseSchema = Type.Object({
   phoneE164: Type.String({ pattern: '^\\+90[0-9]{10}$' }),
 })
 
+export const OwnerCarListingStatusSchema = Type.Union([
+  Type.Literal('draft'),
+  Type.Literal('pending_verification'),
+  Type.Literal('pending_review'),
+  Type.Literal('published'),
+  Type.Literal('rejected'),
+  Type.Literal('inactive'),
+])
+
+const NullableStringSchema = Type.Union([Type.String(), Type.Null()])
+
+export const OwnerCarListingSummarySchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  type: Type.Literal('car_sale'),
+  status: OwnerCarListingStatusSchema,
+  title: NullableStringSchema,
+  priceAmount: Type.Union([Type.Number({ minimum: 1 }), Type.Null()]),
+  currency: Type.Union([Type.Literal('TRY'), Type.Null()]),
+  modelYear: Type.Union([Type.Integer(), Type.Null()]),
+  mileageKm: Type.Union([Type.Integer({ minimum: 0 }), Type.Null()]),
+  vehicle: Type.Object({
+    brandName: Type.String({ minLength: 1 }),
+    seriesName: Type.String({ minLength: 1 }),
+    modelName: Type.String({ minLength: 1 }),
+  }),
+  location: Type.Object({
+    provinceName: NullableStringSchema,
+    districtName: NullableStringSchema,
+  }),
+  imageUrl: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
+  updatedAt: Type.String({ minLength: 1 }),
+  publishedAt: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
+})
+
+export const OwnerCarListingListResponseSchema = Type.Object({
+  items: Type.Array(OwnerCarListingSummarySchema),
+})
+
+export const PublishCarSaleDraftResponseSchema = Type.Object({
+  listing: Type.Object({
+    id: Type.String({ format: 'uuid' }),
+    status: Type.Literal('published'),
+    publishedAt: Type.String({ minLength: 1 }),
+  }),
+})
+
+export const UnpublishCarSaleDraftResponseSchema = Type.Object({
+  listing: Type.Object({
+    id: Type.String({ format: 'uuid' }),
+    status: Type.Literal('inactive'),
+  }),
+})
+
 export type CreateCarSaleDraftRequest = Static<typeof CreateCarSaleDraftRequestSchema>
 export type UpdateCarSaleDraftCoreDetailsRequest = Static<typeof UpdateCarSaleDraftCoreDetailsRequestSchema>
 export type CarSaleDraftResponse = Static<typeof CarSaleDraftResponseSchema>
 export type PublicCarListingListResponse = Static<typeof PublicCarListingListResponseSchema>
 export type PublicCarListingDetailResponse = Static<typeof PublicCarListingDetailResponseSchema>
 export type PublicCarListingContactResponse = Static<typeof PublicCarListingContactResponseSchema>
+export type OwnerCarListingListResponse = Static<typeof OwnerCarListingListResponseSchema>
+export type PublishCarSaleDraftResponse = Static<typeof PublishCarSaleDraftResponseSchema>
+export type UnpublishCarSaleDraftResponse = Static<typeof UnpublishCarSaleDraftResponseSchema>

@@ -3,9 +3,12 @@ import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import type {
   CarSaleDraftResponse,
+  OwnerCarListingListResponse,
   PublicCarListingContactResponse,
   PublicCarListingDetailResponse,
   PublicCarListingListResponse,
+  PublishCarSaleDraftResponse,
+  UnpublishCarSaleDraftResponse,
   UpdateCarSaleDraftCoreDetailsRequest,
 } from '@bizzat/contracts'
 import type { Kysely } from 'kysely'
@@ -17,10 +20,15 @@ import {
   ListingImageValidationError,
   processListingImage,
 } from './listing-media.js'
+import type {
+  VerificationOutcome,
+  VerificationProvider,
+} from '../verifications/verification.provider.js'
 import {
   ListingRepository,
   type ListingImageRow,
   type OwnedCarListingRow,
+  type OwnerCarListingSummaryRow,
 } from './listing.repository.js'
 
 type CarSaleDraft = CarSaleDraftResponse['listing']
@@ -128,6 +136,35 @@ function imageSummary(listingId: string, image: ListingImageRow): CarSaleDraft['
   }
 }
 
+function ownerListingSummary(
+  row: OwnerCarListingSummaryRow,
+): OwnerCarListingListResponse['items'][number] {
+  return {
+    id: row.id,
+    type: 'car_sale',
+    status: row.status as OwnerCarListingListResponse['items'][number]['status'],
+    title: row.title,
+    priceAmount: row.priceAmount === null ? null : Number(row.priceAmount),
+    currency: row.currency === 'TRY' ? 'TRY' : null,
+    modelYear: row.modelYear,
+    mileageKm: row.mileageKm,
+    vehicle: {
+      brandName: row.brandName,
+      seriesName: row.seriesName,
+      modelName: row.modelName,
+    },
+    location: {
+      provinceName: row.provinceName,
+      districtName: row.districtName,
+    },
+    imageUrl: row.imageId
+      ? `/api/v1/listings/${row.id}/images/${row.imageId}`
+      : null,
+    updatedAt: row.updatedAt.toISOString(),
+    publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
+  }
+}
+
 function mediaRoot(): string {
   return path.resolve(process.env.BIZZAT_MEDIA_ROOT ?? '.data/media')
 }
@@ -155,6 +192,7 @@ export class ListingService {
     private readonly repository: ListingRepository,
     private readonly vehicleCatalog: VehicleCatalogService,
     private readonly locations: LocationService,
+    private readonly verificationProvider: VerificationProvider,
   ) {}
 
   async createCarSaleDraft(ownerUserId: string, vehicleModelId: string): Promise<CarSaleDraft> {
@@ -217,6 +255,195 @@ export class ListingService {
       attributes: attributes(draft),
       contact: contact(draft),
       images: images.map((image) => imageSummary(draft.id, image)),
+    }
+  }
+
+  async listMyCarListings(ownerUserId: string): Promise<OwnerCarListingListResponse> {
+    const rows = await this.repository.listOwnedCarListings(ownerUserId)
+    return {
+      items: rows.map((row) => ownerListingSummary(row)),
+    }
+  }
+
+  async publishCarSaleListing(
+    ownerUserId: string,
+    listingId: string,
+  ): Promise<PublishCarSaleDraftResponse> {
+    const existing = await this.repository.findOwnedCarListing(ownerUserId, listingId)
+    if (!existing) {
+      throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+    }
+    if (existing.status !== 'draft' && existing.status !== 'inactive') {
+      throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan şu anda yayınlanamaz.')
+    }
+
+    const verifiedInput = await this.assertPublishable(existing)
+    const originalStatus = existing.status
+
+    const pendingCheck = await this.db.transaction().execute(async (transaction) => {
+      const repository = new ListingRepository(transaction)
+      const locked = await repository.lockOwnedListingForStatus(ownerUserId, listingId)
+      if (!locked) {
+        throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+      }
+      if (locked.status !== 'draft' && locked.status !== 'inactive') {
+        throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan şu anda yayınlanamaz.')
+      }
+      if (!await repository.markListingPendingVerification(ownerUserId, listingId)) {
+        throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan şu anda yayınlanamaz.')
+      }
+      return await repository.insertPendingVerificationCheck({
+        listingId,
+        type: 'vehicle_authority',
+        provider: this.verificationProvider.name,
+      })
+    })
+
+    let outcome: VerificationOutcome
+    try {
+      outcome = await this.verificationProvider.verifyVehicleAuthority({
+        listingId,
+        ownerUserId,
+        vehicleModelId: existing.vehicleModelId,
+        modelYear: verifiedInput.modelYear,
+        plateNationality: verifiedInput.plateNationality,
+      })
+    } catch {
+      outcome = {
+        status: 'unavailable',
+        failureCode: 'VERIFICATION_PROVIDER_ERROR',
+      }
+    }
+
+    const verifiedAt = outcome.status === 'verified' ? new Date() : null
+
+    await this.db.transaction().execute(async (transaction) => {
+      const repository = new ListingRepository(transaction)
+      const completed = await repository.completeVerificationCheck({
+        checkId: pendingCheck.id,
+        status: outcome.status,
+        providerReference: outcome.status === 'verified' ? outcome.providerReference : null,
+        failureCode: outcome.status === 'verified' ? null : outcome.failureCode,
+        verifiedAt,
+      })
+      if (!completed) {
+        throw new AppError(500, 'INTERNAL_ERROR', 'Doğrulama sonucu kaydedilemedi.')
+      }
+
+      if (outcome.status === 'verified' && verifiedAt) {
+        if (!await repository.publishOwnedListing(ownerUserId, listingId, verifiedAt)) {
+          throw new AppError(409, 'LISTING_NOT_EDITABLE', 'İlan yayınlanamadı.')
+        }
+        return
+      }
+
+      if (!await repository.restoreListingStatus(ownerUserId, listingId, originalStatus)) {
+        throw new AppError(500, 'INTERNAL_ERROR', 'İlan durumu geri alınamadı.')
+      }
+    })
+
+    if (outcome.status === 'failed') {
+      throw new AppError(409, 'VERIFICATION_FAILED', 'EİDS yetki doğrulaması başarısız oldu.')
+    }
+    if (outcome.status === 'unavailable') {
+      throw new AppError(
+        503,
+        'DEPENDENCY_UNAVAILABLE',
+        'EİDS doğrulama servisi şu anda kullanılamıyor.',
+      )
+    }
+    if (!verifiedAt) {
+      throw new AppError(500, 'INTERNAL_ERROR', 'Doğrulama zamanı kaydedilemedi.')
+    }
+
+    return {
+      listing: {
+        id: listingId,
+        status: 'published',
+        publishedAt: verifiedAt.toISOString(),
+      },
+    }
+  }
+
+  async unpublishCarSaleListing(
+    ownerUserId: string,
+    listingId: string,
+  ): Promise<UnpublishCarSaleDraftResponse> {
+    const existing = await this.repository.findOwnedCarListing(ownerUserId, listingId)
+    if (!existing) {
+      throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+    }
+    if (existing.status !== 'published') {
+      throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan şu anda yayından kaldırılamaz.')
+    }
+    if (!await this.repository.unpublishOwnedListing(ownerUserId, listingId)) {
+      throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan şu anda yayından kaldırılamaz.')
+    }
+    return {
+      listing: {
+        id: listingId,
+        status: 'inactive',
+      },
+    }
+  }
+
+  private async assertPublishable(
+    row: OwnedCarListingRow,
+  ): Promise<{ modelYear: number; plateNationality: string }> {
+    const listingAttributes = attributes(row)
+    if (
+      listingAttributes === null
+      || row.title === null
+      || row.description === null
+      || row.priceAmount === null
+      || row.currency !== 'TRY'
+      || row.provinceId === null
+      || row.districtId === null
+      || row.neighborhoodId === null
+      || row.modelYear === null
+      || row.mileageKm === null
+      || row.contactPhoneE164 === null
+      || row.plateNationality === null
+    ) {
+      throw new AppError(
+        409,
+        'LISTING_INCOMPLETE',
+        'İlanı yayınlamak için tüm zorunlu alanları doldur.',
+      )
+    }
+
+    const imageCount = await this.repository.countImages(row.id)
+    if (imageCount === 0) {
+      throw new AppError(
+        409,
+        'LISTING_INCOMPLETE',
+        'İlanı yayınlamak için en az bir fotoğraf ekle.',
+      )
+    }
+
+    if (!await this.vehicleCatalog.findActiveModelSummary(row.vehicleModelId)) {
+      throw new AppError(
+        400,
+        'VEHICLE_MODEL_NOT_AVAILABLE',
+        'Seçtiğin araç modeli artık kullanılamıyor.',
+      )
+    }
+
+    if (!await this.locations.resolveActivePath({
+      provinceId: row.provinceId,
+      districtId: row.districtId,
+      neighborhoodId: row.neighborhoodId,
+    })) {
+      throw new AppError(
+        400,
+        'LISTING_LOCATION_INVALID',
+        'Seçtiğin konum artık kullanılamıyor.',
+      )
+    }
+
+    return {
+      modelYear: row.modelYear,
+      plateNationality: row.plateNationality,
     }
   }
 

@@ -20,6 +20,7 @@ export function MarketHeader() {
           <span className="market-session-status">Oturum…</span>
         ) : session ? (
           <>
+            <Link href="/ilanlarim">İlanlarım</Link>
             <span className="market-user-name">{session.user.name}</span>
             <button className="market-signout" type="button" onClick={() => void signOut()}>
               Çıkış yap

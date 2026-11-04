@@ -24,6 +24,8 @@ Henüz netleşmeyenler:
 
 Karar: production'da doğrulama başarısızsa veya yapılamıyorsa ilan sessizce yayınlanamaz.
 
+Uygulama durumu (2026-11-04): `VerificationProvider` adapter sınırı ve `verification_checks` tablosu eklendi. Local/test yayını explicit `EIDS_PROVIDER=mock` ile çalışıyor. Production'da mock provider reddediliyor; gerçek provider yapılandırılmadığında publish `DEPENDENCY_UNAVAILABLE` ile fail-closed kalıyor. Gerçek EİDS bağlantısı hâlâ açık.
+
 ### KVKK ve hassas veri
 
 Henüz netleşmeyenler:

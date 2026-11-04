@@ -229,6 +229,7 @@ export async function seedDevelopmentCarListings(
           neighborhood_id: location.neighborhood_id,
           contact_phone_e164: fixture.contactPhoneE164 ?? '+905000000000',
           show_phone: fixture.showPhone ?? false,
+          published_at: sql`now()`,
         })
         .onConflict((conflict) => conflict.column('id').doUpdateSet({
           owner_user_id: ownerUserId,
@@ -243,6 +244,7 @@ export async function seedDevelopmentCarListings(
           neighborhood_id: location.neighborhood_id,
           contact_phone_e164: fixture.contactPhoneE164 ?? '+905000000000',
           show_phone: fixture.showPhone ?? false,
+          published_at: sql`now()`,
           updated_at: sql`now()`,
         }))
         .execute()

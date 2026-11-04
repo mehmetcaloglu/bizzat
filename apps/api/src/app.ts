@@ -7,6 +7,10 @@ import type { Database } from './db/client.js'
 import { listingRoutes } from './modules/listings/listing.routes.js'
 import { systemRoutes } from './modules/system/system.routes.js'
 import { meRoutes } from './modules/users/me.routes.js'
+import {
+  createVerificationProvider,
+  type VerificationProvider,
+} from './modules/verifications/verification.provider.js'
 import { locationRoutes } from './reference/location.routes.js'
 import { vehicleCatalogRoutes } from './reference/vehicle/vehicle-catalog.routes.js'
 
@@ -15,6 +19,7 @@ export interface BuildAppOptions {
   auth?: BizzatAuth
   authBaseUrl?: string
   db?: Kysely<Database>
+  verificationProvider?: VerificationProvider
   logger?: boolean
 }
 
@@ -52,6 +57,7 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
       prefix: '/api/v1',
       auth: options.auth,
       db: options.db,
+      verificationProvider: options.verificationProvider ?? createVerificationProvider(),
     })
   }
 
