@@ -11,6 +11,7 @@ import {
   type CarSaleDraftResponse,
 } from '../../../lib/api-client'
 import { CarListingDetailsForm } from './car-listing-details-form'
+import { mergeDraftImages } from './car-listing-form-state'
 import {
   clearSelectedModel,
   getPickerInteractionState,
@@ -390,7 +391,11 @@ export function VehiclePicker() {
         </section>
       )}
 
-      <CarListingDetailsForm listing={draft} onSaved={setDraft} />
+      <CarListingDetailsForm
+        listing={draft}
+        onSaved={setDraft}
+        onImagesSaved={(images) => setDraft((current) => mergeDraftImages(current, images))}
+      />
     </main>
   )
 }

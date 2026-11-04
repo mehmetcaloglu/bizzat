@@ -148,12 +148,15 @@ export interface ListingsTable {
   owner_user_id: string
   listing_type_id: string
   status: Generated<string>
+  title: ColumnType<string | null, string | null | undefined, string | null | undefined>
   description: ColumnType<string | null, string | null | undefined, string | null | undefined>
   price_amount: ColumnType<string | null, string | number | null | undefined, string | number | null | undefined>
   currency: ColumnType<string | null, string | null | undefined, string | null | undefined>
   province_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
   district_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
   neighborhood_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  contact_phone_e164: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  show_phone: Generated<boolean>
   created_at: Generated<Date>
   updated_at: Generated<Date>
 }
@@ -163,6 +166,33 @@ export interface CarDetailsTable {
   vehicle_model_id: string
   model_year: ColumnType<number | null, number | null | undefined, number | null | undefined>
   mileage_km: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  fuel_type: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  transmission: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  body_type: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  vehicle_condition: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  engine_power_hp: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  engine_displacement_cc: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  drivetrain: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  color: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  under_warranty: ColumnType<boolean | null, boolean | null | undefined, boolean | null | undefined>
+  heavy_damage_recorded: ColumnType<boolean | null, boolean | null | undefined, boolean | null | undefined>
+  plate_nationality: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  swap_available: ColumnType<boolean | null, boolean | null | undefined, boolean | null | undefined>
+  paint_status: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  replacement_status: ColumnType<string | null, string | null | undefined, string | null | undefined>
+}
+
+export interface ListingImagesTable {
+  id: Generated<string>
+  listing_id: string
+  storage_key: string
+  card_storage_key: string
+  sort_order: Generated<number>
+  mime_type: Generated<string>
+  size_bytes: number
+  width: number
+  height: number
+  created_at: Generated<Date>
 }
 
 export interface Database {
@@ -182,6 +212,7 @@ export interface Database {
   listing_types: ListingTypesTable
   listings: ListingsTable
   car_details: CarDetailsTable
+  listing_images: ListingImagesTable
 }
 
 export function createDatabase(connectionString: string): Kysely<Database> {

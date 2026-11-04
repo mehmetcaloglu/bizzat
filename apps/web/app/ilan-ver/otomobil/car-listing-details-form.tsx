@@ -1,21 +1,35 @@
 'use client'
 
-import { type FormEvent, useEffect, useState } from 'react'
+import { type ChangeEvent, type FormEvent, useEffect, useState } from 'react'
 import {
   ApiClientError,
   listDistricts,
   listNeighborhoods,
   listProvinces,
+  makeCarSaleDraftImageCover,
+  removeCarSaleDraftImage,
   updateCarSaleDraftCoreDetails,
+  uploadCarSaleDraftImage,
+  type CarBodyType,
+  type CarDrivetrain,
+  type CarFuelType,
+  type CarPaintStatus,
+  type CarPlateNationality,
+  type CarReplacementStatus,
   type CarSaleDraftResponse,
+  type CarTransmission,
+  type CarVehicleCondition,
+  type ListingImageSummary,
   type LocationReferenceItem,
   type NeighborhoodReferenceItem,
   type ProvinceReferenceItem,
 } from '../../../lib/api-client'
+import { normalizeTurkishPhone } from './car-listing-form-state'
 
 interface CarListingDetailsFormProps {
   listing: CarSaleDraftResponse['listing'] | null
   onSaved: (listing: CarSaleDraftResponse['listing']) => void
+  onImagesSaved: (images: ListingImageSummary[]) => void
 }
 
 type LoadingTarget = 'provinces' | 'districts' | 'neighborhoods' | 'save' | null
@@ -25,11 +39,33 @@ function errorMessage(error: unknown): string {
   return 'Bilgiler kaydedilemedi. Tekrar deneyebilirsin.'
 }
 
-export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFormProps) {
+export function CarListingDetailsForm({
+  listing,
+  onSaved,
+  onImagesSaved,
+}: CarListingDetailsFormProps) {
+  const [title, setTitle] = useState('')
   const [modelYear, setModelYear] = useState('')
   const [mileageKm, setMileageKm] = useState('')
   const [priceAmount, setPriceAmount] = useState('')
+  const [fuelType, setFuelType] = useState<CarFuelType | ''>('')
+  const [transmission, setTransmission] = useState<CarTransmission | ''>('')
+  const [vehicleCondition, setVehicleCondition] = useState<CarVehicleCondition | ''>('')
+  const [bodyType, setBodyType] = useState<CarBodyType | ''>('')
+  const [enginePowerHp, setEnginePowerHp] = useState('')
+  const [engineDisplacementCc, setEngineDisplacementCc] = useState('')
+  const [drivetrain, setDrivetrain] = useState<CarDrivetrain | ''>('')
+  const [color, setColor] = useState('')
+  const [underWarranty, setUnderWarranty] = useState<'yes' | 'no' | ''>('')
+  const [heavyDamageRecorded, setHeavyDamageRecorded] = useState<'yes' | 'no' | ''>('')
+  const [plateNationality, setPlateNationality] = useState<CarPlateNationality | ''>('')
+  const [swapAvailable, setSwapAvailable] = useState<'yes' | 'no' | ''>('')
+  const [paintStatus, setPaintStatus] = useState<CarPaintStatus | ''>('')
+  const [replacementStatus, setReplacementStatus] = useState<CarReplacementStatus | ''>('')
   const [description, setDescription] = useState('')
+  const [contactPhone, setContactPhone] = useState('')
+  const [phoneError, setPhoneError] = useState<string | null>(null)
+  const [showPhone, setShowPhone] = useState(true)
   const [provinceId, setProvinceId] = useState('')
   const [districtId, setDistrictId] = useState('')
   const [neighborhoodId, setNeighborhoodId] = useState('')
@@ -37,6 +73,8 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
   const [districts, setDistricts] = useState<LocationReferenceItem[]>([])
   const [neighborhoods, setNeighborhoods] = useState<NeighborhoodReferenceItem[]>([])
   const [loadingTarget, setLoadingTarget] = useState<LoadingTarget>(null)
+  const [uploading, setUploading] = useState(false)
+  const [mediaActionId, setMediaActionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
@@ -44,10 +82,28 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     let cancelled = false
 
     if (!listing) {
+      setTitle('')
       setModelYear('')
       setMileageKm('')
       setPriceAmount('')
+      setFuelType('')
+      setTransmission('')
+      setVehicleCondition('')
+      setBodyType('')
+      setEnginePowerHp('')
+      setEngineDisplacementCc('')
+      setDrivetrain('')
+      setColor('')
+      setUnderWarranty('')
+      setHeavyDamageRecorded('')
+      setPlateNationality('')
+      setSwapAvailable('')
+      setPaintStatus('')
+      setReplacementStatus('')
       setDescription('')
+      setContactPhone('')
+      setPhoneError(null)
+      setShowPhone(true)
       setProvinceId('')
       setDistrictId('')
       setNeighborhoodId('')
@@ -63,17 +119,37 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     }
 
     const details = listing.details
+    setTitle(listing.title ?? '')
     setModelYear(details ? String(details.modelYear) : '')
     setMileageKm(details ? String(details.mileageKm) : '')
     setPriceAmount(details ? String(details.priceAmount) : '')
+    setFuelType(listing.attributes?.fuelType ?? '')
+    setTransmission(listing.attributes?.transmission ?? '')
+    setVehicleCondition(listing.attributes?.vehicleCondition ?? '')
+    setBodyType(listing.attributes?.bodyType ?? '')
+    setEnginePowerHp(listing.attributes ? String(listing.attributes.enginePowerHp) : '')
+    setEngineDisplacementCc(
+      listing.attributes?.engineDisplacementCc === null || listing.attributes === null
+        ? ''
+        : String(listing.attributes.engineDisplacementCc),
+    )
+    setDrivetrain(listing.attributes?.drivetrain ?? '')
+    setColor(listing.attributes?.color ?? '')
+    setUnderWarranty(listing.attributes ? (listing.attributes.underWarranty ? 'yes' : 'no') : '')
+    setHeavyDamageRecorded(listing.attributes ? (listing.attributes.heavyDamageRecorded ? 'yes' : 'no') : '')
+    setPlateNationality(listing.attributes?.plateNationality ?? '')
+    setSwapAvailable(listing.attributes ? (listing.attributes.swapAvailable ? 'yes' : 'no') : '')
+    setPaintStatus(listing.attributes?.paintStatus ?? '')
+    setReplacementStatus(listing.attributes?.replacementStatus ?? '')
     setDescription(details?.description ?? '')
+    setContactPhone(listing.contact?.phoneE164 ?? '')
+    setShowPhone(listing.contact?.showPhone ?? true)
     setProvinceId(details?.location.province.id ?? '')
     setDistrictId(details?.location.district.id ?? '')
     setNeighborhoodId(details?.location.neighborhood.id ?? '')
     setDistricts([])
     setNeighborhoods([])
     setError(null)
-    setMessage(null)
 
     async function loadLocationOptions() {
       setLoadingTarget('provinces')
@@ -101,7 +177,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     return () => {
       cancelled = true
     }
-  }, [listing?.id, listing?.details])
+  }, [listing?.id, listing?.details, listing?.title, listing?.attributes, listing?.contact])
 
   async function handleProvince(nextProvinceId: string) {
     setProvinceId(nextProvinceId)
@@ -148,15 +224,38 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     const parsedModelYear = Number(modelYear)
     const parsedMileageKm = Number(mileageKm)
     const parsedPriceAmount = Number(priceAmount)
+    const parsedEnginePowerHp = Number(enginePowerHp)
+    const parsedEngineDisplacementCc = Number(engineDisplacementCc)
+    const normalizedPhone = normalizeTurkishPhone(contactPhone)
+    setPhoneError(null)
     if (
       !Number.isInteger(parsedModelYear)
       || !Number.isInteger(parsedMileageKm)
       || !Number.isInteger(parsedPriceAmount)
+      || title.trim().length < 10
+      || !fuelType
+      || !transmission
+      || !vehicleCondition
+      || !bodyType
+      || !Number.isInteger(parsedEnginePowerHp)
+      || (fuelType !== 'elektrik' && !Number.isInteger(parsedEngineDisplacementCc))
+      || !drivetrain
+      || color.trim().length < 2
+      || !underWarranty
+      || !heavyDamageRecorded
+      || !plateNationality
+      || !swapAvailable
+      || !paintStatus
+      || !replacementStatus
+      || !normalizedPhone
       || !provinceId
       || !districtId
       || !neighborhoodId
     ) {
-      setError('Tüm ilan bilgilerini geçerli değerlerle doldur.')
+      if (!normalizedPhone) {
+        setPhoneError('Geçerli bir Türkiye telefon numarası gir.')
+      }
+      setError('Başlık, araç özellikleri, iletişim ve konum dahil tüm alanları geçerli şekilde doldur.')
       return
     }
 
@@ -165,16 +264,33 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     setLoadingTarget('save')
     try {
       const response = await updateCarSaleDraftCoreDetails(listing.id, {
+        title: title.trim(),
         modelYear: parsedModelYear,
         mileageKm: parsedMileageKm,
         priceAmount: parsedPriceAmount,
+        fuelType,
+        transmission,
+        vehicleCondition,
+        bodyType,
+        enginePowerHp: parsedEnginePowerHp,
+        engineDisplacementCc: fuelType === 'elektrik' ? null : parsedEngineDisplacementCc,
+        drivetrain,
+        color: color.trim(),
+        underWarranty: underWarranty === 'yes',
+        heavyDamageRecorded: heavyDamageRecorded === 'yes',
+        plateNationality,
+        swapAvailable: swapAvailable === 'yes',
+        paintStatus,
+        replacementStatus,
         provinceId,
         districtId,
         neighborhoodId,
         description,
+        contactPhoneE164: normalizedPhone,
+        showPhone,
       })
       onSaved(response.listing)
-      setMessage('İlan bilgileri kaydedildi.')
+      setMessage('İlan bilgileri kaydedildi. Fotoğrafları da ekleyerek taslağını tamamlayabilirsin.')
     } catch (saveError) {
       if (saveError instanceof ApiClientError && saveError.code === 'LISTING_LOCATION_INVALID') {
         setProvinceId('')
@@ -195,6 +311,73 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
     }
   }
 
+  async function handlePhotos(event: ChangeEvent<HTMLInputElement>) {
+    if (!listing || uploading || loadingTarget === 'save') return
+    const files = Array.from(event.target.files ?? [])
+    event.target.value = ''
+    if (files.length === 0) return
+
+    const remaining = Math.max(0, 10 - listing.images.length)
+    if (remaining === 0) {
+      setError('Bu ilana zaten 10 fotoğraf eklenmiş.')
+      return
+    }
+
+    const selected = files.slice(0, remaining)
+    const invalid = selected.find((file) =>
+      !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 8_000_000
+    )
+    if (invalid) {
+      setError('Fotoğraflar JPG, PNG veya WebP olmalı ve her biri en fazla 8 MB olabilir.')
+      return
+    }
+
+    setUploading(true)
+    setError(null)
+    setMessage(null)
+    try {
+      for (const file of selected) {
+        const response = await uploadCarSaleDraftImage(listing.id, file)
+        onImagesSaved(response.listing.images)
+      }
+      setMessage(`${selected.length} fotoğraf eklendi.`)
+    } catch (uploadError) {
+      setError(errorMessage(uploadError))
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  async function handleRemoveImage(imageId: string) {
+    if (!listing || mediaActionId) return
+    setMediaActionId(imageId)
+    setError(null)
+    try {
+      const response = await removeCarSaleDraftImage(listing.id, imageId)
+      onImagesSaved(response.listing.images)
+      setMessage('Fotoğraf kaldırıldı.')
+    } catch (removeError) {
+      setError(errorMessage(removeError))
+    } finally {
+      setMediaActionId(null)
+    }
+  }
+
+  async function handleMakeCover(imageId: string) {
+    if (!listing || mediaActionId) return
+    setMediaActionId(imageId)
+    setError(null)
+    try {
+      const response = await makeCarSaleDraftImageCover(listing.id, imageId)
+      onImagesSaved(response.listing.images)
+      setMessage('Kapak fotoğrafı güncellendi.')
+    } catch (coverError) {
+      setError(errorMessage(coverError))
+    } finally {
+      setMediaActionId(null)
+    }
+  }
+
   const locked = listing === null
   const saving = loadingTarget === 'save'
   const maxModelYear = new Date().getFullYear() + 1
@@ -209,13 +392,27 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
           <p>
             {locked
               ? 'Önce aracını seçip taslağı oluştur. Bu alanlar sonra açılacak.'
-              : 'Aracın temel ilan bilgilerini doldur. Diğer özellikleri sonraki adımlarda ekleyeceğiz.'}
+              : 'Başlık, araç özellikleri, konum ve iletişim bilgisini tamamla; ardından fotoğraflarını ekle.'}
           </p>
         </div>
       </div>
 
       <form className="listing-details-form" onSubmit={(event) => void handleSubmit(event)}>
         <fieldset disabled={locked || saving}>
+          <label className="full-width-field">
+            <span>İlan başlığı</span>
+            <input
+              name="title"
+              minLength={10}
+              maxLength={120}
+              required
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="Örn. 2024 Renault Clio Evolution temiz aile aracı"
+            />
+            <small>{title.length}/120</small>
+          </label>
+
           <div className="listing-details-grid">
             <label>
               <span>Model yılı</span>
@@ -246,7 +443,7 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
                   required
                   value={mileageKm}
                   onChange={(event) => setMileageKm(event.target.value)}
-                  placeholder="45.000"
+                  placeholder="45000"
                 />
                 <span>km</span>
               </div>
@@ -265,11 +462,170 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
                   required
                   value={priceAmount}
                   onChange={(event) => setPriceAmount(event.target.value)}
-                  placeholder="1.250.000"
+                  placeholder="1250000"
                 />
                 <span>TL</span>
               </div>
             </label>
+          </div>
+
+          <div className="listing-form-section">
+            <h3>Araç özellikleri</h3>
+            <div className="listing-details-grid attribute-grid">
+              <label>
+                <span>Yakıt</span>
+                <select
+                  value={fuelType}
+                  required
+                  onChange={(event) => {
+                    const nextFuel = event.target.value as CarFuelType
+                    setFuelType(nextFuel)
+                    if (nextFuel === 'elektrik') setEngineDisplacementCc('')
+                  }}
+                >
+                  <option value="">Yakıt seç</option>
+                  <option value="benzin">Benzin</option>
+                  <option value="dizel">Dizel</option>
+                  <option value="lpg">Benzin & LPG</option>
+                  <option value="hibrit">Hibrit</option>
+                  <option value="elektrik">Elektrik</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Vites</span>
+                <select value={transmission} required onChange={(event) => setTransmission(event.target.value as CarTransmission)}>
+                  <option value="">Vites seç</option>
+                  <option value="manuel">Manuel</option>
+                  <option value="otomatik">Otomatik</option>
+                  <option value="yari_otomatik">Yarı otomatik</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Araç durumu</span>
+                <select value={vehicleCondition} required onChange={(event) => setVehicleCondition(event.target.value as CarVehicleCondition)}>
+                  <option value="">Durum seç</option>
+                  <option value="second_hand">İkinci el</option>
+                  <option value="new">Sıfır</option>
+                  <option value="imported_new">Yurtdışından ithal sıfır</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Kasa tipi</span>
+                <select value={bodyType} required onChange={(event) => setBodyType(event.target.value as CarBodyType)}>
+                  <option value="">Kasa tipi seç</option>
+                  <option value="hatchback">Hatchback</option>
+                  <option value="sedan">Sedan</option>
+                  <option value="station_wagon">Station Wagon</option>
+                  <option value="suv">SUV</option>
+                  <option value="coupe">Coupe</option>
+                  <option value="cabrio">Cabrio</option>
+                  <option value="mpv">MPV</option>
+                  <option value="roadster">Roadster</option>
+                  <option value="diger">Diğer</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Motor gücü</span>
+                <div className="field-with-suffix">
+                  <input type="number" min={1} max={2000} required value={enginePowerHp} onChange={(event) => setEnginePowerHp(event.target.value)} placeholder="100" />
+                  <span>hp</span>
+                </div>
+              </label>
+
+              <label>
+                <span>Motor hacmi</span>
+                <div className="field-with-suffix">
+                  <input
+                    type="number"
+                    min={1}
+                    max={20000}
+                    required={fuelType !== 'elektrik'}
+                    disabled={fuelType === 'elektrik'}
+                    value={engineDisplacementCc}
+                    onChange={(event) => setEngineDisplacementCc(event.target.value)}
+                    placeholder={fuelType === 'elektrik' ? 'Uygulanmaz' : '999'}
+                  />
+                  <span>cc</span>
+                </div>
+              </label>
+
+              <label>
+                <span>Çekiş</span>
+                <select value={drivetrain} required onChange={(event) => setDrivetrain(event.target.value as CarDrivetrain)}>
+                  <option value="">Çekiş seç</option>
+                  <option value="front">Önden çekiş</option>
+                  <option value="rear">Arkadan itiş</option>
+                  <option value="four_wd">4WD (Sürekli)</option>
+                  <option value="awd">AWD (Elektronik)</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Renk</span>
+                <input value={color} minLength={2} maxLength={40} required onChange={(event) => setColor(event.target.value)} placeholder="Beyaz" />
+              </label>
+            </div>
+
+            <div className="listing-details-grid attribute-grid secondary-attribute-grid">
+              <label>
+                <span>Garanti</span>
+                <select value={underWarranty} required onChange={(event) => setUnderWarranty(event.target.value as 'yes' | 'no' | '')}>
+                  <option value="">Seç</option>
+                  <option value="yes">Evet</option>
+                  <option value="no">Hayır</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Ağır hasar kaydı</span>
+                <select value={heavyDamageRecorded} required onChange={(event) => setHeavyDamageRecorded(event.target.value as 'yes' | 'no' | '')}>
+                  <option value="">Seç</option>
+                  <option value="yes">Var</option>
+                  <option value="no">Yok</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Plaka / uyruk</span>
+                <select value={plateNationality} required onChange={(event) => setPlateNationality(event.target.value as CarPlateNationality)}>
+                  <option value="">Seç</option>
+                  <option value="tr">Türkiye (TR) plakalı</option>
+                  <option value="ma">Mavi (MA) plakalı</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Takas</span>
+                <select value={swapAvailable} required onChange={(event) => setSwapAvailable(event.target.value as 'yes' | 'no' | '')}>
+                  <option value="">Seç</option>
+                  <option value="yes">Olur</option>
+                  <option value="no">Olmaz</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Boya durumu</span>
+                <select value={paintStatus} required onChange={(event) => setPaintStatus(event.target.value as CarPaintStatus)}>
+                  <option value="">Seç</option>
+                  <option value="original">Boyasız</option>
+                  <option value="partial">Parça boyalı</option>
+                  <option value="painted">Boyalı</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Değişen parça</span>
+                <select value={replacementStatus} required onChange={(event) => setReplacementStatus(event.target.value as CarReplacementStatus)}>
+                  <option value="">Seç</option>
+                  <option value="none">Değişensiz</option>
+                  <option value="replaced">Değişen var</option>
+                </select>
+              </label>
+            </div>
           </div>
 
           <div className="listing-details-grid location-grid">
@@ -335,7 +691,88 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
             />
             <small>{description.length}/5000</small>
           </label>
+
+          <div className="contact-panel">
+            <label>
+              <span>İletişim telefonu</span>
+              <input
+                type="tel"
+                inputMode="tel"
+                required
+                autoComplete="tel"
+                value={contactPhone}
+                onChange={(event) => {
+                  setContactPhone(event.target.value)
+                  setPhoneError(null)
+                }}
+                placeholder="0555 123 45 67"
+              />
+              <small>0 5xx xxx xx xx veya +90 5xx xxx xx xx</small>
+              {phoneError && <small className="field-error">{phoneError}</small>}
+            </label>
+            <label className="phone-visibility">
+              <input
+                type="checkbox"
+                checked={showPhone}
+                onChange={(event) => setShowPhone(event.target.checked)}
+              />
+              <span>Telefon numaramı ilanda göster</span>
+            </label>
+          </div>
         </fieldset>
+
+        <div className="photo-uploader" aria-disabled={locked}>
+          <div>
+            <span className="photo-uploader-title">
+              Fotoğraflar {listing ? `· ${listing.images.length}/10` : ''}
+            </span>
+            <p>JPG, PNG veya WebP · fotoğraf başına en fazla 8 MB · en fazla 10 fotoğraf</p>
+          </div>
+          <label className="photo-upload-button" aria-disabled={locked || uploading}>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              disabled={locked || uploading || saving || mediaActionId !== null}
+              onChange={(event) => void handlePhotos(event)}
+            />
+            {uploading ? 'Yükleniyor…' : 'Fotoğraf ekle'}
+          </label>
+        </div>
+
+        {listing && listing.images.length > 0 && (
+          <div className="photo-grid" aria-label="Yüklenen fotoğraflar">
+            {listing.images.map((image, index) => (
+              <div className="photo-tile" key={image.id}>
+                <div
+                  className="photo-tile-image"
+                  role="img"
+                  aria-label={`İlan fotoğrafı ${index + 1}`}
+                  style={{ backgroundImage: `url("${image.url}")` }}
+                />
+                <span>{index === 0 ? 'Kapak fotoğrafı' : `Fotoğraf ${index + 1}`}</span>
+                <div className="photo-tile-actions">
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      disabled={mediaActionId !== null}
+                      onClick={() => void handleMakeCover(image.id)}
+                    >
+                      Kapak yap
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    disabled={mediaActionId !== null}
+                    onClick={() => void handleRemoveImage(image.id)}
+                  >
+                    {mediaActionId === image.id ? 'İşleniyor…' : 'Kaldır'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="listing-details-actions">
           <div aria-live="polite">
@@ -343,8 +780,12 @@ export function CarListingDetailsForm({ listing, onSaved }: CarListingDetailsFor
             {error && <span className="listing-details-error" role="alert">{error}</span>}
             {message && <span className="listing-details-saved" role="status">{message}</span>}
           </div>
-          <button className="primary-action" type="submit" disabled={locked || saving}>
-            {saving ? 'Kaydediliyor…' : 'Bilgileri kaydet'}
+          <button
+            className="primary-action"
+            type="submit"
+            disabled={locked || saving || uploading || mediaActionId !== null}
+          >
+            {saving ? 'Kaydediliyor…' : 'Taslağı kaydet'}
           </button>
         </div>
       </form>

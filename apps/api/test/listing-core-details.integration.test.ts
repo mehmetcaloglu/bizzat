@@ -1,3 +1,5 @@
+import { rm } from 'node:fs/promises'
+import sharp from 'sharp'
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 import type { FastifyInstance } from 'fastify'
 import { sql, type Kysely } from 'kysely'
@@ -14,6 +16,8 @@ const databaseUrl = process.env.TEST_DATABASE_URL
 if (!databaseUrl) throw new Error('TEST_DATABASE_URL is required')
 const secret = process.env.BETTER_AUTH_SECRET ?? 'bizzat-test-auth-secret-00000000000001'
 const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
+const mediaRoot = `/tmp/bizzat-listing-media-${process.pid}`
+process.env.BIZZAT_MEDIA_ROOT = mediaRoot
 
 let db: Kysely<Database>
 let app: FastifyInstance
@@ -170,6 +174,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   await app.close()
+  await rm(mediaRoot, { recursive: true, force: true })
   await db.destroy()
   await authPool.end()
 })
@@ -194,10 +199,51 @@ describe('car sale draft core details', () => {
         districtId: istanbul.district_id,
         neighborhoodId: istanbul.neighborhood_id,
         description,
+        title: '2026 Renault Clio temiz aile aracı',
+        fuelType: 'benzin',
+        transmission: 'otomatik',
+        vehicleCondition: 'second_hand',
+        bodyType: 'hatchback',
+        enginePowerHp: 90,
+        engineDisplacementCc: 999,
+        drivetrain: 'front',
+        color: 'Beyaz',
+        underWarranty: true,
+        heavyDamageRecorded: false,
+        plateNationality: 'tr',
+        swapAvailable: false,
+        paintStatus: 'original',
+        replacementStatus: 'none',
+        contactPhoneE164: '+905551234567',
+        showPhone: true,
       },
     })
 
     expect(response.statusCode).toBe(200)
+    expect(response.json().listing).toMatchObject({
+      title: '2026 Renault Clio temiz aile aracı',
+      attributes: {
+        fuelType: 'benzin',
+        transmission: 'otomatik',
+        vehicleCondition: 'second_hand',
+        bodyType: 'hatchback',
+        enginePowerHp: 90,
+        engineDisplacementCc: 999,
+        drivetrain: 'front',
+        color: 'Beyaz',
+        underWarranty: true,
+        heavyDamageRecorded: false,
+        plateNationality: 'tr',
+        swapAvailable: false,
+        paintStatus: 'original',
+        replacementStatus: 'none',
+      },
+      contact: {
+        phoneE164: '+905551234567',
+        showPhone: true,
+      },
+      images: [],
+    })
     expect(response.json().listing.details).toEqual({
       modelYear: new Date().getFullYear(),
       mileageKm: 42800,
@@ -246,6 +292,226 @@ describe('car sale draft core details', () => {
       model_year: new Date().getFullYear(),
       mileage_km: 42800,
     })
+  })
+
+  it('decodes uploads, strips metadata and serves sanitized WebP variants', async () => {
+    const user = await createSignedInUser('Photo Owner')
+    const modelId = await createCanonicalModel()
+    const listingId = await createDraft(user.cookie, modelId)
+    const bytes = await sharp({
+      create: {
+        width: 1200,
+        height: 900,
+        channels: 3,
+        background: { r: 40, g: 120, b: 180 },
+      },
+    }).withMetadata({ orientation: 6 }).jpeg().toBuffer()
+
+    const upload = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/images`,
+      headers: {
+        cookie: user.cookie,
+        host: 'localhost:3000',
+        'content-type': 'image/jpeg',
+      },
+      payload: bytes,
+    })
+
+    expect(upload.statusCode).toBe(201)
+    expect(upload.json().listing.images).toHaveLength(1)
+    const image = upload.json().listing.images[0] as { id: string; url: string }
+    expect(image.url).toBe(`/api/v1/listings/${listingId}/images/${image.id}`)
+
+    const ownedRead = await app.inject({
+      method: 'GET',
+      url: image.url,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(ownedRead.statusCode).toBe(200)
+    expect(ownedRead.headers['content-type']).toContain('image/webp')
+    const ownedMetadata = await sharp(ownedRead.rawPayload).metadata()
+    expect(ownedMetadata.format).toBe('webp')
+    expect(ownedMetadata.exif).toBeUndefined()
+
+    await db.updateTable('listings').set({ status: 'published' }).where('id', '=', listingId).execute()
+    const publicRead = await app.inject({
+      method: 'GET',
+      url: `/api/v1/listings/public/images/${image.id}`,
+      headers: { host: 'localhost:3000' },
+    })
+    expect(publicRead.statusCode).toBe(200)
+    const publicMetadata = await sharp(publicRead.rawPayload).metadata()
+    expect(publicMetadata.format).toBe('webp')
+    expect(publicMetadata.exif).toBeUndefined()
+    expect(publicMetadata.width).toBeLessThanOrEqual(720)
+    expect(publicMetadata.height).toBeLessThanOrEqual(540)
+  })
+
+  it('rejects fake image payloads even when the MIME header claims JPEG', async () => {
+    const user = await createSignedInUser('Fake Photo Owner')
+    const modelId = await createCanonicalModel()
+    const listingId = await createDraft(user.cookie, modelId)
+
+    const response = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/images`,
+      headers: {
+        cookie: user.cookie,
+        host: 'localhost:3000',
+        'content-type': 'image/jpeg',
+      },
+      payload: Buffer.from('not really a jpeg'),
+    })
+
+    expect(response.statusCode).toBe(400)
+    expect(response.json().error.code).toBe('VALIDATION_ERROR')
+  })
+
+  it('keeps the ten-photo limit atomic across concurrent uploads', async () => {
+    const user = await createSignedInUser('Concurrent Photo Owner')
+    const modelId = await createCanonicalModel()
+    const listingId = await createDraft(user.cookie, modelId)
+    const bytes = await sharp({
+      create: {
+        width: 8,
+        height: 8,
+        channels: 3,
+        background: { r: 20, g: 30, b: 40 },
+      },
+    }).png().toBuffer()
+
+    for (let index = 0; index < 9; index += 1) {
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/v1/listings/${listingId}/images`,
+        headers: {
+          cookie: user.cookie,
+          host: 'localhost:3000',
+          'content-type': 'image/png',
+        },
+        payload: bytes,
+      })
+      expect(response.statusCode).toBe(201)
+    }
+
+    const results = await Promise.all([
+      app.inject({
+        method: 'POST',
+        url: `/api/v1/listings/${listingId}/images`,
+        headers: { cookie: user.cookie, host: 'localhost:3000', 'content-type': 'image/png' },
+        payload: bytes,
+      }),
+      app.inject({
+        method: 'POST',
+        url: `/api/v1/listings/${listingId}/images`,
+        headers: { cookie: user.cookie, host: 'localhost:3000', 'content-type': 'image/png' },
+        payload: bytes,
+      }),
+    ])
+
+    expect(results.map((response) => response.statusCode).sort()).toEqual([201, 400])
+    const count = await db
+      .selectFrom('listing_images')
+      .select(({ fn }) => fn.countAll<number>().as('count'))
+      .where('listing_id', '=', listingId)
+      .executeTakeFirstOrThrow()
+    expect(Number(count.count)).toBe(10)
+  })
+
+  it('supports cover selection and removing a draft photo', async () => {
+    const user = await createSignedInUser('Photo Management Owner')
+    const modelId = await createCanonicalModel()
+    const listingId = await createDraft(user.cookie, modelId)
+    const bytes = await sharp({
+      create: {
+        width: 8,
+        height: 8,
+        channels: 3,
+        background: { r: 80, g: 90, b: 100 },
+      },
+    }).png().toBuffer()
+
+    const first = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/images`,
+      headers: { cookie: user.cookie, host: 'localhost:3000', 'content-type': 'image/png' },
+      payload: bytes,
+    })
+    const second = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/images`,
+      headers: { cookie: user.cookie, host: 'localhost:3000', 'content-type': 'image/png' },
+      payload: bytes,
+    })
+    const firstId = first.json().listing.images[0].id as string
+    const secondId = second.json().listing.images[1].id as string
+
+    const cover = await app.inject({
+      method: 'PATCH',
+      url: `/api/v1/listings/${listingId}/images/${secondId}/cover`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(cover.statusCode).toBe(200)
+    expect(cover.json().listing.images[0].id).toBe(secondId)
+
+    const remove = await app.inject({
+      method: 'DELETE',
+      url: `/api/v1/listings/${listingId}/images/${firstId}`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(remove.statusCode).toBe(200)
+    expect(remove.json().listing.images).toHaveLength(1)
+    expect(remove.json().listing.images[0].id).toBe(secondId)
+  })
+
+  it('stores electric cars without a fake engine displacement', async () => {
+    const user = await createSignedInUser('Electric Car Owner')
+    const modelId = await createCanonicalModel()
+    const { istanbul } = await createLocations()
+    const listingId = await createDraft(user.cookie, modelId)
+
+    const response = await app.inject({
+      method: 'PATCH',
+      url: `/api/v1/listings/${listingId}/car-sale/details`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+      payload: {
+        modelYear: 2026,
+        mileageKm: 5000,
+        priceAmount: 1900000,
+        provinceId: istanbul.province_id,
+        districtId: istanbul.district_id,
+        neighborhoodId: istanbul.neighborhood_id,
+        description: 'Tam elektrikli otomobil için motor hacmi uygulanamaz olarak saklanır.',
+        title: '2026 elektrikli otomobil bireysel ilan',
+        fuelType: 'elektrik',
+        transmission: 'otomatik',
+        vehicleCondition: 'second_hand',
+        bodyType: 'sedan',
+        enginePowerHp: 204,
+        engineDisplacementCc: null,
+        drivetrain: 'rear',
+        color: 'Beyaz',
+        underWarranty: true,
+        heavyDamageRecorded: false,
+        plateNationality: 'tr',
+        swapAvailable: false,
+        paintStatus: 'original',
+        replacementStatus: 'none',
+        contactPhoneE164: '+905551234567',
+        showPhone: true,
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.json().listing.attributes.engineDisplacementCc).toBeNull()
+
+    const persisted = await db
+      .selectFrom('car_details')
+      .select('engine_displacement_cc')
+      .where('listing_id', '=', listingId)
+      .executeTakeFirstOrThrow()
+    expect(persisted.engine_displacement_cc).toBeNull()
   })
 
   it('rejects location ids that do not belong to the same active hierarchy', async () => {
