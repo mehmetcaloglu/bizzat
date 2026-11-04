@@ -173,6 +173,12 @@ function mediaRoot(): string {
   return path.resolve(process.env.BIZZAT_MEDIA_ROOT ?? '.data/media')
 }
 
+const editableListingStatuses = ['draft', 'published', 'inactive'] as const
+
+function isEditableListingStatus(status: string): boolean {
+  return (editableListingStatuses as readonly string[]).includes(status)
+}
+
 const publicCarSorts: PublicCarListingSort[] = [
   'newest',
   'oldest',
@@ -305,10 +311,13 @@ export class ListingService {
     }
   }
 
-  async getOwnedDraft(ownerUserId: string, listingId: string): Promise<CarSaleDraft> {
+  async getOwnedEditableListing(ownerUserId: string, listingId: string): Promise<CarSaleDraft> {
     const draft = await this.repository.findOwnedCarListing(ownerUserId, listingId)
-    if (!draft || draft.status !== 'draft') {
+    if (!draft) {
       throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+    }
+    if (!isEditableListingStatus(draft.status)) {
+      throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan artık düzenlenemez.')
     }
 
     const vehicle = await this.vehicleCatalog.findModelSummary(draft.vehicleModelId)
@@ -320,7 +329,7 @@ export class ListingService {
 
     return {
       id: draft.id,
-      status: 'draft',
+      status: draft.status as CarSaleDraft['status'],
       type: 'car_sale',
       vehicle,
       details: coreDetails(draft),
@@ -529,8 +538,8 @@ export class ListingService {
     if (!existing) {
       throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
     }
-    if (existing.status !== 'draft') {
-      throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan artık taslak olarak düzenlenemez.')
+    if (!isEditableListingStatus(existing.status)) {
+      throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan artık düzenlenemez.')
     }
 
     if (input.modelYear > new Date().getFullYear() + 1) {
@@ -586,7 +595,7 @@ export class ListingService {
         showPhone: input.showPhone ?? existing.showPhone,
       })
       if (!listingUpdated) {
-        throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan artık taslak olarak düzenlenemez.')
+        throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilan artık düzenlenemez.')
       }
 
       const detailsUpdated = await repository.updateCarDetails({
@@ -613,7 +622,7 @@ export class ListingService {
       }
     })
 
-    return this.getOwnedDraft(ownerUserId, listingId)
+    return this.getOwnedEditableListing(ownerUserId, listingId)
   }
 
   async uploadDraftImage(
@@ -649,7 +658,7 @@ export class ListingService {
         const repository = new ListingRepository(transaction)
         const locked = await repository.lockOwnedListingForImage(ownerUserId, listingId)
         if (!locked) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
-        if (locked.status !== 'draft') {
+        if (!isEditableListingStatus(locked.status)) {
           throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilana artık fotoğraf eklenemez.')
         }
 
@@ -677,7 +686,7 @@ export class ListingService {
       throw error
     }
 
-    return this.getOwnedDraft(ownerUserId, listingId)
+    return this.getOwnedEditableListing(ownerUserId, listingId)
   }
 
   async removeDraftImage(
@@ -689,8 +698,15 @@ export class ListingService {
       const repository = new ListingRepository(transaction)
       const locked = await repository.lockOwnedListingForImage(ownerUserId, listingId)
       if (!locked) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
-      if (locked.status !== 'draft') {
+      if (!isEditableListingStatus(locked.status)) {
         throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilanın fotoğrafları artık düzenlenemez.')
+      }
+      if (locked.status === 'published' && await repository.countImages(listingId) <= 1) {
+        throw new AppError(
+          409,
+          'LISTING_NOT_EDITABLE',
+          'Yayındaki ilanın son fotoğrafını kaldıramazsın.',
+        )
       }
 
       const image = await repository.deleteImage(listingId, imageId)
@@ -704,7 +720,7 @@ export class ListingService {
       unlink(path.join(mediaRoot(), removed.cardStorageKey)).catch(() => undefined),
     ])
 
-    return this.getOwnedDraft(ownerUserId, listingId)
+    return this.getOwnedEditableListing(ownerUserId, listingId)
   }
 
   async makeDraftImageCover(
@@ -716,7 +732,7 @@ export class ListingService {
       const repository = new ListingRepository(transaction)
       const locked = await repository.lockOwnedListingForImage(ownerUserId, listingId)
       if (!locked) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
-      if (locked.status !== 'draft') {
+      if (!isEditableListingStatus(locked.status)) {
         throw new AppError(409, 'LISTING_NOT_EDITABLE', 'Bu ilanın fotoğrafları artık düzenlenemez.')
       }
 
@@ -725,7 +741,7 @@ export class ListingService {
       }
     })
 
-    return this.getOwnedDraft(ownerUserId, listingId)
+    return this.getOwnedEditableListing(ownerUserId, listingId)
   }
 
   async readOwnedImage(ownerUserId: string, listingId: string, imageId: string) {

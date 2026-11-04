@@ -276,6 +276,86 @@ describe('apartment vertical', () => {
     expect(contact.json().error.code).toBe('LISTING_CONTACT_NOT_AVAILABLE')
   })
 
+  it('edits published and inactive apartment listings while protecting the last published photo', async () => {
+    const owner = await createSignedInUser('Daire Düzenleme Sahibi')
+    const location = await createLocation()
+    const listingId = await createApartmentDraft(owner.cookie, 'sale')
+    await updateDetails(owner.cookie, listingId, detailsPayload(location, 'sale', {
+      priceAmount: 4_250_000,
+      roomCount: '2+1',
+      grossM2: 105,
+    }))
+    const firstUpload = await uploadImage(owner.cookie, listingId)
+    const firstImageId = firstUpload.json().listing.images[0].id as string
+    await publish(owner.cookie, listingId)
+
+    const ownedPublished = await app.inject({
+      method: 'GET',
+      url: `/api/v1/listings/${listingId}/apartment`,
+      headers: { cookie: owner.cookie, host: 'localhost:3000' },
+    })
+    expect(ownedPublished.statusCode).toBe(200)
+    expect(ownedPublished.json().listing.status).toBe('published')
+
+    const editPublished = await updateDetails(owner.cookie, listingId, detailsPayload(location, 'sale', {
+      priceAmount: 4_400_000,
+      roomCount: '2+1',
+      grossM2: 105,
+    }))
+    expect(editPublished.json().listing.status).toBe('published')
+    expect(editPublished.json().listing.details.priceAmount).toBe(4_400_000)
+
+    const publicDetail = await app.inject({
+      method: 'GET',
+      url: `/api/v1/listings/public/apartment/${listingId}`,
+      headers: { host: 'localhost:3000' },
+    })
+    expect(publicDetail.statusCode).toBe(200)
+    expect(publicDetail.json().listing.priceAmount).toBe(4_400_000)
+
+    const removeOnlyPhoto = await app.inject({
+      method: 'DELETE',
+      url: `/api/v1/listings/${listingId}/apartment/images/${firstImageId}`,
+      headers: { cookie: owner.cookie, host: 'localhost:3000' },
+    })
+    expect(removeOnlyPhoto.statusCode).toBe(409)
+    expect(removeOnlyPhoto.json().error.code).toBe('LISTING_NOT_EDITABLE')
+
+    await uploadImage(owner.cookie, listingId)
+    const removeFirstPhoto = await app.inject({
+      method: 'DELETE',
+      url: `/api/v1/listings/${listingId}/apartment/images/${firstImageId}`,
+      headers: { cookie: owner.cookie, host: 'localhost:3000' },
+    })
+    expect(removeFirstPhoto.statusCode).toBe(200)
+    expect(removeFirstPhoto.json().listing.images).toHaveLength(1)
+
+    const unpublish = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/apartment/unpublish`,
+      headers: { cookie: owner.cookie, host: 'localhost:3000' },
+    })
+    expect(unpublish.statusCode).toBe(200)
+
+    const editInactive = await updateDetails(owner.cookie, listingId, detailsPayload(location, 'sale', {
+      priceAmount: 4_500_000,
+      roomCount: '2+1',
+      grossM2: 105,
+    }))
+    expect(editInactive.json().listing.status).toBe('inactive')
+    expect(editInactive.json().listing.details.priceAmount).toBe(4_500_000)
+
+    const ownedInactive = await app.inject({
+      method: 'GET',
+      url: `/api/v1/listings/${listingId}/apartment`,
+      headers: { cookie: owner.cookie, host: 'localhost:3000' },
+    })
+    expect(ownedInactive.statusCode).toBe(200)
+    expect(ownedInactive.json().listing.status).toBe('inactive')
+
+    await publish(owner.cookie, listingId)
+  })
+
   it('creates, publishes, filters, reads, contacts, lists, and unpublishes sale/rent apartments', async () => {
     const owner = await createSignedInUser('Daire Sahibi')
     const location = await createLocation()

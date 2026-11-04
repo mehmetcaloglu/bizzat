@@ -392,6 +392,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
         200: CarSaleDraftResponseSchema,
         401: ApiErrorResponseSchema,
         404: ApiErrorResponseSchema,
+        409: ApiErrorResponseSchema,
       },
     },
   }, async (request) => {
@@ -401,7 +402,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
     }
 
     return {
-      listing: await service.getOwnedDraft(session.user.id, request.params.listingId),
+      listing: await service.getOwnedEditableListing(session.user.id, request.params.listingId),
     }
   })
 }

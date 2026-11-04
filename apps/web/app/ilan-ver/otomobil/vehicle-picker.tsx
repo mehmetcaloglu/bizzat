@@ -401,7 +401,7 @@ export function VehiclePicker() {
           onClick={() => void handleCreateDraft()}
         >
           {draft
-            ? 'Taslak oluşturuldu'
+            ? draft.status === 'draft' ? 'Taslak oluşturuldu' : 'İlan düzenleniyor'
             : loadingTarget === 'draft'
               ? 'Taslak oluşturuluyor…'
               : 'İlan taslağını oluştur'}
@@ -412,13 +412,13 @@ export function VehiclePicker() {
         <section className="draft-success" role="status">
           <span className="draft-success-mark" aria-hidden="true">✓</span>
           <div>
-            <strong>İlan taslağın hazır.</strong>
+            <strong>{draft.status === 'draft' ? 'İlan taslağın hazır.' : 'İlanın düzenlemeye açık.'}</strong>
             <p>{[
               draft.vehicle.brand.name,
               draft.vehicle.series.name,
               ...draft.vehicle.selectionPath.map((node) => node.name),
             ].join(' / ')}</p>
-            <small>Taslak no: {draft.id}</small>
+            <small>{draft.status === 'draft' ? 'Taslak' : 'İlan'} no: {draft.id}</small>
             <a className="draft-success-link" href="/ilanlarim">İlanlarıma git</a>
           </div>
         </section>

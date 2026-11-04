@@ -75,7 +75,7 @@ export interface ListingImageSummary {
 export interface CarSaleDraftResponse {
   listing: {
     id: string
-    status: 'draft'
+    status: 'draft' | 'published' | 'inactive'
     type: 'car_sale'
     vehicle: {
       modelId: string
@@ -160,7 +160,7 @@ export interface ApartmentDraftDetails extends ApartmentAttributeValues {
 export interface ApartmentDraftResponse {
   listing: {
     id: string
-    status: 'draft'
+    status: 'draft' | 'published' | 'inactive'
     type: 'apartment_sale' | 'apartment_rent'
     transactionType: ApartmentTransactionType
     title: string | null

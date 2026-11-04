@@ -1,5 +1,5 @@
 import { Type, type Static } from 'typebox'
-import { ListingContactSchema, ListingImageSchema } from './listing.js'
+import { EditableListingStatusSchema, ListingContactSchema, ListingImageSchema } from './listing.js'
 
 export const ApartmentTransactionTypeSchema = Type.Union([
   Type.Literal('sale'),
@@ -140,7 +140,7 @@ export const UpdateApartmentDraftDetailsRequestSchema = Type.Object({
 
 export const ApartmentDraftSchema = Type.Object({
   id: Type.String({ format: 'uuid' }),
-  status: Type.Literal('draft'),
+  status: EditableListingStatusSchema,
   type: Type.Union([Type.Literal('apartment_sale'), Type.Literal('apartment_rent')]),
   transactionType: ApartmentTransactionTypeSchema,
   title: Type.Union([Type.String({ minLength: 10, maxLength: 120 }), Type.Null()]),

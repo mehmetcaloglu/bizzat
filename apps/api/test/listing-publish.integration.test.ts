@@ -154,6 +154,7 @@ async function saveCompleteDetails(
   cookie: string,
   listingId: string,
   location: { province_id: string; district_id: string; neighborhood_id: string },
+  overrides: { priceAmount?: number; title?: string } = {},
 ) {
   const response = await app.inject({
     method: 'PATCH',
@@ -162,12 +163,12 @@ async function saveCompleteDetails(
     payload: {
       modelYear: 2024,
       mileageKm: 42800,
-      priceAmount: 1250000,
+      priceAmount: overrides.priceAmount ?? 1250000,
       provinceId: location.province_id,
       districtId: location.district_id,
       neighborhoodId: location.neighborhood_id,
       description,
-      title: '2024 Renault Clio temiz aile aracı',
+      title: overrides.title ?? '2024 Renault Clio temiz aile aracı',
       fuelType: 'benzin',
       transmission: 'otomatik',
       vehicleCondition: 'second_hand',
@@ -210,7 +211,7 @@ async function uploadPhoto(cookie: string, listingId: string): Promise<string> {
     payload: bytes,
   })
   expect(upload.statusCode).toBe(201)
-  return upload.json().listing.images[0].id as string
+  return upload.json().listing.images.at(-1).id as string
 }
 
 async function createCompleteDraft() {
@@ -219,8 +220,8 @@ async function createCompleteDraft() {
   const location = await createLocations()
   const listingId = await createDraft(user.cookie, modelId)
   await saveCompleteDetails(user.cookie, listingId, location)
-  await uploadPhoto(user.cookie, listingId)
-  return { user, listingId, modelId, location }
+  const imageId = await uploadPhoto(user.cookie, listingId)
+  return { user, listingId, modelId, location, imageId }
 }
 
 function buildTestApp(verificationProvider?: VerificationProvider) {
@@ -481,6 +482,127 @@ describe('listing publish and owner management', () => {
       headers: { host: 'localhost:3000' },
     })
     expect(publicDetail.statusCode).toBe(404)
+  })
+
+  it('edits published and inactive car listings while protecting the last published photo', async () => {
+    const { user, listingId, location, imageId } = await createCompleteDraft()
+    const publish = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/publish`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(publish.statusCode).toBe(200)
+
+    const editPublished = await app.inject({
+      method: 'PATCH',
+      url: `/api/v1/listings/${listingId}/car-sale/details`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+      payload: {
+        modelYear: 2024,
+        mileageKm: 43_500,
+        priceAmount: 1_300_000,
+        provinceId: location.province_id,
+        districtId: location.district_id,
+        neighborhoodId: location.neighborhood_id,
+        description,
+        title: '2024 Renault Clio güncel aile aracı',
+        fuelType: 'benzin',
+        transmission: 'otomatik',
+        vehicleCondition: 'second_hand',
+        bodyType: 'hatchback',
+        enginePowerHp: 90,
+        engineDisplacementCc: 999,
+        drivetrain: 'front',
+        color: 'Beyaz',
+        underWarranty: true,
+        heavyDamageRecorded: false,
+        plateNationality: 'tr',
+        swapAvailable: false,
+        paintStatus: 'original',
+        replacementStatus: 'none',
+        contactPhoneE164: '+905551234567',
+        showPhone: true,
+      },
+    })
+    expect(editPublished.statusCode).toBe(200)
+    expect(editPublished.json().listing.status).toBe('published')
+    expect(editPublished.json().listing.details.priceAmount).toBe(1_300_000)
+
+    const publicDetail = await app.inject({
+      method: 'GET',
+      url: `/api/v1/listings/public/car-sale/${listingId}`,
+      headers: { host: 'localhost:3000' },
+    })
+    expect(publicDetail.statusCode).toBe(200)
+    expect(publicDetail.json().listing.priceAmount).toBe(1_300_000)
+    expect(publicDetail.json().listing.title).toBe('2024 Renault Clio güncel aile aracı')
+
+    const removeOnlyPhoto = await app.inject({
+      method: 'DELETE',
+      url: `/api/v1/listings/${listingId}/images/${imageId}`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(removeOnlyPhoto.statusCode).toBe(409)
+    expect(removeOnlyPhoto.json().error.code).toBe('LISTING_NOT_EDITABLE')
+
+    await uploadPhoto(user.cookie, listingId)
+    const removeFirstPhoto = await app.inject({
+      method: 'DELETE',
+      url: `/api/v1/listings/${listingId}/images/${imageId}`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(removeFirstPhoto.statusCode).toBe(200)
+    expect(removeFirstPhoto.json().listing.images).toHaveLength(1)
+
+    const unpublish = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/unpublish`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(unpublish.statusCode).toBe(200)
+
+    const editInactive = await app.inject({
+      method: 'PATCH',
+      url: `/api/v1/listings/${listingId}/car-sale/details`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+      payload: {
+        modelYear: 2024,
+        mileageKm: 44_000,
+        priceAmount: 1_350_000,
+        provinceId: location.province_id,
+        districtId: location.district_id,
+        neighborhoodId: location.neighborhood_id,
+        description,
+        title: '2024 Renault Clio güncel aile aracı',
+        fuelType: 'benzin',
+        transmission: 'otomatik',
+        vehicleCondition: 'second_hand',
+        bodyType: 'hatchback',
+        enginePowerHp: 90,
+        engineDisplacementCc: 999,
+        drivetrain: 'front',
+        color: 'Beyaz',
+        underWarranty: true,
+        heavyDamageRecorded: false,
+        plateNationality: 'tr',
+        swapAvailable: false,
+        paintStatus: 'original',
+        replacementStatus: 'none',
+        contactPhoneE164: '+905551234567',
+        showPhone: true,
+      },
+    })
+    expect(editInactive.statusCode).toBe(200)
+    expect(editInactive.json().listing.status).toBe('inactive')
+    expect(editInactive.json().listing.details.priceAmount).toBe(1_350_000)
+
+    const republish = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/publish`,
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(republish.statusCode).toBe(200)
+    expect(republish.json().listing.status).toBe('published')
   })
 
   it('keeps the listing in draft when EİDS authority verification fails', async () => {

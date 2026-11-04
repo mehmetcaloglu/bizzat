@@ -134,7 +134,9 @@ export function MyApartmentListings() {
                   <span>{new Date(listing.updatedAt).toLocaleDateString('tr-TR')}</span>
                 </div>
                 <div className="my-listing-actions">
-                  {listing.status === 'draft' && (
+                  {(listing.status === 'draft'
+                    || listing.status === 'published'
+                    || listing.status === 'inactive') && (
                     <Link className="my-listing-secondary" href={`/ilan-ver/daire?draft=${listing.id}`}>
                       Düzenle
                     </Link>

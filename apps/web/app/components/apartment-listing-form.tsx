@@ -30,6 +30,12 @@ import {
 
 type AuthState = 'checking' | 'authenticated' | 'unauthenticated' | 'error'
 
+const editableStatusLabels = {
+  draft: 'Taslak',
+  published: 'Yayında',
+  inactive: 'Yayından kaldırıldı',
+} as const
+
 interface ApartmentFormValues {
   title: string
   description: string
@@ -410,6 +416,7 @@ export function ApartmentListingForm() {
     setError(null)
     try {
       const response = await publishApartmentListing(draft.id)
+      setDraft((current) => current ? { ...current, status: 'published' } : current)
       setPublishedAt(response.listing.publishedAt)
       setSavedMessage('İlan yayınlandı.')
     } catch (publishError) {
@@ -482,7 +489,7 @@ export function ApartmentListingForm() {
             <p className="listing-create-eyebrow">{transactionType === 'sale' ? 'Satılık daire' : 'Kiralık daire'}</p>
             <h2>{draft.title ?? 'Yeni daire taslağı'}</h2>
           </div>
-          <span className="listing-status listing-status-draft">Taslak</span>
+          <span className={`listing-status listing-status-${draft.status}`}>{editableStatusLabels[draft.status]}</span>
         </div>
 
         {savedMessage && <div className="listing-save-note" role="status">{savedMessage}</div>}
@@ -778,7 +785,7 @@ export function ApartmentListingForm() {
           <button className="listing-create-submit" type="button" disabled={saving || Boolean(publishedAt)} onClick={() => void saveDetails()}>
             {saving ? 'Kaydediliyor…' : 'Taslağı kaydet'}
           </button>
-          {!publishedAt && (
+          {!publishedAt && (draft.status === 'draft' || draft.status === 'inactive') && (
             <button className="listing-create-secondary" type="button" disabled={publishing || saving} onClick={() => void publish()}>
               {publishing ? 'Yayınlanıyor…' : 'Yayınla'}
             </button>
