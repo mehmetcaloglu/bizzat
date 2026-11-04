@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { sql, type Kysely } from 'kysely'
 import { createAuth, createAuthPool } from '../src/auth/auth.js'
 import { migrateAuth } from '../src/auth/auth-migrator.js'
@@ -13,6 +13,10 @@ const baseUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000'
 let db: Kysely<Database>
 const authPool = createAuthPool(databaseUrl)
 const auth = createAuth({ databaseUrl, baseUrl, secret }, authPool)
+const userIds: string[] = []
+const modelIds: string[] = []
+const seriesIds: string[] = []
+const brandIds: string[] = []
 
 async function insertAuthUser(label: string): Promise<string> {
   const id = crypto.randomUUID()
@@ -21,6 +25,7 @@ async function insertAuthUser(label: string): Promise<string> {
     insert into auth."user" (id, name, email, "emailVerified", "createdAt", "updatedAt")
     values (${id}::uuid, ${label}, ${email}, false, now(), now())
   `.execute(db)
+  userIds.push(id)
   return id
 }
 
@@ -35,6 +40,7 @@ async function insertCanonicalModel(): Promise<string> {
     })
     .returning('id')
     .executeTakeFirstOrThrow()
+  brandIds.push(brand.id)
 
   const series = await db
     .insertInto('vehicle_series')
@@ -46,6 +52,7 @@ async function insertCanonicalModel(): Promise<string> {
     })
     .returning('id')
     .executeTakeFirstOrThrow()
+  seriesIds.push(series.id)
 
   const model = await db
     .insertInto('vehicle_models')
@@ -58,6 +65,7 @@ async function insertCanonicalModel(): Promise<string> {
     })
     .returning('id')
     .executeTakeFirstOrThrow()
+  modelIds.push(model.id)
 
   return model.id
 }
@@ -67,6 +75,34 @@ beforeAll(async () => {
   await migrateBootstrap(db)
   await migrateAuth(auth)
   await migrateDomain(db)
+})
+
+afterEach(async () => {
+  const owners = userIds.splice(0)
+  if (owners.length > 0) {
+    const ownedListings = await db
+      .selectFrom('listings')
+      .select('id')
+      .where('owner_user_id', 'in', owners)
+      .execute()
+    const ownedListingIds = ownedListings.map((listing) => listing.id)
+    if (ownedListingIds.length > 0) {
+      await db.deleteFrom('car_details').where('listing_id', 'in', ownedListingIds).execute()
+    }
+    await db.deleteFrom('listings').where('owner_user_id', 'in', owners).execute()
+  }
+  if (modelIds.length > 0) {
+    await db.deleteFrom('vehicle_models').where('id', 'in', modelIds.splice(0)).execute()
+  }
+  if (seriesIds.length > 0) {
+    await db.deleteFrom('vehicle_series').where('id', 'in', seriesIds.splice(0)).execute()
+  }
+  if (brandIds.length > 0) {
+    await db.deleteFrom('vehicle_brands').where('id', 'in', brandIds.splice(0)).execute()
+  }
+  for (const ownerUserId of owners) {
+    await sql`delete from auth."user" where id = ${ownerUserId}::uuid`.execute(db)
+  }
 })
 
 afterAll(async () => {

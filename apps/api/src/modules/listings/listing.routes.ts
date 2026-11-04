@@ -2,6 +2,8 @@ import {
   ApiErrorResponseSchema,
   CarSaleDraftResponseSchema,
   CreateCarSaleDraftRequestSchema,
+  PublicCarListingContactResponseSchema,
+  PublicCarListingDetailResponseSchema,
   PublicCarListingListResponseSchema,
   UpdateCarSaleDraftCoreDetailsRequestSchema,
 } from '@bizzat/contracts'
@@ -71,12 +73,54 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
     request.query.cursor,
   ))
 
+  app.get('/listings/public/car-sale/:listingId', {
+    schema: {
+      params: ListingParamsSchema,
+      response: {
+        200: PublicCarListingDetailResponseSchema,
+        404: ApiErrorResponseSchema,
+      },
+    },
+  }, async (request, reply) => {
+    const listing = await service.getPublicCarListing(request.params.listingId)
+    return reply
+      .header('Cache-Control', 'public, max-age=60')
+      .send(listing)
+  })
+
+  app.get('/listings/public/car-sale/:listingId/contact', {
+    schema: {
+      params: ListingParamsSchema,
+      response: {
+        200: PublicCarListingContactResponseSchema,
+        404: ApiErrorResponseSchema,
+      },
+    },
+  }, async (request, reply) => {
+    const contact = await service.getPublicCarListingContact(request.params.listingId)
+    return reply
+      .header('Cache-Control', 'no-store')
+      .send(contact)
+  })
+
   app.get('/listings/public/images/:imageId', {
     schema: {
       params: PublicImageParamsSchema,
     },
   }, async (request, reply) => {
     const image = await service.readPublicImage(request.params.imageId)
+    return reply
+      .header('Cache-Control', 'public, max-age=86400')
+      .type(image.mimeType)
+      .send(image.bytes)
+  })
+
+  app.get('/listings/public/images/:imageId/full', {
+    schema: {
+      params: PublicImageParamsSchema,
+    },
+  }, async (request, reply) => {
+    const image = await service.readPublicImage(request.params.imageId, 'full')
     return reply
       .header('Cache-Control', 'public, max-age=86400')
       .type(image.mimeType)

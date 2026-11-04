@@ -35,6 +35,40 @@ function formatKm(value: number): string {
   return new Intl.NumberFormat('tr-TR').format(value) + ' km'
 }
 
+export function PublicCarListingCard({ item }: { item: PublicCarListingItem }) {
+  return (
+    <Link className="listing-card-link" href={`/otomobil/${item.id}`}>
+      <article className="listing-card">
+        {item.imageUrl ? (
+          <div
+            className="listing-card-media"
+            role="img"
+            aria-label={item.title}
+            style={{ backgroundImage: `url("${item.imageUrl}")` }}
+          />
+        ) : (
+          <div className="listing-card-media listing-card-placeholder" aria-hidden="true">
+            <span>{item.vehicle.brandName.slice(0, 1)}</span>
+          </div>
+        )}
+        <div className="listing-card-body">
+          <div className="listing-card-location">
+            {item.location.provinceName} · {item.location.districtName}
+          </div>
+          <h3>{item.title}</h3>
+          <strong className="listing-card-price">{formatTry(item.priceAmount)}</strong>
+          <div className="listing-card-specs">
+            <span>{item.modelYear}</span>
+            <span>{formatKm(item.mileageKm)}</span>
+            <span>{fuelLabels[item.attributes.fuelType]}</span>
+            <span>{transmissionLabels[item.attributes.transmission]}</span>
+          </div>
+        </div>
+      </article>
+    </Link>
+  )
+}
+
 export function PublicCarListings({
   limit = 12,
   paginated = false,
@@ -135,33 +169,7 @@ export function PublicCarListings({
     <>
       <div className="public-listing-grid">
         {items.map((item) => (
-          <article className="listing-card" key={item.id}>
-            {item.imageUrl ? (
-              <div
-                className="listing-card-media"
-                role="img"
-                aria-label={item.title}
-                style={{ backgroundImage: `url("${item.imageUrl}")` }}
-              />
-            ) : (
-              <div className="listing-card-media listing-card-placeholder" aria-hidden="true">
-                <span>{item.vehicle.brandName.slice(0, 1)}</span>
-              </div>
-            )}
-            <div className="listing-card-body">
-              <div className="listing-card-location">
-                {item.location.provinceName} · {item.location.districtName}
-              </div>
-              <h3>{item.title}</h3>
-              <strong className="listing-card-price">{formatTry(item.priceAmount)}</strong>
-              <div className="listing-card-specs">
-                <span>{item.modelYear}</span>
-                <span>{formatKm(item.mileageKm)}</span>
-                <span>{fuelLabels[item.attributes.fuelType]}</span>
-                <span>{transmissionLabels[item.attributes.transmission]}</span>
-              </div>
-            </div>
-          </article>
+          <PublicCarListingCard item={item} key={item.id} />
         ))}
       </div>
 

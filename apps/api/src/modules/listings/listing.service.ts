@@ -3,6 +3,8 @@ import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import type {
   CarSaleDraftResponse,
+  PublicCarListingContactResponse,
+  PublicCarListingDetailResponse,
   PublicCarListingListResponse,
   UpdateCarSaleDraftCoreDetailsRequest,
 } from '@bizzat/contracts'
@@ -25,6 +27,23 @@ type CarSaleDraft = CarSaleDraftResponse['listing']
 type CarFuelType = NonNullable<CarSaleDraft['attributes']>['fuelType']
 type CarTransmission = NonNullable<CarSaleDraft['attributes']>['transmission']
 type CarBodyType = NonNullable<CarSaleDraft['attributes']>['bodyType']
+type CarAttributesSource = Pick<
+  OwnedCarListingRow,
+  | 'fuelType'
+  | 'transmission'
+  | 'vehicleCondition'
+  | 'bodyType'
+  | 'enginePowerHp'
+  | 'engineDisplacementCc'
+  | 'drivetrain'
+  | 'color'
+  | 'underWarranty'
+  | 'heavyDamageRecorded'
+  | 'plateNationality'
+  | 'swapAvailable'
+  | 'paintStatus'
+  | 'replacementStatus'
+>
 
 function coreDetails(row: OwnedCarListingRow): CarSaleDraft['details'] {
   if (
@@ -57,7 +76,7 @@ function coreDetails(row: OwnedCarListingRow): CarSaleDraft['details'] {
   }
 }
 
-function attributes(row: OwnedCarListingRow): CarSaleDraft['attributes'] {
+function attributes(row: CarAttributesSource): CarSaleDraft['attributes'] {
   if (
     !row.fuelType
     || !row.transmission
@@ -419,14 +438,80 @@ export class ListingService {
     }
   }
 
-  async readPublicImage(imageId: string) {
+  async readPublicImage(imageId: string, variant: 'card' | 'full' = 'card') {
     const image = await this.repository.findPublicImage(imageId)
     if (!image) throw new AppError(404, 'LISTING_NOT_FOUND', 'Fotoğraf bulunamadı.')
+    const storageKey = variant === 'full' ? image.storageKey : image.cardStorageKey
     try {
-      return { mimeType: image.mimeType, bytes: await readFile(path.join(mediaRoot(), image.cardStorageKey)) }
+      return { mimeType: image.mimeType, bytes: await readFile(path.join(mediaRoot(), storageKey)) }
     } catch {
       throw new AppError(404, 'LISTING_NOT_FOUND', 'Fotoğraf bulunamadı.')
     }
+  }
+
+  async getPublicCarListing(listingId: string): Promise<PublicCarListingDetailResponse> {
+    const row = await this.repository.findPublicCarListingById(listingId)
+    if (!row) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+
+    const listingAttributes = attributes(row)
+    if (
+      listingAttributes === null
+      || row.title === null
+      || row.description === null
+      || row.priceAmount === null
+      || row.currency !== 'TRY'
+      || row.modelYear === null
+      || row.mileageKm === null
+      || row.provinceName === null
+      || row.districtName === null
+      || row.neighborhoodName === null
+      || (row.selectionPath !== null && row.selectionPath.length === 0)
+    ) {
+      throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+    }
+
+    const images = await this.repository.listPublicListingImages(listingId)
+    return {
+      listing: {
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        priceAmount: Number(row.priceAmount),
+        currency: 'TRY',
+        modelYear: row.modelYear,
+        mileageKm: row.mileageKm,
+        vehicle: {
+          brandName: row.brandName,
+          seriesName: row.seriesName,
+          modelName: row.modelName,
+          selectionPath: row.selectionPath ?? [{ key: row.modelCatalogKey, name: row.modelName }],
+        },
+        location: {
+          provinceName: row.provinceName,
+          districtName: row.districtName,
+          neighborhoodName: row.neighborhoodName,
+        },
+        attributes: listingAttributes,
+        images: images.map((image) => ({
+          id: image.id,
+          sortOrder: image.sortOrder,
+          cardUrl: `/api/v1/listings/public/images/${image.id}`,
+          fullUrl: `/api/v1/listings/public/images/${image.id}/full`,
+        })),
+        contact: {
+          showPhone: row.showPhone,
+        },
+      },
+    }
+  }
+
+  async getPublicCarListingContact(listingId: string): Promise<PublicCarListingContactResponse> {
+    const contact = await this.repository.findPublicListingContact(listingId)
+    if (!contact) throw new AppError(404, 'LISTING_NOT_FOUND', 'İlan bulunamadı.')
+    if (!contact.showPhone || !contact.phoneE164) {
+      throw new AppError(404, 'LISTING_CONTACT_NOT_AVAILABLE', 'İlan sahibi telefon numarasını paylaşmadı.')
+    }
+    return { phoneE164: contact.phoneE164 }
   }
 
   async listPublicCarListings(
@@ -438,28 +523,16 @@ export class ListingService {
     const pageRows = rows.slice(0, limit)
     return {
       items: pageRows.flatMap((row) => {
+        const listingAttributes = attributes(row)
         if (
-          row.title === null
+          listingAttributes === null
+          || row.title === null
           || row.priceAmount === null
           || row.currency !== 'TRY'
           || row.modelYear === null
           || row.mileageKm === null
           || row.provinceName === null
           || row.districtName === null
-          || row.fuelType === null
-          || row.transmission === null
-          || row.vehicleCondition === null
-          || row.bodyType === null
-          || row.enginePowerHp === null
-          || (row.fuelType !== 'elektrik' && row.engineDisplacementCc === null)
-          || row.drivetrain === null
-          || row.color === null
-          || row.underWarranty === null
-          || row.heavyDamageRecorded === null
-          || row.plateNationality === null
-          || row.swapAvailable === null
-          || row.paintStatus === null
-          || row.replacementStatus === null
         ) return []
 
         return [{
@@ -477,22 +550,7 @@ export class ListingService {
             provinceName: row.provinceName,
             districtName: row.districtName,
           },
-          attributes: {
-            fuelType: row.fuelType as CarFuelType,
-            transmission: row.transmission as CarTransmission,
-            vehicleCondition: row.vehicleCondition as NonNullable<CarSaleDraft['attributes']>['vehicleCondition'],
-            bodyType: row.bodyType as CarBodyType,
-            enginePowerHp: row.enginePowerHp,
-            engineDisplacementCc: row.engineDisplacementCc,
-            drivetrain: row.drivetrain as NonNullable<CarSaleDraft['attributes']>['drivetrain'],
-            color: row.color,
-            underWarranty: row.underWarranty,
-            heavyDamageRecorded: row.heavyDamageRecorded,
-            plateNationality: row.plateNationality as NonNullable<CarSaleDraft['attributes']>['plateNationality'],
-            swapAvailable: row.swapAvailable,
-            paintStatus: row.paintStatus as NonNullable<CarSaleDraft['attributes']>['paintStatus'],
-            replacementStatus: row.replacementStatus as NonNullable<CarSaleDraft['attributes']>['replacementStatus'],
-          },
+          attributes: listingAttributes,
           imageUrl: row.imageId ? `/api/v1/listings/public/images/${row.imageId}` : null,
         }]
       }),
