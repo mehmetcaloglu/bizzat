@@ -17,7 +17,7 @@ describe('public marketplace surfaces', () => {
     const html = renderToStaticMarkup(<CarsPage />)
 
     expect(html).toContain('Satılık otomobiller')
-    expect(html).toContain('En güncel ilanlar')
-    expect(html).toContain('Fiyat, yıl ve araç bilgileri kart üzerinde')
+    expect(html).toContain('filtrele, sırala ve incele')
+    expect(html).toContain('Filtreler hazırlanıyor…')
   })
 })

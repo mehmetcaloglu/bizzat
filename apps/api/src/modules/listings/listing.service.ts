@@ -7,6 +7,7 @@ import type {
   PublicCarListingContactResponse,
   PublicCarListingDetailResponse,
   PublicCarListingListResponse,
+  PublicCarListingSort,
   PublishCarSaleDraftResponse,
   UnpublishCarSaleDraftResponse,
   UpdateCarSaleDraftCoreDetailsRequest,
@@ -29,6 +30,9 @@ import {
   type ListingImageRow,
   type OwnedCarListingRow,
   type OwnerCarListingSummaryRow,
+  type PublicCarListingCursor,
+  type PublicCarListingFilters,
+  type PublicCarListingRow,
 } from './listing.repository.js'
 
 type CarSaleDraft = CarSaleDraftResponse['listing']
@@ -169,20 +173,89 @@ function mediaRoot(): string {
   return path.resolve(process.env.BIZZAT_MEDIA_ROOT ?? '.data/media')
 }
 
-function encodePublicCursor(row: { updatedAtCursor: string; id: string }): string {
-  return Buffer.from(JSON.stringify([row.updatedAtCursor, row.id])).toString('base64url')
+const publicCarSorts: PublicCarListingSort[] = [
+  'newest',
+  'oldest',
+  'price_asc',
+  'price_desc',
+  'mileage_asc',
+  'mileage_desc',
+  'year_asc',
+  'year_desc',
+]
+
+function publicFiltersKey(filters: PublicCarListingFilters): string {
+  return JSON.stringify(
+    Object.entries(filters).sort(([left], [right]) => left.localeCompare(right)),
+  )
 }
 
-function decodePublicCursor(cursor: string): { updatedAtCursor: string; id: string } {
+function encodePublicCursor(cursor: PublicCarListingCursor): string {
+  return Buffer.from(JSON.stringify(cursor)).toString('base64url')
+}
+
+function decodePublicCursor(cursor: string): PublicCarListingCursor {
   try {
     const parsed = JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8')) as unknown
-    if (!Array.isArray(parsed) || parsed.length !== 2) throw new Error('invalid cursor')
-    const [updatedAtCursor, id] = parsed
-    if (typeof updatedAtCursor !== 'string' || typeof id !== 'string') throw new Error('invalid cursor')
-    if (!/^\d{4}-\d{2}-\d{2}/.test(updatedAtCursor)) throw new Error('invalid cursor')
-    return { updatedAtCursor, id }
+    if (
+      typeof parsed !== 'object'
+      || parsed === null
+      || !('sort' in parsed)
+      || !('filterKey' in parsed)
+      || !('value' in parsed)
+      || !('id' in parsed)
+    ) {
+      throw new Error('invalid cursor')
+    }
+    const { sort, filterKey, value, id } = parsed as Record<string, unknown>
+    if (
+      typeof sort !== 'string'
+      || !publicCarSorts.includes(sort as PublicCarListingSort)
+      || typeof filterKey !== 'string'
+      || typeof value !== 'string'
+      || value.length === 0
+      || typeof id !== 'string'
+      || id.length === 0
+    ) {
+      throw new Error('invalid cursor')
+    }
+    return { sort: sort as PublicCarListingSort, filterKey, value, id }
   } catch {
     throw new AppError(400, 'VALIDATION_ERROR', 'Liste devam bilgisi geçersiz.')
+  }
+}
+
+function cursorValue(row: PublicCarListingRow, sort: PublicCarListingSort): string {
+  switch (sort) {
+    case 'newest':
+    case 'oldest':
+      return row.publishedAtCursor
+    case 'price_asc':
+    case 'price_desc':
+      return row.priceCursor
+    case 'mileage_asc':
+    case 'mileage_desc':
+      return row.mileageCursor
+    case 'year_asc':
+    case 'year_desc':
+      return row.yearCursor
+  }
+}
+
+export interface PublicCarListingQuery {
+  limit: number
+  cursor?: string
+  sort: PublicCarListingSort
+  filters: PublicCarListingFilters
+}
+
+function assertRange(
+  min: number | undefined,
+  max: number | undefined,
+  label: string,
+): void {
+  if (min !== undefined && max !== undefined && min > max) {
+    throw new AppError(400, 'VALIDATION_ERROR', `${label} alt sınırı üst sınırından büyük olamaz.`)
   }
 }
 
@@ -742,12 +815,29 @@ export class ListingService {
   }
 
   async listPublicCarListings(
-    limit: number,
-    cursor?: string,
+    query: PublicCarListingQuery,
   ): Promise<PublicCarListingListResponse> {
+    const { limit, cursor, sort, filters } = query
+    assertRange(filters.minPrice, filters.maxPrice, 'Fiyat')
+    assertRange(filters.minYear, filters.maxYear, 'Yıl')
+    assertRange(filters.minMileageKm, filters.maxMileageKm, 'Kilometre')
+
     const decodedCursor = cursor ? decodePublicCursor(cursor) : undefined
-    const rows = await this.repository.listPublicCarListings(limit + 1, decodedCursor)
+    if (
+      decodedCursor
+      && (decodedCursor.sort !== sort || decodedCursor.filterKey !== publicFiltersKey(filters))
+    ) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'Liste devam bilgisi geçersiz.')
+    }
+
+    const rows = await this.repository.listPublicCarListings(limit + 1, {
+      sort,
+      filters,
+      ...(decodedCursor ? { cursor: decodedCursor } : {}),
+    })
     const pageRows = rows.slice(0, limit)
+    const lastRow = pageRows[pageRows.length - 1]
+
     return {
       items: pageRows.flatMap((row) => {
         const listingAttributes = attributes(row)
@@ -781,8 +871,13 @@ export class ListingService {
           imageUrl: row.imageId ? `/api/v1/listings/public/images/${row.imageId}` : null,
         }]
       }),
-      nextCursor: rows.length > limit && pageRows.length > 0
-        ? encodePublicCursor(pageRows[pageRows.length - 1]!)
+      nextCursor: rows.length > limit && lastRow
+        ? encodePublicCursor({
+          sort,
+          filterKey: publicFiltersKey(filters),
+          value: cursorValue(lastRow, sort),
+          id: lastRow.id,
+        })
         : null,
     }
   }

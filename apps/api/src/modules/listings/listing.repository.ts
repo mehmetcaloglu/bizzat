@@ -1,4 +1,5 @@
-import { sql, type Kysely, type Transaction } from 'kysely'
+import type { PublicCarListingSort } from '@bizzat/contracts'
+import { sql, type Kysely, type RawBuilder, type Transaction } from 'kysely'
 import type { Database } from '../../db/client.js'
 import type { VehicleSelectionNode } from '../../reference/vehicle/catalog.types.js'
 
@@ -75,9 +76,42 @@ export interface ListingImageRow {
   height: number
 }
 
+export interface PublicCarListingFilters {
+  brandId?: string
+  seriesId?: string
+  modelId?: string
+  provinceId?: string
+  districtId?: string
+  minPrice?: number
+  maxPrice?: number
+  minYear?: number
+  maxYear?: number
+  minMileageKm?: number
+  maxMileageKm?: number
+  fuelType?: string
+  transmission?: string
+  bodyType?: string
+  drivetrain?: string
+  vehicleCondition?: string
+  color?: string
+  q?: string
+  swapAvailable?: boolean
+  listedWithinDays?: number
+}
+
+export interface PublicCarListingCursor {
+  sort: PublicCarListingSort
+  filterKey: string
+  value: string
+  id: string
+}
+
 export interface PublicCarListingRow {
   id: string
-  updatedAtCursor: string
+  publishedAtCursor: string
+  priceCursor: string
+  mileageCursor: string
+  yearCursor: string
   title: string | null
   priceAmount: string | null
   currency: string | null
@@ -140,6 +174,89 @@ export interface PublicCarListingDetailRow {
 export interface PublicListingContactRow {
   phoneE164: string | null
   showPhone: boolean
+}
+
+function publicListingOrder(
+  sort: PublicCarListingSort,
+): { primary: RawBuilder<unknown>; direction: 'asc' | 'desc' } {
+  switch (sort) {
+    case 'newest':
+      return {
+        primary: sql`coalesce(listings.published_at, listings.updated_at)`,
+        direction: 'desc',
+      }
+    case 'oldest':
+      return {
+        primary: sql`coalesce(listings.published_at, listings.updated_at)`,
+        direction: 'asc',
+      }
+    case 'price_asc':
+      return { primary: sql`listings.price_amount`, direction: 'asc' }
+    case 'price_desc':
+      return { primary: sql`listings.price_amount`, direction: 'desc' }
+    case 'mileage_asc':
+      return { primary: sql`car_details.mileage_km`, direction: 'asc' }
+    case 'mileage_desc':
+      return { primary: sql`car_details.mileage_km`, direction: 'desc' }
+    case 'year_asc':
+      return { primary: sql`car_details.model_year`, direction: 'asc' }
+    case 'year_desc':
+      return { primary: sql`car_details.model_year`, direction: 'desc' }
+  }
+}
+
+function cursorCondition(
+  sort: PublicCarListingSort,
+  cursor: PublicCarListingCursor,
+): RawBuilder<boolean> {
+  switch (sort) {
+    case 'newest':
+      return sql<boolean>`(
+        coalesce(listings.published_at, listings.updated_at) < ${cursor.value}::timestamptz
+        or (
+          coalesce(listings.published_at, listings.updated_at) = ${cursor.value}::timestamptz
+          and listings.id < ${cursor.id}::uuid
+        )
+      )`
+    case 'oldest':
+      return sql<boolean>`(
+        coalesce(listings.published_at, listings.updated_at) > ${cursor.value}::timestamptz
+        or (
+          coalesce(listings.published_at, listings.updated_at) = ${cursor.value}::timestamptz
+          and listings.id > ${cursor.id}::uuid
+        )
+      )`
+    case 'price_asc':
+      return sql<boolean>`(
+        listings.price_amount > ${cursor.value}::numeric
+        or (listings.price_amount = ${cursor.value}::numeric and listings.id > ${cursor.id}::uuid)
+      )`
+    case 'price_desc':
+      return sql<boolean>`(
+        listings.price_amount < ${cursor.value}::numeric
+        or (listings.price_amount = ${cursor.value}::numeric and listings.id < ${cursor.id}::uuid)
+      )`
+    case 'mileage_asc':
+      return sql<boolean>`(
+        car_details.mileage_km > ${cursor.value}::integer
+        or (car_details.mileage_km = ${cursor.value}::integer and listings.id > ${cursor.id}::uuid)
+      )`
+    case 'mileage_desc':
+      return sql<boolean>`(
+        car_details.mileage_km < ${cursor.value}::integer
+        or (car_details.mileage_km = ${cursor.value}::integer and listings.id < ${cursor.id}::uuid)
+      )`
+    case 'year_asc':
+      return sql<boolean>`(
+        car_details.model_year > ${cursor.value}::integer
+        or (car_details.model_year = ${cursor.value}::integer and listings.id > ${cursor.id}::uuid)
+      )`
+    case 'year_desc':
+      return sql<boolean>`(
+        car_details.model_year < ${cursor.value}::integer
+        or (car_details.model_year = ${cursor.value}::integer and listings.id < ${cursor.id}::uuid)
+      )`
+  }
 }
 
 export class ListingRepository {
@@ -706,8 +823,13 @@ export class ListingRepository {
 
   async listPublicCarListings(
     limit: number,
-    cursor?: { updatedAtCursor: string; id: string },
+    options: {
+      sort: PublicCarListingSort
+      filters: PublicCarListingFilters
+      cursor?: PublicCarListingCursor
+    },
   ): Promise<PublicCarListingRow[]> {
+    const { filters, cursor, sort } = options
     let query = this.db
       .selectFrom('listings')
       .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
@@ -719,7 +841,10 @@ export class ListingRepository {
       .leftJoin('districts', 'districts.id', 'listings.district_id')
       .select([
         'listings.id as id',
-        sql<string>`listings.updated_at::text`.as('updatedAtCursor'),
+        sql<string>`coalesce(listings.published_at, listings.updated_at)::text`.as('publishedAtCursor'),
+        sql<string>`listings.price_amount::text`.as('priceCursor'),
+        sql<string>`car_details.mileage_km::text`.as('mileageCursor'),
+        sql<string>`car_details.model_year::text`.as('yearCursor'),
         'listings.title as title',
         'listings.price_amount as priceAmount',
         'listings.currency as currency',
@@ -753,20 +878,69 @@ export class ListingRepository {
       ])
       .where('listings.status', '=', 'published')
       .where('listing_types.code', '=', 'car_sale')
+      .where(sql<boolean>`listings.price_amount is not null`)
+      .where(sql<boolean>`car_details.mileage_km is not null`)
+      .where(sql<boolean>`car_details.model_year is not null`)
 
-    if (cursor) {
+    if (filters.brandId) query = query.where('vehicle_brands.id', '=', filters.brandId)
+    if (filters.seriesId) query = query.where('vehicle_series.id', '=', filters.seriesId)
+    if (filters.modelId) query = query.where('vehicle_models.id', '=', filters.modelId)
+    if (filters.provinceId) query = query.where('listings.province_id', '=', filters.provinceId)
+    if (filters.districtId) query = query.where('listings.district_id', '=', filters.districtId)
+    if (filters.minPrice !== undefined) {
+      query = query.where(sql<boolean>`listings.price_amount >= ${filters.minPrice}::numeric`)
+    }
+    if (filters.maxPrice !== undefined) {
+      query = query.where(sql<boolean>`listings.price_amount <= ${filters.maxPrice}::numeric`)
+    }
+    if (filters.minYear !== undefined) {
+      query = query.where(sql<boolean>`car_details.model_year >= ${filters.minYear}::integer`)
+    }
+    if (filters.maxYear !== undefined) {
+      query = query.where(sql<boolean>`car_details.model_year <= ${filters.maxYear}::integer`)
+    }
+    if (filters.minMileageKm !== undefined) {
+      query = query.where(sql<boolean>`car_details.mileage_km >= ${filters.minMileageKm}::integer`)
+    }
+    if (filters.maxMileageKm !== undefined) {
+      query = query.where(sql<boolean>`car_details.mileage_km <= ${filters.maxMileageKm}::integer`)
+    }
+    if (filters.fuelType) query = query.where('car_details.fuel_type', '=', filters.fuelType)
+    if (filters.transmission) {
+      query = query.where('car_details.transmission', '=', filters.transmission)
+    }
+    if (filters.bodyType) query = query.where('car_details.body_type', '=', filters.bodyType)
+    if (filters.drivetrain) query = query.where('car_details.drivetrain', '=', filters.drivetrain)
+    if (filters.vehicleCondition) {
+      query = query.where('car_details.vehicle_condition', '=', filters.vehicleCondition)
+    }
+    if (filters.color) query = query.where('car_details.color', '=', filters.color)
+    if (filters.swapAvailable !== undefined) {
+      query = query.where('car_details.swap_available', '=', filters.swapAvailable)
+    }
+    if (filters.q) {
+      const pattern = `%${filters.q}%`
       query = query.where(sql<boolean>`(
-        listings.updated_at < ${cursor.updatedAtCursor}::timestamptz
-        or (
-          listings.updated_at = ${cursor.updatedAtCursor}::timestamptz
-          and listings.id < ${cursor.id}::uuid
-        )
+        listings.title ilike ${pattern}
+        or listings.description ilike ${pattern}
+      )`)
+    }
+    if (filters.listedWithinDays !== undefined) {
+      query = query.where(sql<boolean>`(
+        coalesce(listings.published_at, listings.updated_at)
+          >= now() - (${filters.listedWithinDays} * interval '1 day')
       )`)
     }
 
+    if (cursor) {
+      const comparator = cursorCondition(sort, cursor)
+      query = query.where(comparator)
+    }
+
+    const order = publicListingOrder(sort)
     return await query
-      .orderBy('listings.updated_at', 'desc')
-      .orderBy('listings.id', 'desc')
+      .orderBy(order.primary, order.direction)
+      .orderBy('listings.id', order.direction)
       .limit(limit)
       .execute()
   }

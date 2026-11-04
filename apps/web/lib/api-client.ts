@@ -373,6 +373,13 @@ export async function listVehicleSeries(brandId: string): Promise<VehicleReferen
   return response.items
 }
 
+export async function listVehicleModels(seriesId: string): Promise<VehicleReferenceItem[]> {
+  const response = await requestJson<{ items: VehicleReferenceItem[] }>(
+    `/api/v1/reference/vehicle/series/${encodeURIComponent(seriesId)}/models`,
+  )
+  return response.items
+}
+
 export async function listVehicleSelection(
   seriesId: string,
   parentKey?: string,
@@ -458,12 +465,55 @@ export interface PublicCarListingPage {
   nextCursor: string | null
 }
 
+export type PublicCarListingSort =
+  | 'newest'
+  | 'oldest'
+  | 'price_asc'
+  | 'price_desc'
+  | 'mileage_asc'
+  | 'mileage_desc'
+  | 'year_asc'
+  | 'year_desc'
+
+export interface PublicCarListingFilters {
+  brandId?: string
+  seriesId?: string
+  modelId?: string
+  provinceId?: string
+  districtId?: string
+  minPrice?: number
+  maxPrice?: number
+  minYear?: number
+  maxYear?: number
+  minMileageKm?: number
+  maxMileageKm?: number
+  fuelType?: string
+  transmission?: string
+  bodyType?: string
+  drivetrain?: string
+  vehicleCondition?: string
+  color?: string
+  q?: string
+  swapAvailable?: boolean
+  listedWithinDays?: number
+}
+
+export interface PublicCarListingQuery {
+  limit?: number
+  cursor?: string
+  sort?: PublicCarListingSort
+  filters?: PublicCarListingFilters
+}
+
 export function listPublicCarListings(
-  limit = 12,
-  cursor?: string,
+  input: PublicCarListingQuery = {},
 ): Promise<PublicCarListingPage> {
-  const query = new URLSearchParams({ limit: String(limit) })
-  if (cursor) query.set('cursor', cursor)
+  const query = new URLSearchParams({ limit: String(input.limit ?? 12) })
+  if (input.cursor) query.set('cursor', input.cursor)
+  if (input.sort) query.set('sort', input.sort)
+  for (const [key, value] of Object.entries(input.filters ?? {})) {
+    if (value !== undefined && value !== '') query.set(key, String(value))
+  }
   return requestJson<PublicCarListingPage>(
     `/api/v1/listings/public/car-sale?${query.toString()}`,
   )

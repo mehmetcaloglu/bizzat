@@ -85,7 +85,7 @@ export function PublicCarListings({
     setLoading(true)
     setError(null)
 
-    void listPublicCarListings(limit)
+    void listPublicCarListings({ limit })
       .then((page) => {
         if (cancelled) return
         setItems(page.items)
@@ -111,7 +111,7 @@ export function PublicCarListings({
     setLoadingMore(true)
     setError(null)
     try {
-      const page = await listPublicCarListings(limit, nextCursor)
+      const page = await listPublicCarListings({ limit, cursor: nextCursor })
       setItems((current) => {
         const known = new Set(current.map((item) => item.id))
         return [...current, ...page.items.filter((item) => !known.has(item.id))]
