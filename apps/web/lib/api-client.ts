@@ -255,6 +255,65 @@ export interface UnpublishCarSaleListingResponse {
   }
 }
 
+export type ReportReason =
+  | 'fraud'
+  | 'wrong_category'
+  | 'prohibited'
+  | 'duplicate'
+  | 'misleading'
+  | 'other'
+
+export type ModerationReportStatus = 'open' | 'reviewing' | 'resolved' | 'dismissed'
+
+export interface ModerationReport {
+  id: string
+  listingId: string
+  reason: ReportReason
+  note: string | null
+  status: ModerationReportStatus
+  reporterType: 'guest' | 'member'
+  createdAt: string
+  listing: {
+    title: string | null
+    status: string
+    priceAmount: number | null
+    currency: 'TRY' | null
+    provinceName: string | null
+    districtName: string | null
+    imageUrl: string | null
+  }
+}
+
+export interface CreateListingReportInput {
+  reason: ReportReason
+  note?: string
+}
+
+export interface CreateListingReportResponse {
+  report: {
+    id: string
+    status: 'open'
+    createdAt: string
+  }
+}
+
+export interface ResolveModerationReportInput {
+  action: 'reject' | 'dismiss'
+  note?: string
+}
+
+export interface ModerationReportListResponse {
+  items: ModerationReport[]
+}
+
+export interface ResolveModerationReportResponse {
+  report: {
+    id: string
+    status: 'resolved' | 'dismissed'
+    reviewedAt: string
+  }
+}
+
 export class ApiClientError extends Error {
   constructor(
     readonly status: number,
@@ -443,6 +502,41 @@ export function unpublishCarSaleListing(
   return requestJson<UnpublishCarSaleListingResponse>(
     `/api/v1/listings/${encodeURIComponent(listingId)}/unpublish`,
     { method: 'POST' },
+  )
+}
+
+export function reportListing(
+  listingId: string,
+  input: CreateListingReportInput,
+): Promise<CreateListingReportResponse> {
+  return requestJson<CreateListingReportResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/reports`,
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export function listModerationReports(
+  status: 'open' | 'reviewing' | 'resolved' | 'dismissed' | 'all' = 'open',
+): Promise<ModerationReportListResponse> {
+  const query = new URLSearchParams({ status })
+  return requestJson<ModerationReportListResponse>(
+    `/api/v1/moderation/reports?${query.toString()}`,
+  )
+}
+
+export function resolveModerationReport(
+  reportId: string,
+  input: ResolveModerationReportInput,
+): Promise<ResolveModerationReportResponse> {
+  return requestJson<ResolveModerationReportResponse>(
+    `/api/v1/moderation/reports/${encodeURIComponent(reportId)}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    },
   )
 }
 

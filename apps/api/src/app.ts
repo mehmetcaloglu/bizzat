@@ -5,6 +5,7 @@ import { authRoutes } from './auth/auth.routes.js'
 import { registerErrorHandling } from './common/errors/error-handler.js'
 import type { Database } from './db/client.js'
 import { listingRoutes } from './modules/listings/listing.routes.js'
+import { moderationRoutes } from './modules/moderation/moderation.routes.js'
 import { systemRoutes } from './modules/system/system.routes.js'
 import { meRoutes } from './modules/users/me.routes.js'
 import {
@@ -58,6 +59,11 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
       auth: options.auth,
       db: options.db,
       verificationProvider: options.verificationProvider ?? createVerificationProvider(),
+    })
+    app.register(moderationRoutes, {
+      prefix: '/api/v1',
+      auth: options.auth,
+      db: options.db,
     })
   }
 

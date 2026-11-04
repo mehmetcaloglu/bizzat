@@ -208,6 +208,20 @@ export interface VerificationChecksTable {
   created_at: Generated<Date>
 }
 
+export interface ReportsTable {
+  id: Generated<string>
+  listing_id: string
+  reporter_user_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  reason: string
+  note: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  status: Generated<string>
+  reviewed_by_user_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  reviewed_at: ColumnType<Date | null, Date | string | null | undefined, Date | string | null | undefined>
+  resolution_note: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
 export interface Database {
   profiles: ProfilesTable
   reference_data_providers: ReferenceDataProvidersTable
@@ -227,6 +241,7 @@ export interface Database {
   car_details: CarDetailsTable
   listing_images: ListingImagesTable
   verification_checks: VerificationChecksTable
+  reports: ReportsTable
 }
 
 export function createDatabase(connectionString: string): Kysely<Database> {

@@ -107,6 +107,7 @@ describe('public car listing detail', () => {
     expect(html).toContain('Otomatik')
     expect(html).toContain('Bakımları zamanında yapılmış')
     expect(html).toContain('Telefonu göster')
+    expect(html).toContain('İlanı raporla')
     expect(html).toContain(listing.images[0]!.fullUrl)
     expect(html).not.toContain('+90 555')
   })
