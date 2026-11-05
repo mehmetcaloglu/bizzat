@@ -11,7 +11,7 @@ interface ApiErrorBody {
 }
 
 export type AccountStatus = 'active' | 'suspended' | 'banned'
-export type EnforcementAction = 'warning' | 'suspend' | 'ban' | 'reactivate' | 'listing_takedown'
+export type EnforcementAction = 'warning' | 'suspend' | 'ban' | 'reactivate' | 'listing_takedown' | 'role_change'
 
 export interface AccountEnforcement {
   id: string
@@ -623,6 +623,64 @@ export function takedownStaffListing(
   return requestJson<StaffListingTakedownResponse>(
     `/api/v1/staff/listings/${encodeURIComponent(listingId)}/takedown`,
     { method: 'POST', body: JSON.stringify({ reason }) },
+  )
+}
+
+export interface AdminSummary {
+  users: {
+    total: number
+    active: number
+    suspended: number
+    banned: number
+    moderators: number
+    admins: number
+  }
+  listings: {
+    total: number
+    published: number
+    rejected: number
+    inactive: number
+  }
+  moderation: {
+    openReports: number
+    overdueReports: number
+    pendingAppeals: number
+  }
+  enforcementsLast30Days: number
+}
+
+export interface AdminEnforcementItem {
+  id: string
+  action: EnforcementAction
+  reason: string
+  targetUserId: string
+  targetName: string
+  targetEmail: string
+  actorName: string | null
+  listingTitle: string | null
+  createdAt: string
+}
+
+export interface AdminRoleResponse {
+  user: StaffUserSummary
+  enforcement: AccountEnforcement
+}
+
+export function getAdminSummary(): Promise<AdminSummary> {
+  return requestJson<AdminSummary>('/api/v1/admin/summary')
+}
+
+export function listAdminEnforcements(): Promise<{ items: AdminEnforcementItem[] }> {
+  return requestJson<{ items: AdminEnforcementItem[] }>('/api/v1/admin/enforcements')
+}
+
+export function changeAdminUserRole(
+  userId: string,
+  role: 'user' | 'moderator' | 'admin',
+): Promise<AdminRoleResponse> {
+  return requestJson<AdminRoleResponse>(
+    `/api/v1/admin/users/${encodeURIComponent(userId)}/role`,
+    { method: 'PATCH', body: JSON.stringify({ role }) },
   )
 }
 

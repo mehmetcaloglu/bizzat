@@ -370,6 +370,73 @@ describe('staff account enforcement', () => {
     expect(blocked.json().error.code).toBe('ACCOUNT_BANNED')
   })
 
+  it('gives super admins system summary and role management', async () => {
+    const admin = await createSignedInUser('Summary Admin')
+    const user = await createSignedInUser('Role Target')
+    const moderator = await createSignedInUser('Summary Moderator')
+    await setRole(admin.cookie, admin.userId, 'admin')
+    await setRole(moderator.cookie, moderator.userId, 'moderator')
+
+    const userSummary = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/summary',
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(userSummary.statusCode).toBe(403)
+
+    const moderatorSummary = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/summary',
+      headers: { cookie: moderator.cookie, host: 'localhost:3000' },
+    })
+    expect(moderatorSummary.statusCode).toBe(403)
+
+    const summary = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/summary',
+      headers: { cookie: admin.cookie, host: 'localhost:3000' },
+    })
+    expect(summary.statusCode).toBe(200)
+    expect(summary.json().users.admins).toBeGreaterThanOrEqual(1)
+    expect(summary.json().users.moderators).toBeGreaterThanOrEqual(1)
+
+    const roleChange = await app.inject({
+      method: 'PATCH',
+      url: `/api/v1/admin/users/${user.userId}/role`,
+      headers: { cookie: admin.cookie, host: 'localhost:3000' },
+      payload: { role: 'moderator' },
+    })
+    expect(roleChange.statusCode).toBe(200)
+    expect(roleChange.json().user.role).toBe('moderator')
+    expect(roleChange.json().enforcement.action).toBe('role_change')
+
+    const newModeratorStaffAccess = await app.inject({
+      method: 'GET',
+      url: '/api/v1/staff/users',
+      headers: { cookie: user.cookie, host: 'localhost:3000' },
+    })
+    expect(newModeratorStaffAccess.statusCode).toBe(200)
+
+    const selfRoleChange = await app.inject({
+      method: 'PATCH',
+      url: `/api/v1/admin/users/${admin.userId}/role`,
+      headers: { cookie: admin.cookie, host: 'localhost:3000' },
+      payload: { role: 'moderator' },
+    })
+    expect(selfRoleChange.statusCode).toBe(400)
+
+    const enforcements = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/enforcements',
+      headers: { cookie: admin.cookie, host: 'localhost:3000' },
+    })
+    expect(enforcements.statusCode).toBe(200)
+    expect(enforcements.json().items[0]).toMatchObject({
+      action: 'role_change',
+      targetUserId: user.userId,
+    })
+  })
+
   it('takes down a listing from the customer service panel', async () => {
     const moderator = await createSignedInUser('Listing Moderator')
     const owner = await createSignedInUser('Takedown Owner')

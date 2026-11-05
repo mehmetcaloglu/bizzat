@@ -7,6 +7,7 @@ import type { Database } from './db/client.js'
 import { apartmentRoutes } from './modules/apartments/apartment.routes.js'
 import { listingRoutes } from './modules/listings/listing.routes.js'
 import { moderationRoutes } from './modules/moderation/moderation.routes.js'
+import { adminRoutes } from './modules/staff/admin.routes.js'
 import { staffRoutes } from './modules/staff/staff.routes.js'
 import { systemRoutes } from './modules/system/system.routes.js'
 import { meRoutes } from './modules/users/me.routes.js'
@@ -74,6 +75,11 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
       db: options.db,
     })
     app.register(staffRoutes, {
+      prefix: '/api/v1',
+      auth: options.auth,
+      db: options.db,
+    })
+    app.register(adminRoutes, {
       prefix: '/api/v1',
       auth: options.auth,
       db: options.db,

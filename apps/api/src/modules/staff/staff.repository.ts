@@ -188,7 +188,7 @@ export class StaffRepository {
   async insertEnforcement(input: {
     targetUserId: string
     actorUserId: string
-    action: 'warning' | 'suspend' | 'ban' | 'reactivate' | 'listing_takedown'
+    action: 'warning' | 'suspend' | 'ban' | 'reactivate' | 'listing_takedown' | 'role_change'
     reason: string
     listingId?: string | null
     endsAt?: Date | null

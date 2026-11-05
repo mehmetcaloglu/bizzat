@@ -29,6 +29,7 @@ const actionLabels: Record<AccountEnforcement['action'], string> = {
   ban: 'Ban',
   reactivate: 'Aktifleştirme',
   listing_takedown: 'İlan kapatma',
+  role_change: 'Rol değişikliği',
 }
 
 const listingStatusLabels: Record<string, string> = {
