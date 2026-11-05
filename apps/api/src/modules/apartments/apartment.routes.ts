@@ -20,7 +20,7 @@ import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import type { Kysely } from 'kysely'
 import { Type } from 'typebox'
 import type { BizzatAuth } from '../../auth/auth.js'
-import { getAuthSession } from '../../auth/session.js'
+import { getActiveAuthSession } from '../../auth/session.js'
 import { AppError } from '../../common/errors/app-error.js'
 import type { Database } from '../../db/client.js'
 import { LocationRepository } from '../../reference/location.repository.js'
@@ -77,9 +77,10 @@ const PublicApartmentQuerySchema = Type.Object({
 
 async function requireSession(
   auth: BizzatAuth,
+  db: Kysely<Database>,
   headers: Record<string, string | string[] | undefined>,
 ) {
-  const session = await getAuthSession(auth, headers)
+  const session = await getActiveAuthSession(auth, db, headers)
   if (!session) throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
   return session
 }
@@ -111,7 +112,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request, reply) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     const listing = await service.createDraft(session.user.id, request.body.transactionType)
     return reply.code(201).send({ listing })
   })
@@ -127,7 +128,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     return { listing: await service.getOwnedEditableListing(session.user.id, request.params.listingId) }
   })
 
@@ -144,7 +145,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     return {
       listing: await service.updateDetails(
         session.user.id,
@@ -166,7 +167,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request, reply) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     const mimeType = request.headers['content-type'] ?? ''
     if (!/^image\/(jpeg|png|webp)$/.test(mimeType)) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Yalnız JPEG, PNG veya WebP yükleyebilirsin.')
@@ -191,7 +192,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     return {
       listing: await service.removeDraftImage(
         session.user.id,
@@ -212,7 +213,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     return {
       listing: await service.makeDraftImageCover(
         session.user.id,
@@ -235,7 +236,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     return await service.publishOwnedListing(session.user.id, request.params.listingId)
   })
 
@@ -250,7 +251,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     return await service.unpublishOwnedListing(session.user.id, request.params.listingId)
   })
 
@@ -262,7 +263,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
       },
     },
   }, async (request) => {
-    const session = await requireSession(options.auth, request.headers)
+    const session = await requireSession(options.auth, options.db, request.headers)
     return await service.listOwned(session.user.id)
   })
 

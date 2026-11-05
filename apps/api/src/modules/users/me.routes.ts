@@ -5,6 +5,8 @@ import type { BizzatAuth } from '../../auth/auth.js'
 import { getAuthSession } from '../../auth/session.js'
 import { AppError } from '../../common/errors/app-error.js'
 import type { Database } from '../../db/client.js'
+import { StaffRepository } from '../staff/staff.repository.js'
+import { enforcementSummary } from '../staff/staff.service.js'
 import { ensureProfile } from './profile.repository.js'
 
 export interface MeRoutesOptions {
@@ -29,7 +31,10 @@ export const meRoutes: FastifyPluginAsyncTypebox<MeRoutesOptions> = async (
       throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
     }
 
-    const profile = await ensureProfile(options.db, session.user.id)
+    const [profile, enforcements] = await Promise.all([
+      ensureProfile(options.db, session.user.id),
+      new StaffRepository(options.db).listEnforcements(session.user.id, 20),
+    ])
 
     return {
       user: {
@@ -37,7 +42,14 @@ export const meRoutes: FastifyPluginAsyncTypebox<MeRoutesOptions> = async (
         name: session.user.name,
         email: session.user.email,
       },
-      profile: { role: profile.role },
+      profile: {
+        role: profile.role,
+        accountStatus: profile.accountStatus,
+        suspendedUntil: profile.suspendedUntil
+          ? profile.suspendedUntil.toISOString()
+          : null,
+      },
+      enforcements: enforcements.map(enforcementSummary),
     }
   })
 }

@@ -8,6 +8,8 @@ export type VehicleMappingMethod = 'manual' | 'exact-rule' | 'curated-import'
 export interface ProfilesTable {
   user_id: string
   role: UserRole
+  account_status: Generated<string>
+  suspended_until: ColumnType<Date | null, Date | string | null | undefined, Date | string | null | undefined>
   created_at: Generated<Date>
   updated_at: Generated<Date>
 }
@@ -261,6 +263,17 @@ export interface ListingAppealsTable {
   updated_at: Generated<Date>
 }
 
+export interface AccountEnforcementsTable {
+  id: Generated<string>
+  target_user_id: string
+  actor_user_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  action: string
+  reason: string
+  listing_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  ends_at: ColumnType<Date | null, Date | string | null | undefined, Date | string | null | undefined>
+  created_at: Generated<Date>
+}
+
 export interface Database {
   profiles: ProfilesTable
   reference_data_providers: ReferenceDataProvidersTable
@@ -283,6 +296,7 @@ export interface Database {
   verification_checks: VerificationChecksTable
   reports: ReportsTable
   listing_appeals: ListingAppealsTable
+  account_enforcements: AccountEnforcementsTable
 }
 
 export function createDatabase(connectionString: string): Kysely<Database> {
