@@ -13,6 +13,7 @@ import type { BizzatAuth } from '../../auth/auth.js'
 import { getAuthSession } from '../../auth/session.js'
 import { AppError } from '../../common/errors/app-error.js'
 import type { Database } from '../../db/client.js'
+import { hashReporterIp } from './report-abuse.js'
 import { requireModerator } from './moderation.authorization.js'
 import { ReportRepository } from './report.repository.js'
 import { ReportService } from './report.service.js'
@@ -54,14 +55,18 @@ export const moderationRoutes: FastifyPluginAsyncTypebox<ModerationRoutesOptions
         201: CreateListingReportResponseSchema,
         400: ApiErrorResponseSchema,
         404: ApiErrorResponseSchema,
+        409: ApiErrorResponseSchema,
+        429: ApiErrorResponseSchema,
       },
     },
   }, async (request, reply) => {
     const session = await getAuthSession(options.auth, request.headers)
+    const reporterIpHash = session ? null : hashReporterIp(request.ip)
     const report = await service.reportListing(
       request.params.listingId,
       request.body,
       session?.user.id ?? null,
+      reporterIpHash,
     )
     reply.header('Cache-Control', 'no-store')
     return reply.code(201).send(report)

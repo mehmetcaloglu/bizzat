@@ -237,6 +237,7 @@ export interface ReportsTable {
   id: Generated<string>
   listing_id: string
   reporter_user_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  reporter_ip_hash: ColumnType<string | null, string | null | undefined, string | null | undefined>
   reason: string
   note: ColumnType<string | null, string | null | undefined, string | null | undefined>
   status: Generated<string>
