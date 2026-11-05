@@ -18,6 +18,7 @@ export const EnforcementActionSchema = Type.Union([
   Type.Literal('ban'),
   Type.Literal('reactivate'),
   Type.Literal('listing_takedown'),
+  Type.Literal('role_change'),
 ])
 
 export const AccountEnforcementSchema = Type.Object({

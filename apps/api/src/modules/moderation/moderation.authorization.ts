@@ -12,3 +12,13 @@ export async function requireModerator(
     throw new AppError(403, 'FORBIDDEN', 'Bu işlem için moderatör yetkisi gerekiyor.')
   }
 }
+
+export async function requireAdmin(
+  db: Kysely<Database>,
+  userId: string,
+): Promise<void> {
+  const profile = await ensureProfile(db, userId)
+  if (profile.role !== 'admin') {
+    throw new AppError(403, 'FORBIDDEN', 'Bu işlem için admin yetkisi gerekiyor.')
+  }
+}

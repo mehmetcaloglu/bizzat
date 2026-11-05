@@ -16,6 +16,7 @@ const actionLabels = {
   ban: 'Ban',
   reactivate: 'Aktifleştirme',
   listing_takedown: 'İlan kapatma',
+  role_change: 'Rol değişikliği',
 } as const
 
 function dateLabel(value: string | null): string {

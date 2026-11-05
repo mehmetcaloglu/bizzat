@@ -3250,3 +3250,133 @@ button:disabled {
     flex-direction: column;
   }
 }
+
+.super-admin {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-summary-grid > div {
+  padding: 13px 14px;
+  display: grid;
+  gap: 2px;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 12px;
+}
+
+.admin-summary-grid span {
+  color: #77858f;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.admin-summary-grid strong {
+  color: #26343d;
+  font-size: 24px;
+}
+
+.admin-summary-grid .is-warning {
+  background: #fff9ec;
+  border-color: #eedaa7;
+}
+
+.admin-summary-grid .is-danger {
+  background: #fff5f3;
+  border-color: #efc8c2;
+}
+
+.admin-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.admin-panel {
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 16px;
+}
+
+.admin-panel h2 {
+  margin: 0 0 12px;
+}
+
+.admin-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.admin-panel-header h2 {
+  margin: 0;
+}
+
+.admin-role-list {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-role-list article {
+  padding: 11px 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid #e3edf3;
+  border-radius: 9px;
+}
+
+.admin-role-list article > div {
+  display: grid;
+  gap: 2px;
+}
+
+.admin-role-list article span,
+.admin-role-list article small {
+  color: #6d7d87;
+  font-size: 12px;
+}
+
+.admin-role-list select {
+  padding: 8px 10px;
+  border: 1px solid #ccdbe5;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.admin-role-list button {
+  padding: 9px 12px;
+  color: #ffffff;
+  background: #2d7fb5;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-role-list button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (max-width: 820px) {
+  .admin-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-role-list article {
+    grid-template-columns: 1fr;
+  }
+}

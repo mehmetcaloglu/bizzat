@@ -20,7 +20,7 @@ import {
   type StaffUserRow,
 } from './staff.repository.js'
 
-function staffUserSummary(row: StaffUserRow): StaffUserSummary {
+export function staffUserSummary(row: StaffUserRow): StaffUserSummary {
   return {
     id: row.id,
     name: row.name,
