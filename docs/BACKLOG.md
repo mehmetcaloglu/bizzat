@@ -5,7 +5,6 @@ Bu dosya MVP sonrası açık işleri tek yerde tutar. Issue tracker yerine repo-
 | Öncelik | İş | Neden / kabul yönü |
 |---|---|---|
 | P2 | Gerçek EİDS provider entegrasyonu | `vehicle_authority` ve `property_authority` için mock dışı, production’da fail-closed provider. |
-| P2 | Rapor rate limit’i ve kötüye kullanım kontrolleri | Anonim/üye raporlarında spam ve tekrarlı raporları sınırlama. |
 | P3 | Moderasyon SLA, itiraz ve hesap yaptırımı | Rapor kuyruğu için hedef süre, itiraz akışı ve gerekli hallerde hesap seviyesinde işlem. |
 | P3 | Arama/filtre performansı | `q` için ILIKE dışında ölçülmüş ihtiyaç doğarsa PostgreSQL full-text/indeks değerlendirmesi. |
 | P3 | Production deploy/Caddy/backup | Uygulama kapsamı dışında kalan sonraki operasyon fazı. |

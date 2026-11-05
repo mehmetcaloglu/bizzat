@@ -261,6 +261,18 @@ describe('listing reports and moderation', () => {
     expect(typeof report.json().report.id).toBe('string')
     expect(typeof report.json().report.createdAt).toBe('string')
 
+    const duplicate = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${listingId}/reports`,
+      headers: { host: 'localhost:3000' },
+      payload: {
+        reason: 'misleading',
+        note: 'Aynı ilan için tekrar rapor.',
+      },
+    })
+    expect(duplicate.statusCode).toBe(409)
+    expect(duplicate.json().error.code).toBe('REPORT_ALREADY_OPEN')
+
     const persisted = await sql<{
       reporter_user_id: string | null
       reason: string
@@ -433,6 +445,71 @@ describe('listing reports and moderation', () => {
       headers: { host: 'localhost:3000' },
     })
     expect(publicDetail.statusCode).toBe(200)
+  })
+
+  it('rate limits guest reports per hashed IP address', async () => {
+    const owner = await createSignedInUser('Rate Limit Owner')
+    const modelId = await createCanonicalModel()
+    const location = await createLocations()
+    const ids = []
+    for (let index = 0; index < 6; index += 1) {
+      ids.push(await createListing(owner.userId, modelId, location, 'published'))
+    }
+
+    for (let index = 0; index < 5; index += 1) {
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/v1/listings/${ids[index]}/reports`,
+        headers: { host: 'localhost:3000' },
+        payload: { reason: 'other', note: `Guest raporu ${index + 1}` },
+      })
+      expect(response.statusCode).toBe(201)
+    }
+
+    const limited = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${ids[5]}/reports`,
+      headers: { host: 'localhost:3000' },
+      payload: { reason: 'other', note: 'Limit sonrası rapor.' },
+    })
+    expect(limited.statusCode).toBe(429)
+    expect(limited.json().error.code).toBe('RATE_LIMITED')
+
+    const stored = await sql<{ reporter_ip_hash: string | null }>`
+      select reporter_ip_hash from reports where listing_id = ${ids[0]}::uuid
+    `.execute(db)
+    expect(stored.rows[0]?.reporter_ip_hash).toHaveLength(64)
+    expect(stored.rows[0]?.reporter_ip_hash).not.toBe('127.0.0.1')
+  })
+
+  it('rate limits member reports per user', async () => {
+    const owner = await createSignedInUser('Member Rate Owner')
+    const reporter = await createSignedInUser('Member Rate Reporter')
+    const modelId = await createCanonicalModel()
+    const location = await createLocations()
+    const ids = []
+    for (let index = 0; index < 11; index += 1) {
+      ids.push(await createListing(owner.userId, modelId, location, 'published'))
+    }
+
+    for (let index = 0; index < 10; index += 1) {
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/v1/listings/${ids[index]}/reports`,
+        headers: { cookie: reporter.cookie, host: 'localhost:3000' },
+        payload: { reason: 'other', note: `Üye raporu ${index + 1}` },
+      })
+      expect(response.statusCode).toBe(201)
+    }
+
+    const limited = await app.inject({
+      method: 'POST',
+      url: `/api/v1/listings/${ids[10]}/reports`,
+      headers: { cookie: reporter.cookie, host: 'localhost:3000' },
+      payload: { reason: 'other', note: 'Limit sonrası üye raporu.' },
+    })
+    expect(limited.statusCode).toBe(429)
+    expect(limited.json().error.code).toBe('RATE_LIMITED')
   })
 
   it('rejects reports for non-public listings, own listings, and already reviewed reports', async () => {

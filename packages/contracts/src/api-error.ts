@@ -16,6 +16,7 @@ export const ApiErrorCodeSchema = Type.Union([
   Type.Literal('VERIFICATION_FAILED'),
   Type.Literal('REPORT_NOT_FOUND'),
   Type.Literal('REPORT_ALREADY_REVIEWED'),
+  Type.Literal('REPORT_ALREADY_OPEN'),
   Type.Literal('REFERENCE_PARENT_NOT_FOUND'),
   Type.Literal('RATE_LIMITED'),
   Type.Literal('INTERNAL_ERROR'),

@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ve daire ilan oluşturma/yayınlama/düzenleme + kendi ilanlarım + filtre/sıralamalı public feed/detay + ilan raporlama ve minimum moderasyon |
+| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ve daire ilan oluşturma/yayınlama/düzenleme + kendi ilanlarım + filtre/sıralamalı public feed/detay + ilan raporlama, abuse kontrolleri ve minimum moderasyon |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -106,6 +106,8 @@ Raporlama ve moderasyon yüzeyi:
 - `POST /api/v1/listings/:listingId/reports` — public ilan için ziyaretçi veya üye raporu
 - `GET /api/v1/moderation/reports` — moderatör/admin rapor kuyruğu
 - `PATCH /api/v1/moderation/reports/:reportId` — `reject` veya `dismiss` kararı ve moderasyon notu
+
+Anonim raporlar IP başına saatte 5, üye raporları kullanıcı başına saatte 10 ile sınırlıdır. Aynı aktörün aynı ilan için açık/incelenen raporu tekrar gönderilemez (`409 REPORT_ALREADY_OPEN`); limit aşımı `429 RATE_LIMITED` döner. Ham IP saklanmaz; `REPORT_RATE_LIMIT_SECRET` veya `BETTER_AUTH_SECRET` ile üretilen 64 karakterlik HMAC-SHA256 hash saklanır. Reverse proxy arkasında doğru istemci IP’si için `trustProxy` yapılandırılmalıdır.
 
 Rapor nedenleri: `fraud`, `wrong_category`, `prohibited`, `duplicate`, `misleading`, `other`. Rapor durumları: `open`, `reviewing`, `resolved`, `dismissed`. Moderatör ilanı reddettiğinde ilan `rejected` durumuna geçer, public okumalardan kalkar ve sahibi tarafından doğrudan yeniden yayınlanamaz; o ilana ait açık raporlar birlikte kapatılır. Moderatör işlemi `reviewed_by_user_id`, `reviewed_at` ve `resolution_note` alanlarına yazılır. Moderatör/admin rolü public sign-up’tan gelmez; `profiles.role` server-owned olarak yönetilir.
 

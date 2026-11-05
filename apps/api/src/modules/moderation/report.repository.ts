@@ -50,6 +50,7 @@ export class ReportRepository {
   async insertReport(input: {
     listingId: string
     reporterUserId: string | null
+    reporterIpHash: string | null
     reason: string
     note: string | null
   }): Promise<{ id: string; status: string; createdAt: Date }> {
@@ -58,11 +59,56 @@ export class ReportRepository {
       .values({
         listing_id: input.listingId,
         reporter_user_id: input.reporterUserId,
+        reporter_ip_hash: input.reporterIpHash,
         reason: input.reason,
         note: input.note,
       })
       .returning(['id', 'status', 'created_at as createdAt'])
       .executeTakeFirstOrThrow()
+  }
+
+  async findOpenReportForActor(input: {
+    listingId: string
+    reporterUserId: string | null
+    reporterIpHash: string | null
+  }): Promise<{ id: string } | null> {
+    let query = this.db
+      .selectFrom('reports')
+      .select('id')
+      .where('listing_id', '=', input.listingId)
+      .where('status', 'in', ['open', 'reviewing'])
+
+    if (input.reporterUserId) {
+      query = query.where('reporter_user_id', '=', input.reporterUserId)
+    } else if (input.reporterIpHash) {
+      query = query.where('reporter_ip_hash', '=', input.reporterIpHash)
+    } else {
+      return null
+    }
+
+    return await query.executeTakeFirst() ?? null
+  }
+
+  async countRecentReportsForActor(input: {
+    reporterUserId: string | null
+    reporterIpHash: string | null
+    since: Date
+  }): Promise<number> {
+    let query = this.db
+      .selectFrom('reports')
+      .select(({ fn }) => fn.countAll<number>().as('count'))
+      .where('created_at', '>=', input.since)
+
+    if (input.reporterUserId) {
+      query = query.where('reporter_user_id', '=', input.reporterUserId)
+    } else if (input.reporterIpHash) {
+      query = query.where('reporter_ip_hash', '=', input.reporterIpHash)
+    } else {
+      return 0
+    }
+
+    const row = await query.executeTakeFirstOrThrow()
+    return Number(row.count)
   }
 
   async listReports(status?: string): Promise<ModerationReportRow[]> {
