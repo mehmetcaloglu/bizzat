@@ -1,4 +1,5 @@
 import { Type, type Static } from 'typebox'
+import { AppealStatusSchema } from './appeal.js'
 import { EditableListingStatusSchema, ListingContactSchema, ListingImageSchema } from './listing.js'
 
 export const ApartmentTransactionTypeSchema = Type.Union([
@@ -259,6 +260,7 @@ export const ApartmentOwnerListingSummarySchema = Type.Object({
   imageUrl: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
   updatedAt: Type.String({ minLength: 1 }),
   publishedAt: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
+  appealStatus: Type.Union([AppealStatusSchema, Type.Null()]),
 })
 
 export const ApartmentOwnerListingListResponseSchema = Type.Object({

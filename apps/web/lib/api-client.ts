@@ -205,6 +205,7 @@ export interface ApartmentOwnerListingSummary {
   imageUrl: string | null
   updatedAt: string
   publishedAt: string | null
+  appealStatus: AppealStatus | null
 }
 
 export interface ApartmentOwnerListingListResponse {
@@ -389,6 +390,8 @@ export interface PublicCarListingDetail {
   }
 }
 
+export type AppealStatus = 'pending' | 'approved' | 'rejected'
+
 export type OwnerCarListingStatus =
   | 'draft'
   | 'pending_verification'
@@ -418,6 +421,7 @@ export interface OwnerCarListingSummary {
   imageUrl: string | null
   updatedAt: string
   publishedAt: string | null
+  appealStatus: AppealStatus | null
 }
 
 export interface OwnerCarListingListResponse {
@@ -757,6 +761,79 @@ export function reportListing(
     `/api/v1/listings/${encodeURIComponent(listingId)}/reports`,
     {
       method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export interface CreateListingAppealResponse {
+  appeal: {
+    id: string
+    status: 'pending'
+    createdAt: string
+  }
+}
+
+export interface ModerationAppeal {
+  id: string
+  listingId: string
+  status: AppealStatus
+  note: string
+  createdAt: string
+  listing: {
+    type: 'car_sale' | 'apartment_sale' | 'apartment_rent'
+    title: string | null
+    status: string
+    priceAmount: number | null
+    currency: 'TRY' | null
+    provinceName: string | null
+    districtName: string | null
+    imageUrl: string | null
+  }
+}
+
+export interface ModerationAppealListResponse {
+  items: ModerationAppeal[]
+}
+
+export interface ResolveModerationAppealResponse {
+  appeal: {
+    id: string
+    status: 'approved' | 'rejected'
+    reviewedAt: string
+  }
+}
+
+export function createListingAppeal(
+  listingId: string,
+  note: string,
+): Promise<CreateListingAppealResponse> {
+  return requestJson<CreateListingAppealResponse>(
+    `/api/v1/listings/${encodeURIComponent(listingId)}/appeal`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ note }),
+    },
+  )
+}
+
+export function listModerationAppeals(
+  status: AppealStatus | 'all' = 'pending',
+): Promise<ModerationAppealListResponse> {
+  const query = new URLSearchParams({ status })
+  return requestJson<ModerationAppealListResponse>(
+    `/api/v1/moderation/appeals?${query.toString()}`,
+  )
+}
+
+export function resolveModerationAppeal(
+  appealId: string,
+  input: { action: 'approve' | 'reject'; note?: string },
+): Promise<ResolveModerationAppealResponse> {
+  return requestJson<ResolveModerationAppealResponse>(
+    `/api/v1/moderation/appeals/${encodeURIComponent(appealId)}`,
+    {
+      method: 'PATCH',
       body: JSON.stringify(input),
     },
   )

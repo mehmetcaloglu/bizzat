@@ -1,4 +1,5 @@
 export * from './api-error.js'
+export * from './appeal.js'
 export * from './apartment.js'
 export * from './listing.js'
 export * from './me.js'

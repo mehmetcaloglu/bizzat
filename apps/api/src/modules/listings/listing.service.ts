@@ -166,6 +166,7 @@ function ownerListingSummary(
       : null,
     updatedAt: row.updatedAt.toISOString(),
     publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
+    appealStatus: row.appealStatus as OwnerCarListingListResponse['items'][number]['appealStatus'],
   }
 }
 

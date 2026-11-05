@@ -67,6 +67,7 @@ export interface OwnerCarListingSummaryRow {
   imageId: string | null
   updatedAt: Date
   publishedAt: Date | null
+  appealStatus: string | null
 }
 
 export interface ListingImageRow {
@@ -234,6 +235,7 @@ export interface ApartmentOwnerSummaryRow {
   status: string
   updatedAt: Date
   publishedAt: Date | null
+  appealStatus: string | null
   title: string | null
   priceAmount: string | null
   currency: string | null
@@ -694,6 +696,7 @@ export class ListingRepository {
     return await this.db
       .selectFrom('listings')
       .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .leftJoin('listing_appeals', 'listing_appeals.listing_id', 'listings.id')
       .leftJoin('apartment_details', 'apartment_details.listing_id', 'listings.id')
       .leftJoin('provinces', 'provinces.id', 'listings.province_id')
       .leftJoin('districts', 'districts.id', 'listings.district_id')
@@ -703,6 +706,7 @@ export class ListingRepository {
         'listings.status as status',
         'listings.updated_at as updatedAt',
         'listings.published_at as publishedAt',
+        'listing_appeals.status as appealStatus',
         'listings.title as title',
         'listings.price_amount as priceAmount',
         'listings.currency as currency',
@@ -948,6 +952,7 @@ export class ListingRepository {
     return await this.db
       .selectFrom('listings')
       .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
+      .leftJoin('listing_appeals', 'listing_appeals.listing_id', 'listings.id')
       .innerJoin('car_details', 'car_details.listing_id', 'listings.id')
       .innerJoin('vehicle_models', 'vehicle_models.id', 'car_details.vehicle_model_id')
       .innerJoin('vehicle_series', 'vehicle_series.id', 'vehicle_models.series_id')
@@ -976,6 +981,7 @@ export class ListingRepository {
         )`.as('imageId'),
         'listings.updated_at as updatedAt',
         'listings.published_at as publishedAt',
+        'listing_appeals.status as appealStatus',
       ])
       .where('listings.owner_user_id', '=', ownerUserId)
       .where('listing_types.code', '=', 'car_sale')
