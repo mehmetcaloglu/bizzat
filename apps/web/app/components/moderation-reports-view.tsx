@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type {
   ModerationReport,
+  ModerationReportListResponse,
   ReportReason,
 } from '../../lib/api-client'
 
@@ -43,8 +44,42 @@ function locationLabel(report: ModerationReport): string {
     .join(' · ') || 'Konum yok'
 }
 
+function slaLabel(report: ModerationReport): string | null {
+  if (report.slaState === 'overdue') return 'SLA gecikti'
+  if (report.slaState === 'due_soon') return 'SLA yaklaşıyor'
+  return null
+}
+
+function ModerationSlaSummary({
+  summary,
+}: {
+  summary: ModerationReportListResponse['summary']
+}) {
+  return (
+    <section className="moderation-sla-summary" aria-label="Moderasyon SLA özeti">
+      <div>
+        <span>Açık rapor</span>
+        <strong>{summary.openCount}</strong>
+      </div>
+      <div className={summary.overdueCount > 0 ? 'is-overdue' : undefined}>
+        <span>Geciken</span>
+        <strong>{summary.overdueCount}</strong>
+      </div>
+      <div className={summary.dueSoonCount > 0 ? 'is-due-soon' : undefined}>
+        <span>4 saat içinde</span>
+        <strong>{summary.dueSoonCount}</strong>
+      </div>
+      <div>
+        <span>Yanıt hedefi</span>
+        <strong>{summary.slaHours} saat</strong>
+      </div>
+    </section>
+  )
+}
+
 interface ModerationReportsViewProps {
   reports: ModerationReport[]
+  summary: ModerationReportListResponse['summary']
   notes: Record<string, string>
   loadingActionId: string | null
   actionError: string | null
@@ -54,6 +89,7 @@ interface ModerationReportsViewProps {
 
 export function ModerationReportsView({
   reports,
+  summary,
   notes,
   loadingActionId,
   actionError,
@@ -62,15 +98,19 @@ export function ModerationReportsView({
 }: ModerationReportsViewProps) {
   if (reports.length === 0) {
     return (
-      <div className="public-list-state my-listings-empty">
-        <strong>Bekleyen rapor yok.</strong>
-        <span>Yeni bir rapor geldiğinde burada görünecek.</span>
+      <div className="moderation-reports">
+        <ModerationSlaSummary summary={summary} />
+        <div className="public-list-state my-listings-empty">
+          <strong>Bekleyen rapor yok.</strong>
+          <span>Yeni bir rapor geldiğinde burada görünecek.</span>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="moderation-reports">
+      <ModerationSlaSummary summary={summary} />
       {actionError && (
         <div className="listing-error" role="alert">{actionError}</div>
       )}
@@ -79,6 +119,10 @@ export function ModerationReportsView({
         {reports.map((report) => {
           const actionLoading = loadingActionId === report.id
           const title = report.listing.title ?? 'Başlıksız ilan'
+          const sla = slaLabel(report)
+          const listingHref = report.listing.type === 'car_sale'
+            ? `/otomobil/${report.listingId}`
+            : `/daire/${report.listingId}`
 
           return (
             <article className="moderation-report-card" key={report.id}>
@@ -95,6 +139,16 @@ export function ModerationReportsView({
                   <span className="listing-status listing-status-pending_review">
                     {reportReasonLabels[report.reason]}
                   </span>
+                  {sla && (
+                    <span
+                      className={`moderation-sla-badge ${
+                        report.slaState === 'overdue' ? 'is-overdue' : 'is-due-soon'
+                      }`}
+                      title={report.slaDueAt ? `Hedef: ${formatDate(report.slaDueAt)}` : undefined}
+                    >
+                      {sla}
+                    </span>
+                  )}
                   <span>{formatDate(report.createdAt)}</span>
                 </div>
 
@@ -131,7 +185,7 @@ export function ModerationReportsView({
 
                 <div className="my-listing-actions">
                   {report.listing.status === 'published' && (
-                    <Link className="my-listing-secondary" href={`/otomobil/${report.listingId}`}>
+                    <Link className="my-listing-secondary" href={listingHref}>
                       İlanı gör
                     </Link>
                   )}

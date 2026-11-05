@@ -7,6 +7,7 @@ import {
   listModerationReports,
   resolveModerationReport,
   type ModerationReport,
+  type ModerationReportListResponse,
 } from '../../lib/api-client'
 import { ModerationReportsView } from './moderation-reports-view'
 
@@ -15,8 +16,17 @@ function errorMessage(error: unknown): string {
   return 'Raporlar şu anda yüklenemiyor.'
 }
 
+const emptySummary: ModerationReportListResponse['summary'] = {
+  slaHours: 24,
+  openCount: 0,
+  overdueCount: 0,
+  dueSoonCount: 0,
+  oldestOpenCreatedAt: null,
+}
+
 export function ModerationReports() {
   const [reports, setReports] = useState<ModerationReport[]>([])
+  const [summary, setSummary] = useState<ModerationReportListResponse['summary']>(emptySummary)
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -35,7 +45,9 @@ export function ModerationReports() {
 
     void listModerationReports('open')
       .then((response) => {
-        if (!cancelled) setReports(response.items)
+        if (cancelled) return
+        setReports(response.items)
+        setSummary(response.summary)
       })
       .catch((loadError: unknown) => {
         if (cancelled) return
@@ -68,11 +80,32 @@ export function ModerationReports() {
         ...(note ? { note } : {}),
       })
       const report = reports.find((item) => item.id === reportId)
+      const removed = reports.filter((item) => (
+        action === 'reject'
+          ? item.listingId === report?.listingId
+          : item.id === reportId
+      ))
       setReports((current) => current.filter((item) => (
         action === 'reject'
           ? item.listingId !== report?.listingId
           : item.id !== reportId
       )))
+      setSummary((current) => {
+        const openCount = Math.max(0, current.openCount - removed.length)
+        return {
+          ...current,
+          openCount,
+          overdueCount: Math.max(
+            0,
+            current.overdueCount - removed.filter((item) => item.slaState === 'overdue').length,
+          ),
+          dueSoonCount: Math.max(
+            0,
+            current.dueSoonCount - removed.filter((item) => item.slaState === 'due_soon').length,
+          ),
+          oldestOpenCreatedAt: openCount === 0 ? null : current.oldestOpenCreatedAt,
+        }
+      })
       setNotes((current) => {
         const next = { ...current }
         delete next[reportId]
@@ -137,6 +170,7 @@ export function ModerationReports() {
   return (
     <ModerationReportsView
       reports={reports}
+      summary={summary}
       notes={notes}
       loadingActionId={loadingActionId}
       actionError={actionError}

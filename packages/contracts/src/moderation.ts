@@ -29,6 +29,18 @@ export const ModerationReportStatusSchema = Type.Union([
   Type.Literal('dismissed'),
 ])
 
+export const ModerationSlaStateSchema = Type.Union([
+  Type.Literal('on_track'),
+  Type.Literal('due_soon'),
+  Type.Literal('overdue'),
+])
+
+export const ModerationListingTypeSchema = Type.Union([
+  Type.Literal('car_sale'),
+  Type.Literal('apartment_sale'),
+  Type.Literal('apartment_rent'),
+])
+
 export const ModerationReportSchema = Type.Object({
   id: Type.String({ format: 'uuid' }),
   listingId: Type.String({ format: 'uuid' }),
@@ -37,7 +49,10 @@ export const ModerationReportSchema = Type.Object({
   status: ModerationReportStatusSchema,
   reporterType: Type.Union([Type.Literal('guest'), Type.Literal('member')]),
   createdAt: Type.String({ minLength: 1 }),
+  slaDueAt: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
+  slaState: Type.Union([ModerationSlaStateSchema, Type.Null()]),
   listing: Type.Object({
+    type: ModerationListingTypeSchema,
     title: Type.Union([Type.String(), Type.Null()]),
     status: Type.String({ minLength: 1 }),
     priceAmount: Type.Union([Type.Number({ minimum: 1 }), Type.Null()]),
@@ -50,6 +65,13 @@ export const ModerationReportSchema = Type.Object({
 
 export const ModerationReportListResponseSchema = Type.Object({
   items: Type.Array(ModerationReportSchema),
+  summary: Type.Object({
+    slaHours: Type.Integer({ minimum: 1 }),
+    openCount: Type.Integer({ minimum: 0 }),
+    overdueCount: Type.Integer({ minimum: 0 }),
+    dueSoonCount: Type.Integer({ minimum: 0 }),
+    oldestOpenCreatedAt: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
+  }),
 })
 
 export const ResolveModerationReportRequestSchema = Type.Object({

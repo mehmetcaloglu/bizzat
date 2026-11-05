@@ -17,6 +17,7 @@ export interface ModerationReportRow {
   status: string
   reporterUserId: string | null
   createdAt: Date
+  listingTypeCode: string
   listingTitle: string | null
   listingStatus: string
   priceAmount: string | null
@@ -115,6 +116,7 @@ export class ReportRepository {
     let query = this.db
       .selectFrom('reports')
       .innerJoin('listings', 'listings.id', 'reports.listing_id')
+      .innerJoin('listing_types', 'listing_types.id', 'listings.listing_type_id')
       .leftJoin('provinces', 'provinces.id', 'listings.province_id')
       .leftJoin('districts', 'districts.id', 'listings.district_id')
       .select([
@@ -125,6 +127,7 @@ export class ReportRepository {
         'reports.status as status',
         'reports.reporter_user_id as reporterUserId',
         'reports.created_at as createdAt',
+        'listing_types.code as listingTypeCode',
         'listings.title as listingTitle',
         'listings.status as listingStatus',
         'listings.price_amount as priceAmount',
@@ -148,6 +151,42 @@ export class ReportRepository {
       .orderBy('reports.created_at', 'desc')
       .limit(100)
       .execute()
+  }
+
+  async getOpenReportSlaSummary(input: {
+    overdueBefore: Date
+    dueSoonBefore: Date
+  }): Promise<{
+    openCount: number
+    overdueCount: number
+    dueSoonCount: number
+    oldestOpenCreatedAt: Date | null
+  }> {
+    const result = await sql<{
+      open_count: string
+      overdue_count: string
+      due_soon_count: string
+      oldest_open_created_at: Date | null
+    }>`
+      select
+        count(*)::text as open_count,
+        count(*) filter (where created_at <= ${input.overdueBefore})::text as overdue_count,
+        count(*) filter (
+          where created_at > ${input.overdueBefore}
+            and created_at <= ${input.dueSoonBefore}
+        )::text as due_soon_count,
+        min(created_at) as oldest_open_created_at
+      from reports
+      where status in ('open', 'reviewing')
+    `.execute(this.db)
+
+    const row = result.rows[0]
+    return {
+      openCount: Number(row?.open_count ?? 0),
+      overdueCount: Number(row?.overdue_count ?? 0),
+      dueSoonCount: Number(row?.due_soon_count ?? 0),
+      oldestOpenCreatedAt: row?.oldest_open_created_at ?? null,
+    }
   }
 
   async findReportForUpdate(reportId: string): Promise<ReportReviewRow | null> {
