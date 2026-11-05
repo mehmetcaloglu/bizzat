@@ -320,6 +320,34 @@ describe('listing reports and moderation', () => {
     })
     expect(moderators.json().items[0].listing.title).toBe('2024 Renault Clio rapor testi ilanı')
     expect(moderators.json().items[0].listing.imageUrl).toContain('/api/v1/listings/public/images/')
+    expect(moderators.json().items[0].listing.type).toBe('car_sale')
+    expect(moderators.json().items[0].slaState).toBe('on_track')
+    expect(typeof moderators.json().items[0].slaDueAt).toBe('string')
+    expect(moderators.json().summary).toMatchObject({
+      slaHours: 24,
+      openCount: 1,
+      overdueCount: 0,
+      dueSoonCount: 0,
+    })
+
+    await sql`
+      update reports
+      set created_at = now() - interval '25 hours'
+      where listing_id = ${listingId}::uuid
+    `.execute(db)
+
+    const overdue = await app.inject({
+      method: 'GET',
+      url: '/api/v1/moderation/reports',
+      headers: { cookie: moderator.cookie, host: 'localhost:3000' },
+    })
+    expect(overdue.statusCode).toBe(200)
+    expect(overdue.json().items[0].slaState).toBe('overdue')
+    expect(overdue.json().summary).toMatchObject({
+      openCount: 1,
+      overdueCount: 1,
+      dueSoonCount: 0,
+    })
   })
 
   it('lets a moderator reject a reported listing and resolve all open reports', async () => {

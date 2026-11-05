@@ -9,6 +9,11 @@ import type { Kysely } from 'kysely'
 import { AppError } from '../../common/errors/app-error.js'
 import type { Database } from '../../db/client.js'
 import {
+  MODERATION_SLA_HOURS,
+  moderationSla,
+  moderationSlaCutoffs,
+} from './moderation-sla.js'
+import {
   GUEST_REPORT_HOURLY_LIMIT,
   MEMBER_REPORT_HOURLY_LIMIT,
   REPORT_RATE_LIMIT_WINDOW_MS,
@@ -23,7 +28,11 @@ function optionalNote(note: string | undefined): string | null {
   return trimmed.length > 0 ? trimmed : null
 }
 
-function reportSummary(row: ModerationReportRow): ModerationReportListResponse['items'][number] {
+function reportSummary(
+  row: ModerationReportRow,
+  now: Date,
+): ModerationReportListResponse['items'][number] {
+  const sla = moderationSla(row.createdAt, row.status, now)
   return {
     id: row.id,
     listingId: row.listingId,
@@ -32,7 +41,10 @@ function reportSummary(row: ModerationReportRow): ModerationReportListResponse['
     status: row.status as ModerationReportListResponse['items'][number]['status'],
     reporterType: row.reporterUserId ? 'member' : 'guest',
     createdAt: row.createdAt.toISOString(),
+    slaDueAt: sla ? sla.dueAt.toISOString() : null,
+    slaState: sla ? sla.state : null,
     listing: {
+      type: row.listingTypeCode as ModerationReportListResponse['items'][number]['listing']['type'],
       title: row.listingTitle,
       status: row.listingStatus,
       priceAmount: row.priceAmount === null ? null : Number(row.priceAmount),
@@ -114,9 +126,23 @@ export class ReportService {
   }
 
   async listReports(status?: string): Promise<ModerationReportListResponse> {
-    const rows = await this.repository.listReports(status === 'all' ? undefined : status)
+    const now = new Date()
+    const cutoffs = moderationSlaCutoffs(now)
+    const [rows, summary] = await Promise.all([
+      this.repository.listReports(status === 'all' ? undefined : status),
+      this.repository.getOpenReportSlaSummary(cutoffs),
+    ])
     return {
-      items: rows.map((row) => reportSummary(row)),
+      items: rows.map((row) => reportSummary(row, now)),
+      summary: {
+        slaHours: MODERATION_SLA_HOURS,
+        openCount: summary.openCount,
+        overdueCount: summary.overdueCount,
+        dueSoonCount: summary.dueSoonCount,
+        oldestOpenCreatedAt: summary.oldestOpenCreatedAt
+          ? summary.oldestOpenCreatedAt.toISOString()
+          : null,
+      },
     }
   }
 

@@ -457,7 +457,10 @@ export interface ModerationReport {
   status: ModerationReportStatus
   reporterType: 'guest' | 'member'
   createdAt: string
+  slaDueAt: string | null
+  slaState: 'on_track' | 'due_soon' | 'overdue' | null
   listing: {
+    type: 'car_sale' | 'apartment_sale' | 'apartment_rent'
     title: string | null
     status: string
     priceAmount: number | null
@@ -488,6 +491,13 @@ export interface ResolveModerationReportInput {
 
 export interface ModerationReportListResponse {
   items: ModerationReport[]
+  summary: {
+    slaHours: number
+    openCount: number
+    overdueCount: number
+    dueSoonCount: number
+    oldestOpenCreatedAt: string | null
+  }
 }
 
 export interface ResolveModerationReportResponse {

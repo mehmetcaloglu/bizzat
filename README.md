@@ -109,13 +109,13 @@ Raporlama ve moderasyon yüzeyi:
 
 Anonim raporlar IP başına saatte 5, üye raporları kullanıcı başına saatte 10 ile sınırlıdır. Aynı aktörün aynı ilan için açık/incelenen raporu tekrar gönderilemez (`409 REPORT_ALREADY_OPEN`); limit aşımı `429 RATE_LIMITED` döner. Ham IP saklanmaz; `REPORT_RATE_LIMIT_SECRET` veya `BETTER_AUTH_SECRET` ile üretilen 64 karakterlik HMAC-SHA256 hash saklanır. Reverse proxy arkasında doğru istemci IP’si için `trustProxy` yapılandırılmalıdır.
 
-Rapor nedenleri: `fraud`, `wrong_category`, `prohibited`, `duplicate`, `misleading`, `other`. Rapor durumları: `open`, `reviewing`, `resolved`, `dismissed`. Moderatör ilanı reddettiğinde ilan `rejected` durumuna geçer, public okumalardan kalkar ve sahibi tarafından doğrudan yeniden yayınlanamaz; o ilana ait açık raporlar birlikte kapatılır. Moderatör işlemi `reviewed_by_user_id`, `reviewed_at` ve `resolution_note` alanlarına yazılır. Moderatör/admin rolü public sign-up’tan gelmez; `profiles.role` server-owned olarak yönetilir.
+Rapor nedenleri: `fraud`, `wrong_category`, `prohibited`, `duplicate`, `misleading`, `other`. Rapor durumları: `open`, `reviewing`, `resolved`, `dismissed`. Moderatör ilanı reddettiğinde ilan `rejected` durumuna geçer, public okumalardan kalkar ve sahibi tarafından doğrudan yeniden yayınlanamaz; o ilana ait açık raporlar birlikte kapatılır. Açık/incelenen raporlar için 24 saatlik yanıt hedefi vardır; son 4 saatte olanlar `due_soon`, süresi geçenler `overdue` olarak işaretlenir. Moderasyon kuyruğu açık, geciken ve yaklaşan rapor sayılarını özetler; ilan tipine göre otomobil veya daire detayına bağlantı verir. Moderatör işlemi `reviewed_by_user_id`, `reviewed_at` ve `resolution_note` alanlarına yazılır. Moderatör/admin rolü public sign-up’tan gelmez; `profiles.role` server-owned olarak yönetilir.
 
 Telefon numarası detay yanıtına konmaz; yalnız açık kullanıcı tercihi varsa ayrı contact endpoint’inden döner. Public görseller metadata’dan arındırılmış WebP varyantlarıdır.
 
 EİDS doğrulaması `VerificationProvider` sınırı arkasındadır; otomobil için `vehicle_authority`, daire için `property_authority` kontrolü çalışır. Local/test ortamında explicit `EIDS_PROVIDER=mock` kullanılabilir. Production’da mock provider reddedilir; gerçek provider yoksa veya doğrulama başarısız/kullanılamazsa ilan yayınlanmaz (`fail closed`). Her deneme `verification_checks` tablosuna minimal sonuç olarak yazılır; ham provider yanıtı saklanmaz.
 
-Düzenleme yalnız `draft`, `published` ve `inactive` ilanlarda açıktır; `rejected` ile doğrulama/inceleme bekleyen ilanlar düzenlenemez. Henüz bu dilimde olmayanlar: rapor rate limit’i, moderasyon SLA/itiraz akışı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında otomobil feed’ini doldurmak için:
+Düzenleme yalnız `draft`, `published` ve `inactive` ilanlarda açıktır; `rejected` ile doğrulama/inceleme bekleyen ilanlar düzenlenemez. Henüz bu dilimde olmayanlar: moderasyon itiraz akışı, hesap yaptırımı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında otomobil feed’ini doldurmak için:
 
 ```bash
 pnpm listings:seed:dev -- <owner-user-uuid>
