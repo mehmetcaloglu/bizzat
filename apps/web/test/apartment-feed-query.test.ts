@@ -12,7 +12,7 @@ import {
 describe('apartment feed query state', () => {
   it('parses transaction type, sort, and filter values from the URL', () => {
     const parsed = parseApartmentFeedQuery(new URLSearchParams(
-      'transactionType=rent&sort=price_asc&provinceId=province-1&districtId=district-1&roomCount=2%2B1&minPrice=10000&maxPrice=50000&minGrossM2=80&maxGrossM2=120&maxBuildingAge=10&heating=combi&parking=closed&furnished=true&inSite=false&q=geni%C5%9F',
+      'transactionType=rent&sort=price_asc&provinceId=province-1&districtId=district-1&roomCount=2%2B1&minPrice=10000&maxPrice=50000&minGrossM2=80&maxGrossM2=120&maxBuildingAge=10&floorLabel=attic&heating=combi&parking=closed&furnished=true&inSite=false&q=geni%C5%9F',
     ))
 
     expect(parsed.transactionType).toBe('rent')
@@ -28,6 +28,7 @@ describe('apartment feed query state', () => {
       minGrossM2: 80,
       maxGrossM2: 120,
       maxBuildingAge: 10,
+      floorLabel: 'attic',
       heating: 'combi',
       parking: 'closed',
       furnished: true,
@@ -52,6 +53,7 @@ describe('apartment feed query state', () => {
       roomCount: '3+1',
       minPrice: '3000000',
       maxBuildingAge: '5',
+      floorLabel: 'garden',
       heating: 'combi',
       furnished: 'false',
       inSite: 'true',
@@ -64,6 +66,7 @@ describe('apartment feed query state', () => {
       roomCount: '3+1',
       minPrice: 3000000,
       maxBuildingAge: 5,
+      floorLabel: 'garden',
       heating: 'combi',
       furnished: false,
       inSite: true,
@@ -73,6 +76,7 @@ describe('apartment feed query state', () => {
       roomCount: '3+1',
       minPrice: '3000000',
       maxBuildingAge: '5',
+      floorLabel: 'garden',
       heating: 'combi',
       furnished: 'false',
       inSite: 'true',
@@ -85,6 +89,7 @@ describe('apartment feed query state', () => {
       roomCount: '3+1',
       minPrice: '3000000',
       maxBuildingAge: '5',
+      floorLabel: 'garden',
       heating: 'combi',
       furnished: 'false',
       inSite: 'true',

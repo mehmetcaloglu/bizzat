@@ -111,6 +111,8 @@ function detailsPayload(
     roomCount: string
     grossM2: number
     furnished?: boolean
+    floor?: number | null
+    floorLabel?: string | null
   },
 ) {
   return {
@@ -126,7 +128,8 @@ function detailsPayload(
     grossM2: overrides.grossM2,
     netM2: overrides.grossM2 - 10,
     buildingAge: 5,
-    floor: 3,
+    floor: overrides.floor === undefined ? 3 : overrides.floor,
+    floorLabel: overrides.floorLabel ?? null,
     totalFloors: 8,
     heating: 'combi',
     bathroomCount: 1,
@@ -354,6 +357,46 @@ describe('apartment vertical', () => {
     expect(ownedInactive.json().listing.status).toBe('inactive')
 
     await publish(owner.cookie, listingId)
+  })
+
+  it('supports special floor labels in detail and feed filters', async () => {
+    const owner = await createSignedInUser('Bahçe Katı Sahibi')
+    const location = await createLocation()
+    const listingId = await createApartmentDraft(owner.cookie, 'sale')
+    await updateDetails(owner.cookie, listingId, detailsPayload(location, 'sale', {
+      priceAmount: 3_900_000,
+      roomCount: '2+1',
+      grossM2: 100,
+      floor: null,
+      floorLabel: 'garden',
+    }))
+    await uploadImage(owner.cookie, listingId)
+    await publish(owner.cookie, listingId)
+
+    const detail = await app.inject({
+      method: 'GET',
+      url: `/api/v1/listings/public/apartment/${listingId}`,
+      headers: { host: 'localhost:3000' },
+    })
+    expect(detail.statusCode).toBe(200)
+    expect(detail.json().listing.floor).toBeNull()
+    expect(detail.json().listing.attributes.floorLabel).toBe('garden')
+
+    const gardenFeed = await app.inject({
+      method: 'GET',
+      url: '/api/v1/listings/public/apartment?transactionType=sale&floorLabel=garden',
+      headers: { host: 'localhost:3000' },
+    })
+    expect(gardenFeed.statusCode).toBe(200)
+    expect((gardenFeed.json().items as Array<{ id: string }>).map((item) => item.id)).toEqual([listingId])
+
+    const atticFeed = await app.inject({
+      method: 'GET',
+      url: '/api/v1/listings/public/apartment?transactionType=sale&floorLabel=attic',
+      headers: { host: 'localhost:3000' },
+    })
+    expect(atticFeed.statusCode).toBe(200)
+    expect(atticFeed.json().items).toHaveLength(0)
   })
 
   it('creates, publishes, filters, reads, contacts, lists, and unpublishes sale/rent apartments', async () => {

@@ -1,5 +1,6 @@
 import type {
   ApartmentFeedFilters,
+  ApartmentFloorLabel,
   ApartmentHeating,
   ApartmentParking,
   ApartmentRoomCount,
@@ -11,6 +12,11 @@ export const apartmentRoomCounts: ApartmentRoomCount[] = [
   'studio', '1+0', '1+1', '1.5+1', '2+0', '2+1', '2.5+1', '2+2',
   '3+0', '3+1', '3.5+1', '3+2', '4+0', '4+1', '4.5+1', '4+2',
   '5+1', '5+2', '6+1', '7+1', '8+1', '9+1', '10+',
+]
+
+export const apartmentFloorLabels: ApartmentFloorLabel[] = [
+  'garden', 'basement', 'ground', 'entrance', 'high_entrance',
+  'detached', 'villa', 'attic',
 ]
 
 export const apartmentHeatingValues: ApartmentHeating[] = [
@@ -41,6 +47,7 @@ export interface ApartmentFeedFormValues {
   minGrossM2: string
   maxGrossM2: string
   maxBuildingAge: string
+  floorLabel: string
   heating: string
   parking: string
   furnished: string
@@ -57,6 +64,7 @@ export const emptyApartmentFeedForm: ApartmentFeedFormValues = {
   minGrossM2: '',
   maxGrossM2: '',
   maxBuildingAge: '',
+  floorLabel: '',
   heating: '',
   parking: '',
   furnished: '',
@@ -96,6 +104,9 @@ export function filtersFromApartmentForm(
   if (minGrossM2 !== undefined) filters.minGrossM2 = minGrossM2
   if (maxGrossM2 !== undefined) filters.maxGrossM2 = maxGrossM2
   if (maxBuildingAge !== undefined) filters.maxBuildingAge = maxBuildingAge
+  if (apartmentFloorLabels.includes(form.floorLabel as ApartmentFloorLabel)) {
+    filters.floorLabel = form.floorLabel as ApartmentFloorLabel
+  }
   if (apartmentHeatingValues.includes(form.heating as ApartmentHeating)) {
     filters.heating = form.heating as ApartmentHeating
   }
@@ -120,6 +131,7 @@ export function formFromApartmentFilters(filters: ApartmentFeedFilters): Apartme
     minGrossM2: filters.minGrossM2 === undefined ? '' : String(filters.minGrossM2),
     maxGrossM2: filters.maxGrossM2 === undefined ? '' : String(filters.maxGrossM2),
     maxBuildingAge: filters.maxBuildingAge === undefined ? '' : String(filters.maxBuildingAge),
+    floorLabel: filters.floorLabel ?? '',
     heating: filters.heating ?? '',
     parking: filters.parking ?? '',
     furnished: filters.furnished === undefined ? '' : String(filters.furnished),
@@ -147,11 +159,15 @@ export function parseApartmentFeedQuery(params: URLSearchParams): {
   const roomCount = params.get('roomCount')
   const heating = params.get('heating')
   const parking = params.get('parking')
+  const floorLabel = params.get('floorLabel')
   if (q) filters.q = q
   if (provinceId) filters.provinceId = provinceId
   if (districtId) filters.districtId = districtId
   if (apartmentRoomCounts.includes(roomCount as ApartmentRoomCount)) {
     filters.roomCount = roomCount as ApartmentRoomCount
+  }
+  if (apartmentFloorLabels.includes(floorLabel as ApartmentFloorLabel)) {
+    filters.floorLabel = floorLabel as ApartmentFloorLabel
   }
   if (apartmentHeatingValues.includes(heating as ApartmentHeating)) {
     filters.heating = heating as ApartmentHeating

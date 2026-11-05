@@ -191,6 +191,7 @@ export interface ApartmentDetailsTable {
   net_m2: ColumnType<number | null, number | null | undefined, number | null | undefined>
   building_age: ColumnType<number | null, number | null | undefined, number | null | undefined>
   floor: ColumnType<number | null, number | null | undefined, number | null | undefined>
+  floor_label: ColumnType<string | null, string | null | undefined, string | null | undefined>
   total_floors: ColumnType<number | null, number | null | undefined, number | null | undefined>
   heating: string
   bathroom_count: number
