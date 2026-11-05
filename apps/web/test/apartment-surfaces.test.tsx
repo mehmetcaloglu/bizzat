@@ -48,8 +48,8 @@ describe('apartment surfaces', () => {
 
     expect(html).toContain('Satılık ve kiralık daireler')
     expect(html).toContain('Daireler')
-    expect(html).toContain('Satılık')
-    expect(html).toContain('Kiralık')
+    expect(html).toContain('Satılık ve kiralık daireler')
+    expect(html).toContain('Filtreler hazırlanıyor…')
     expect(html).toContain('Daire ilanı ver')
   })
 
