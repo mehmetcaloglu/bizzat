@@ -4,7 +4,6 @@ Bu dosya MVP sonrası açık işleri tek yerde tutar. Issue tracker yerine repo-
 
 | Öncelik | İş | Neden / kabul yönü |
 |---|---|---|
-| P1 | Daire feed filtrelerini URL query state’ine taşımak | Otomobil feed’iyle tutarlı paylaşılabilir/geri-ileri uyumlu filtre deneyimi. |
 | P2 | Özel kat etiketleri | Bahçe katı, bodrum, çatı katı gibi sayısal olmayan kat değerlerinin modellenmesi. |
 | P2 | Gerçek EİDS provider entegrasyonu | `vehicle_authority` ve `property_authority` için mock dışı, production’da fail-closed provider. |
 | P2 | Rapor rate limit’i ve kötüye kullanım kontrolleri | Anonim/üye raporlarında spam ve tekrarlı raporları sınırlama. |

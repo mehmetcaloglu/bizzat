@@ -64,7 +64,7 @@ Satılık ve kiralık daire dikey dilimi çalışır durumdadır:
 
 - `/ilan-ver/daire` altında işlem türü seçimi, daire bilgileri, konum, iletişim ve fotoğraf yükleme,
 - `/ilan-ver/daire?draft=<id>` ile taslak/yayındaki/pasif ilan düzenleme,
-- `/daire` üzerinde satılık/kiralık geçişli public feed; konum, fiyat, oda sayısı, m², bina yaşı, ısıtma, otopark, eşyalı ve site filtreleri; fiyat/m² sıralaması,
+- `/daire` üzerinde satılık/kiralık geçişli public feed; URL query state’li konum, fiyat, oda sayısı, m², bina yaşı, ısıtma, otopark, eşyalı ve site filtreleri; fiyat/m² sıralaması,
 - `/daire/:listingId` üzerinde public detay, fotoğraf galerisi, daire özellikleri ve telefonu gösterme akışı,
 - `/ilanlarim` üzerinde daire taslaklarını/yayındaki/pasif ilanları düzenleme, yayınlama ve yayından kaldırma.
 
@@ -113,7 +113,7 @@ Telefon numarası detay yanıtına konmaz; yalnız açık kullanıcı tercihi va
 
 EİDS doğrulaması `VerificationProvider` sınırı arkasındadır; otomobil için `vehicle_authority`, daire için `property_authority` kontrolü çalışır. Local/test ortamında explicit `EIDS_PROVIDER=mock` kullanılabilir. Production’da mock provider reddedilir; gerçek provider yoksa veya doğrulama başarısız/kullanılamazsa ilan yayınlanmaz (`fail closed`). Her deneme `verification_checks` tablosuna minimal sonuç olarak yazılır; ham provider yanıtı saklanmaz.
 
-Düzenleme yalnız `draft`, `published` ve `inactive` ilanlarda açıktır; `rejected` ile doğrulama/inceleme bekleyen ilanlar düzenlenemez. Henüz bu dilimde olmayanlar: daire filtrelerinin URL query state’ine taşınması, rapor rate limit’i, moderasyon SLA/itiraz akışı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında otomobil feed’ini doldurmak için:
+Düzenleme yalnız `draft`, `published` ve `inactive` ilanlarda açıktır; `rejected` ile doğrulama/inceleme bekleyen ilanlar düzenlenemez. Henüz bu dilimde olmayanlar: rapor rate limit’i, moderasyon SLA/itiraz akışı ve gerçek EİDS provider entegrasyonu. Geliştirme ortamında otomobil feed’ini doldurmak için:
 
 ```bash
 pnpm listings:seed:dev -- <owner-user-uuid>

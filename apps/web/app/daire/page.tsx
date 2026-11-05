@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { MarketHeader } from '../components/market-header'
 import { PublicApartmentListings } from '../components/public-apartment-listings'
 
@@ -14,7 +15,14 @@ export default function ApartmentsPage() {
       </section>
 
       <section className="market-section catalog-section">
-        <PublicApartmentListings limit={12} />
+        <Suspense fallback={(
+          <div className="public-list-state">
+            <strong>Filtreler hazırlanıyor…</strong>
+            <span>Daire listesi birazdan yüklenecek.</span>
+          </div>
+        )}>
+          <PublicApartmentListings limit={12} />
+        </Suspense>
         <div className="apartment-create-cta">
           <span>Daireni bireysel olarak yayınlamak ister misin?</span>
           <Link href="/ilan-ver/daire">Daire ilanı ver</Link>

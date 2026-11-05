@@ -1,27 +1,31 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 import {
   ApiClientError,
   listDistricts,
   listProvinces,
   listPublicApartmentListings,
-  type ApartmentFeedFilters,
   type ApartmentHeating,
   type ApartmentParking,
-  type ApartmentRoomCount,
   type ApartmentTransactionType,
   type LocationReferenceItem,
   type PublicApartmentListingItem,
   type PublicApartmentListingSort,
 } from '../../lib/api-client'
-
-const roomCounts: ApartmentRoomCount[] = [
-  'studio', '1+0', '1+1', '1.5+1', '2+0', '2+1', '2.5+1', '2+2',
-  '3+0', '3+1', '3.5+1', '3+2', '4+0', '4+1', '4.5+1', '4+2',
-  '5+1', '5+2', '6+1', '7+1', '8+1', '9+1', '10+',
-]
+import {
+  activeApartmentFilterCount,
+  apartmentRoomCounts as roomCounts,
+  emptyApartmentFeedForm,
+  filtersFromApartmentForm,
+  formFromApartmentFilters,
+  parseApartmentFeedQuery,
+  toApartmentFeedSearchParams,
+  validateApartmentFeedForm,
+  type ApartmentFeedFormValues,
+} from './apartment-feed-query'
 
 const heatingLabels: Record<ApartmentHeating, string> = {
   none: 'Yok',
@@ -51,78 +55,8 @@ const sortLabels: Record<PublicApartmentListingSort, string> = {
   gross_m2_desc: 'm² azalan',
 }
 
-interface DraftFilters {
-  q: string
-  provinceId: string
-  districtId: string
-  roomCount: string
-  minPrice: string
-  maxPrice: string
-  minGrossM2: string
-  maxGrossM2: string
-  maxBuildingAge: string
-  heating: string
-  parking: string
-  furnished: string
-  inSite: string
-}
-
-const emptyDraft: DraftFilters = {
-  q: '',
-  provinceId: '',
-  districtId: '',
-  roomCount: '',
-  minPrice: '',
-  maxPrice: '',
-  minGrossM2: '',
-  maxGrossM2: '',
-  maxBuildingAge: '',
-  heating: '',
-  parking: '',
-  furnished: '',
-  inSite: '',
-}
-
 function formatTry(value: number, rent: boolean): string {
   return new Intl.NumberFormat('tr-TR').format(value) + (rent ? ' TL/ay' : ' TL')
-}
-
-function numberOrUndefined(value: string): number | undefined {
-  if (value.trim() === '') return undefined
-  const parsed = Number(value)
-  return Number.isFinite(parsed) ? parsed : undefined
-}
-
-function filtersFromDraft(
-  transactionType: ApartmentTransactionType,
-  draft: DraftFilters,
-): ApartmentFeedFilters {
-  const filters: ApartmentFeedFilters = { transactionType }
-  if (draft.q.trim()) filters.q = draft.q.trim()
-  if (draft.provinceId) filters.provinceId = draft.provinceId
-  if (draft.districtId) filters.districtId = draft.districtId
-  if (draft.roomCount) filters.roomCount = draft.roomCount as ApartmentRoomCount
-  const minPrice = numberOrUndefined(draft.minPrice)
-  const maxPrice = numberOrUndefined(draft.maxPrice)
-  const minGrossM2 = numberOrUndefined(draft.minGrossM2)
-  const maxGrossM2 = numberOrUndefined(draft.maxGrossM2)
-  const maxBuildingAge = numberOrUndefined(draft.maxBuildingAge)
-  if (minPrice !== undefined) filters.minPrice = minPrice
-  if (maxPrice !== undefined) filters.maxPrice = maxPrice
-  if (minGrossM2 !== undefined) filters.minGrossM2 = minGrossM2
-  if (maxGrossM2 !== undefined) filters.maxGrossM2 = maxGrossM2
-  if (maxBuildingAge !== undefined) filters.maxBuildingAge = maxBuildingAge
-  if (draft.heating) filters.heating = draft.heating as ApartmentHeating
-  if (draft.parking) filters.parking = draft.parking as ApartmentParking
-  if (draft.furnished === 'true') filters.furnished = true
-  if (draft.furnished === 'false') filters.furnished = false
-  if (draft.inSite === 'true') filters.inSite = true
-  if (draft.inSite === 'false') filters.inSite = false
-  return filters
-}
-
-function activeFilterCount(filters: ApartmentFeedFilters): number {
-  return Object.keys(filters).filter((key) => key !== 'transactionType').length
 }
 
 export function PublicApartmentCard({ item }: { item: PublicApartmentListingItem }) {
@@ -162,10 +96,16 @@ export function PublicApartmentCard({ item }: { item: PublicApartmentListingItem
 }
 
 export function PublicApartmentListings({ limit = 12 }: { limit?: number }) {
-  const [transactionType, setTransactionType] = useState<ApartmentTransactionType>('sale')
-  const [sort, setSort] = useState<PublicApartmentListingSort>('newest')
-  const [draft, setDraft] = useState<DraftFilters>({ ...emptyDraft })
-  const [applied, setApplied] = useState<ApartmentFeedFilters>({ transactionType: 'sale' })
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const queryString = searchParams.toString()
+  const { transactionType, sort, filters } = parseApartmentFeedQuery(
+    new URLSearchParams(queryString),
+  )
+  const filtersKey = JSON.stringify(filters)
+  const lastFiltersKey = useRef(filtersKey)
+  const [draft, setDraft] = useState<ApartmentFeedFormValues>(() => formFromApartmentFilters(filters))
   const [provinces, setProvinces] = useState<LocationReferenceItem[]>([])
   const [districts, setDistricts] = useState<LocationReferenceItem[]>([])
   const [items, setItems] = useState<PublicApartmentListingItem[]>([])
@@ -175,7 +115,14 @@ export function PublicApartmentListings({ limit = 12 }: { limit?: number }) {
   const [error, setError] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const [retryVersion, setRetryVersion] = useState(0)
-  const appliedKey = JSON.stringify(applied)
+
+  useEffect(() => {
+    if (lastFiltersKey.current === filtersKey) return
+    lastFiltersKey.current = filtersKey
+    setDraft(formFromApartmentFilters(
+      parseApartmentFeedQuery(new URLSearchParams(queryString)).filters,
+    ))
+  }, [filtersKey, queryString])
 
   useEffect(() => {
     void listProvinces().then(setProvinces).catch(() => undefined)
@@ -199,12 +146,16 @@ export function PublicApartmentListings({ limit = 12 }: { limit?: number }) {
 
   useEffect(() => {
     let cancelled = false
+    const query = parseApartmentFeedQuery(new URLSearchParams(queryString))
     setLoading(true)
     setError(null)
     setNextCursor(null)
-    const filters = JSON.parse(appliedKey) as ApartmentFeedFilters
 
-    void listPublicApartmentListings({ limit, sort, filters })
+    void listPublicApartmentListings({
+      limit,
+      sort: query.sort,
+      filters: query.filters,
+    })
       .then((page) => {
         if (cancelled) return
         setItems(page.items)
@@ -223,40 +174,41 @@ export function PublicApartmentListings({ limit = 12 }: { limit?: number }) {
     return () => {
       cancelled = true
     }
-  }, [appliedKey, limit, retryVersion, sort])
+  }, [limit, queryString, retryVersion])
+
+  function navigate(
+    nextTransactionType: ApartmentTransactionType,
+    nextSort: PublicApartmentListingSort,
+    nextFilters: typeof filters,
+  ) {
+    setFormError(null)
+    const params = toApartmentFeedSearchParams(nextTransactionType, nextSort, nextFilters)
+    const suffix = params.toString()
+    router.replace(suffix ? `${pathname}?${suffix}` : pathname, { scroll: false })
+  }
 
   function changeTransaction(next: ApartmentTransactionType) {
-    setTransactionType(next)
-    setApplied(filtersFromDraft(next, draft))
+    navigate(next, sort, filters)
   }
 
   function submitFilters() {
-    if (
-      numberOrUndefined(draft.minPrice) !== undefined
-      && numberOrUndefined(draft.maxPrice) !== undefined
-      && numberOrUndefined(draft.minPrice)! > numberOrUndefined(draft.maxPrice)!
-    ) {
-      setFormError('Minimum fiyat maksimum fiyattan büyük olamaz.')
-      return
-    }
-    if (
-      numberOrUndefined(draft.minGrossM2) !== undefined
-      && numberOrUndefined(draft.maxGrossM2) !== undefined
-      && numberOrUndefined(draft.minGrossM2)! > numberOrUndefined(draft.maxGrossM2)!
-    ) {
-      setFormError('Minimum m² maksimum m²den büyük olamaz.')
+    const validation = validateApartmentFeedForm(draft)
+    if (validation) {
+      setFormError(validation)
       return
     }
     setFormError(null)
-    setApplied(filtersFromDraft(transactionType, draft))
+    navigate(transactionType, sort, filtersFromApartmentForm(transactionType, draft))
   }
 
   function clearFilters() {
-    setDraft({ ...emptyDraft })
+    setDraft({ ...emptyApartmentFeedForm })
     setFormError(null)
-    setTransactionType('sale')
-    setSort('newest')
-    setApplied({ transactionType: 'sale' })
+    router.replace(pathname, { scroll: false })
+  }
+
+  function changeSort(nextSort: PublicApartmentListingSort) {
+    navigate(transactionType, nextSort, filters)
   }
 
   async function loadMore() {
@@ -268,7 +220,7 @@ export function PublicApartmentListings({ limit = 12 }: { limit?: number }) {
         limit,
         cursor: nextCursor,
         sort,
-        filters: applied,
+        filters,
       })
       setItems((current) => {
         const known = new Set(current.map((item) => item.id))
@@ -284,7 +236,7 @@ export function PublicApartmentListings({ limit = 12 }: { limit?: number }) {
     }
   }
 
-  const activeCount = activeFilterCount(applied)
+  const activeCount = activeApartmentFilterCount(filters)
 
   return (
     <div className="apartment-feed">
@@ -483,7 +435,7 @@ export function PublicApartmentListings({ limit = 12 }: { limit?: number }) {
             <span>Sırala</span>
             <select
               value={sort}
-              onChange={(event) => setSort(event.target.value as PublicApartmentListingSort)}
+              onChange={(event) => changeSort(event.target.value as PublicApartmentListingSort)}
             >
               {Object.entries(sortLabels).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
