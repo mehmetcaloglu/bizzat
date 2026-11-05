@@ -10,6 +10,19 @@ interface ApiErrorBody {
   }
 }
 
+export type AccountStatus = 'active' | 'suspended' | 'banned'
+export type EnforcementAction = 'warning' | 'suspend' | 'ban' | 'reactivate' | 'listing_takedown'
+
+export interface AccountEnforcement {
+  id: string
+  action: EnforcementAction
+  reason: string
+  listingId: string | null
+  listingTitle: string | null
+  endsAt: string | null
+  createdAt: string
+}
+
 export interface MeSummary {
   user: {
     id: string
@@ -18,7 +31,10 @@ export interface MeSummary {
   }
   profile: {
     role: string
+    accountStatus: AccountStatus
+    suspendedUntil: string | null
   }
+  enforcements: AccountEnforcement[]
 }
 
 export interface LocationReferenceItem {
@@ -510,6 +526,104 @@ export interface ResolveModerationReportResponse {
     status: 'resolved' | 'dismissed'
     reviewedAt: string
   }
+}
+
+export interface StaffUserSummary {
+  id: string
+  name: string
+  email: string
+  role: 'user' | 'moderator' | 'admin'
+  accountStatus: AccountStatus
+  suspendedUntil: string | null
+  warningCount: number
+  listingCount: number
+  createdAt: string
+}
+
+export interface StaffListingSummary {
+  id: string
+  title: string | null
+  type: 'car_sale' | 'apartment_sale' | 'apartment_rent'
+  status: string
+  priceAmount: number | null
+  currency: 'TRY' | null
+  createdAt: string
+}
+
+export interface StaffUserDetailResponse {
+  user: StaffUserSummary
+  enforcements: AccountEnforcement[]
+  listings: StaffListingSummary[]
+}
+
+export interface StaffUserActionResponse {
+  user: StaffUserSummary
+  enforcement: AccountEnforcement
+}
+
+export interface StaffListingTakedownResponse {
+  listing: { id: string; status: 'rejected' }
+  enforcement: AccountEnforcement
+}
+
+export function searchStaffUsers(query = ''): Promise<{ items: StaffUserSummary[] }> {
+  const params = new URLSearchParams()
+  if (query.trim()) params.set('q', query.trim())
+  const suffix = params.toString()
+  return requestJson<{ items: StaffUserSummary[] }>(
+    `/api/v1/staff/users${suffix ? `?${suffix}` : ''}`,
+  )
+}
+
+export function getStaffUser(userId: string): Promise<StaffUserDetailResponse> {
+  return requestJson<StaffUserDetailResponse>(
+    `/api/v1/staff/users/${encodeURIComponent(userId)}`,
+  )
+}
+
+export function warnStaffUser(userId: string, reason: string): Promise<StaffUserActionResponse> {
+  return requestJson<StaffUserActionResponse>(
+    `/api/v1/staff/users/${encodeURIComponent(userId)}/warnings`,
+    { method: 'POST', body: JSON.stringify({ reason }) },
+  )
+}
+
+export function suspendStaffUser(
+  userId: string,
+  reason: string,
+  days: number,
+): Promise<StaffUserActionResponse> {
+  return requestJson<StaffUserActionResponse>(
+    `/api/v1/staff/users/${encodeURIComponent(userId)}/suspend`,
+    { method: 'POST', body: JSON.stringify({ reason, days }) },
+  )
+}
+
+export function banStaffUser(userId: string, reason: string): Promise<StaffUserActionResponse> {
+  return requestJson<StaffUserActionResponse>(
+    `/api/v1/staff/users/${encodeURIComponent(userId)}/ban`,
+    { method: 'POST', body: JSON.stringify({ reason }) },
+  )
+}
+
+export function reactivateStaffUser(
+  userId: string,
+  reason: string,
+): Promise<StaffUserActionResponse> {
+  return requestJson<StaffUserActionResponse>(
+    `/api/v1/staff/users/${encodeURIComponent(userId)}/reactivate`,
+    { method: 'POST', body: JSON.stringify({ reason }) },
+  )
+}
+
+export function takedownStaffListing(
+  listingId: string,
+  reason: string,
+): Promise<StaffListingTakedownResponse> {
+  return requestJson<StaffListingTakedownResponse>(
+    `/api/v1/staff/listings/${encodeURIComponent(listingId)}/takedown`,
+    { method: 'POST', body: JSON.stringify({ reason }) },
+  )
 }
 
 export class ApiClientError extends Error {

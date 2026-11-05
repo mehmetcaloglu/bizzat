@@ -20,7 +20,7 @@ import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import type { Kysely } from 'kysely'
 import { Type } from 'typebox'
 import type { BizzatAuth } from '../../auth/auth.js'
-import { getAuthSession } from '../../auth/session.js'
+import { getActiveAuthSession } from '../../auth/session.js'
 import { AppError } from '../../common/errors/app-error.js'
 import type { Database } from '../../db/client.js'
 import { LocationRepository } from '../../reference/location.repository.js'
@@ -198,7 +198,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request, reply) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) {
       throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
     }
@@ -219,7 +219,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) {
       throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
     }
@@ -239,7 +239,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) {
       throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
     }
@@ -257,7 +257,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) {
       throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
     }
@@ -277,7 +277,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) {
       throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
     }
@@ -303,7 +303,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request, reply) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
 
     const contentType = request.headers['content-type']?.split(';', 1)[0] ?? ''
@@ -331,7 +331,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
 
     return {
@@ -354,7 +354,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
 
     return {
@@ -371,7 +371,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       params: ListingImageParamsSchema,
     },
   }, async (request, reply) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
 
     const image = await service.readOwnedImage(
@@ -396,7 +396,7 @@ export const listingRoutes: FastifyPluginAsyncTypebox<ListingRoutesOptions> = as
       },
     },
   }, async (request) => {
-    const session = await getAuthSession(options.auth, request.headers)
+    const session = await getActiveAuthSession(options.auth, options.db, request.headers)
     if (!session) {
       throw new AppError(401, 'UNAUTHENTICATED', 'Oturum açman gerekiyor.')
     }

@@ -26,7 +26,7 @@ Bu depo ürün kapsamını, marka kimliğini, Sahibinden referans envanterini, i
 | Araç kataloğu | Bizzat-owned yaprak UUID kimliği; değişken derinlikte seçim ağacı; PostgreSQL runtime |
 | Çalıştırma | pnpm workspace + Docker Compose; production tarafında tek Linux VM/VDS hedefi |
 | Görsel yön | Açık mavi, beyaz ve açık tonlar; sade ve profesyonel |
-| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ve daire ilan oluşturma/yayınlama/düzenleme + kendi ilanlarım + filtre/sıralamalı public feed/detay + ilan raporlama, abuse kontrolleri ve minimum moderasyon |
+| Mevcut aşama | Identity + konum + canonical araç katalog + otomobil ve daire ilan oluşturma/yayınlama/düzenleme + kendi ilanlarım + filtre/sıralamalı public feed/detay + ilan raporlama, abuse kontrolleri, minimum moderasyon ve customer service yaptırımları |
 
 İlan veren kişinin her durumda malın kayıtlı sahibi olması markanın genel şartı değildir. Ancak güncel EİDS kuralları nedeniyle taşınmaz ve taşıt ilanlarında elektronik yayın yetkisi malik, eş ve izin verilen birinci/ikinci derece kan hısımlarıyla sınırlı bireysel bir yapıya sahiptir. Bizzat'ın “başkası adına yardımcı olma” yaklaşımı bu yasal/entegrasyon sınırı içinde uygulanmalıdır.
 
@@ -109,10 +109,17 @@ Raporlama ve moderasyon yüzeyi:
 - `POST /api/v1/listings/:listingId/appeal` — reddedilen ilan için sahibin tek seferlik itirazı
 - `GET /api/v1/moderation/appeals` — bekleyen itiraz kuyruğu
 - `PATCH /api/v1/moderation/appeals/:appealId` — `approve` veya `reject` kararı
+- `GET /api/v1/staff/users` — customer service kullanıcı araması
+- `GET /api/v1/staff/users/:userId` — kullanıcı, ilanlar ve işlem geçmişi
+- `POST /api/v1/staff/users/:userId/warnings` — uyarı kaydı
+- `POST /api/v1/staff/users/:userId/suspend` — süreli askıya alma
+- `POST /api/v1/staff/users/:userId/ban` — kalıcı ban
+- `POST /api/v1/staff/users/:userId/reactivate` — hesabı aktifleştirme
+- `POST /api/v1/staff/listings/:listingId/takedown` — ilanı customer service tarafından kapatma
 
 Anonim raporlar IP başına saatte 5, üye raporları kullanıcı başına saatte 10 ile sınırlıdır. Aynı aktörün aynı ilan için açık/incelenen raporu tekrar gönderilemez (`409 REPORT_ALREADY_OPEN`); limit aşımı `429 RATE_LIMITED` döner. Ham IP saklanmaz; `REPORT_RATE_LIMIT_SECRET` veya `BETTER_AUTH_SECRET` ile üretilen 64 karakterlik HMAC-SHA256 hash saklanır. Reverse proxy arkasında doğru istemci IP’si için `trustProxy` yapılandırılmalıdır.
 
-Rapor nedenleri: `fraud`, `wrong_category`, `prohibited`, `duplicate`, `misleading`, `other`. Rapor durumları: `open`, `reviewing`, `resolved`, `dismissed`. Moderatör ilanı reddettiğinde ilan `rejected` durumuna geçer, public okumalardan kalkar ve sahibi tarafından doğrudan yeniden yayınlanamaz; o ilana ait açık raporlar birlikte kapatılır. Açık/incelenen raporlar için 24 saatlik yanıt hedefi vardır; son 4 saatte olanlar `due_soon`, süresi geçenler `overdue` olarak işaretlenir. Moderasyon kuyruğu açık, geciken ve yaklaşan rapor sayılarını özetler; ilan tipine göre otomobil veya daire detayına bağlantı verir. Moderatör işlemi `reviewed_by_user_id`, `reviewed_at` ve `resolution_note` alanlarına yazılır. Moderatör/admin rolü public sign-up’tan gelmez; `profiles.role` server-owned olarak yönetilir. Reddedilen ilanın sahibi ilan başına bir kez itiraz edebilir; itiraz kabul edilirse ilan `published` durumuna döner, reddedilirse `rejected` kalır. İtiraz kabulü yeni bir EİDS doğrulaması tetiklemez; ilan daha önce yayın kapısını geçmiş kabul edilir.
+Rapor nedenleri: `fraud`, `wrong_category`, `prohibited`, `duplicate`, `misleading`, `other`. Rapor durumları: `open`, `reviewing`, `resolved`, `dismissed`. Moderatör ilanı reddettiğinde ilan `rejected` durumuna geçer, public okumalardan kalkar ve sahibi tarafından doğrudan yeniden yayınlanamaz; o ilana ait açık raporlar birlikte kapatılır. Açık/incelenen raporlar için 24 saatlik yanıt hedefi vardır; son 4 saatte olanlar `due_soon`, süresi geçenler `overdue` olarak işaretlenir. Moderasyon kuyruğu açık, geciken ve yaklaşan rapor sayılarını özetler; ilan tipine göre otomobil veya daire detayına bağlantı verir. Moderatör işlemi `reviewed_by_user_id`, `reviewed_at` ve `resolution_note` alanlarına yazılır. Moderatör/admin rolü public sign-up’tan gelmez; `profiles.role` server-owned olarak yönetilir. Reddedilen ilanın sahibi ilan başına bir kez itiraz edebilir; itiraz kabul edilirse ilan `published` durumuna döner, reddedilirse `rejected` kalır. İtiraz kabulü yeni bir EİDS doğrulaması tetiklemez; ilan daha önce yayın kapısını geçmiş kabul edilir. Customer service paneli `/destek` altındadır; moderatör ve admin kullanıcı arayabilir, uyarı verebilir, hesabı süreli askıya alabilir veya banlayabilir, kurallara aykırı ilanı `rejected` durumuna çekebilir. `/hesabim` kullanıcıya hesap durumunu, uyarıları ve işlem geçmişini gösterir. Askıya alınan veya banlanan hesap korumalı API işlemlerinde engellenir; `süper admin` arayüzü henüz sonraki dilimdedir.
 
 Telefon numarası detay yanıtına konmaz; yalnız açık kullanıcı tercihi varsa ayrı contact endpoint’inden döner. Public görseller metadata’dan arındırılmış WebP varyantlarıdır.
 

@@ -21,6 +21,8 @@ export const ApiErrorCodeSchema = Type.Union([
   Type.Literal('APPEAL_ALREADY_EXISTS'),
   Type.Literal('APPEAL_NOT_FOUND'),
   Type.Literal('APPEAL_ALREADY_REVIEWED'),
+  Type.Literal('ACCOUNT_SUSPENDED'),
+  Type.Literal('ACCOUNT_BANNED'),
   Type.Literal('REFERENCE_PARENT_NOT_FOUND'),
   Type.Literal('RATE_LIMITED'),
   Type.Literal('INTERNAL_ERROR'),

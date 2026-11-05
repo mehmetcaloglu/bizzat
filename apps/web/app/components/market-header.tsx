@@ -43,8 +43,10 @@ export function MarketHeader() {
         ) : session ? (
           <>
             <Link href="/ilanlarim">İlanlarım</Link>
+            <Link href="/hesabim">Hesabım</Link>
             {(role === 'moderator' || role === 'admin') && (
               <>
+                <Link href="/destek">Destek</Link>
                 <Link href="/moderasyon/raporlar">Moderasyon</Link>
                 <Link href="/moderasyon/itirazlar">İtirazlar</Link>
               </>

@@ -2961,3 +2961,292 @@ button:disabled {
   color: #77858f;
   font-size: 12px;
 }
+
+.staff-console {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.staff-search-panel,
+.staff-detail-panel {
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgb(44 73 91 / 5%);
+}
+
+.staff-search-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.staff-search-form label {
+  display: grid;
+  gap: 5px;
+  color: #52616b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.staff-search-form input {
+  width: 100%;
+  padding: 9px 10px;
+  color: var(--bizzat-text);
+  border: 1px solid #ccdbe5;
+  border-radius: 8px;
+}
+
+.staff-search-form button,
+.staff-action-buttons button,
+.staff-listing-list button {
+  padding: 9px 13px;
+  color: #ffffff;
+  background: #2d7fb5;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.staff-search-form button:disabled,
+.staff-action-buttons button:disabled,
+.staff-listing-list button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.staff-user-list {
+  margin-top: 14px;
+  display: grid;
+  gap: 7px;
+  max-height: 620px;
+  overflow-y: auto;
+}
+
+.staff-user-list button {
+  padding: 10px;
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  color: var(--bizzat-text);
+  background: #f8fbfd;
+  border: 1px solid #e3edf3;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.staff-user-list button:hover,
+.staff-user-list button.is-selected {
+  background: #eef7fc;
+  border-color: #9cc7df;
+}
+
+.staff-user-list button span,
+.staff-user-list button small {
+  color: #6d7d87;
+  font-size: 12px;
+}
+
+.staff-detail-panel {
+  min-height: 420px;
+}
+
+.staff-user-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.staff-user-header h2 {
+  margin: 4px 0;
+}
+
+.staff-user-header p {
+  margin: 0;
+  color: #6d7d87;
+}
+
+.staff-status {
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.staff-status-active {
+  color: #1d684d;
+  background: #e8f6ef;
+}
+
+.staff-status-suspended {
+  color: #7c5a18;
+  background: #fbefd1;
+}
+
+.staff-status-banned {
+  color: #98372f;
+  background: #fde9e5;
+}
+
+.staff-facts {
+  margin: 14px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: #5a6872;
+  font-size: 13px;
+}
+
+.staff-action-box {
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  background: #f8fbfd;
+  border: 1px solid #e3edf3;
+  border-radius: 12px;
+}
+
+.staff-action-box label {
+  display: grid;
+  gap: 5px;
+  color: #52616b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.staff-action-box textarea {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #ccdbe5;
+  border-radius: 8px;
+  resize: vertical;
+  font: inherit;
+  font-weight: 400;
+}
+
+.staff-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.staff-action-buttons select {
+  padding: 9px 10px;
+  border: 1px solid #ccdbe5;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.staff-danger {
+  background: #a73b32 !important;
+}
+
+.staff-section-title {
+  margin: 22px 0 10px;
+  font-size: 16px;
+}
+
+.staff-listing-list,
+.staff-history {
+  display: grid;
+  gap: 8px;
+}
+
+.staff-listing-list article,
+.staff-history article {
+  padding: 11px 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid #e3edf3;
+  border-radius: 9px;
+}
+
+.staff-listing-list article > div,
+.staff-history article > div {
+  display: grid;
+  gap: 3px;
+}
+
+.staff-listing-list article span,
+.staff-history article span,
+.staff-history article small {
+  color: #6d7d87;
+  font-size: 12px;
+}
+
+.staff-history article p {
+  margin: 0;
+  flex: 1;
+  color: #4f5e68;
+  font-size: 13px;
+}
+
+.account-status-view {
+  display: grid;
+  gap: 14px;
+}
+
+.account-status-card {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--bizzat-border);
+  border-radius: 16px;
+}
+
+.account-status-card h2 {
+  margin: 4px 0;
+}
+
+.account-status-card p {
+  margin: 0;
+  color: #6d7d87;
+}
+
+.account-status-suspended {
+  background: #fff9ec;
+  border-color: #eedaa7;
+}
+
+.account-status-banned {
+  background: #fff5f3;
+  border-color: #efc8c2;
+}
+
+.account-warning-banner {
+  padding: 13px 15px;
+  color: #7c4a1b;
+  background: #fff4e5;
+  border: 1px solid #efd3ae;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account-status-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 820px) {
+  .staff-console {
+    grid-template-columns: 1fr;
+  }
+
+  .account-status-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
