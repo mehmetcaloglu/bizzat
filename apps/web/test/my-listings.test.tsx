@@ -25,6 +25,7 @@ const baseListing: OwnerCarListingSummary = {
   imageUrl: null,
   updatedAt: '2026-11-04T12:00:00.000Z',
   publishedAt: null,
+  appealStatus: null,
 }
 
 const listings: OwnerCarListingSummary[] = [
@@ -69,6 +70,42 @@ describe('my listings', () => {
     expect(html).toContain('Yayınla')
     expect(html).toContain('Yayından kaldır')
     expect(html).toContain('href="/otomobil/0199f000-0000-7000-8000-000000000002"')
+  })
+
+  it('renders appeal actions for rejected listings by appeal state', () => {
+    const appealListings: OwnerCarListingSummary[] = [
+      {
+        ...baseListing,
+        id: '0199f000-0000-7000-8000-000000000004',
+        status: 'rejected',
+      },
+      {
+        ...baseListing,
+        id: '0199f000-0000-7000-8000-000000000005',
+        status: 'rejected',
+        appealStatus: 'pending',
+      },
+      {
+        ...baseListing,
+        id: '0199f000-0000-7000-8000-000000000006',
+        status: 'rejected',
+        appealStatus: 'rejected',
+      },
+    ]
+    const html = renderToStaticMarkup(
+      <MyListingsView
+        listings={appealListings}
+        loadingActionId={null}
+        actionError={null}
+        onPublish={() => undefined}
+        onUnpublish={() => undefined}
+      />,
+    )
+
+    expect(html).toContain('href="/ilanlarim/itiraz/0199f000-0000-7000-8000-000000000004"')
+    expect(html).toContain('İtiraz et')
+    expect(html).toContain('İtirazın inceleniyor.')
+    expect(html).toContain('İtirazın reddedildi.')
   })
 
   it('renders a clear empty state and the page shell', () => {

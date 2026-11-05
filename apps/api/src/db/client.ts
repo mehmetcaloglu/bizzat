@@ -248,6 +248,19 @@ export interface ReportsTable {
   updated_at: Generated<Date>
 }
 
+export interface ListingAppealsTable {
+  id: Generated<string>
+  listing_id: string
+  appellant_user_id: string
+  note: string
+  status: Generated<string>
+  reviewed_by_user_id: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  reviewed_at: ColumnType<Date | null, Date | string | null | undefined, Date | string | null | undefined>
+  resolution_note: ColumnType<string | null, string | null | undefined, string | null | undefined>
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
 export interface Database {
   profiles: ProfilesTable
   reference_data_providers: ReferenceDataProvidersTable
@@ -269,6 +282,7 @@ export interface Database {
   listing_images: ListingImagesTable
   verification_checks: VerificationChecksTable
   reports: ReportsTable
+  listing_appeals: ListingAppealsTable
 }
 
 export function createDatabase(connectionString: string): Kysely<Database> {

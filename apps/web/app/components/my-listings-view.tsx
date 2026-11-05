@@ -152,8 +152,16 @@ export function MyListingsView({
                   {listing.status === 'pending_review' && (
                     <span className="my-listing-note">İlan inceleme sırasında.</span>
                   )}
-                  {listing.status === 'rejected' && (
-                    <span className="my-listing-note">İlan reddedildi. Destek ekibiyle iletişime geç.</span>
+                  {listing.status === 'rejected' && listing.appealStatus === null && (
+                    <Link className="my-listing-secondary" href={`/ilanlarim/itiraz/${listing.id}`}>
+                      İtiraz et
+                    </Link>
+                  )}
+                  {listing.status === 'rejected' && listing.appealStatus === 'pending' && (
+                    <span className="my-listing-note">İtirazın inceleniyor.</span>
+                  )}
+                  {listing.status === 'rejected' && listing.appealStatus === 'rejected' && (
+                    <span className="my-listing-note">İtirazın reddedildi.</span>
                   )}
                 </div>
               </div>

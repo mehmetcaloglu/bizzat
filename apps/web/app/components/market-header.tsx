@@ -44,7 +44,10 @@ export function MarketHeader() {
           <>
             <Link href="/ilanlarim">İlanlarım</Link>
             {(role === 'moderator' || role === 'admin') && (
-              <Link href="/moderasyon/raporlar">Moderasyon</Link>
+              <>
+                <Link href="/moderasyon/raporlar">Moderasyon</Link>
+                <Link href="/moderasyon/itirazlar">İtirazlar</Link>
+              </>
             )}
             <span className="market-user-name">{session.user.name}</span>
             <button className="market-signout" type="button" onClick={() => void signOut()}>

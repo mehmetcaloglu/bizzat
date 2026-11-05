@@ -677,6 +677,7 @@ export class ApartmentService {
       imageUrl: row.imageId ? `/api/v1/listings/${row.id}/images/${row.imageId}` : null,
       updatedAt: row.updatedAt.toISOString(),
       publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
+      appealStatus: row.appealStatus as ApartmentOwnerListingListResponse['items'][number]['appealStatus'],
     }
   }
 
