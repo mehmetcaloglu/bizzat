@@ -321,3 +321,4 @@ pnpm build
 | [DESIGN.md](DESIGN.md) | Onaylanan görsel yön |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Kesinleşmiş kararlar |
 | [docs/BACKLOG.md](docs/BACKLOG.md) | MVP sonrası kısa takip işleri listesi |
+| [docs/LOCAL_SMOKE_CHECKLIST.md](docs/LOCAL_SMOKE_CHECKLIST.md) | Local kurulum ve uçtan uca smoke kontrol listesi |

@@ -385,6 +385,17 @@ button:disabled {
   padding: 5px;
 }
 
+.listing-success {
+  margin-top: 16px;
+  padding: 13px 16px;
+  color: #1d684d;
+  background: #f0faf5;
+  border: 1px solid #bfe6d3;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .listing-error {
   margin-top: 16px;
   padding: 13px 16px;
@@ -788,10 +799,12 @@ button:disabled {
   width: min(1240px, calc(100% - 48px));
   min-height: 76px;
   margin: 0 auto;
+  padding: 12px 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 12px 24px;
   border-bottom: 1px solid var(--bizzat-border);
 }
 
@@ -803,8 +816,10 @@ button:disabled {
 
 .market-nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 22px;
+  justify-content: flex-end;
+  gap: 8px 22px;
 }
 
 .market-nav a {
@@ -1328,7 +1343,9 @@ button:disabled {
   }
 
   .market-nav {
-    gap: 12px;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px 14px;
   }
 
   .market-nav > a:first-child {
