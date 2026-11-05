@@ -114,6 +114,10 @@ export type ApartmentRoomCount =
   | 'studio' | '1+0' | '1+1' | '1.5+1' | '2+0' | '2+1' | '2.5+1' | '2+2'
   | '3+0' | '3+1' | '3.5+1' | '3+2' | '4+0' | '4+1' | '4.5+1' | '4+2'
   | '5+1' | '5+2' | '6+1' | '7+1' | '8+1' | '9+1' | '10+'
+export type ApartmentFloorLabel =
+  | 'garden' | 'basement' | 'ground' | 'entrance' | 'high_entrance'
+  | 'detached' | 'villa' | 'attic'
+
 export type ApartmentHeating =
   | 'none' | 'stove' | 'central' | 'combi' | 'underfloor'
   | 'air_conditioning' | 'heat_pump' | 'solar' | 'fireplace'
@@ -130,6 +134,7 @@ export interface ApartmentAttributeValues {
   netM2: number | null
   buildingAge: number | null
   floor: number | null
+  floorLabel: ApartmentFloorLabel | null
   totalFloors: number | null
   heating: ApartmentHeating
   bathroomCount: number
@@ -264,6 +269,7 @@ export interface ApartmentFeedFilters {
   maxBuildingAge?: number
   minFloor?: number
   maxFloor?: number
+  floorLabel?: ApartmentFloorLabel
   heating?: ApartmentHeating
   bathroomCount?: number
   furnished?: boolean

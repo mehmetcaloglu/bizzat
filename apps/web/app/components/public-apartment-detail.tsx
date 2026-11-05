@@ -7,6 +7,7 @@ import {
   getPublicApartmentContact,
   getPublicApartmentListing,
   type ApartmentDeedStatus,
+  type ApartmentFloorLabel,
   type ApartmentHeating,
   type ApartmentKitchen,
   type ApartmentOccupancy,
@@ -26,6 +27,17 @@ const heatingLabels: Record<ApartmentHeating, string> = {
   heat_pump: 'Isı pompası',
   solar: 'Güneş enerjisi',
   fireplace: 'Şömine',
+}
+
+const floorLabels: Record<ApartmentFloorLabel, string> = {
+  garden: 'Bahçe katı',
+  basement: 'Bodrum',
+  ground: 'Zemin',
+  entrance: 'Giriş',
+  high_entrance: 'Yüksek giriş',
+  detached: 'Müstakil',
+  villa: 'Villa tipi',
+  attic: 'Çatı katı',
 }
 
 const kitchenLabels: Record<ApartmentKitchen, string> = {
@@ -139,6 +151,9 @@ export function PublicApartmentDetail({ listingId }: PublicApartmentDetailProps)
 
   const rent = listing.type === 'apartment_rent'
   const attributes = listing.attributes
+  const floorText = attributes.floorLabel
+    ? floorLabels[attributes.floorLabel]
+    : listing.floor === null ? 'Belirtilmedi' : String(listing.floor)
 
   return (
     <article className="listing-detail apartment-detail">
@@ -177,7 +192,7 @@ export function PublicApartmentDetail({ listingId }: PublicApartmentDetailProps)
               <div><dt>Brüt m²</dt><dd>{listing.grossM2} m²</dd></div>
               <div><dt>Net m²</dt><dd>{listing.netM2 === null ? 'Belirtilmedi' : `${listing.netM2} m²`}</dd></div>
               <div><dt>Bina yaşı</dt><dd>{listing.buildingAge === null ? 'Belirtilmedi' : listing.buildingAge}</dd></div>
-              <div><dt>Bulunduğu kat</dt><dd>{listing.floor ?? 'Belirtilmedi'}</dd></div>
+              <div><dt>Bulunduğu kat</dt><dd>{floorText}</dd></div>
               <div><dt>Kat sayısı</dt><dd>{listing.totalFloors ?? 'Belirtilmedi'}</dd></div>
               <div><dt>Isıtma</dt><dd>{heatingLabels[attributes.heating]}</dd></div>
               <div><dt>Banyo sayısı</dt><dd>{attributes.bathroomCount}</dd></div>

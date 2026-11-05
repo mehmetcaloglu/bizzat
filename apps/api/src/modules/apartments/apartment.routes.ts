@@ -1,5 +1,6 @@
 import {
   ApartmentDraftResponseSchema,
+  ApartmentFloorLabelSchema,
   ApartmentHeatingSchema,
   ApartmentOwnerListingListResponseSchema,
   ApartmentParkingSchema,
@@ -62,6 +63,7 @@ const PublicApartmentQuerySchema = Type.Object({
   maxBuildingAge: Type.Optional(Type.Integer({ minimum: 0, maximum: 200 })),
   minFloor: Type.Optional(Type.Integer({ minimum: -10, maximum: 200 })),
   maxFloor: Type.Optional(Type.Integer({ minimum: -10, maximum: 200 })),
+  floorLabel: Type.Optional(ApartmentFloorLabelSchema),
   heating: Type.Optional(ApartmentHeatingSchema),
   bathroomCount: Type.Optional(Type.Integer({ minimum: 0, maximum: 20 })),
   furnished: Type.Optional(Type.Boolean()),
@@ -291,6 +293,7 @@ export const apartmentRoutes: FastifyPluginAsyncTypebox<ApartmentRoutesOptions> 
     }
     if (request.query.minFloor !== undefined) filters.minFloor = request.query.minFloor
     if (request.query.maxFloor !== undefined) filters.maxFloor = request.query.maxFloor
+    if (request.query.floorLabel) filters.floorLabel = request.query.floorLabel
     if (request.query.heating) filters.heating = request.query.heating
     if (request.query.bathroomCount !== undefined) {
       filters.bathroomCount = request.query.bathroomCount

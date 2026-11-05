@@ -68,7 +68,7 @@ Satılık ve kiralık daire dikey dilimi çalışır durumdadır:
 - `/daire/:listingId` üzerinde public detay, fotoğraf galerisi, daire özellikleri ve telefonu gösterme akışı,
 - `/ilanlarim` üzerinde daire taslaklarını/yayındaki/pasif ilanları düzenleme, yayınlama ve yayından kaldırma.
 
-Satılıkta krediye uygunluk ve takas; kiralamada depozito alanı işlem türüne bağlıdır. Yayın öncesi daire bilgileri, aktif konum, telefon ve en az bir fotoğraf kontrol edilir. Yayındaki ilan düzenlendiğinde `published` durumu korunur; yayındaki ilanın son fotoğrafı kaldırılamaz.
+Satılıkta krediye uygunluk ve takas; kiralamada depozito alanı işlem türüne bağlıdır. Bulunduğu kat sayısal kat veya bahçe/bodrum/çatı gibi özel kat etiketi olarak saklanır. Yayın öncesi daire bilgileri, aktif konum, telefon ve en az bir fotoğraf kontrol edilir. Yayındaki ilan düzenlendiğinde `published` durumu korunur; yayındaki ilanın son fotoğrafı kaldırılamaz.
 
 Public API yüzeyi:
 
@@ -83,7 +83,7 @@ Public API yüzeyi:
 
 Otomobil feed filtreleri: `brandId`, `seriesId`, `modelId`, `provinceId`, `districtId`, `minPrice`, `maxPrice`, `minYear`, `maxYear`, `minMileageKm`, `maxMileageKm`, `fuelType`, `transmission`, `bodyType`, `drivetrain`, `vehicleCondition`, `color`, `q`, `swapAvailable`, `listedWithinDays`. Sıralamalar: `newest` (varsayılan), `oldest`, `price_asc`, `price_desc`, `mileage_asc`, `mileage_desc`, `year_asc`, `year_desc`.
 
-Daire feed filtreleri: `transactionType`, `provinceId`, `districtId`, `minPrice`, `maxPrice`, `roomCount`, `minGrossM2`, `maxGrossM2`, `minBuildingAge`, `maxBuildingAge`, `minFloor`, `maxFloor`, `heating`, `bathroomCount`, `furnished`, `inSite`, `parking`, `creditEligible`, `swapAvailable`, `q`, `listedWithinDays`. Sıralamalar: `newest`, `oldest`, `price_asc`, `price_desc`, `gross_m2_asc`, `gross_m2_desc`. Her iki feed’de cursor seçilen sıralama ve filtrelere göre üretilir; aynı cursor farklı sıralama veya filtreyle reddedilir.
+Daire feed filtreleri: `transactionType`, `provinceId`, `districtId`, `minPrice`, `maxPrice`, `roomCount`, `minGrossM2`, `maxGrossM2`, `minBuildingAge`, `maxBuildingAge`, `minFloor`, `maxFloor`, `floorLabel`, `heating`, `bathroomCount`, `furnished`, `inSite`, `parking`, `creditEligible`, `swapAvailable`, `q`, `listedWithinDays`. Sıralamalar: `newest`, `oldest`, `price_asc`, `price_desc`, `gross_m2_asc`, `gross_m2_desc`. Her iki feed’de cursor seçilen sıralama ve filtrelere göre üretilir; aynı cursor farklı sıralama veya filtreyle reddedilir.
 
 Authenticated yönetim yüzeyi:
 

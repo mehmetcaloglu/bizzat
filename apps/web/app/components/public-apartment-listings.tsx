@@ -8,6 +8,7 @@ import {
   listDistricts,
   listProvinces,
   listPublicApartmentListings,
+  type ApartmentFloorLabel,
   type ApartmentHeating,
   type ApartmentParking,
   type ApartmentTransactionType,
@@ -17,6 +18,7 @@ import {
 } from '../../lib/api-client'
 import {
   activeApartmentFilterCount,
+  apartmentFloorLabels,
   apartmentRoomCounts as roomCounts,
   emptyApartmentFeedForm,
   filtersFromApartmentForm,
@@ -44,6 +46,17 @@ const parkingLabels: Record<ApartmentParking, string> = {
   open: 'Açık otopark',
   closed: 'Kapalı otopark',
   both: 'Açık ve kapalı',
+}
+
+const floorLabels: Record<ApartmentFloorLabel, string> = {
+  garden: 'Bahçe katı',
+  basement: 'Bodrum',
+  ground: 'Zemin',
+  entrance: 'Giriş',
+  high_entrance: 'Yüksek giriş',
+  detached: 'Müstakil',
+  villa: 'Villa tipi',
+  attic: 'Çatı katı',
 }
 
 const sortLabels: Record<PublicApartmentListingSort, string> = {
@@ -86,7 +99,9 @@ export function PublicApartmentCard({ item }: { item: PublicApartmentListingItem
           <div className="listing-card-specs">
             <span>{item.roomCount === 'studio' ? 'Stüdyo' : item.roomCount}</span>
             <span>{item.grossM2} m²</span>
-            {item.floor !== null && <span>{item.floor}. kat</span>}
+            {item.attributes.floorLabel
+              ? <span>{floorLabels[item.attributes.floorLabel]}</span>
+              : item.floor !== null && <span>{item.floor}. kat</span>}
             <span>{heatingLabels[item.attributes.heating]}</span>
           </div>
         </div>
@@ -362,6 +377,18 @@ export function PublicApartmentListings({ limit = 12 }: { limit?: number }) {
                 value={draft.maxBuildingAge}
                 onChange={(event) => setDraft({ ...draft, maxBuildingAge: event.target.value })}
               />
+            </label>
+            <label>
+              <span>Kat türü</span>
+              <select
+                value={draft.floorLabel}
+                onChange={(event) => setDraft({ ...draft, floorLabel: event.target.value })}
+              >
+                <option value="">Tümü</option>
+                {apartmentFloorLabels.map((floor) => (
+                  <option key={floor} value={floor}>{floorLabels[floor]}</option>
+                ))}
+              </select>
             </label>
             <label>
               <span>Isıtma</span>

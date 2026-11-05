@@ -204,6 +204,7 @@ export interface ApartmentListingRow {
   netM2: number | null
   buildingAge: number | null
   floor: number | null
+  floorLabel: string | null
   totalFloors: number | null
   heating: string | null
   bathroomCount: number | null
@@ -256,6 +257,7 @@ export interface ApartmentFeedFilters {
   maxBuildingAge?: number
   minFloor?: number
   maxFloor?: number
+  floorLabel?: string
   heating?: string
   bathroomCount?: number
   furnished?: boolean
@@ -550,6 +552,7 @@ export class ListingRepository {
         'apartment_details.net_m2 as netM2',
         'apartment_details.building_age as buildingAge',
         'apartment_details.floor as floor',
+        'apartment_details.floor_label as floorLabel',
         'apartment_details.total_floors as totalFloors',
         'apartment_details.heating as heating',
         'apartment_details.bathroom_count as bathroomCount',
@@ -619,6 +622,7 @@ export class ListingRepository {
     netM2: number | null
     buildingAge: number | null
     floor: number | null
+    floorLabel: string | null
     totalFloors: number | null
     heating: string
     bathroomCount: number
@@ -644,6 +648,7 @@ export class ListingRepository {
         net_m2: input.netM2,
         building_age: input.buildingAge,
         floor: input.floor,
+        floor_label: input.floorLabel,
         total_floors: input.totalFloors,
         heating: input.heating,
         bathroom_count: input.bathroomCount,
@@ -666,6 +671,7 @@ export class ListingRepository {
         net_m2: input.netM2,
         building_age: input.buildingAge,
         floor: input.floor,
+        floor_label: input.floorLabel,
         total_floors: input.totalFloors,
         heating: input.heating,
         bathroom_count: input.bathroomCount,
@@ -751,6 +757,7 @@ export class ListingRepository {
         'apartment_details.net_m2 as netM2',
         'apartment_details.building_age as buildingAge',
         'apartment_details.floor as floor',
+        'apartment_details.floor_label as floorLabel',
         'apartment_details.total_floors as totalFloors',
         'apartment_details.heating as heating',
         'apartment_details.bathroom_count as bathroomCount',
@@ -833,6 +840,7 @@ export class ListingRepository {
         'apartment_details.net_m2 as netM2',
         'apartment_details.building_age as buildingAge',
         'apartment_details.floor as floor',
+        'apartment_details.floor_label as floorLabel',
         'apartment_details.total_floors as totalFloors',
         'apartment_details.heating as heating',
         'apartment_details.bathroom_count as bathroomCount',
@@ -890,6 +898,9 @@ export class ListingRepository {
     }
     if (filters.maxFloor !== undefined) {
       query = query.where(sql<boolean>`apartment_details.floor <= ${filters.maxFloor}::integer`)
+    }
+    if (filters.floorLabel) {
+      query = query.where('apartment_details.floor_label', '=', filters.floorLabel)
     }
     if (filters.heating) query = query.where('apartment_details.heating', '=', filters.heating)
     if (filters.bathroomCount !== undefined) {

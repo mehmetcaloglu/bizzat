@@ -32,6 +32,17 @@ export const ApartmentRoomCountSchema = Type.Union([
   Type.Literal('10+'),
 ])
 
+export const ApartmentFloorLabelSchema = Type.Union([
+  Type.Literal('garden'),
+  Type.Literal('basement'),
+  Type.Literal('ground'),
+  Type.Literal('entrance'),
+  Type.Literal('high_entrance'),
+  Type.Literal('detached'),
+  Type.Literal('villa'),
+  Type.Literal('attic'),
+])
+
 export const ApartmentHeatingSchema = Type.Union([
   Type.Literal('none'),
   Type.Literal('stove'),
@@ -92,6 +103,7 @@ const ApartmentAttributeFields = {
   netM2: NullableInteger(1, 100000),
   buildingAge: NullableInteger(0, 200),
   floor: NullableInteger(-10, 200),
+  floorLabel: Type.Union([ApartmentFloorLabelSchema, Type.Null()]),
   totalFloors: NullableInteger(1, 200),
   heating: ApartmentHeatingSchema,
   bathroomCount: Type.Integer({ minimum: 0, maximum: 20 }),
@@ -269,6 +281,7 @@ export const UnpublishApartmentDraftResponseSchema = Type.Object({
 })
 
 export type ApartmentTransactionType = Static<typeof ApartmentTransactionTypeSchema>
+export type ApartmentFloorLabel = Static<typeof ApartmentFloorLabelSchema>
 export type CreateApartmentDraftRequest = Static<typeof CreateApartmentDraftRequestSchema>
 export type UpdateApartmentDraftDetailsRequest = Static<typeof UpdateApartmentDraftDetailsRequestSchema>
 export type ApartmentDraftResponse = Static<typeof ApartmentDraftResponseSchema>

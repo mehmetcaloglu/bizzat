@@ -24,6 +24,7 @@ const item: PublicApartmentListingItem = {
     netM2: 90,
     buildingAge: 5,
     floor: 3,
+    floorLabel: null,
     totalFloors: 8,
     heating: 'combi',
     bathroomCount: 1,
@@ -67,6 +68,19 @@ describe('apartment surfaces', () => {
 
     expect(html).toContain('Daireni bireysel olarak yayınla')
     expect(html).toContain('İlan formu hazırlanıyor…')
+  })
+
+  it('renders a special floor label instead of a numeric floor', () => {
+    const html = renderToStaticMarkup(
+      <PublicApartmentCard item={{
+        ...item,
+        floor: null,
+        attributes: { ...item.attributes, floor: null, floorLabel: 'garden' },
+      }} />,
+    )
+
+    expect(html).toContain('Bahçe katı')
+    expect(html).not.toContain('3. kat')
   })
 
   it('renders an apartment card with sale price and room facts', () => {

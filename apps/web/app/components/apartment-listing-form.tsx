@@ -16,6 +16,7 @@ import {
   updateApartmentDraftDetails,
   uploadApartmentDraftImage,
   type ApartmentDeedStatus,
+  type ApartmentFloorLabel,
   type ApartmentDraftResponse,
   type ApartmentHeating,
   type ApartmentKitchen,
@@ -50,6 +51,7 @@ interface ApartmentFormValues {
   netM2: string
   buildingAge: string
   floor: string
+  floorType: string
   totalFloors: string
   heating: ApartmentHeating
   bathroomCount: string
@@ -80,6 +82,7 @@ const emptyForm: ApartmentFormValues = {
   netM2: '',
   buildingAge: '',
   floor: '',
+  floorType: 'numbered',
   totalFloors: '',
   heating: 'combi',
   bathroomCount: '1',
@@ -130,6 +133,17 @@ const parkingLabels: Record<ApartmentParking, string> = {
   both: 'Açık ve kapalı',
 }
 
+const floorLabels: Record<ApartmentFloorLabel, string> = {
+  garden: 'Bahçe katı',
+  basement: 'Bodrum',
+  ground: 'Zemin',
+  entrance: 'Giriş',
+  high_entrance: 'Yüksek giriş',
+  detached: 'Müstakil',
+  villa: 'Villa tipi',
+  attic: 'Çatı katı',
+}
+
 const occupancyLabels: Record<ApartmentOccupancy, string> = {
   empty: 'Boş',
   tenant: 'Kiracılı',
@@ -171,6 +185,7 @@ function formFromDraft(draft: ApartmentDraftResponse['listing']): ApartmentFormV
     netM2: details.netM2 === null ? '' : String(details.netM2),
     buildingAge: details.buildingAge === null ? '' : String(details.buildingAge),
     floor: details.floor === null ? '' : String(details.floor),
+    floorType: details.floorLabel ?? 'numbered',
     totalFloors: details.totalFloors === null ? '' : String(details.totalFloors),
     heating: details.heating,
     bathroomCount: String(details.bathroomCount),
@@ -206,7 +221,10 @@ function inputFromForm(
     grossM2: Number(form.grossM2),
     netM2: optionalNumber(form.netM2),
     buildingAge: optionalNumber(form.buildingAge),
-    floor: optionalNumber(form.floor),
+    floor: form.floorType === 'numbered' ? optionalNumber(form.floor) : null,
+    floorLabel: form.floorType === 'numbered'
+      ? null
+      : form.floorType as ApartmentFloorLabel,
     totalFloors: optionalNumber(form.totalFloors),
     heating: form.heating,
     bathroomCount: Number(form.bathroomCount),
@@ -632,14 +650,32 @@ export function ApartmentListingForm() {
               />
             </label>
             <label>
-              <span>Bulunduğu kat</span>
-              <input
-                type="number"
-                min={-10}
-                value={form.floor}
-                onChange={(event) => setForm({ ...form, floor: event.target.value })}
-              />
+              <span>Kat türü</span>
+              <select
+                value={form.floorType}
+                onChange={(event) => setForm({
+                  ...form,
+                  floorType: event.target.value,
+                  floor: event.target.value === 'numbered' ? form.floor : '',
+                })}
+              >
+                <option value="numbered">Numaralı kat</option>
+                {(Object.entries(floorLabels) as Array<[ApartmentFloorLabel, string]>).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
             </label>
+            {form.floorType === 'numbered' && (
+              <label>
+                <span>Kat numarası</span>
+                <input
+                  type="number"
+                  min={-10}
+                  value={form.floor}
+                  onChange={(event) => setForm({ ...form, floor: event.target.value })}
+                />
+              </label>
+            )}
             <label>
               <span>Kat sayısı</span>
               <input
